@@ -21,7 +21,8 @@ class GOCR {
 
     private final BufferedImage image;
     private final String commandLineOptions;
-    private final static String PATH = "tools/gocr/gocr046.exe";
+    private final static String PATH_WINDOWS = "tools/gocr/gocr046.exe";
+    private final static String PATH_LINUX = "gocr";
 
     GOCR(BufferedImage image, String commandLineOptions) {
 
@@ -39,7 +40,21 @@ class GOCR {
 
         Scanner scanner = null;
         OutputStream processOut = null;
-        final String command = Utils.addFileSeparator(Utils.getAppPath()) + PATH;
+        final String command;
+        if (Utils.isWindows()) {
+            command = Utils.addFileSeparator(Utils.getAppPath()) + PATH_WINDOWS;
+        } else {
+            command = PATH_LINUX;
+            try {
+                final Process process = Runtime.getRuntime().exec(command);
+                process.waitFor();
+                if (process.exitValue() != 0)
+                    return null;
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
         try {
             final Process process = Runtime.getRuntime().exec(command + " " + commandLineOptions + " -f ASCII -");
             processOut = process.getOutputStream();
@@ -52,10 +67,7 @@ class GOCR {
             if (process.exitValue() != 0)
                 throw new IOException("Process exited abnormally");
             return s;
-        } catch (IOException e) {
-            LogUtils.processException(logger, e);
-            throw e;
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             LogUtils.processException(logger, e);
             throw new IOException(e);
         } finally {
