@@ -99,10 +99,11 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
             statusbar.setName("statusbarPanel");
             infoLabel = new JLabel();
             progress = new JProgressBar();
+
             //  progress.setStringPainted(false);
             indicator = new MemoryIndicator();
             indicator.setPreferredSize(new Dimension(100, 15));
-            infoLabel.setPreferredSize(new Dimension(330, 15));
+            infoLabel.setPreferredSize(new Dimension(345, 15));
             clipboardMonitoring.setPreferredSize(new Dimension(17, 15));
             progress.setPreferredSize(new Dimension(progress.getPreferredSize().width * 2 / 3, 15));
             progress.setVisible(false);
