@@ -6,10 +6,13 @@ import cz.vity.freerapid.plugins.webclient.interfaces.PluginRunner;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
 
 /**
  * @author Ladislav Vitasek
@@ -84,4 +87,19 @@ public abstract class AbstractRunner implements PluginRunner {
         return client.makeRequest(method) == HttpStatus.SC_OK;
     }
 
+    protected PostMethod getPostMethod(String uri) {
+        return client.getPostMethod(uri);
+    }
+
+    protected GetMethod getGetMethod(String uri) {
+        return client.getGetMethod(uri);
+    }
+
+    protected String getContentAsString() {
+        return client.getContentAsString();
+    }
+
+    protected Matcher matcherRequest(final String regexp) {
+        return PlugUtils.matcher(regexp, client.getContentAsString());
+    }
 }

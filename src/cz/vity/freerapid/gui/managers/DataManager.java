@@ -7,8 +7,8 @@ import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.FWProp;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.DownloadTask;
+import cz.vity.freerapid.gui.managers.exceptions.NotSupportedDownloadServiceException;
 import cz.vity.freerapid.model.DownloadFile;
-import cz.vity.freerapid.plugins.exceptions.NotSupportedDownloadServiceException;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.swing.Swinger;
@@ -155,7 +155,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         final boolean startFromTop = AppPrefs.getProperty(UserProp.START_FROM_TOP, UserProp.START_FROM_TOP_DEFAULT);
         for (DownloadFile file : files) {
             try {
-                file.setShareDownloadServiceID(pluginsManager.getServiceIDForURL(file.getFileUrl()));
+                file.setPluginID(pluginsManager.getServiceIDForURL(file.getFileUrl()));
             } catch (NotSupportedDownloadServiceException e) {
                 file.setState(DownloadState.ERROR);
                 file.setErrorMessage("Not Supported Download Service Exception");//TODO I18N

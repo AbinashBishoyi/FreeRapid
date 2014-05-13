@@ -1,10 +1,11 @@
 package cz.vity.freerapid.gui.managers;
 
+import cz.vity.freerapid.gui.managers.exceptions.NotSupportedDownloadServiceException;
+import cz.vity.freerapid.gui.managers.exceptions.PluginIsNotEnabledException;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.model.PluginMetaData;
 import cz.vity.freerapid.plugimpl.PluginContextImpl;
 import cz.vity.freerapid.plugimpl.StandardDialogSupport;
-import cz.vity.freerapid.plugins.exceptions.NotSupportedDownloadServiceException;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.plugins.webclient.interfaces.PluginContext;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
@@ -215,11 +216,18 @@ public class PluginsManager {
     public String getServiceIDForURL(URL url) throws NotSupportedDownloadServiceException {
         final Set<Map.Entry<String, PluginMetaData>> entries = this.supportedPlugins.entrySet();
         final String s = url.toExternalForm();
+        PluginMetaData disabledPlugin = null;
         for (Map.Entry<String, PluginMetaData> entry : entries) {
             final PluginMetaData value = entry.getValue();
-            if (value.isSupported(s) && value.isEnabled())
-                return entry.getKey();
+            if (value.isSupported(s)) {
+                if (!value.isEnabled()) {
+                    disabledPlugin = value;
+                } else
+                    return entry.getKey();
+            }
         }
+        if (disabledPlugin != null)
+            throw new PluginIsNotEnabledException(disabledPlugin);
         throw new NotSupportedDownloadServiceException();
     }
 
@@ -278,19 +286,19 @@ public class PluginsManager {
     }
 
     private ShareDownloadService getActiveService(DownloadFile file) {
-        final String id = file.getShareDownloadServiceID();
+        final String id = file.getPluginID();
         try {
             final PluginMetaData data = getPluginMetadata(id);
             if (!data.isEnabled()) {
                 try {//aktivni plugin neni zapnuty, zkusim najit alternativu
                     final String newId = getServiceIDForURL(file.getFileUrl());
-                    file.setShareDownloadServiceID(newId);
+                    file.setPluginID(newId);
                     return getPluginInstance(newId);
                 } catch (NotSupportedDownloadServiceException e1) {
                     //nenasel jsem alternativu pro disablovany plugin, vypisu tedy hlasku o tom, ze neni zapnuty ten puvodni
-                    file.setShareDownloadServiceID(id);//v pripade, ze selhalo getPluginInstance(newId);, musim vratit id na stare 
+                    file.setPluginID(id);//v pripade, ze selhalo getPluginInstance(newId);, musim vratit id na stare
                     file.setState(DownloadState.DISABLED);
-                    file.setErrorMessage("Plugin is not enabled - " + file.getShareDownloadServiceID()); //TODO I18N
+                    file.setErrorMessage("Plugin is not enabled - " + file.getPluginID()); //TODO I18N
                 }
 
                 return null;
@@ -299,11 +307,15 @@ public class PluginsManager {
         } catch (NotSupportedDownloadServiceException e) {
             try {//snazim se najit alternativu
                 final String newId = getServiceIDForURL(file.getFileUrl());
-                file.setShareDownloadServiceID(newId);
+                file.setPluginID(newId);
                 return getPluginInstance(newId);
-            } catch (NotSupportedDownloadServiceException e1) {//nenasel jsem alternativu
+            } catch (PluginIsNotEnabledException ex) {
+                file.setState(DownloadState.DISABLED);
+                file.setErrorMessage("Plugin is not enabled - " + file.getPluginID()); //TODO I18N
+            }
+            catch (NotSupportedDownloadServiceException e1) {//nenasel jsem alternativu
                 file.setState(DownloadState.ERROR);
-                file.setErrorMessage("Not supported service - " + file.getShareDownloadServiceID()); //TODO I18N
+                file.setErrorMessage("Not supported service - " + file.getPluginID()); //TODO I18N
             }
         }
         return null;

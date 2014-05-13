@@ -24,6 +24,7 @@ class PluginDevHttpFile implements HttpFile {
     private File saveToDirectory;
     private String description;
     private FileState fileState;
+    private String serviceID;
 
     public long getFileSize() {
         return fileSize;
@@ -119,5 +120,18 @@ class PluginDevHttpFile implements HttpFile {
 
     public void setFileState(FileState state) {
         this.fileState = state;
+    }
+
+    public void setNewURL(URL fileUrl) {
+        setFileUrl(fileUrl);
+    }
+
+
+    public void setPluginID(String pluginID) {
+        this.serviceID = pluginID;
+    }
+
+    public String getPluginID() {
+        return serviceID;
     }
 }

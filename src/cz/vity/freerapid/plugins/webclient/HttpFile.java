@@ -24,7 +24,11 @@ public interface HttpFile {
 
     void setFileName(String fileName);
 
-    void setFileUrl(URL fileUrl);
+    void setNewURL(URL fileUrl);
+
+    void setPluginID(final String pluginID);
+
+    String getPluginID();
 
     String getDescription();
 

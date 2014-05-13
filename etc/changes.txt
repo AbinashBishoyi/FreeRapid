@@ -11,6 +11,10 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
+XXX   08 - FreeRapid Downloader 0.8 released
+  
+
+
 10th November 2008 - FreeRapid Downloader 0.71 released
   Added : Hungarian translation [thanks to Denisz Kosztyukovics!]
   Added : German translation [thanks to Rabyte!]  

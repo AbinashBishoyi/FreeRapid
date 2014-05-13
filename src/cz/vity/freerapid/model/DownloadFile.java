@@ -14,6 +14,8 @@ import org.jdesktop.application.AbstractBean;
 import java.beans.*;
 import java.io.File;
 import java.net.URL;
+import java.util.Hashtable;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -28,7 +30,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
     private DownloadTask task = null;
     private volatile DownloadState state = DownloadState.PAUSED;
     private String fileName;
-    private long downloaded = 0;
+    private volatile long downloaded = 0;
     private int sleep;
     private float averageSpeed;
     private long speed;
@@ -45,7 +47,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
     private volatile String serviceName = null;
     private volatile ConnectionSettings connectionSettings;
     private volatile FileState fileState = FileState.NOT_CHECKED;
-
+    private Map<String, Object> properties = new Hashtable<String, Object>();
 
     static {
         try {
@@ -71,6 +73,11 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
         this.fileUrl = fileUrl;
         this.saveToDirectory = saveToDirectory;
         this.description = description;
+        setNewURL(fileUrl);
+    }
+
+    public void setNewURL(URL fileUrl) {
+        setFileUrl(fileUrl);
         this.fileSize = -1;
         final String urlStr = fileUrl.toExternalForm();
         this.fileName = FileTypeIconProvider.identifyFileName(urlStr);
@@ -250,6 +257,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
         //firePropertyChange("fileType", oldValue, this.fileType);
     }
 
+    @Deprecated
     public String getShareDownloadServiceID() {
         return shareDownloadServiceID;
     }
@@ -276,9 +284,9 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
         this.errorAttemptsCount = AppPrefs.getProperty(UserProp.ERROR_ATTEMPTS_COUNT, UserProp.ERROR_ATTEMPTS_COUNT_DEFAULT);
     }
 
+    @Deprecated
     public void setShareDownloadServiceID(String shareDownloadServiceID) {
-        this.shareDownloadServiceID = shareDownloadServiceID;
-        this.serviceName = shareDownloadServiceID.toLowerCase().replace('_', ' ');
+        setPluginID(shareDownloadServiceID);
     }
 
     public int getTimeToQueuedMax() {
@@ -322,5 +330,22 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
             this.fileState = fileState;
             firePropertyChange("fileState", oldValue, fileState);
         }
+    }
+
+    public Map<String, Object> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Map<String, Object> properties) {
+        this.properties = properties;
+    }
+
+    public void setPluginID(String pluginID) {
+        this.shareDownloadServiceID = pluginID;
+        this.serviceName = shareDownloadServiceID.toLowerCase().replace('_', ' ');
+    }
+
+    public String getPluginID() {
+        return this.shareDownloadServiceID;
     }
 }

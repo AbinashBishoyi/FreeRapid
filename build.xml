@@ -47,6 +47,7 @@
         <include name="**/?*.tld"/>
         <include name="**/?*.mid"/>
         <include name="**/?*.wav"/>
+        <include name="**/?*.xsd"/>
 
         <exclude name="**/plugin.xml"/>
     </patternset>

@@ -6,9 +6,9 @@ import cz.vity.freerapid.core.application.GlobalEDTExceptionHandler;
 import cz.vity.freerapid.core.tasks.DownloadTask;
 import cz.vity.freerapid.core.tasks.DownloadTaskError;
 import cz.vity.freerapid.core.tasks.RunCheckTask;
+import cz.vity.freerapid.gui.managers.exceptions.NotSupportedDownloadServiceException;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.model.PluginMetaData;
-import cz.vity.freerapid.plugins.exceptions.NotSupportedDownloadServiceException;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.plugins.webclient.FileState;
@@ -281,7 +281,7 @@ public class ProcessManager extends Thread {
 
     private void finishedDownloading(final DownloadFile file, final HttpDownloadClient client, final DownloadTask task, final boolean runCheck) {
         synchronized (manipulation) {
-            final String serviceID = file.getShareDownloadServiceID();
+            final String serviceID = file.getPluginID();
             final DownloadService service = services.get(pluginsManager.getPluginMetadata(serviceID).getServices());
             if (service == null)
                 throw new IllegalStateException("Download service not found:" + serviceID);

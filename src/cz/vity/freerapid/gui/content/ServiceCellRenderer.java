@@ -4,8 +4,8 @@ import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
 import cz.vity.freerapid.gui.managers.PluginsManager;
+import cz.vity.freerapid.gui.managers.exceptions.NotSupportedDownloadServiceException;
 import cz.vity.freerapid.model.DownloadFile;
-import cz.vity.freerapid.plugins.exceptions.NotSupportedDownloadServiceException;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 
 import javax.swing.*;
@@ -29,7 +29,7 @@ class ServiceCellRenderer extends DefaultTableCellRenderer {
 
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         final DownloadFile downloadFile = (DownloadFile) value;
-        final String shareDownloadServiceID = downloadFile.getShareDownloadServiceID();
+        final String shareDownloadServiceID = downloadFile.getPluginID();
         assert shareDownloadServiceID != null;
         final String serviceName = downloadFile.getServiceName();
         Icon faviconImage = null;
