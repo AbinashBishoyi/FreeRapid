@@ -22,6 +22,10 @@ public class CaptchaSupport {
         this.dialogSupport = dialogSupport;
     }
 
+    public String askForCaptcha(final BufferedImage image) throws Exception {
+        return dialogSupport.askForCaptcha(image);
+    }
+
     public String getCaptcha(final String url) throws FailedToLoadCaptchaPictureException {
         try {
             return dialogSupport.askForCaptcha(getCaptchaImage(url));

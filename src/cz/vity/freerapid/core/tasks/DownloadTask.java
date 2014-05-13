@@ -151,16 +151,15 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         }
 
         final File saveToDirectory = downloadFile.getSaveToDirectory();
-        if (!saveToDirectory.exists())
-            saveToDirectory.mkdirs();
-
-        storeFile = (temporary) ? File.createTempFile(fileName + ".", ".part", saveToDirectory) : outputFile;
-        final long fileSize = downloadFile.getFileSize();
-
-        if (temporary)
-            storeFile.deleteOnExit();
-
         try {
+            if (!saveToDirectory.exists())
+                saveToDirectory.mkdirs();
+            storeFile = (temporary) ? File.createTempFile(fileName + ".", ".part", saveToDirectory) : outputFile;
+            final long fileSize = downloadFile.getFileSize();
+
+            if (temporary)
+                storeFile.deleteOnExit();
+
             try {
                 fileOutputStream[0] = getFileOutputStream(storeFile, fileSize);
                 if (isTerminated()) {
