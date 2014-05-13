@@ -15,25 +15,26 @@ import java.util.logging.Logger;
 /**
  * @author Ladislav Vitasek
  */
-public abstract class AbstractRunner<C extends ShareDownloadService> implements PluginRunner {
+public abstract class AbstractRunner implements PluginRunner {
     private final static Logger logger = Logger.getLogger(AbstractRunner.class.getName());
 
     protected HttpDownloadClient client;
 
+    private ShareDownloadService pluginService;
     protected HttpFileDownloader downloader;
 
     protected HttpFile httpFile;
 
     protected String fileURL;
 
-    protected C pluginService;
     private CaptchaSupport captchaSupport;
 
-    public AbstractRunner(C pluginService) {
-        this.pluginService = pluginService;
+    public AbstractRunner() {
+
     }
 
-    protected void init(HttpFileDownloader downloader) {
+    public void init(ShareDownloadService service, HttpFileDownloader downloader) {
+        this.pluginService = service;
         this.downloader = downloader;
         this.client = downloader.getClient();
         this.httpFile = downloader.getDownloadFile();
@@ -41,12 +42,10 @@ public abstract class AbstractRunner<C extends ShareDownloadService> implements 
     }
 
     public void run(HttpFileDownloader downloader) throws Exception {
-        init(downloader);
         logger.info("Starting download 'run'" + fileURL);
     }
 
     public void runCheck(HttpFileDownloader downloader) throws Exception {
-        init(downloader);
         logger.info("Starting download 'runCheck' " + fileURL);
     }
 
@@ -78,7 +77,7 @@ public abstract class AbstractRunner<C extends ShareDownloadService> implements 
         }
     }
 
-    public C getPluginService() {
+    public ShareDownloadService getPluginService() {
         return pluginService;
     }
 

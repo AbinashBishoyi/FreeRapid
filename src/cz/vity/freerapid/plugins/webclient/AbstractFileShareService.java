@@ -53,17 +53,21 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
 
     public void run(HttpFileDownloader downloader) throws Exception {
         checkSupportedURL(downloader);
-        final PluginRunner pluginRunner = getPluginRunnerInstance();
-        if (pluginRunner != null)
+        final PluginRunner<ShareDownloadService> pluginRunner = getPluginRunnerInstance();
+        if (pluginRunner != null) {
+            pluginRunner.init(this, downloader);
             pluginRunner.run(downloader);
+        }
 
     }
 
     public void runCheck(HttpFileDownloader downloader) throws Exception {
         checkSupportedURL(downloader);
-        final PluginRunner pluginRunner = getPluginRunnerInstance();
-        if (pluginRunner != null)
+        final PluginRunner<ShareDownloadService> pluginRunner = getPluginRunnerInstance();
+        if (pluginRunner != null) {
+            pluginRunner.init(this, downloader);
             pluginRunner.runCheck(downloader);
+        }
     }
 
     public boolean supportsRunCheck() {
@@ -88,7 +92,7 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
         this.pluginContext = pluginContext;
     }
 
-    protected PluginRunner getPluginRunnerInstance() {
+    protected PluginRunner<ShareDownloadService> getPluginRunnerInstance() {
         return null;
     }
 }
