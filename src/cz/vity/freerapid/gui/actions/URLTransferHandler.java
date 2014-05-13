@@ -67,6 +67,9 @@ public abstract class URLTransferHandler extends TransferHandler {
                 String spec = match.group();
                 if (!spec.startsWith(http))
                     spec = http + spec;
+                if (spec.endsWith("'")) {
+                    spec = spec.substring(0, spec.length() - 1);
+                }
                 final URL url = new URL(spec);
                 if (pluginsManager.isSupported(url)) {
                     final String s = url.toExternalForm();
