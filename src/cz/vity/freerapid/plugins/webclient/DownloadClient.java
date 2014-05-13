@@ -99,7 +99,7 @@ public class DownloadClient implements HttpDownloadClient {
         } else {
             final String value = contentType.getValue();
             isImage = contentType.getValue().startsWith("image/");
-            if (!value.startsWith("application/") || !isImage) {
+            if (!value.startsWith("application/") && !isImage) {
                 logger.warning("Suspicious Content-Type:" + contentType.getValue());
             } else {
                 final Header contentLength = method.getResponseHeader("Content-Length");
