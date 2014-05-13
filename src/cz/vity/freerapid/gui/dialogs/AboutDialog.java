@@ -57,7 +57,7 @@ public class AboutDialog extends AppDialog {
         locateOnOpticalScreenCenter(this);
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                audioClip = Sound.playSound("boss.mid");
+                audioClip = Sound.playSound("laugh.wav");
             }
         });
 
