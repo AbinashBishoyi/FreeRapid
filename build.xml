@@ -125,6 +125,7 @@
                 <attribute name="Build-Date" value="${TODAY}"/>
             </manifest>
             <fileset dir="${classes.dir}" includes="**/plugins/**"/>
+            <fileset dir="${classes.dir}" includes="**/**/EDTPropertyChangeSupport**"/>
         </jar>
 
     </target>
