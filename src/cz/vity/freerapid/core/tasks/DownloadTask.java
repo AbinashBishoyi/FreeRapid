@@ -13,15 +13,12 @@ import cz.vity.freerapid.utilities.FileUtils;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Sound;
 import org.apache.commons.httpclient.SimpleHttpConnectionManager;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.TaskEvent;
 import org.jdesktop.application.TaskListener;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.ConnectException;
@@ -50,12 +47,10 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     private DownloadTaskError serviceError;
 
     private int youHaveToSleepSecondsTime = 0;
-    private volatile String captchaResult;
     private static final int NO_DATA_TIMEOUT_LIMIT = 100;
     private static final int INPUT_BUFFER_SIZE = 50000;
     private static final int OUTPUT_FILE_BUFFER_SIZE = 600000;
     private volatile boolean connectionTimeOut;
-    private final static Object captchaLock = new Object();
     private int fileAlreadyExists;
 
     public DownloadTask(Application application) {
@@ -575,63 +570,9 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         return youHaveToSleepSecondsTime;
     }
 
-
-    public BufferedImage getCaptchaImage(final String url) throws FailedToLoadCaptchaPictureException {
-        final GetMethod getMethod = client.getGetMethod(url);
-        try {
-            InputStream stream = client.makeRequestForFile(getMethod);
-            if (stream == null)
-                throw new FailedToLoadCaptchaPictureException();
-            return loadCaptcha(stream);
-        } catch (FailedToLoadCaptchaPictureException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new FailedToLoadCaptchaPictureException(e);
-        }
-
-    }
-
-    private BufferedImage loadCaptcha(InputStream inputStream) throws FailedToLoadCaptchaPictureException {
-        if (inputStream == null)
-            throw new NullPointerException("InputStreamForCaptchaIsNull");
-        try {
-            return ImageIO.read(inputStream);
-        } catch (IOException e) {
-            throw new FailedToLoadCaptchaPictureException("ReadingCaptchaPictureFailed", e);
-        }
-    }
-
-    public String askForCaptcha(final BufferedImage image) throws Exception {
-        synchronized (captchaLock) {
-            SwingUtilities.invokeAndWait(new Runnable() {
-                public void run() {
-                    if (AppPrefs.getProperty(UserProp.ACTIVATE_WHEN_CAPTCHA, UserProp.ACTIVATE_WHEN_CAPTCHA_DEFAULT))
-                        Swinger.bringToFront(getMainFrame(), true);
-                    captchaResult = "";
-
-                    while (captchaResult.isEmpty()) {
-                        captchaResult = (String) JOptionPane.showInputDialog(null, getResourceMap().getString("InsertWhatYouSee"), getResourceMap().getString("InsertCaptcha"), JOptionPane.PLAIN_MESSAGE, new ImageIcon(image), null, null);
-                        if (captchaResult == null)
-                            break;
-                    }
-                }
-            });
-        }
-        image.flush();
-        return captchaResult;
-    }
-
-    public void setDownloadFile(DownloadFile downloadFile) {
+    protected void setDownloadFile(DownloadFile downloadFile) {
         this.downloadFile = downloadFile;
     }
 
-    public String getCaptcha(final String url) throws FailedToLoadCaptchaPictureException {
-        try {
-            return askForCaptcha(getCaptchaImage(url));
-        } catch (FailedToLoadCaptchaPictureException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new FailedToLoadCaptchaPictureException(e);
-        }
-    }
+
 }
