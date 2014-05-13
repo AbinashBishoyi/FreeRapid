@@ -171,7 +171,10 @@ public abstract class URLTransferHandler extends TransferHandler {
                                 urls.addAll(textURIListToFileList(s));
                             } catch (UnsupportedEncodingException e) {
                                 //ignore
+                            } catch (IllegalArgumentException e) {
+                                LogUtils.processException(logger, e);
                             }
+
                         }
                     }
                 } catch (UnsupportedFlavorException e) {
