@@ -30,6 +30,8 @@
     <property name="resources" value="cz/vity/freerapid/core/resources/"/>
     <property name="splash" value="${resources}icons/splash.jpg"/>
 
+    <property name="ignoreProperties" value="log*,lookandfeels*"/>
+
     <fileset id="jars" dir="${lib.dir}" includes="**/*"/>
 
     <patternset id="compiler.resources">
@@ -83,7 +85,7 @@
             </mapper>
         </copy>
 
-        <native2ascii src="${classes.dir}" encoding="utf-8" includes="**/?*.stripped" excludes="log*,lookandfeels*"
+        <native2ascii src="${classes.dir}" encoding="utf-8" includes="**/?*.stripped" excludes="${ignoreProperties}"
                       dest="${classes.dir}" ext=".properties"/>
         <delete>
             <fileset dir="${classes.dir}" includes="**/?*.stripped"/>
@@ -178,11 +180,20 @@
     <target name="resources" depends="init">
         <mkdir dir="${resources.dir}"/>
         <copy todir="${resources.dir}">
-            <fileset dir="${src.dir}" includes="**/**/*.properties" excludes="log*,lookandfeels*"/>
+            <fileset dir="${src.dir}" includes="**/?*.properties" excludes="${ignoreProperties}"/>
         </copy>
         <zip zipfile="${dist.dir}/resources.zip">
             <fileset dir="${resources.dir}"/>
         </zip>
+    </target>
+
+    <target name="intellij">
+        <delete>
+            <fileset dir="out/production/freerapid" includes="**/?*.properties" excludes="${ignoreProperties}"/>
+        </delete>
+
+        <native2ascii src="${src.dir}" encoding="utf-8" includes="**/?*.properties" excludes="${ignoreProperties}"
+                      dest="out/production/freerapid" ext=".properties"/>
     </target>
 
 
