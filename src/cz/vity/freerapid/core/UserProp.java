@@ -82,4 +82,11 @@ public class UserProp {
 
     public static final String ANIMATE_ICON = "animateIcon";
     public static final boolean ANIMATE_ICON_DEFAULT = true;
+
+    public static final String GENERATE_DESCRIPT_ION_FILE = "generateDescript-ionFile";
+    public static final boolean GENERATE_DESCRIPT_ION_FILE_DEFAULT = true;
+
+    public static final String GENERATE_DESCRIPTION_BY_FILENAME = "generateDescriptionByFileName";
+    public static final boolean GENERATE_DESCRIPTION_BY_FILENAME_DEFAULT = true;
+
 }

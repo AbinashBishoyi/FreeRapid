@@ -1,16 +1,15 @@
 package cz.vity.freerapid.core.tasks;
 
+import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.MainApp;
+import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.exceptions.FileTransferFailedException;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
 import org.jdesktop.application.Application;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.logging.Logger;
@@ -62,6 +61,7 @@ public class MoveFileTask extends CoreTask<Void, Void> {
             if (from.renameTo(to)) {
                 saveToHistoryList();
             } else throw new FileTransferFailedException("Creating output file path failed");
+            saveDescriptionFiles();
             return null;
         }
 
@@ -70,6 +70,7 @@ public class MoveFileTask extends CoreTask<Void, Void> {
                 throw new FileTransferFailedException("Creating output path failed");
         }
 
+        saveDescriptionFiles();
 
         try {
             try {
@@ -105,12 +106,73 @@ public class MoveFileTask extends CoreTask<Void, Void> {
         catch (Exception e) {
             if (to.exists())
                 to.delete();
+            deleteDescriptionFileOnError();
         }
         finally {
             if (deleteSource && from.exists()) // i v pripade cancelled a failed
                 from.delete();
         }
         return null;
+    }
+
+    private void deleteDescriptionFileOnError() {
+        final String desc = downloadFile.getDescription();
+        if (desc == null || desc.isEmpty())
+            return;
+        final boolean descriptionFile = AppPrefs.getProperty(UserProp.GENERATE_DESCRIPTION_BY_FILENAME, UserProp.GENERATE_DESCRIPTION_BY_FILENAME_DEFAULT);
+        if (descriptionFile) {
+            final File descTxtFile = new File(to.getParentFile(), Utils.getPureFilename(to) + ".txt");
+            if (descTxtFile.exists())
+                descTxtFile.delete();
+        }
+    }
+
+    private void saveDescriptionFiles() {
+        final String desc = downloadFile.getDescription();
+        if (desc == null || desc.isEmpty())
+            return;
+        final boolean descIon = AppPrefs.getProperty(UserProp.GENERATE_DESCRIPT_ION_FILE, UserProp.GENERATE_DESCRIPT_ION_FILE_DEFAULT);
+
+        if (descIon) {
+            final File descriptIonFile = new File(to.getParentFile(), "descript.ion");
+            FileWriter writer = null;
+            try {
+                writer = new FileWriter(descriptIonFile, true);
+                if (descriptIonFile.length() > 0)
+                    writer.write(Utils.getSystemLineSeparator());
+                writer.write(to.getName() + " " + desc);
+            } catch (IOException e) {
+                LogUtils.processException(logger, e);
+            } finally {
+                if (writer != null) {
+                    try {
+                        writer.close();
+                    } catch (IOException e) {
+                        LogUtils.processException(logger, e);
+                    }
+                }
+            }
+        }
+
+        final boolean descriptionFile = AppPrefs.getProperty(UserProp.GENERATE_DESCRIPTION_BY_FILENAME, UserProp.GENERATE_DESCRIPTION_BY_FILENAME_DEFAULT);
+        if (descriptionFile) {
+            final File descTxtFile = new File(to.getParentFile(), Utils.getPureFilenameWithDots(to) + ".txt");
+            FileWriter writer = null;
+            try {
+                writer = new FileWriter(descTxtFile, false);
+                writer.write(desc);
+            } catch (IOException e) {
+                LogUtils.processException(logger, e);
+            } finally {
+                if (writer != null) {
+                    try {
+                        writer.close();
+                    } catch (IOException e) {
+                        LogUtils.processException(logger, e);
+                    }
+                }
+            }
+        }
     }
 
 

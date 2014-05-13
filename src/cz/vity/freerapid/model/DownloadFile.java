@@ -181,7 +181,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
     public void setAverageSpeed(float averageSpeed) {
         float oldValue = this.averageSpeed;
         this.averageSpeed = averageSpeed;
-        firePropertyChange("averageSpeed", oldValue, this.sleep);
+        firePropertyChange("averageSpeed", oldValue, this.averageSpeed);
     }
 
     public void setErrorMessage(String errorMessage) {

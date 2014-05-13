@@ -268,7 +268,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     }
 
     protected void setAverageSpeed(float avgSpeed) {
-        float oldValue, newValue;
+        final float oldValue, newValue;
         synchronized (this) {
             oldValue = this.averageSpeed;
             this.averageSpeed = avgSpeed;

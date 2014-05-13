@@ -84,6 +84,15 @@ public final class Utils {
         return fileName[0];
     }
 
+    public static String getPureFilenameWithDots(final File f) {
+        final String s = f.getName();
+        int index = s.lastIndexOf('.');
+        if (index > 0)
+            return s.substring(0, index);
+        else
+            return s;
+    }
+
     /**
      * Prida na danou cestu oddelovac, pokud jiz oddelovac na konci ma, nic se nepridava
      *
@@ -226,5 +235,9 @@ public final class Utils {
         }
         logger.info("App Path is " + appPath);
         return appPath;
+    }
+
+    public static String getSystemLineSeparator() {
+        return System.getProperty("line.separator", "\n");
     }
 }
