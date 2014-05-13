@@ -3,6 +3,7 @@ package cz.vity.freerapid.swing;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.FWProp;
 import cz.vity.freerapid.core.MainApp;
+import cz.vity.freerapid.core.UserProp;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.ResourceMap;
 
@@ -84,7 +85,7 @@ public class TrayIconSupport implements PropertyChangeListener {
             SystemTray tray = SystemTray.getSystemTray();
             tray.add(trayIcon);
         } catch (AWTException e) {
-            logger.log(Level.WARNING, "Cannot enable Tray icon is not supported on this system");
+            logger.log(Level.WARNING, "Cannot enable Tray - Tray icon is not supported on this system");
         }
         setEnabled(true);
     }
@@ -101,6 +102,19 @@ public class TrayIconSupport implements PropertyChangeListener {
         //final Action quitAction = actionMap.get("quit");
         MenuItem defaultItem = new MenuItem(map.getString("trayQuit"));
         MenuItem restoreItem = new MenuItem(map.getString("trayRestore"));
+
+        final CheckboxMenuItem clipboardMonitoring = new CheckboxMenuItem(map.getString("monitorClipboardActionTray"));
+        clipboardMonitoring.setState(AppPrefs.getProperty(UserProp.CLIPBOARD_MONITORING, UserProp.CLIPBOARD_MONITORING_DEFAULT));
+        clipboardMonitoring.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                final boolean b = clipboardMonitoring.getState();
+
+                final Action action = app.getContext().getActionMap().get("monitorClipboardAction");
+                action.putValue(Action.SELECTED_KEY, b);
+                action.actionPerformed(new ActionEvent(this, 0, ""));
+            }
+        });
+
         final CheckboxMenuItem hideWhenMinimizedItem = new CheckboxMenuItem(map.getString("trayHideWhenMinimized"));
         hideWhenMinimizedItem.setState(AppPrefs.getProperty(FWProp.MINIMIZE_TO_TRAY, false));
 
@@ -108,6 +122,8 @@ public class TrayIconSupport implements PropertyChangeListener {
             public void preferenceChange(PreferenceChangeEvent evt) {
                 if (FWProp.MINIMIZE_TO_TRAY.equals(evt.getKey())) {
                     hideWhenMinimizedItem.setState(AppPrefs.getProperty(FWProp.MINIMIZE_TO_TRAY, false));
+                } else if (UserProp.CLIPBOARD_MONITORING.equals(evt.getKey())) {
+                    clipboardMonitoring.setState(AppPrefs.getProperty(UserProp.CLIPBOARD_MONITORING, UserProp.CLIPBOARD_MONITORING_DEFAULT));
                 }
             }
         });
@@ -132,6 +148,8 @@ public class TrayIconSupport implements PropertyChangeListener {
         });
 
         popup.add(restoreItem);
+        popup.addSeparator();
+        popup.add(clipboardMonitoring);
         popup.addSeparator();
         popup.add(hideWhenMinimizedItem);
         popup.addSeparator();

@@ -61,7 +61,7 @@ public class ClipboardMonitorManager extends Thread implements ClipboardOwner {
         while (!interrupted()) {
             try {
                 synchronized (this) {
-                    logger.info("Clipboard test for sleeping");
+                    logger.fine("Clipboard test for sleeping");
                     while (threadSuspended) {
                         wait();
                     }

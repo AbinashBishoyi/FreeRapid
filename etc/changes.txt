@@ -10,9 +10,10 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
-September 2008 - FreeRapid Downloader 0.5 released
-
+September 2008 - FreeRapid Downloader 0.6 released
+  Fixed : remove selected does not select next line in the table (if filter was applied)
   Fixed : partly downloaded files were not deleted in some special cases
+  Added : clipboard monitoring (optionable)
   Added : frame title information (optionable)
   Added : ESC key cancels current download(s)
   Added : automatic smart saving current queue and downloaded files history
