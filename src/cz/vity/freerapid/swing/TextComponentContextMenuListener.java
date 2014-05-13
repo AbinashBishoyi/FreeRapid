@@ -34,7 +34,6 @@ public final class TextComponentContextMenuListener implements AWTEventListener 
             return;
         final Component comp = SwingUtilities.getDeepestComponentAt(me.getComponent(), me.getX(), me.getY());
 
-
         // no popup shown by user code
         if (MenuSelectionManager.defaultManager().getSelectedPath().length > 0)
             return;
@@ -54,7 +53,9 @@ public final class TextComponentContextMenuListener implements AWTEventListener 
         menu.add(map.get("paste"));
         menu.add(map.get("delete"));
         menu.addSeparator();
-        menu.add(map.get("select-all"));
+        final Action action = map.get("select-all");
+        //System.out.println("select-all action = " + action);
+        menu.add(action);
 
         final Point pt = SwingUtilities.convertPoint(me.getComponent(), me.getPoint(), tc);
         menu.show(tc, pt.x, pt.y);
