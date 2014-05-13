@@ -3,7 +3,7 @@
 *      by Ladislav Vitasek aka Vity                          *
 *   Website/Forum/Bugtracker: http://wordrider.net/freerapid *
 *   Mail: info@wordrider.net - suggestions                   *
-*   Last change: 15th October 2008                           *
+*   Last change: 25th October 2008                           *
 **************************************************************
 
 =======================================

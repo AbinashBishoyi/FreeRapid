@@ -1,9 +1,9 @@
 **************************************************************
 *   FreeRapid Downloader                                     *
-*      by Ladislav Vitasek aka Vity                          *
-*   Website/Forum/Bugtracker: http://wordrider.net/freerapid *
-*   Mail: info@wordrider.net - suggestions                   *
-*   Last change: 15th October 2008                           *
+*      - Ladislav Vitasek aka Vity (c) 2008                  *
+*   Homepage/Forum/Bugtracker: http://wordrider.net/freerapid*
+*   E-Mail: info@wordrider.net - suggestions                 *
+*   Poslední zmìna: 2008-10-15                               *
 **************************************************************
 
 =======================================
