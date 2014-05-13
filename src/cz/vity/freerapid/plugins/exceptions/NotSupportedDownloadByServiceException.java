@@ -22,4 +22,9 @@ public class NotSupportedDownloadByServiceException extends NotRecoverableDownlo
     public NotSupportedDownloadByServiceException(String message) {
         super(message);
     }
+
+    @Override
+    public String getLocalizedMessage() {
+        return super.getLocalizedMessage();
+    }
 }

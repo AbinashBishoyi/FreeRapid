@@ -161,7 +161,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                 file.setPluginID(pluginsManager.getServiceIDForURL(file.getFileUrl()));
             } catch (NotSupportedDownloadServiceException e) {
                 file.setState(ERROR);
-                file.setErrorMessage("Not Supported Download Service Exception");//TODO I18N
+                file.setErrorMessage(Swinger.getMessageFromException(Swinger.getResourceMap(), e));
             }
             file.addPropertyChangeListener(this);
             if (startFromTop)

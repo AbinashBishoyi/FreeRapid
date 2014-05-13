@@ -68,7 +68,7 @@ public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
             method = postMethod;
         }
         message("message.connecting");
-        if (client.makeRequest(method) != HttpStatus.SC_OK)
+        if (client.makeRequest(method, true) != HttpStatus.SC_OK)
             throw new ConnectException(getResourceMap().getString("Connection_failed"));
         message("message.checkingData");
         if (isCancelled())

@@ -155,7 +155,8 @@ public abstract class AbstractRunner implements PluginRunner {
     }
 
     /**
-     * Method makeRequest does simple request to server via given HTTP method
+     * Method makeRequest does simple request to server via given HTTP method <br />
+     * Autoredirect is off.
      *
      * @param method HTTP method
      * @return boolean true if request finished with HTTP status code 200
@@ -163,7 +164,20 @@ public abstract class AbstractRunner implements PluginRunner {
      * @see org.apache.commons.httpclient.HttpStatus#SC_OK
      */
     protected boolean makeRequest(HttpMethod method) throws IOException {
-        return client.makeRequest(method) == HttpStatus.SC_OK;
+        return client.makeRequest(method, false) == HttpStatus.SC_OK;
+    }
+
+    /**
+     * Method makeRequest does simple request to server via given HTTP method.<br />
+     * Autoredirect is on.
+     *
+     * @param method HTTP method
+     * @return boolean true if request finished with HTTP status code 200
+     * @throws IOException when there was error during getting response from server
+     * @see org.apache.commons.httpclient.HttpStatus#SC_OK
+     */
+    protected boolean makeRedirectedRequest(HttpMethod method) throws IOException {
+        return client.makeRequest(method, true) == HttpStatus.SC_OK;
     }
 
     /**

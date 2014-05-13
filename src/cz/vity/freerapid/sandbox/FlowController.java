@@ -1,4 +1,4 @@
-package cz.vity.freerapid.plugins.webclient;
+package cz.vity.freerapid.sandbox;
 
 import cz.vity.freerapid.plugins.exceptions.*;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
@@ -28,7 +28,7 @@ public class FlowController {
     }
 
     public void throwInvalidUsernameOrPassword(final String message) throws ErrorDuringDownloadingException {
-        throwEx(new InvalidUsernameOrPassword(message));
+        throwEx(new BadLoginException(message));
     }
 
     public void throwCAPTCHAEntryMismatch() throws ErrorDuringDownloadingException {

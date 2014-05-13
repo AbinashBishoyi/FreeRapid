@@ -78,14 +78,15 @@ public interface HttpDownloadClient {
     InputStream makeRequestForFile(HttpMethod method) throws IOException;
 
     /**
-     * Runs simple HTTP request
+     * Runs simple HTTP request with optional redirect.
      *
-     * @param method a descendant of HttpMethod - PostMethod or GetMethod
+     * @param method        a descendant of HttpMethod - PostMethod or GetMethod
+     * @param allowRedirect allow redirext flag
      * @return HTTP result code
      * @throws IOException error I/O
      * @see org.apache.commons.httpclient.HttpClient#executeMethod(org.apache.commons.httpclient.HttpMethod)
      */
-    int makeRequest(HttpMethod method) throws IOException;
+    int makeRequest(HttpMethod method, boolean allowRedirect) throws IOException;
 
     /**
      * Getter

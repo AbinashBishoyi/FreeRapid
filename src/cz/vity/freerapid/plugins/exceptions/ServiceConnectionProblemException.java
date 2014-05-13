@@ -14,7 +14,7 @@ public class ServiceConnectionProblemException extends ErrorDuringDownloadingExc
     }
 
     public ServiceConnectionProblemException() {
-        super();
+        super("ServiceConnectionProblemException");
     }
 
     public ServiceConnectionProblemException(String message, Throwable cause) {
@@ -25,8 +25,4 @@ public class ServiceConnectionProblemException extends ErrorDuringDownloadingExc
         super(cause);
     }
 
-    @Override
-    public String getLocalizedMessage() {
-        return "ServiceConnectionProblemException";
-    }
 }

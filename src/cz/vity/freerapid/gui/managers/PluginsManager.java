@@ -10,6 +10,7 @@ import cz.vity.freerapid.plugimpl.StandardStorageSupportImpl;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.plugins.webclient.interfaces.PluginContext;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
+import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
 import org.java.plugin.ObjectFactory;
@@ -298,11 +299,11 @@ public class PluginsManager {
                     final String newId = getServiceIDForURL(file.getFileUrl());
                     file.setPluginID(newId);
                     return getPluginInstance(newId);
-                } catch (NotSupportedDownloadServiceException e1) {
+                } catch (NotSupportedDownloadServiceException ex) {
                     //nenasel jsem alternativu pro disablovany plugin, vypisu tedy hlasku o tom, ze neni zapnuty ten puvodni
                     file.setPluginID(id);//v pripade, ze selhalo getPluginInstance(newId);, musim vratit id na stare
                     file.setState(DownloadState.DISABLED);
-                    file.setErrorMessage("Plugin is not enabled - " + file.getPluginID()); //TODO I18N
+                    file.setErrorMessage(Swinger.getMessageFromException(Swinger.getResourceMap(), ex));
                 }
 
                 return null;
@@ -315,11 +316,11 @@ public class PluginsManager {
                 return getPluginInstance(newId);
             } catch (PluginIsNotEnabledException ex) {
                 file.setState(DownloadState.DISABLED);
-                file.setErrorMessage("Plugin is not enabled - " + file.getPluginID()); //TODO I18N
+                file.setErrorMessage(Swinger.getResourceMap().getString("PluginIsNotEnabled", file.getPluginID()));
             }
             catch (NotSupportedDownloadServiceException e1) {//nenasel jsem alternativu
                 file.setState(DownloadState.ERROR);
-                file.setErrorMessage("Not supported service - " + file.getPluginID()); //TODO I18N
+                file.setErrorMessage(Swinger.getMessageFromException(Swinger.getResourceMap(), e));
             }
         }
         return null;

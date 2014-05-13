@@ -56,12 +56,14 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
             final PluginClassLoader loader = getManager().getPluginClassLoader(desc);
             if (loader != null) {
                 final URL resource = loader.getResource(attr.getValue());
-                if (resource == null)
-                    logger.warning("Image was not found");
-                try {
-                    image = new ImageIcon(ImageIO.read(resource));
-                } catch (IOException e) {
-                    logger.warning("Image reading failed");
+                if (resource == null) {
+                    logger.warning("Icon image for plugin '" + desc.getId() + "' was not found");
+                } else {
+                    try {
+                        image = new ImageIcon(ImageIO.read(resource));
+                    } catch (IOException e) {
+                        logger.warning("Icon image for plugin '" + desc.getId() + "' reading failed");
+                    }
                 }
             }
         }

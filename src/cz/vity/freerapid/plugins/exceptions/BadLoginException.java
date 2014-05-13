@@ -5,12 +5,12 @@ package cz.vity.freerapid.plugins.exceptions;
  *
  * @author Ladislav Vitasek
  */
-public class InvalidUsernameOrPassword extends NotRecoverableDownloadException {
+public class BadLoginException extends NotRecoverableDownloadException {
     /**
      * Constructor - creates a new InvalidUsernameOrPassword instance.
      */
-    public InvalidUsernameOrPassword() {
-        super();
+    public BadLoginException() {
+        super("InvalidUsernameOrPassword");
     }
 
     /**
@@ -18,7 +18,7 @@ public class InvalidUsernameOrPassword extends NotRecoverableDownloadException {
      *
      * @param message
      */
-    public InvalidUsernameOrPassword(String message) {
+    public BadLoginException(String message) {
         super(message);
     }
 
@@ -28,7 +28,7 @@ public class InvalidUsernameOrPassword extends NotRecoverableDownloadException {
      * @param message
      * @param cause
      */
-    public InvalidUsernameOrPassword(String message, Throwable cause) {
+    public BadLoginException(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -37,12 +37,7 @@ public class InvalidUsernameOrPassword extends NotRecoverableDownloadException {
      *
      * @param cause
      */
-    public InvalidUsernameOrPassword(Throwable cause) {
+    public BadLoginException(Throwable cause) {
         super(cause);
-    }
-
-    @Override
-    public String getLocalizedMessage() {
-        return "InvalidUsernameOrPassword";
     }
 }

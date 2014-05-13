@@ -260,8 +260,9 @@ public class DownloadClient implements HttpDownloadClient {
         return null;
     }
 
+
     @Override
-    public int makeRequest(HttpMethod method) throws IOException {
+    public int makeRequest(HttpMethod method, boolean allowRedirect) throws IOException {
         //toString(method);
         asString = ""; //pro sichr aby tam nebylo nikdy null
 
@@ -278,7 +279,7 @@ public class DownloadClient implements HttpDownloadClient {
         }
 
 
-        if (isRedirect && redirect != 1) {
+        if (allowRedirect && isRedirect && redirect != 1) {
             redirect = 1;
             Header header = method.getResponseHeader("location");
             if (header != null) {
@@ -292,7 +293,7 @@ public class DownloadClient implements HttpDownloadClient {
                 logger.info("Redirect target: " + newuri);
                 setReferer(newuri);
                 GetMethod redirect = getGetMethod(newuri);
-                final int i = makeRequest(redirect);
+                final int i = makeRequest(redirect, allowRedirect);
                 logger.info("Redirect: " + redirect.getStatusLine().toString());
 // release any connection resources used by the method
                 return i;
