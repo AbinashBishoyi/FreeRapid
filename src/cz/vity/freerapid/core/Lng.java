@@ -77,6 +77,7 @@ public final class Lng {
                         break;
                     }
                 }
+                Locale.setDefault(new Locale(selLanguageCode, Locale.getDefault().getCountry()));
             }
         }
     }
