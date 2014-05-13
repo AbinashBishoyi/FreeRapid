@@ -10,7 +10,16 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
-September 2008 - FreeRapid Downloader 0.6 released
+20th September 2008 - FreeRapid Downloader 0.61 released - bug fix release + 1 great option ;-)
+  Fixed : clipboard monitoring doesn't work properly on Windows [thanks to ATom!]
+  Fixed : last selected dir not saved when files were started as paused [thanks to Savannah&Lukiz!]
+  Added : added option to pre-allocate file to prevent file fragmentation (Options->Preferences->Misc->Advanced)
+  Changed : minor changes in megaupload, rapidshare and uploaded.to plugins
+  Changed : updated readme.txt
+  Changed : upgraded Substance L&F library to version 0.5 final
+
+
+15th September 2008 - FreeRapid Downloader 0.6 released
   Fixed : remove selected does not select next line in the table (if filter was applied)
   Fixed : partly downloaded files were not deleted at some special cases
   Changed : SwingX library upgraded to version 0.94

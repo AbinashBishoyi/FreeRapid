@@ -224,6 +224,8 @@ public class UserPreferencesDialog extends AppDialog {
         bind(checkGenerateDescIon, UserProp.GENERATE_DESCRIPT_ION_FILE, UserProp.GENERATE_DESCRIPT_ION_FILE_DEFAULT);
         bind(checkGenerateHidden, UserProp.GENERATE_DESCRIPTION_FILES_HIDDEN, UserProp.GENERATE_DESCRIPTION_FILES_HIDDEN_DEFAULT);
 
+        bind(checkPrepareFile, UserProp.ANTI_FRAGMENT_FILES, UserProp.ANTI_FRAGMENT_FILES_DEFAULT);
+
         valueModel = bind(checkShowIconInSystemTray, FWProp.SHOW_TRAY, true);
 
         PropertyConnector.connectAndUpdate(valueModel, checkAnimateIcon, "enabled");
@@ -384,6 +386,8 @@ public class UserPreferencesDialog extends AppDialog {
         JPanel panelSoundSettings = new JPanel();
         JPanel panelMiscSettings = new JPanel();
         JPanel panelDescSettings = new JPanel();
+        JPanel panelAdvancedSettings = new JPanel();
+
         JPanel panelSound = new JPanel();
         checkPlaySoundInCaseOfError = new JCheckBox();
         checkPlaySoundWhenComplete = new JCheckBox();
@@ -416,6 +420,9 @@ public class UserPreferencesDialog extends AppDialog {
         CellConstraints cc = new CellConstraints();
         checkAnimateIcon = new JCheckBox();
         checkShowTitle = new JCheckBox();
+        checkPrepareFile = new JCheckBox();
+
+        checkPrepareFile.setName("checkPrepareFile");
 
         //======== this ========
         Container contentPane = getContentPane();
@@ -581,7 +588,7 @@ public class UserPreferencesDialog extends AppDialog {
                     {
                         panelMiscSettings.setBorder(Borders.TABBED_DIALOG_BORDER);
 
-                        //======== panelSound ========
+                        //======== panelDesc ========
                         {
                             panelDescSettings.setBorder(new TitledBorder(null, bundle.getString("panelDesc.border"), TitledBorder.LEADING, TitledBorder.TOP));
 
@@ -599,15 +606,34 @@ public class UserPreferencesDialog extends AppDialog {
                             panelDescBuilder.add(checkGenerateHidden, cc.xy(3, 3));
                         }
 
+                        //======== panelAdvanced ========
+                        {
+                            panelAdvancedSettings.setBorder(new TitledBorder(null, bundle.getString("panelAdvanced.border"), TitledBorder.LEADING, TitledBorder.TOP));
+
+
+                            PanelBuilder panelDescBuilder = new PanelBuilder(new FormLayout(
+                                    new ColumnSpec[]{
+                                            new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(0), FormSpec.NO_GROW),
+                                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                            FormFactory.DEFAULT_COLSPEC
+                                    },
+                                    RowSpec.decodeSpecs("default")), panelAdvancedSettings);
+
+                            panelDescBuilder.add(checkPrepareFile, cc.xy(3, 1));
+                        }
+
                         PanelBuilder panelMiscSettingsBuilder = new PanelBuilder(new FormLayout(
                                 ColumnSpec.decodeSpecs("default:grow"),
                                 new RowSpec[]{
+                                        FormFactory.DEFAULT_ROWSPEC,
+                                        FormFactory.RELATED_GAP_ROWSPEC,
                                         FormFactory.DEFAULT_ROWSPEC,
                                         FormFactory.RELATED_GAP_ROWSPEC,
                                         FormFactory.DEFAULT_ROWSPEC
                                 }), panelMiscSettings);
 
                         panelMiscSettingsBuilder.add(panelDescSettings, cc.xy(1, 1));
+                        panelMiscSettingsBuilder.add(panelAdvancedSettings, cc.xy(1, 3));
                     }
                     panelCard.add(panelMiscSettings, "CARD5");
 
@@ -859,6 +885,7 @@ public class UserPreferencesDialog extends AppDialog {
 
     private JCheckBox checkShowHorizontalLinesInTable;
     private JCheckBox checkShowVerticalLinesInTable;
+    private JCheckBox checkPrepareFile;
 
     private JSpinner spinnerMaxConcurrentDownloads;
     private JCheckBox checkUseProxyList;

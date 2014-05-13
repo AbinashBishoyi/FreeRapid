@@ -8,6 +8,7 @@ import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.exceptions.*;
 import cz.vity.freerapid.plugins.webclient.*;
 import cz.vity.freerapid.swing.Swinger;
+import cz.vity.freerapid.utilities.FileUtils;
 import cz.vity.freerapid.utilities.Sound;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.jdesktop.application.Application;
@@ -84,11 +85,22 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         return null;
     }
 
-    protected OutputStream getFileOutputStream(File f, long fileSize) throws NotEnoughSpaceException, FileNotFoundException {
+    protected OutputStream getFileOutputStream(final File f, final long fileSize) throws NotEnoughSpaceException, IOException {
         if (f.getParentFile().getFreeSpace() < fileSize) {
             throw new NotEnoughSpaceException();
         }
-        return new BufferedOutputStream(new FileOutputStream(f), OUTPUT_FILE_BUFFER_SIZE);
+        final OutputStream fos;
+        if (AppPrefs.getProperty(UserProp.ANTI_FRAGMENT_FILES, UserProp.ANTI_FRAGMENT_FILES_DEFAULT)) {
+            synchronized (DownloadTask.class) {
+                if (isTerminated())
+                    return null;
+                fos = FileUtils.createEmptyFile(f, fileSize);
+            }
+        } else {
+            fos = new FileOutputStream(f);
+        }
+
+        return new BufferedOutputStream(fos, AppPrefs.getProperty(UserProp.OUTPUT_FILE_BUFFER_SIZE, OUTPUT_FILE_BUFFER_SIZE));
     }
 
     protected void initBackground() {
@@ -102,7 +114,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     public void saveToFile(InputStream inputStream) throws Exception {
         boolean temporary = AppPrefs.getProperty(UserProp.USE_TEMPORARY_FILES, true);
 
-        final byte[] buffer = new byte[INPUT_BUFFER_SIZE];
+        final byte[] buffer = new byte[AppPrefs.getProperty(UserProp.INPUT_BUFFER_SIZE, INPUT_BUFFER_SIZE)];
         final OutputStream[] fileOutputStream = new OutputStream[]{null};
         final String fileName = downloadFile.getFileName();
         outputFile = downloadFile.getOutputFile();
@@ -120,6 +132,11 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         try {
             try {
                 fileOutputStream[0] = getFileOutputStream(storeFile, fileSize);
+                if (isTerminated()) {
+                    closeFileStream(fileOutputStream[0]);
+                    checkDeleteTempFile();
+                    return;
+                }
                 int len;
                 counter = 0;
                 downloadFile.setState(DownloadState.DOWNLOADING);
@@ -206,6 +223,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 //                }
                 closeFileStream(fileOutputStream[0]);
                 fileOutputStream[0] = null;
+                checkDeleteTempFile();
             }
         }
         finally {

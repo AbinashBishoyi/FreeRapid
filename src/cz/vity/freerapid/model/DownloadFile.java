@@ -24,7 +24,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
 
     private long fileSize;
     private DownloadTask task = null;
-    private DownloadState state = DownloadState.PAUSED;
+    private volatile DownloadState state = DownloadState.PAUSED;
     private String fileName;
     private long downloaded = 0;
     private int sleep;

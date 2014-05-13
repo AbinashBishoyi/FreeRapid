@@ -815,8 +815,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             if (state == DownloadState.DOWNLOADING) {
                 long hasToBeDownloaded = downloadFile.getFileSize() - downloadFile.getDownloaded();
                 final float speed = downloadFile.getAverageSpeed();
-                assert speed > 0;
-                if (Float.compare(0, speed) != 0) {
+                if (Float.compare(0, speed) != 0 && speed > 0) {
                     if (hasToBeDownloaded >= 0) {
                         value = secondsToHMin(Math.round(hasToBeDownloaded / speed));
                     }

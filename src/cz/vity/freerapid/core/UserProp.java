@@ -99,4 +99,10 @@ public class UserProp {
     public static final String SHOW_GRID_VERTICAL = "showVerticalGridLines";
     public static final boolean SHOW_GRID_VERTICAL_DEFAULT = false;
 
+    public static final String ANTI_FRAGMENT_FILES = "preCreateFile";
+    public static final boolean ANTI_FRAGMENT_FILES_DEFAULT = false;
+
+    public static final String OUTPUT_FILE_BUFFER_SIZE = "outputFileBufferSize";
+    public static final String INPUT_BUFFER_SIZE = "inputBufferSize";
+
 }
