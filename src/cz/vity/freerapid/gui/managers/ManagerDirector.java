@@ -56,6 +56,7 @@ public class ManagerDirector {
     private FileHistoryManager fileHistoryManager;
     private ClipboardMonitorManager clipboardMonitorManager;
     private TaskServiceManager taskServiceManager;
+    private UpdateManager updateManager;
 
     /**
      * Konstruktor
@@ -81,6 +82,8 @@ public class ManagerDirector {
         this.fileHistoryManager = new FileHistoryManager(this, context);
 
         this.pluginsManager = new PluginsManager(context);
+
+        this.updateManager = new UpdateManager(this, context);
 
         this.fileTypeIconProvider = new FileTypeIconProvider(context);
 
@@ -172,5 +175,9 @@ public class ManagerDirector {
 
     public TaskServiceManager getTaskServiceManager() {
         return taskServiceManager;
+    }
+
+    public UpdateManager getUpdateManager() {
+        return updateManager;
     }
 }

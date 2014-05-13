@@ -40,15 +40,15 @@ import java.util.logging.Logger;
  */
 public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownloader {
     private final static Logger logger = Logger.getLogger(DownloadTask.class.getName());
-    protected final HttpDownloadClient client;
-    protected final DownloadFile downloadFile;
+    protected HttpDownloadClient client;
+    protected DownloadFile downloadFile;
     protected ShareDownloadService service;
     private long speedInBytes;
     private float averageSpeed;
     private volatile long counter;
     private Integer sleep = 0;
-    private File outputFile;
-    private File storeFile;
+    protected File outputFile;
+    protected File storeFile;
     private static java.util.Timer timer = new java.util.Timer();
     private DownloadTaskError serviceError;
 
@@ -61,11 +61,21 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     private final static Object captchaLock = new Object();
     private int fileAlreadyExists;
 
+    public DownloadTask(Application application) {
+        super(application);
+        init();
+    }
+
     public DownloadTask(Application application, HttpDownloadClient client, DownloadFile downloadFile, ShareDownloadService service) {
         super(application);
         this.client = client;
         this.downloadFile = downloadFile;
         this.service = service;
+        init();
+        downloadFile.setConnectionSettings(client.getSettings());
+    }
+
+    protected void init() {
         this.serviceError = DownloadTaskError.NO_ERROR;
         this.setInputBlocker(null);
         this.setUserCanCancel(true);
@@ -74,16 +84,12 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         this.speedInBytes = 0;
         this.averageSpeed = 0;
         fileAlreadyExists = -2;
-        downloadFile.setConnectionSettings(client.getSettings());
     }
 
     protected Void doInBackground() throws Exception {
         initDownloadThread();
-//        final GetMethod getMethod = client.getGetMethod("http://data.idnes.cz/televize/img/1/1466255.jpg");
-//        InputStream stream = client.makeRequestForFile(getMethod);
-//        final BufferedImage image = loadCaptcha(stream);
-//        final String s = askForCaptcha(image);
-//        System.out.println("s = " + s);
+
+
         downloadFile.setDownloaded(0);
         final int seconds = AppPrefs.getProperty(UserProp.ERROR_SLEEP_TIME, UserProp.ERROR_SLEEP_TIME_DEFAULT);
         if (seconds > 0)
@@ -131,7 +137,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     }
 
     public void saveToFile(InputStream inputStream) throws Exception {
-        boolean temporary = AppPrefs.getProperty(UserProp.USE_TEMPORARY_FILES, true);
+        boolean temporary = useTemporaryFiles();
 
         final byte[] buffer = new byte[AppPrefs.getProperty(UserProp.INPUT_BUFFER_SIZE, INPUT_BUFFER_SIZE)];
         final OutputStream[] fileOutputStream = new OutputStream[]{null};
@@ -260,6 +266,10 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 
     }
 
+    protected boolean useTemporaryFiles() {
+        return AppPrefs.getProperty(UserProp.USE_TEMPORARY_FILES, true);
+    }
+
     private void closeFileStream(OutputStream fileOutputStream) {
         try {
             if (fileOutputStream != null) {
@@ -360,19 +370,23 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         }
     }
 
-    private void error(Throwable cause) {
+    protected void error(Throwable cause) {
 
-        final String errorMessage = cause.getMessage();
-        if (errorMessage != null && getResourceMap().containsKey(errorMessage))
-            downloadFile.setErrorMessage(getResourceMap().getString(errorMessage));
-        else
-            downloadFile.setErrorMessage(errorMessage);
+        setFileErrorMessage(cause);
         setServiceError(DownloadTaskError.GENERAL_ERROR);
         if (!(cause instanceof YouHaveToWaitException)) {
             if (AppPrefs.getProperty(UserProp.PLAY_SOUNDS_FAILED, true))
                 Sound.playSound(getContext().getResourceMap().getString("errorWav"));
             downloadFile.setState(DownloadState.ERROR);
         } else downloadFile.setState(DownloadState.SLEEPING);
+    }
+
+    protected void setFileErrorMessage(Throwable cause) {
+        final String errorMessage = cause.getMessage();
+        if (errorMessage != null && getResourceMap().containsKey(errorMessage))
+            downloadFile.setErrorMessage(getResourceMap().getString(errorMessage));
+        else
+            downloadFile.setErrorMessage(errorMessage);
     }
 
     @Override
@@ -423,7 +437,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         }
     }
 
-    private int checkExists() throws InvocationTargetException, InterruptedException {
+    protected int checkExists() throws InvocationTargetException, InterruptedException {
         if (!outputFile.exists())
             return -2;
         return fileAlreadyExistsProperty();
@@ -597,6 +611,10 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         }
         image.flush();
         return captchaResult;
+    }
+
+    public void setDownloadFile(DownloadFile downloadFile) {
+        this.downloadFile = downloadFile;
     }
 
     public String getCaptcha(final String url) throws FailedToLoadCaptchaPictureException {

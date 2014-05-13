@@ -3,6 +3,7 @@ package cz.vity.freerapid.gui.dialogs.filechooser;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.UIStringsManager;
 import cz.vity.freerapid.core.UserProp;
+import cz.vity.freerapid.gui.FRDUtils;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.Utils;
 import org.jdesktop.application.ApplicationContext;
@@ -65,7 +66,7 @@ public class OpenSaveDialogFactory {
             return new File[0];
         else {
             AppPrefs.storeProperty(lastUsedFilterKey, fileFilters.indexOf(fileDialog.getFileFilter()));
-            AppPrefs.storeProperty(folderPathKey, fileDialog.getSelectedFile().getPath());
+            AppPrefs.storeProperty(folderPathKey, FRDUtils.getAbsRelPath(fileDialog.getSelectedFile()).getPath());
             return new File[]{fileDialog.getSelectedFile()};
         }
     }

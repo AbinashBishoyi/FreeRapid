@@ -7,6 +7,7 @@ import com.jgoodies.forms.layout.*;
 import com.l2fprod.common.swing.JDirectoryChooser;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.UserProp;
+import cz.vity.freerapid.gui.FRDUtils;
 import cz.vity.freerapid.gui.managers.ContentPanel;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
@@ -127,11 +128,12 @@ public class MultipleSettingsDialog extends AppFrame implements PropertyChangeLi
             return;
         AppPrefs.storeProperty(UserProp.LAST_COMBO_PATH, comboPath.getSelectedItem().toString());
         final File outputDir = new File(comboPath.getEditor().getItem().toString());
-        file.setSaveToDirectory(outputDir);
+        final File dir = FRDUtils.getAbsRelPath(outputDir);
+        file.setSaveToDirectory(dir);
 
         final String desc = descriptionArea.getText();
         for (DownloadFile downloadFile : files) {
-            downloadFile.setSaveToDirectory(outputDir);
+            downloadFile.setSaveToDirectory(dir);
             downloadFile.setDescription(desc);
         }
         setResult(RESULT_OK);

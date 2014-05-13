@@ -16,6 +16,7 @@ import com.jgoodies.forms.layout.*;
 import com.l2fprod.common.swing.JButtonBar;
 import com.l2fprod.common.swing.plaf.blue.BlueishButtonBarUI;
 import cz.vity.freerapid.core.*;
+import cz.vity.freerapid.gui.FRDUtils;
 import cz.vity.freerapid.gui.MyPreferencesAdapter;
 import cz.vity.freerapid.gui.MyPresentationModel;
 import cz.vity.freerapid.gui.dialogs.filechooser.OpenSaveDialogFactory;
@@ -274,7 +275,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         final KeyStroke ctrlF = SwingUtils.getCtrlKeyStroke(KeyEvent.VK_F);
         tableInputMap.remove(ctrlF);
 
-        pluginTable.getParent().setPreferredSize(new Dimension(230, 150));
+        pluginTable.getParent().setPreferredSize(new Dimension(230, 100));
 
         tableInputMap.put(SwingUtils.getShiftKeyStroke(KeyEvent.VK_HOME), "selectFirstRowExtendSelection");
         tableInputMap.put(SwingUtils.getShiftKeyStroke(KeyEvent.VK_END), "selectLastRowExtendSelection");
@@ -486,7 +487,26 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         PropertyConnector.connectAndUpdate(valueModel, fieldProxyListPath, "enabled");
         PropertyConnector.connectAndUpdate(valueModel, btnProxyListPathSelect, "enabled");
 
-        bind(fieldProxyListPath, UserProp.PROXY_LIST_PATH, "");
+        //bind(fieldProxyListPath, UserProp.PROXY_LIST_PATH, "");
+
+        String property = AppPrefs.getProperty(UserProp.PROXY_LIST_PATH, "");
+        if (!property.isEmpty()) {
+            property = new File(property).getAbsolutePath();
+        }
+        fieldProxyListPath.setText(property);
+        fieldProxyListPath.getDocument().addDocumentListener(new DocumentListener() {
+            public void insertUpdate(DocumentEvent e) {
+                changedUpdate(e);
+            }
+
+            public void removeUpdate(DocumentEvent e) {
+                changedUpdate(e);
+            }
+
+            public void changedUpdate(DocumentEvent e) {
+                model.setBuffering(true);
+            }
+        });
 
         bind(checkPlaySoundWhenComplete, UserProp.PLAY_SOUNDS_OK, true);
         bind(checkPlaySoundInCaseOfError, UserProp.PLAY_SOUNDS_FAILED, true);
@@ -571,6 +591,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         return valueModel;
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     private void bind(final JTextField field, final String key, final Object defaultValue) {
         Bindings.bind(field, model.getBufferedPreferences(key, defaultValue), false);
     }
@@ -604,8 +625,13 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         AppPrefs.storeProperty(UserProp.PLUGIN_CHECK_URL_SELECTED, comboPluginServers.getSelectedItem().toString());
 
         trigger.triggerCommit();
-//        final String s = AppPrefs.getProperty(UserProp.PROXY_LIST_PATH, "");
-//        System.out.println("s = " + s);
+
+        String property = fieldProxyListPath.getText();
+        if (!property.isEmpty()) {
+            property = FRDUtils.getAbsRelPath(property).getPath();
+        }
+        AppPrefs.storeProperty(UserProp.PROXY_LIST_PATH, property);
+
 
         final LaF selLaf = LookAndFeels.getInstance().getSelectedLaF();
         LaF laf = (LaF) comboLaF.getSelectedItem();

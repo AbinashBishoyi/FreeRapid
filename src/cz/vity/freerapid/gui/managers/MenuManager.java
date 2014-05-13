@@ -141,6 +141,7 @@ public class MenuManager {
                 "showDemo",
                 "visitHomepage",
                 MENU_SEPARATOR,
+                "checkForNewPlugins",
                 "checkForNewVersion",
                 MENU_SEPARATOR,
                 "paypalSupportAction",

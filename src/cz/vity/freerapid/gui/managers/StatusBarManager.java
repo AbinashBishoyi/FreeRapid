@@ -3,7 +3,7 @@ package cz.vity.freerapid.gui.managers;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
-import cz.vity.freerapid.core.tasks.MoveFileTask;
+import cz.vity.freerapid.core.tasks.DownloadTask;
 import cz.vity.freerapid.swing.TrayIconSupport;
 import cz.vity.freerapid.swing.components.MemoryIndicator;
 import cz.vity.freerapid.utilities.Utils;
@@ -173,7 +173,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
         if ("speed".equals(propertyName) || "completed".equals(propertyName)) {
             updateInfoStatus();
         } else if ("started".equals(propertyName) || "done".equals(propertyName) || "message".equals(propertyName)) {
-            if (evt.getSource() instanceof MoveFileTask)
+            if (!(evt.getSource() instanceof DownloadTask))
                 updateProgress(evt);
         } else if ("selectedText".equals(propertyName)) {
             final String s = (String) evt.getNewValue();

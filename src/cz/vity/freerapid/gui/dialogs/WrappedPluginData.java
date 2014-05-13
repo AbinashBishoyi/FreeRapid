@@ -1,0 +1,68 @@
+package cz.vity.freerapid.gui.dialogs;
+
+import cz.vity.freerapid.model.DownloadFile;
+import cz.vity.freerapid.xmlimport.ver1.Plugin;
+
+/**
+ * @author Ladislav Vitasek
+ */
+class WrappedPluginData {
+    private boolean selected;
+    private String author;
+
+    private DownloadFile httpFile;
+    private String id;
+    private String version;
+    private String services;
+    private boolean aNew;
+
+
+    WrappedPluginData(boolean selected, DownloadFile httpFile, Plugin pluginInfo) {
+        this.selected = selected;
+        this.httpFile = httpFile;
+        this.id = pluginInfo.getId();
+        this.author = pluginInfo.getVendor();
+        version = pluginInfo.getVersion();
+        services = pluginInfo.getServices();
+    }
+
+    public boolean getSelected() {
+        return selected;
+    }
+
+    public String getID() {
+        return id;
+    }
+
+    public String getAuthor() {
+        return this.author;
+    }
+
+    public DownloadFile getHttpFile() {
+        return httpFile;
+    }
+
+    public String getStatus() {
+        return httpFile.getState().toString();
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public Object getVersion() {
+        return version;
+    }
+
+    public String getServices() {
+        return services;
+    }
+
+    public void setNew(boolean aNew) {
+        this.aNew = aNew;
+    }
+
+    public boolean isNew() {
+        return aNew;
+    }
+}

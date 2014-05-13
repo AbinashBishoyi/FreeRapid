@@ -86,7 +86,11 @@ public class PluginsManager {
         //    pluginManager = objectFactory.createManager(objectFactory.createRegistry(), resolver);
         pluginManager = objectFactory.createManager(objectFactory.createRegistry(), resolver);
 
-        final File pluginsDir = new File(Utils.getAppPath(), "plugins");
+        initPlugins();
+    }
+
+    private void initPlugins() {
+        final File pluginsDir = getPluginsDir();
         logger.info("Plugins dir: " + pluginsDir.getAbsolutePath());
 
         File[] plugins = pluginsDir.listFiles(new FilenameFilter() {
@@ -142,7 +146,7 @@ public class PluginsManager {
                 }
             }
 
-            disableConflictPlugins();
+            disablePluginsInConflict();
 
         } catch (Exception e) {
             LogUtils.processException(logger, e);
@@ -150,7 +154,11 @@ public class PluginsManager {
         }
     }
 
-    private void disableConflictPlugins() {
+    public File getPluginsDir() {
+        return new File(Utils.getAppPath(), "plugins");
+    }
+
+    private void disablePluginsInConflict() {
         final Map<String, List<PluginMetaData>> serviceConficts = new HashMap<String, List<PluginMetaData>>();
         for (PluginMetaData pluginMetaData : supportedPlugins.values()) {
             if (pluginMetaData.isEnabled()) {
@@ -257,7 +265,7 @@ public class PluginsManager {
         pluginMetaDataManager.saveToFile(new HashSet<PluginMetaData>(supportedPlugins.values()));
     }
 
-    private PluginMetaData getPluginMetadata(String serviceID) throws NotSupportedDownloadServiceException {
+    public PluginMetaData getPluginMetadata(String serviceID) throws NotSupportedDownloadServiceException {
         if (!this.supportedPlugins.containsKey(serviceID))
             throw new NotSupportedDownloadServiceException(serviceID);
         return this.supportedPlugins.get(serviceID);
@@ -301,4 +309,7 @@ public class PluginsManager {
         return null;
     }
 
+    public boolean hasPlugin(String id) {
+        return supportedPlugins.containsKey(id);
+    }
 }

@@ -61,7 +61,7 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
         this.descriptor = descriptor;
         supportedURL = Pattern.compile(DescriptorUtils.getAttribute("urlRegex", "XX", descriptor), Pattern.CASE_INSENSITIVE);
         hasOptions = DescriptorUtils.getAttribute("hasOptions", false, descriptor);
-        services = DescriptorUtils.getAttribute("services", "", descriptor);
+        services = DescriptorUtils.getAttribute("services", getId(), descriptor);
         www = DescriptorUtils.getAttribute("www", Consts.WEBURL, descriptor);
         premium = DescriptorUtils.getAttribute("premium", false, descriptor);
     }

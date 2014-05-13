@@ -8,6 +8,7 @@ import com.jgoodies.forms.layout.*;
 import com.l2fprod.common.swing.JDirectoryChooser;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.UserProp;
+import cz.vity.freerapid.gui.FRDUtils;
 import cz.vity.freerapid.gui.actions.URLTransferHandler;
 import cz.vity.freerapid.gui.managers.DataManager;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
@@ -282,8 +283,9 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
         final LinkedHashSet<URL> urlLinkedHashSet = new LinkedHashSet<URL>(urlList);
         List<DownloadFile> result = new ArrayList<DownloadFile>();
         final String description = this.descriptionArea.getText();
+        final File saveToDirectory = FRDUtils.getAbsRelPath(directory);
         for (URL url : urlLinkedHashSet) {
-            result.add(new DownloadFile(url, directory, description));
+            result.add(new DownloadFile(url, saveToDirectory, description));
         }
         return result;
     }

@@ -1,5 +1,6 @@
 package cz.vity.freerapid.gui.managers;
 
+import cz.vity.freerapid.model.PluginMetaData;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.HttpDownloadClient;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
@@ -16,9 +17,9 @@ class DownloadService {
     private String serviceName;
     private int maxDownloadsFromOneIP;
 
-    public DownloadService(ShareDownloadService fileService) {
-        this.serviceName = fileService.getName();
-        this.maxDownloadsFromOneIP = fileService.getMaxDownloadsFromOneIP();
+    public DownloadService(PluginMetaData fileService, ShareDownloadService service) {
+        this.serviceName = fileService.getServices();//TODO ne jmena
+        this.maxDownloadsFromOneIP = service.getMaxDownloadsFromOneIP();
     }
 
 

@@ -112,6 +112,64 @@ public class FileUtils {
         return new File(srcFile.getParentFile(), srcFile.getName() + BACKUP_EXTENSION);
     }
 
+
+    public static File getRelativeDirectory(final File base, final File file) {
+        final String relativeFile;
+        try {
+            relativeFile = getRelativePath(base, file);
+            logger.info("Relative path of '" + file + "' to " + base + " is " + relativeFile);
+        } catch (IOException e) {
+            return file;
+        }
+        if (relativeFile == null)
+            return file;
+        else return new File(relativeFile);
+    }
+
+    private static String getRelativePath(final File base, final File file) throws IOException {
+        String basePath;
+        String filePath = file.getCanonicalPath();
+        if (base.isFile()) {
+            File baseParent = base.getParentFile();
+            if (baseParent == null) {
+                return null;
+            }
+            basePath = baseParent.getCanonicalPath();
+        } else {
+            basePath = base.getCanonicalPath();
+        }
+        if (!basePath.endsWith(File.separator)) {
+            basePath += File.separator;
+        }
+        int p = basePath.indexOf(File.separatorChar);
+        String prefix = null;
+        while (p != -1) {
+            String newPrefix = basePath.substring(0, p + 1);
+            if (!filePath.startsWith(newPrefix)) {
+                break;
+            }
+            prefix = newPrefix;
+            p = basePath.indexOf(File.separatorChar, p + 1);
+        }
+        if (prefix == null) {
+            return null;
+        }
+        filePath = filePath.substring(prefix.length());
+        if (prefix.length() == basePath.length()) {
+            return filePath;
+        }
+        int c = 0;
+        p = basePath.indexOf(File.separatorChar, prefix.length());
+        while (p != -1) {
+            c++;
+            p = basePath.indexOf(File.separatorChar, p + 1);
+        }
+        for (int i = 0; i < c; i++) {
+            filePath = ".." + File.separator + filePath; //$NON-NLS-1$
+        }
+        return filePath;
+    }
+
     public static void copyfile(final File srcFile, final File dstFile) throws IOException {
         if (!srcFile.exists() || !srcFile.isFile())
             return;

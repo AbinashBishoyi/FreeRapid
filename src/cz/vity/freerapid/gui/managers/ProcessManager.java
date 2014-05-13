@@ -8,6 +8,7 @@ import cz.vity.freerapid.core.tasks.DownloadTask;
 import cz.vity.freerapid.core.tasks.DownloadTaskError;
 import cz.vity.freerapid.core.tasks.RunCheckTask;
 import cz.vity.freerapid.model.DownloadFile;
+import cz.vity.freerapid.model.PluginMetaData;
 import cz.vity.freerapid.plugins.exceptions.NotSupportedDownloadServiceException;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
@@ -132,11 +133,13 @@ public class ProcessManager extends Thread {
             final ShareDownloadService service = pluginsManager.getService(file);
             if (service == null)
                 continue;
-            final String serviceID = file.getShareDownloadServiceID();
-            DownloadService downloadService = services.get(serviceID);
+            final PluginMetaData metaData = pluginsManager.getPluginMetadata(service.getId());
+
+            final String idServices = metaData.getServices();
+            DownloadService downloadService = services.get(idServices);
             if (downloadService == null) {
-                downloadService = new DownloadService(service);
-                services.put(serviceID, downloadService);
+                downloadService = new DownloadService(metaData, service);
+                services.put(idServices, downloadService);
             }
 
             if (!forceDownload) {
@@ -257,10 +260,10 @@ public class ProcessManager extends Thread {
 
     private void finishedDownloading(final DownloadFile file, final HttpDownloadClient client, final DownloadTask task, final boolean runCheck) {
         synchronized (manipulation) {
-            final String serviceName = file.getShareDownloadServiceID();
-            final DownloadService service = services.get(serviceName);
+            final String serviceID = file.getShareDownloadServiceID();
+            final DownloadService service = services.get(pluginsManager.getPluginMetadata(serviceID).getServices());
             if (service == null)
-                throw new IllegalStateException("Download service not found:" + serviceName);
+                throw new IllegalStateException("Download service not found:" + serviceID);
             if (!runCheck)
                 service.finishedDownloading(client);
             clientManager.pushWorkingClient(client);

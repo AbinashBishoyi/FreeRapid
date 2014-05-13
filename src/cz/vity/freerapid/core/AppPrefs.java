@@ -1,6 +1,7 @@
 package cz.vity.freerapid.core;
 
 import cz.vity.freerapid.utilities.LogUtils;
+import cz.vity.freerapid.utilities.Utils;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.LocalStorage;
 import org.jdesktop.application.ResourceMap;
@@ -28,8 +29,9 @@ public final class AppPrefs {
     private static volatile Preferences properties;
     private final ApplicationContext context;
     private String userNode;
+    private static final String CONFIG_DIR = "config";
 
-    AppPrefs(ApplicationContext context, Map<String, String> properties, boolean resetOptions) {
+    AppPrefs(final ApplicationContext context, final Map<String, String> properties, final boolean resetOptions) {
         this.context = context;
         final String id = context.getResourceMap().getString("Application.id");
         if (id == null || id.isEmpty())
@@ -187,7 +189,13 @@ public final class AppPrefs {
      */
     private Preferences loadProperties() {
         final LocalStorage localStorage = context.getLocalStorage();
+        if (System.getProperties().containsKey("portable")) {
+            localStorage.setDirectory(new File(Utils.getAppPath(), CONFIG_DIR));
+        }
+
         final File storageDir = localStorage.getDirectory();
+        logger.info("Config files directory: " + storageDir.getAbsolutePath());
+
         final File userFile = new File(storageDir, propertiesFileName);
         if (!(userFile.exists())) {
             logger.log(Level.CONFIG, "File with user settings " + userFile + " was not found. First run. Using default settings");

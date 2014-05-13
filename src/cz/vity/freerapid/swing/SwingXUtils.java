@@ -15,7 +15,7 @@ import java.net.URL;
 /**
  * @author Ladislav Vitasek
  */
-public class SwingXUtils {
+final public class SwingXUtils {
 
 
     private SwingXUtils() {

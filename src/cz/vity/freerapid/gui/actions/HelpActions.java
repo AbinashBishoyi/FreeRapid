@@ -6,6 +6,7 @@ import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.CheckForNewVersionTask;
 import cz.vity.freerapid.gui.dialogs.AboutDialog;
+import cz.vity.freerapid.gui.managers.UpdateManager;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.Browser;
 import org.jdesktop.application.Action;
@@ -65,5 +66,11 @@ public class HelpActions {
         app.prepareDialog(aboutDialog, true);
     }
 
+
+    @Action
+    public void checkForNewPlugins() {
+        final UpdateManager updateManager = app.getManagerDirector().getUpdateManager();
+        updateManager.checkUpdate();
+    }
 
 }

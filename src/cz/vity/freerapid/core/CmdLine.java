@@ -49,6 +49,7 @@ final class CmdLine {
         final DefaultOption debugOption = obuilder.withShortName("d").withLongName("debug").withDescription("print debugging information").create();
         final DefaultOption resetOption = obuilder.withShortName("r").withLongName("reset").withDescription("reset user properties to default values").create();
         final DefaultOption minimizeOption = obuilder.withShortName("m").withLongName("minim").withDescription("minimize main window on start").create();
+        final DefaultOption portableOption = obuilder.withShortName("p").withLongName("portable").withDescription("configuration files will be stored in the 'config' folder, all file paths will be saved relatively to FRD folder (if possible) - useful for USB FLASH drives").create();
 
         final PropertyOption propertyOption = new PropertyOption();
 
@@ -77,6 +78,7 @@ final class CmdLine {
                 .withOption(resetOption)
                 .withOption(propertyOption)
                 .withOption(minimizeOption)
+                .withOption(portableOption)
                 .create();
         Parser parser = new Parser();
         parser.setGroup(options);
@@ -95,6 +97,9 @@ final class CmdLine {
             }
             if (cmd.hasOption(minimizeOption)) {
                 this.minimize = true;
+            }
+            if (cmd.hasOption(portableOption)) {
+                System.getProperties().put("portable", true);
             }
             final Set<String> set = (Set<String>) cmd.getProperties(propertyOption);
 
