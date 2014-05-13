@@ -13,10 +13,6 @@ MainApp.properties
 was: tooltipTrayInfo=FreeRapid Downloader\n\nComplete downloads %d of %d\nCurrent speed: %s/s\n
 is:  tooltipTrayInfo=FreeRapid Downloader%n%nComplete downloads %d of %d%nCurrent speed: %s/s%n
 
-Change - added new column
-mainTableColumns=?|Name|Progress|Completion|Est. time|Size|Speed|Average Speed|Service|Connection
-
-
 #New
 DISABLED=DISABLED
 TESTING=TESTING
@@ -97,7 +93,7 @@ labelCheckForUpdateEvery.text=Check &for updates every
 labelHours.text=hour(s)
 labelManualCheck.text=For manual check use function in menu "Help - Check for new plugins"
 
-comboHowToUpdate_list=Show update dialog first|Update automatic
+comboHowToUpdate_list=Ask what to do|Show update dialog first|Update automatic without asking
 
 pluginPanelSettings.tab.title=Settings
 pluginPanelUpdates.tab.title=Updates

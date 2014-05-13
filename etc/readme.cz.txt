@@ -12,10 +12,10 @@
 *                                                            *
 *                                                            *
 *     FreeRapid Downloader                                   *
-*      - Ladislav Vitasek aka Vity (c) 2008                  *
-*   Homepage/Forum/Bugtracker: http://wordrider.net/freerapid*
-*   E-Mail: info@wordrider.net - suggestions                 *
-*   Poslední zmìna: 2008-10-25                               *
+*      - Ladislav Vitasek alias Vity (c) 2008                *
+*Dom.stránka/Forum/Bugtracker: http://wordrider.net/freerapid*
+*E-Mail: info@wordrider.net - návrhy/                        *
+*Poslední zmìna: 2008-12-25                                  *
 **************************************************************
 
 =======================================
@@ -40,34 +40,42 @@ Hlavní vlastnosti:
  - stahování souborù z více služeb najednou
  - možnost použítí seznamu proxy serverù
  - historie stahování
- - sledování schránky
- - rozhraní pro programování aplikací (API) pro pøidání dalších služeb jako pluginy
+ - inteligentní sledování schránky
+ - automatická kontrola existence souborù (funkènosti odkazù) na vzdáleném serveru
+ - automatické aktualizace pluginù
  - automatické ukonèení
+ - mnoho uživatelských nastavení k pøizpùsobení zvykùm uživatele
  - možnost spuštìní pod operaèními systémy Windows, Linux a MacOS
+ - vypadá skvìle a funguje! :-)
 
 
 Rùzné:
  - Drag&Drop URL adres
+-  jednoduche rozhraní pro programování aplikací (API) pro pøidání dalších služeb jako pluginy
 
 V souèasné dobì jsou podporovány následující služby:
- -  Rapidshare.com
+ -  Rapidshare.com (+ premium úèet)
+ -  MegaUpload.com
+ -  Megarotic.com and Sexuploader.com
+ -  NetLoad.in
+ -  MediaFire.com
  -  FileFactory.com
  -  Uploaded.to
- -  MegaUpload.com
  -  DepositFiles.com
- -  NetLoad.in
- -  Megarotic.com a Sexuploader.com
  -  Share-online.biz
  -  Egoshare.com
  -  Easy-share.com
- -  Letibit.net
  -  XtraUpload.de
  -  Shareator.com
+ -  SaveFile.com
  -  Load.to
  -  Iskladka.cz
- -  Uloz.to
  -  HellShare.com
  -  QuickShare.cz
+ -  FlyShare.cz
+ -  Edisk.cz
+ -  Uloz.to
+ -  Upnito.sk
 
 
  II.    Systémové požadavky
@@ -94,12 +102,13 @@ Instalace
 Rozbalte archiv se soubory do libovolného adresáøe na pevném disku (cesta k aplikaci by nemìla obsahovat speciální znaky typu '+', '!').
 V pøípadì pøechodu na novìjší verzi smažte pøedchozí složku aplikace. Veškerá uživatelská nastavení jsou
 zachována. Uložená uživatelská nastavení naleznete:
-MS Windows: c:\Documents and Settings\YOUR_USER_NAME\application data\VitySoft\FRD
-            and in registry HKEY_CURRENT_USER\Software\JavaSoft\Prefs\vitysoft\frd
+MS Windows: c:\Dokumenty a nastavení\Vaše_uživatelské_jméno\Data aplikací\VitySoft\FRD
+            a v registru HKEY_CURRENT_USER\Software\JavaSoft\Prefs\vitysoft\frd
 Linux: ~/.FRD
 
 NEKOPÍRUJTE novou verzi programu pøes starou.
 
+Pokud je použit pøepínaè -p (viz dále) je cesta ke konfiguraèním souborùm shodná s adresáøem programu.
 
 Spuštìní
 -----------
@@ -115,7 +124,7 @@ All platforms
 
 volitelné parametry pøi spuštìní:
 
-java -jar frd.jar [-h -v -d -D<property>=<value>]
+java -jar frd.jar [-h -v -d -D<property>=<value> -p]
 
 volby
   -h (--help,-?)      tisk této zprávy
@@ -124,6 +133,10 @@ volby
   -r (--reset)        reset uživatelských nastavení do výchozího stavu
   -m (--minim)        minimalizovat aplikaci po startu  
   -Dproperty=value    Nastavení interních hodnot vlastností (vìtšinou pro úèely ladìní, testování)
+  -p (--portable)     konfiguraèní soubory budou uloženy v adresáøi 'config' u programu,
+                      všechny cesty (pokud je to možné) budou ukládány relativnì vùèi adresáøi programu
+                      - užiteèné napø. pro USB FLASH disky
+
 
 Pokud je hodnota volby -D nastavena na 'default' (bez '), použije se výchozí hodnota.
 

@@ -3,7 +3,7 @@
 *      by Ladislav Vitasek aka Vity                          *
 *   Website/Forum/Bugtracker: http://wordrider.net/freerapid *
 *   Mail: info@wordrider.net - suggestions                   *
-*   Last change: 25th October 2008                           *
+*   Last change: 14th December 2008                          *
 **************************************************************
 
 =======================================
@@ -28,34 +28,42 @@ Main features:
  - support for concurrent downloading from multiple services
  - downloading using proxy list
  - download history
- - clipboard monitoring 
- - programming interface (API) for adding other services like plugins
- - auto shutdown 
- - works on Linux and MacOS
-
+ - smart clipboard monitoring
+ - automatic checking for file's existence on server
+ - automatic plugins updates
+ - simple CAPTCHA recognition
+ - auto shutdown
+ - many UI settings 
+ - works on MS Windows, Linux and MacOS
+ - looks amazingly and simply works!s
 
 Misc.:
  - Drag&Drop URLs
+ - easy programming interface (API) for adding other services like plugins
 
 Currently supported services are:
- -  Rapidshare.com (for Premium account see Homepage for more details)
+ -  Rapidshare.com (+ premium account)
+ -  MegaUpload.com
+ -  Megarotic.com and Sexuploader.com
+ -  NetLoad.in
+ -  MediaFire.com
  -  FileFactory.com
  -  Uploaded.to
- -  MegaUpload.com
  -  DepositFiles.com
- -  NetLoad.in
- -  Megarotic.com and Sexuploader.com
  -  Share-online.biz
  -  Egoshare.com
  -  Easy-share.com
- -  Letibit.net
  -  XtraUpload.de
  -  Shareator.com
+ -  SaveFile.com
  -  Load.to
  -  Iskladka.cz
- -  Uloz.to
  -  HellShare.com
  -  QuickShare.cz
+ -  FlyShare.cz
+ -  Edisk.cz
+ -  Uloz.to
+ -  Upnito.sk
 
 
  II.    System requirements
@@ -106,7 +114,7 @@ All platforms
 
 additional parameters for launching are:
 
-java -jar frd.jar [-h -v -d -D<property>=<value>]
+java -jar frd.jar [-h -v -d -r -D<property>=<value> -m -p]
 
 options
   -h (--help,-?)      print this message
@@ -115,6 +123,9 @@ options
   -r (--reset)        reset user properties to default values  
   -m (--minim)        minimize main window on start  
   -Dproperty=value    Passes properties and values to the application (mostly for debug or testing purposes)
+  -p (--portable)     configuration files will be stored in the 'config'
+                      folder, all file paths will be saved relatively to FRD
+                      folder (if possible) - useful for USB FLASH drives
 
 If value of option -D is set 'default' (without ') default value will be used.
 
@@ -187,7 +198,7 @@ We are students and we must pay for webhosting, bills for our girlfriends etc...
 
 PayPal: http://wordrider.net/freerapid/paypal
    or
-use bank account described on the homepage http://wordrider.net/freerapid/
+use bank account described on the homepage http://wordrider.net/freerapid/donation.html
 
 
 VIII.   FAQ
@@ -199,5 +210,6 @@ A: 1) Because I don't want to be dependant on the russian software, which is pro
    3) Because other existing downloaders have unintuitive user interface and missing important features.
    4) Because I can.
 
-Q: How to enable a support for shutdown commands on Linux and MacOS?
+Q: How to enable a support for shutdown/restart commands on Linux and MacOS?
 A: Please see 'syscmd.properties' configuration file in application directory for more details.
+
