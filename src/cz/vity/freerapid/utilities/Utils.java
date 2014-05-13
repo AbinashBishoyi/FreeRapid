@@ -17,6 +17,8 @@ import java.util.logging.Logger;
 public final class Utils {
     private final static Logger logger = Logger.getLogger(Utils.class.getName());
 
+    private final static int WINDOWS_OS = 0;
+    private static int operatingSystem = -1;
     /**
      * pomocna promenna pro ulozeni verze JVM na ktere bezime
      */
@@ -131,9 +133,34 @@ public final class Utils {
      * @return
      */
     public static boolean isWindows() {
-        final String osName = System.getProperty("os.name");
-        return (osName == null || osName.startsWith("Windows"));
-//        return false;
+        if (operatingSystem == -1) {
+            final String osName = System.getProperty("os.name");
+            if (osName == null || osName.startsWith("Windows")) {
+                operatingSystem = WINDOWS_OS;
+            } else operatingSystem = 1;
+        }
+        return operatingSystem == WINDOWS_OS;
+    }
+
+    public static void setFileAsHidden(File file) {
+        if (!file.exists() || !file.isFile())
+            return;
+        if (isWindows()) {
+            try {
+                Runtime.getRuntime().exec("attrib.exe +H " + file.getAbsolutePath());
+            } catch (IOException e) {
+                logger.warning("Setting file " + file.getAbsolutePath() + " as hidden failed.");
+                LogUtils.processException(logger, e);
+            }
+        } else {
+            final String s = file.getName();
+            if (!s.startsWith(".")) {
+                final File newFile = new File(file.getParentFile(), "." + s);
+                if (!file.renameTo(newFile)) {
+                    logger.warning("Setting file " + file.getAbsolutePath() + " as hidden failed.");
+                }
+            }
+        }
     }
 
     public static Properties loadProperties(final String propertiesFile, final boolean isResource) {

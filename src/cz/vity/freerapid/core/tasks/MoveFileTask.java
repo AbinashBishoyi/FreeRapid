@@ -121,7 +121,7 @@ public class MoveFileTask extends CoreTask<Void, Void> {
             return;
         final boolean descriptionFile = AppPrefs.getProperty(UserProp.GENERATE_DESCRIPTION_BY_FILENAME, UserProp.GENERATE_DESCRIPTION_BY_FILENAME_DEFAULT);
         if (descriptionFile) {
-            final File descTxtFile = new File(to.getParentFile(), Utils.getPureFilename(to) + ".txt");
+            final File descTxtFile = new File(to.getParentFile(), getNameForFile(Utils.getPureFilename(to) + ".txt"));
             if (descTxtFile.exists())
                 descTxtFile.delete();
         }
@@ -134,7 +134,7 @@ public class MoveFileTask extends CoreTask<Void, Void> {
         final boolean descIon = AppPrefs.getProperty(UserProp.GENERATE_DESCRIPT_ION_FILE, UserProp.GENERATE_DESCRIPT_ION_FILE_DEFAULT);
 
         if (descIon) {
-            final File descriptIonFile = new File(to.getParentFile(), "descript.ion");
+            final File descriptIonFile = new File(to.getParentFile(), getNameForFile("descript.ion"));
             FileWriter writer = null;
             try {
                 writer = new FileWriter(descriptIonFile, true);
@@ -145,6 +145,8 @@ public class MoveFileTask extends CoreTask<Void, Void> {
                 LogUtils.processException(logger, e);
             } finally {
                 if (writer != null) {
+                    if (generateFileAsHidden() && Utils.isWindows())
+                        Utils.setFileAsHidden(descriptIonFile);
                     try {
                         writer.close();
                     } catch (IOException e) {
@@ -156,7 +158,12 @@ public class MoveFileTask extends CoreTask<Void, Void> {
 
         final boolean descriptionFile = AppPrefs.getProperty(UserProp.GENERATE_DESCRIPTION_BY_FILENAME, UserProp.GENERATE_DESCRIPTION_BY_FILENAME_DEFAULT);
         if (descriptionFile) {
-            final File descTxtFile = new File(to.getParentFile(), Utils.getPureFilenameWithDots(to) + ".txt");
+            final File descTxtFile = new File(to.getParentFile(), getNameForFile(Utils.getPureFilenameWithDots(to) + ".txt"));
+            if (descTxtFile.exists() && descTxtFile.isHidden()) { //na Windows FileWriter haze vyjimku, pokud je hidden
+                if (!descTxtFile.delete()) { //txt vztazeny k souboru muzeme klidne smazat, protoze vytvorime novy
+                    logger.warning("Deletion file " + descTxtFile.getAbsolutePath() + " failed");
+                }
+            }
             FileWriter writer = null;
             try {
                 writer = new FileWriter(descTxtFile, false);
@@ -165,6 +172,8 @@ public class MoveFileTask extends CoreTask<Void, Void> {
                 LogUtils.processException(logger, e);
             } finally {
                 if (writer != null) {
+                    if (generateFileAsHidden() && Utils.isWindows())
+                        Utils.setFileAsHidden(descTxtFile);
                     try {
                         writer.close();
                     } catch (IOException e) {
@@ -175,6 +184,18 @@ public class MoveFileTask extends CoreTask<Void, Void> {
         }
     }
 
+    private String getNameForFile(String st) {
+        if (generateFileAsHidden()) {
+            if (!Utils.isWindows() && !st.startsWith(".")) {
+                return "." + st;
+            }
+        }
+        return st;
+    }
+
+    private boolean generateFileAsHidden() {
+        return AppPrefs.getProperty(UserProp.GENERATE_DESCRIPTION_FILES_HIDDEN, UserProp.GENERATE_DESCRIPTION_FILES_HIDDEN_DEFAULT);
+    }
 
     private void saveToHistoryList() {
         downloadFile.setFileName(to.getName());

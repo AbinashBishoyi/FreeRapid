@@ -402,12 +402,12 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     private void updateActions() {
         final int[] indexes = getSelectedRows();
-        final boolean enabledCancel = this.manager.hasDownloadFilesStates(indexes, DownloadState.COMPLETED, DownloadState.ERROR, DownloadState.DOWNLOADING, DownloadState.GETTING, DownloadState.WAITING, DownloadState.PAUSED);
+        final boolean enabledCancel = this.manager.hasDownloadFilesStates(indexes, DownloadState.cancelEnabledStates);
         setCancelActionEnabled(enabledCancel);
 
         setSelectedEnabled(indexes.length > 0);
 
-        final boolean allCompleted = this.manager.hasDownloadFilesStates(indexes, DownloadState.COMPLETED);
+        final boolean allCompleted = this.manager.hasDownloadFilesStates(indexes, DownloadState.completedStates);
 
         if (allCompleted) {
             boolean valid = true;
@@ -424,10 +424,10 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             setResumeActionEnabled(false);
             setPauseActionEnabled(false);
         } else {
-            final boolean enabledResume = this.manager.hasDownloadFilesStates(indexes, DownloadState.ERROR, DownloadState.CANCELLED, DownloadState.PAUSED);
+            final boolean enabledResume = this.manager.hasAnyDownloadFilesStates(indexes, DownloadState.resumeEnabledStates);
             setResumeActionEnabled(enabledResume);
 
-            final boolean enabledPause = this.manager.hasDownloadFilesStates(indexes, DownloadState.ERROR, DownloadState.GETTING, DownloadState.QUEUED, DownloadState.WAITING);
+            final boolean enabledPause = this.manager.hasAnyDownloadFilesStates(indexes, DownloadState.pauseEnabledStates);
             setPauseActionEnabled(enabledPause);
 
             setCompletedWithFilesEnabled(false);
@@ -549,7 +549,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         JMenu forceMenu = new JMenu("Force Download");
         forceMenu.setMnemonic('F');
 //      menu.add(forceMenu);
-        boolean forceEnabled = isSelectedEnabled() && this.manager.hasDownloadFilesStates(getSelectedRows(), DownloadState.QUEUED, DownloadState.PAUSED, DownloadState.CANCELLED);
+        boolean forceEnabled = isSelectedEnabled() && this.manager.hasDownloadFilesStates(getSelectedRows(), DownloadState.forceEnabledStates);
         forceMenu.setEnabled(forceEnabled);
         final List<ConnectionSettings> connectionSettingses = director.getClientManager().getAvailableConnections();
         for (ConnectionSettings settings : connectionSettingses) {

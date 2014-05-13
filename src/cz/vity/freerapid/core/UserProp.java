@@ -89,4 +89,7 @@ public class UserProp {
     public static final String GENERATE_DESCRIPTION_BY_FILENAME = "generateDescriptionByFileName";
     public static final boolean GENERATE_DESCRIPTION_BY_FILENAME_DEFAULT = true;
 
+    public static final String GENERATE_DESCRIPTION_FILES_HIDDEN = "descriptionFilesHidden";
+    public static final boolean GENERATE_DESCRIPTION_FILES_HIDDEN_DEFAULT = true;
+
 }

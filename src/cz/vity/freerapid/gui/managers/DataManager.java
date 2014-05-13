@@ -240,24 +240,31 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
 
     }
 
-    public boolean hasDownloadFilesStates(int[] indexes, DownloadState... states) {
+    public boolean hasDownloadFilesStates(int[] indexes, final EnumSet<DownloadState> states) {
         synchronized (this.lock) {
             if (indexes.length == 0)
                 return false;
             for (int index : indexes) {
                 final DownloadFile file = downloadFiles.get(index);
                 final DownloadState s = file.getState();
-                boolean found = false;
-                for (DownloadState state : states) {
-                    if (s == state) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found)
+                if (!states.contains(s))
                     return false;
             }
             return true;
+        }
+    }
+
+    public boolean hasAnyDownloadFilesStates(int[] indexes, final EnumSet<DownloadState> states) {
+        synchronized (this.lock) {
+            if (indexes.length == 0)
+                return false;
+            for (int index : indexes) {
+                final DownloadFile file = downloadFiles.get(index);
+                final DownloadState s = file.getState();
+                if (states.contains(s))
+                    return true;
+            }
+            return false;
         }
     }
 
@@ -310,12 +317,17 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
     }
 
     public void resumeSelected(int[] indexes) {
+        //predpoklada se, ze alespon jeden soubor splni vnitrni podminku
         synchronized (this.lock) {
             final List<DownloadFile> files = selectionToList(indexes);
+            final List<DownloadFile> resumingFiles = new LinkedList<DownloadFile>();
             for (DownloadFile file : files) {
-                file.resetErrorAttempts();
+                if (DownloadState.resumeEnabledStates.contains(file.getState())) {
+                    file.resetErrorAttempts();
+                    resumingFiles.add(file);
+                }
             }
-            addToQueue(files);
+            addToQueue(resumingFiles);
         }
 
     }
@@ -324,16 +336,18 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         synchronized (this.lock) {
             List<DownloadFile> toRemoveList = selectionToList(indexes);
             for (DownloadFile file : toRemoveList) {
-                final DownloadTask task = file.getTask();
-                if (task != null && !task.isTerminated()) {
-                    task.cancel(true);
-                    //file.setState(DownloadState.CANCELLED);
-                }
-                file.setState(DownloadState.CANCELLED);
-                file.setDownloaded(0);
-                final File outputFile = file.getOutputFile();
-                if (outputFile.exists()) {
-                    outputFile.delete();
+                if (DownloadState.cancelEnabledStates.contains(file.getState())) {
+                    final DownloadTask task = file.getTask();
+                    if (task != null && !task.isTerminated()) {
+                        task.cancel(true);
+                        //file.setState(DownloadState.CANCELLED);
+                    }
+                    file.setState(DownloadState.CANCELLED);
+                    file.setDownloaded(0);
+                    final File outputFile = file.getOutputFile();
+                    if (outputFile.exists()) {
+                        outputFile.delete();
+                    }
                 }
             }
         }
@@ -360,15 +374,17 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         synchronized (this.lock) {
             List<DownloadFile> toRemoveList = selectionToList(indexes);
             for (DownloadFile file : toRemoveList) {
-                final DownloadTask task = file.getTask();
-                if (task != null) {
-                    task.cancel(true);
-                }
-                file.setState(DownloadState.PAUSED);
-                final File outputFile = file.getOutputFile();
-                if (outputFile.exists()) {
-                    outputFile.delete();
-                    file.setDownloaded(0);
+                if (DownloadState.pauseEnabledStates.contains(file.getState())) {
+                    final DownloadTask task = file.getTask();
+                    if (task != null) {
+                        task.cancel(true);
+                    }
+                    file.setState(DownloadState.PAUSED);
+                    final File outputFile = file.getOutputFile();
+                    if (outputFile.exists()) {
+                        outputFile.delete();
+                        file.setDownloaded(0);
+                    }
                 }
             }
         }
