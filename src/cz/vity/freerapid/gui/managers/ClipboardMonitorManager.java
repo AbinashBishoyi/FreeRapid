@@ -66,7 +66,7 @@ public class ClipboardMonitorManager extends Thread implements ClipboardOwner {
                         wait();
                     }
                 }
-                Thread.sleep(750);
+                Thread.sleep(600);
             } catch (InterruptedException e) {
                 //ignore
             }

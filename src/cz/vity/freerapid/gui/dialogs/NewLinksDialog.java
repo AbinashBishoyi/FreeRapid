@@ -18,6 +18,7 @@ import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.swing.components.EditorPaneLinkDetector;
 import cz.vity.freerapid.swing.models.RecentsFilesComboModel;
 import cz.vity.freerapid.utilities.LogUtils;
+import cz.vity.freerapid.utilities.Utils;
 import org.jdesktop.application.Action;
 import org.jdesktop.swinghelper.buttonpanel.JXButtonPanel;
 
@@ -180,7 +181,7 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
             btnSelectPathAction();
             return false;
         }
-        final File outputDir = new File(dir);
+        final File outputDir = new File(Utils.isWindows() ? dir.trim() : dir);
         if (!outputDir.isDirectory()) {
             final int choiceYesNo = Swinger.getChoiceYesNo(getResourceMap().getString("directoryCreateMessage"));
             if (choiceYesNo == Swinger.RESULT_YES) {
@@ -280,7 +281,8 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
     }
 
     private File getDirectory() {
-        return new File(comboPath.getEditor().getItem().toString());
+        final String o = (String) comboPath.getEditor().getItem();
+        return new File((Utils.isWindows()) ? o.trim() : o);
     }
 
 
@@ -413,9 +415,6 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
             dialogPane.add(buttonBar, BorderLayout.SOUTH);
         }
         contentPane.add(dialogPane, BorderLayout.CENTER);
-        pack();
-        setLocationRelativeTo(getOwner());
-        // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
 

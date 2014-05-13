@@ -316,7 +316,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
 
     }
 
-    public void resumeSelected(int[] indexes) {
+    public void resumeSelected(final int[] indexes) {
         //predpoklada se, ze alespon jeden soubor splni vnitrni podminku
         synchronized (this.lock) {
             final List<DownloadFile> files = selectionToList(indexes);

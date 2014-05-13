@@ -30,7 +30,6 @@ import org.jdesktop.swinghelper.buttonpanel.JXButtonPanel;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -218,6 +217,9 @@ public class UserPreferencesDialog extends AppDialog {
         bind(checkAnimateIcon, UserProp.ANIMATE_ICON, UserProp.ANIMATE_ICON_DEFAULT);
         bind(checkShowTitle, UserProp.SHOWINFO_IN_TITLE, UserProp.SHOWINFO_IN_TITLE_DEFAULT);
 
+        bind(checkShowHorizontalLinesInTable, UserProp.SHOW_GRID_HORIZONTAL, UserProp.SHOW_GRID_HORIZONTAL_DEFAULT);
+        bind(checkShowVerticalLinesInTable, UserProp.SHOW_GRID_VERTICAL, UserProp.SHOW_GRID_VERTICAL_DEFAULT);
+
         bind(checkGenerateTXTDescription, UserProp.GENERATE_DESCRIPTION_BY_FILENAME, UserProp.GENERATE_DESCRIPTION_BY_FILENAME_DEFAULT);
         bind(checkGenerateDescIon, UserProp.GENERATE_DESCRIPT_ION_FILE, UserProp.GENERATE_DESCRIPT_ION_FILE_DEFAULT);
         bind(checkGenerateHidden, UserProp.GENERATE_DESCRIPTION_FILES_HIDDEN, UserProp.GENERATE_DESCRIPTION_FILES_HIDDEN_DEFAULT);
@@ -373,6 +375,10 @@ public class UserPreferencesDialog extends AppDialog {
         checkGenerateDescIon.setName("checkGenerateDescIon");
         checkGenerateHidden.setName("checkGenerateHidden");
 
+        checkShowHorizontalLinesInTable = new JCheckBox();
+        checkShowVerticalLinesInTable = new JCheckBox();
+        checkShowHorizontalLinesInTable.setName("checkShowHorizontalLinesInTable");
+        checkShowVerticalLinesInTable.setName("checkShowVerticalLinesInTable");
         JLabel labelIfFilenameExists = new JLabel();
         comboFileExists = new JComboBox();
         JPanel panelSoundSettings = new JPanel();
@@ -632,7 +638,7 @@ public class UserPreferencesDialog extends AppDialog {
                             checkHideWhenMinimized.setName("checkHideWhenMinimized");
 
                             checkAnimateIcon.setName("checkAnimateIcon");
-                            checkAnimateIcon.setBorder(new EmptyBorder(0, 35, 0, 0));
+                            //checkAnimateIcon.setBorder(new EmptyBorder(0, 35, 0, 0));
 
                             checkShowTitle.setName("checkShowTitle");
                             checkProcessFromTop.setName("checkProcessFromTop");
@@ -656,17 +662,22 @@ public class UserPreferencesDialog extends AppDialog {
                                             FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC,
                                             //FormFactory.RELATED_GAP_ROWSPEC
                                     }), panelAppearance);
 
                             panelAppearanceBuilder.add(labelLaF, cc.xy(3, 1));
                             panelAppearanceBuilder.add(comboLaF, cc.xy(5, 1));
-                            panelAppearanceBuilder.add(labelRequiresRestart2, cc.xy(7, 1));
+                            panelAppearanceBuilder.add(labelRequiresRestart2, cc.xy(7, 1));//1
                             panelAppearanceBuilder.add(checkDecoratedFrames, cc.xywh(3, 2, 5, 1));
                             panelAppearanceBuilder.add(checkShowIconInSystemTray, cc.xywh(3, 3, 5, 1));
                             panelAppearanceBuilder.add(checkAnimateIcon, cc.xywh(3, 5, 5, 1));
-                            panelAppearanceBuilder.add(checkShowTitle, cc.xywh(3, 6, 5, 1));
-                            panelAppearanceBuilder.add(checkHideWhenMinimized, cc.xywh(3, 7, 5, 1));
+                            panelAppearanceBuilder.add(checkShowHorizontalLinesInTable, cc.xywh(3, 7, 5, 1));
+                            panelAppearanceBuilder.add(checkShowVerticalLinesInTable, cc.xywh(3, 8, 5, 1));
+                            panelAppearanceBuilder.add(checkShowTitle, cc.xywh(3, 9, 5, 1));
+                            panelAppearanceBuilder.add(checkHideWhenMinimized, cc.xywh(3, 10, 5, 1));
                         }
 
                         PanelBuilder panelViewsBuilder = new PanelBuilder(new FormLayout(
@@ -845,6 +856,9 @@ public class UserPreferencesDialog extends AppDialog {
     private JCheckBox checkGenerateTXTDescription;
     private JCheckBox checkGenerateDescIon;
     private JCheckBox checkGenerateHidden;
+
+    private JCheckBox checkShowHorizontalLinesInTable;
+    private JCheckBox checkShowVerticalLinesInTable;
 
     private JSpinner spinnerMaxConcurrentDownloads;
     private JCheckBox checkUseProxyList;

@@ -49,7 +49,12 @@ public class FileActions extends AbstractBean {
 
         if (urlList != null) {
             Swinger.bringToFront(app.getMainFrame());
-            dialog.setURLs(urlList);
+            final List<URL> urlList1 = urlList;
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    dialog.setURLs(urlList1);
+                }
+            });
         }
         if (!showing) {
             app.prepareDialog(dialog, true);

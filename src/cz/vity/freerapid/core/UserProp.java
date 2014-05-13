@@ -93,4 +93,9 @@ public class UserProp {
     public static final String GENERATE_DESCRIPTION_FILES_HIDDEN = "descriptionFilesHidden";
     public static final boolean GENERATE_DESCRIPTION_FILES_HIDDEN_DEFAULT = false;
 
+    public static final String SHOW_GRID_HORIZONTAL = "showHorizontalGridLines";
+    public static final boolean SHOW_GRID_HORIZONTAL_DEFAULT = false;
+
+    public static final String SHOW_GRID_VERTICAL = "showVerticalGridLines";
+    public static final boolean SHOW_GRID_VERTICAL_DEFAULT = false;
 }

@@ -47,6 +47,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 
 /**
  * @author Vity
@@ -307,6 +309,20 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     private void setActions() {
         initTable();
+
+        AppPrefs.getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
+            public void preferenceChange(PreferenceChangeEvent evt) {
+                if (UserProp.SHOW_GRID_HORIZONTAL.equals(evt.getKey()) || UserProp.SHOW_GRID_VERTICAL.equals(evt.getKey()))
+                    updateGridLines();
+            }
+        });
+        updateGridLines();
+    }
+
+    private void updateGridLines() {
+        final boolean horizontal = AppPrefs.getProperty(UserProp.SHOW_GRID_HORIZONTAL, UserProp.SHOW_GRID_HORIZONTAL_DEFAULT);
+        final boolean vertical = AppPrefs.getProperty(UserProp.SHOW_GRID_VERTICAL, UserProp.SHOW_GRID_VERTICAL_DEFAULT);
+        table.setShowGrid(horizontal, vertical);
     }
 
 
@@ -445,7 +461,6 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         table.setColumnControlVisible(true);
         table.setSortable(false);
         table.setColumnMargin(10);
-        table.setShowGrid(false, false);
 
         table.setTransferHandler(new URLTransferHandler(director) {
             @Override

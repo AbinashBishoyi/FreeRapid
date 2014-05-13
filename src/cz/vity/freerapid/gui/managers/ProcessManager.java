@@ -297,6 +297,7 @@ public class ProcessManager extends Thread {
                 file.setTimeToQueuedMax(-1);
                 renewProblematicConnection();
                 file.resetErrorAttempts(); //je nutne vyresetovat pocet error pokusu
+                queueUpdated();
                 return;
             }
             file.setTimeToQueued(--counter); //normalni prubeh, jeden tick
