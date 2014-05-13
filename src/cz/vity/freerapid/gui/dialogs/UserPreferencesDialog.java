@@ -25,6 +25,7 @@ import cz.vity.freerapid.gui.dialogs.filechooser.OpenSaveDialogFactory;
 import cz.vity.freerapid.swing.LaF;
 import cz.vity.freerapid.swing.LookAndFeels;
 import cz.vity.freerapid.swing.Swinger;
+import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.swinghelper.buttonpanel.JXButtonPanel;
 
@@ -290,8 +291,11 @@ public class UserPreferencesDialog extends AppDialog {
 //        final String s = AppPrefs.getProperty(UserProp.PROXY_LIST_PATH, "");
 //        System.out.println("s = " + s);
 
+        final LaF selLaf = LookAndFeels.getInstance().getSelectedLaF();
         LaF laf = (LaF) comboLaF.getSelectedItem();
-        LookAndFeels.getInstance().storeSelectedLaF(laf);
+        if (!selLaf.equals(laf)) {
+            updateLookAndFeel();
+        }
 
         doClose();
     }
@@ -908,31 +912,28 @@ public class UserPreferencesDialog extends AppDialog {
             if (FWProp.SHOW_TRAY.equals(key)) {
                 app.getTrayIconSupport().setVisibleByDefault();
             }
-//            else if (LAF_PROPERTY.equals(key)) {
-//                boolean succesful;
-////                final ResourceMap map = getResourceMap();
-//                laf = (LaF) comboLaF.getSelectedItem();
-//                try {
-////                    succesful = LookAndFeels.getInstance().loadLookAndFeel(laf, true);
-//                    succesful = true;
-//                    synchronized (UserPreferencesDialog.this) {
-//                        AppPrefs.getPreferences().removePreferenceChangeListener(this);
-//
-//                        AppPrefs.removeProperty(LAF_PROPERTY);
-//                        AppPrefs.getPreferences().addPreferenceChangeListener(this);
-//                    }
-//                } catch (Exception ex) {
-//                    LogUtils.processException(logger, ex);
-//                    Swinger.showErrorDialog("changeLookAndFeelActionFailed", ex);
-////                    succesful = false;
-//                }
-//                if (!succesful) {
-//
-//                } //else {
-//                    Swinger.showInformationDialog(map.getString("message_changeLookAndFeelActionSet"));
-//                }
         }
-//        }
+
+    }
+
+    private void updateLookAndFeel() {
+        boolean succesful;
+        final ResourceMap map = getResourceMap();
+        LaF laf = (LaF) comboLaF.getSelectedItem();
+        final LookAndFeels lafManager = LookAndFeels.getInstance();
+        try {
+            succesful = lafManager.loadLookAndFeel(laf, true);
+            lafManager.storeSelectedLaF(laf);
+            // succesful = true;
+        } catch (Exception ex) {
+            LogUtils.processException(logger, ex);
+            Swinger.showErrorDialog(map, "changeLookAndFeelActionFailed", ex);
+            succesful = false;
+        }
+        if (succesful) {
+            Swinger.showInformationDialog(map.getString("message_changeLookAndFeelActionSet"));
+        }
+
     }
 
 

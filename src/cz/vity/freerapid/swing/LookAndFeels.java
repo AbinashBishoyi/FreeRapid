@@ -173,6 +173,7 @@ public final class LookAndFeels {
         } else
             AppPrefs.storeProperty(FWProp.THEME_SELECTED_KEY, laf.getThemeClass());
         //  selectedLookAndFeel = laf;
+        selectedLookAndFeel = laf;
         logger.config("LaF " + laf + " has been set. It will be effective on restart.");
     }
 
