@@ -1,5 +1,6 @@
 package cz.vity.freerapid.gui.managers;
 
+import cz.vity.freerapid.gui.content.ContentPanel;
 import org.jdesktop.application.ApplicationContext;
 
 import java.awt.*;

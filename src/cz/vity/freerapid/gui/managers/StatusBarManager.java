@@ -4,6 +4,7 @@ import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.DownloadTask;
+import cz.vity.freerapid.gui.content.ContentPanel;
 import cz.vity.freerapid.swing.TrayIconSupport;
 import cz.vity.freerapid.swing.components.MemoryIndicator;
 import cz.vity.freerapid.utilities.Utils;

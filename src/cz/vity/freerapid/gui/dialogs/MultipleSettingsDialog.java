@@ -8,7 +8,7 @@ import com.l2fprod.common.swing.JDirectoryChooser;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.gui.FRDUtils;
-import cz.vity.freerapid.gui.managers.ContentPanel;
+import cz.vity.freerapid.gui.content.ContentPanel;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.swing.ComponentFactory;

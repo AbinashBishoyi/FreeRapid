@@ -8,7 +8,7 @@ import com.jgoodies.forms.layout.*;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.Consts;
 import cz.vity.freerapid.core.UserProp;
-import cz.vity.freerapid.gui.managers.ContentPanel;
+import cz.vity.freerapid.gui.content.ContentPanel;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
 import cz.vity.freerapid.gui.managers.PluginsManager;
 import cz.vity.freerapid.gui.managers.UpdateManager;

@@ -1,18 +1,18 @@
-package cz.vity.freerapid.gui.managers;
+package cz.vity.freerapid.gui.content;
 
-import com.jgoodies.binding.list.ArrayListModel;
 import cz.vity.freerapid.core.AppPrefs;
-import cz.vity.freerapid.core.FileTypeIconProvider;
 import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
-import cz.vity.freerapid.core.tasks.DownloadTask;
 import cz.vity.freerapid.gui.actions.URLTransferHandler;
 import cz.vity.freerapid.gui.dialogs.InformationDialog;
 import cz.vity.freerapid.gui.dialogs.MultipleSettingsDialog;
+import cz.vity.freerapid.gui.managers.DataManager;
+import cz.vity.freerapid.gui.managers.ManagerDirector;
 import cz.vity.freerapid.model.DownloadFile;
-import cz.vity.freerapid.plugins.exceptions.NotSupportedDownloadServiceException;
-import cz.vity.freerapid.plugins.webclient.*;
-import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
+import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
+import cz.vity.freerapid.plugins.webclient.DownloadState;
+import cz.vity.freerapid.plugins.webclient.FileState;
+import cz.vity.freerapid.plugins.webclient.HttpFile;
 import cz.vity.freerapid.swing.SwingUtils;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.Browser;
@@ -21,8 +21,6 @@ import cz.vity.freerapid.utilities.OSDesktop;
 import cz.vity.freerapid.utilities.Utils;
 import org.jdesktop.application.ApplicationActionMap;
 import org.jdesktop.application.ApplicationContext;
-import org.jdesktop.application.ResourceMap;
-import org.jdesktop.application.Task;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.FilterPipeline;
@@ -34,7 +32,8 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.*;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
@@ -46,10 +45,7 @@ import java.io.File;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
@@ -862,53 +858,6 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     }
 
-    private static class CustomTableModel extends AbstractTableModel implements ListDataListener {
-        private final ArrayListModel<DownloadFile> model;
-        private final String[] columns;
-
-
-        public CustomTableModel(ArrayListModel<DownloadFile> model, String[] columns) {
-            super();
-            this.model = model;
-            this.columns = columns;
-            model.addListDataListener(this);
-        }
-
-        public int getRowCount() {
-            return model.getSize();
-        }
-
-        @Override
-        public boolean isCellEditable(int rowIndex, int columnIndex) {
-            return false;
-        }
-
-        @Override
-        public String getColumnName(int column) {
-            return this.columns[column];
-        }
-
-        public int getColumnCount() {
-            return this.columns.length;
-        }
-
-        public Object getValueAt(int rowIndex, int columnIndex) {
-            return model.get(rowIndex);
-        }
-
-        public void intervalAdded(ListDataEvent e) {
-            fireTableRowsInserted(e.getIndex0(), e.getIndex1());
-        }
-
-        public void intervalRemoved(ListDataEvent e) {
-            fireTableRowsDeleted(e.getIndex0(), e.getIndex1());
-        }
-
-        public void contentsChanged(ListDataEvent e) {
-            fireTableRowsUpdated(e.getIndex0(), e.getIndex1());
-        }
-    }
-
     public static int getProgress(DownloadFile downloadFile) {
         final long downloaded = downloadFile.getDownloaded();
         final long fileSize = downloadFile.getFileSize();
@@ -926,252 +875,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 //        }
 //    }
 
-    private static class NameURLCellRenderer extends DefaultTableCellRenderer {
-
-        private final FileTypeIconProvider iconProvider;
-
-        private NameURLCellRenderer(FileTypeIconProvider iconProvider) {
-            this.iconProvider = iconProvider;
-        }
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            final DownloadFile downloadFile = (DownloadFile) value;
-            final String fn = downloadFile.getFileName();
-            final String url = downloadFile.getFileUrl().toString();
-            if (fn != null && !fn.isEmpty()) {
-                value = fn;
-            } else {
-                value = url;
-            }
-
-            super.getTableCellRendererComponent(table, " " + value, isSelected, hasFocus, row, column);
-            //this.setForeground(Color.BLUE);
-            if (value != null) {
-                this.setToolTipText(url);
-                this.setIcon(iconProvider.getIconImageByFileType(downloadFile.getFileType(), false));
-            }
-            return this;
-        }
-
-    }
-
-    private static class SizeCellRenderer extends DefaultTableCellRenderer {
-        private final String sizeRendererProgress;
-        private final String sizeRendererUnknown;
-        private final String sizeRendererInBytes;
-
-        private SizeCellRenderer(ApplicationContext context) {
-            final ResourceMap map = context.getResourceMap();
-            sizeRendererProgress = map.getString("sizeRendererProgress");
-            sizeRendererUnknown = map.getString("sizeRendererUnknown");
-            sizeRendererInBytes = map.getString("sizeRendererInBytes");
-
-        }
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            final DownloadFile downloadFile = (DownloadFile) value;
-            final long fs = downloadFile.getFileSize();
-            if (fs >= 0) {
-                if (downloadFile.getDownloaded() != fs)
-                    value = String.format(sizeRendererProgress, bytesToAnother(downloadFile.getDownloaded()), bytesToAnother(fs));
-                else
-                    value = bytesToAnother(fs);
-                this.setToolTipText(String.format(sizeRendererInBytes, NumberFormat.getIntegerInstance().format(fs)));
-            } else {
-                value = sizeRendererUnknown;
-                this.setToolTipText(null);
-            }
-            return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        }
-    }
-
-    private static class SpeedCellRenderer extends DefaultTableCellRenderer {
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            final DownloadFile downloadFile = (DownloadFile) value;
-            if (downloadFile.getState() == DownloadState.DOWNLOADING) {
-                if (downloadFile.getSpeed() >= 0) {
-                    value = bytesToAnother(downloadFile.getSpeed()) + "/s";
-                } else value = "0 B/s";
-                //this.setToolTipText("Average speed " + bytesToAnother((long) downloadFile.getAverageSpeed()) + "/s");
-            } else value = "";
-            return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        }
-    }
-
-    private static class ProgressCellRenderer extends DefaultTableCellRenderer {
-
-        private ProgressCellRenderer() {
-        }
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            final DownloadFile downloadFile = (DownloadFile) value;
-            this.setHorizontalAlignment(CENTER);
-            final int progress = getProgress(downloadFile);
-            value = progress + "%";
-            return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        }
-    }
-
-    private static class EstTimeCellRenderer extends DefaultTableCellRenderer {
-        private final String tooltip;
-        private final String elapsedTime;
-
-        private EstTimeCellRenderer(ApplicationContext context) {
-            final ResourceMap map = context.getResourceMap();
-            tooltip = map.getString("tooltip");
-            elapsedTime = map.getString("elapsedTime");
-        }
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            final DownloadFile downloadFile = (DownloadFile) value;
-            final DownloadState state = downloadFile.getState();
-            value = stateToString(state);
-            this.setHorizontalAlignment(CENTER);
-            this.setToolTipText(null);
-            if (state == DownloadState.DOWNLOADING) {
-                long hasToBeDownloaded = downloadFile.getFileSize() - downloadFile.getDownloaded();
-                final double avgSpeed = downloadFile.getAverageSpeed();
-                if (hasToBeDownloaded >= 0) {
-                    if (avgSpeed > 0) {
-                        value = secondsToHMin(Math.round((double) hasToBeDownloaded / avgSpeed));
-                    }
-                }
-            } else if (state == DownloadState.WAITING) {
-//                if (downloadFile.getSleep() >= 0)
-//                    value = String.format("%s (%s)", stateToString(state), secondsToHMin(downloadFile.getSleep()));
-//                else value = "";
-            }
-            if (state == DownloadState.ERROR || state == DownloadState.SLEEPING || state == DownloadState.DISABLED) {
-                final String errorMessage = downloadFile.getErrorMessage();
-                if (errorMessage != null) {
-                    if (state == DownloadState.ERROR || state == DownloadState.DISABLED)
-                        value = value + " - " + errorMessage.replaceAll("<.*?>", "");
-                    this.setToolTipText(String.format(tooltip, errorMessage));
-                }
-            } else if (DownloadState.isProcessState(state)) {
-                Task task = downloadFile.getTask();
-                if (task != null)
-                    this.setToolTipText(String.format(elapsedTime, secondsToHMin(task.getExecutionDuration(TimeUnit.SECONDS))));
-            }
-
-            return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        }
-    }
-
-    private static class ProgressBarCellRenderer extends JProgressBar implements TableCellRenderer {
-        private static final Color BG_RED = new Color(0xFFD0D0);
-        private static final Color BG_ORANGE = new Color(0xFFEDD0);
-        private static final Color BG_GREEN = new Color(0xD0FFE9);
-        private static final Color BG_BLUE = new Color(0xb6e9ff);
-        private String autoReconnectIn;
-        private String attemptForDownloading;
-
-        public ProgressBarCellRenderer(ApplicationContext context) {
-            super(0, 100);
-            final ResourceMap map = context.getResourceMap();
-            autoReconnectIn = map.getString("autoreconnectIn");
-            attemptForDownloading = map.getString("attemptForDownloading");
-            final int h = this.getPreferredSize().height;
-            this.setPreferredSize(new Dimension(70, h));
-        }
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            final DownloadFile downloadFile = (DownloadFile) value;
-            final DownloadState state = downloadFile.getState();
-            if (state == DownloadState.DOWNLOADING || state == DownloadState.GETTING || state == DownloadState.WAITING) {
-                this.setBackground(BG_GREEN);
-            } else
-            if (state == DownloadState.CANCELLED || state == DownloadState.ERROR || state == DownloadState.DELETED) {
-                this.setBackground(BG_RED);
-            } else if (state == DownloadState.PAUSED || state == DownloadState.DISABLED) {
-                this.setBackground(Color.BLACK);
-            } else if (state == DownloadState.QUEUED) {
-                this.setBackground(BG_ORANGE);
-            } else if (state == DownloadState.SLEEPING) {
-                this.setBackground(BG_BLUE);
-            } else if (state == DownloadState.COMPLETED) {
-                this.setBackground(null);
-                // this.setBackground(Color.GREEN);
-            } else
-                this.setBackground(Color.BLACK);
-
-            final int toQueued = downloadFile.getTimeToQueued();
-            if ((state == DownloadState.ERROR || state == DownloadState.SLEEPING) && toQueued >= 0) {
-                final int max = downloadFile.getTimeToQueuedMax();
-                this.setStringPainted(true);
-                this.setString(secondsToHMin(toQueued));
-                this.setValue(getProgress(max, toQueued));
-                this.setToolTipText(String.format(autoReconnectIn, toQueued));
-            } else {
-                final int sleep = downloadFile.getSleep();
-                if (state == DownloadState.WAITING && sleep >= 0) {
-                    final int max = downloadFile.getTimeToQueuedMax();
-                    this.setStringPainted(true);
-                    this.setString(secondsToHMin(sleep));
-                    this.setValue(getProgress(max, sleep));
-                    this.setToolTipText(String.format(attemptForDownloading, sleep));
-                } else {
-                    this.setToolTipText(null);
-                    final int progress = getProgress(downloadFile);
-
-                    if (AppPrefs.getProperty(UserProp.SHOW_PROGRESS_IN_PROGRESSBAR, UserProp.SHOW_PROGRESS_IN_PROGRESSBAR_DEFAULT)) {
-                        this.setStringPainted(true);
-                        this.setString(progress + "%");
-                    } else {
-                        this.setStringPainted(false);
-                    }
-                    this.setValue(progress);
-                }
-            }
-            return this;
-        }
-
-    }
-
-    private static int getProgress(final int max, final int timeToQueued) {
+    static int getProgress(final int max, final int timeToQueued) {
         return (int) ((timeToQueued / (float) max) * 100);
-    }
-
-    private static class ConnectionCellRenderer extends DefaultTableCellRenderer {
-        private final String defaultConnection;
-
-        private ConnectionCellRenderer(ApplicationContext context) {
-            final ResourceMap map = context.getResourceMap();
-            defaultConnection = map.getString("defaultConnection");
-        }
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            final DownloadFile downloadFile = (DownloadFile) value;
-            final DownloadTask task = downloadFile.getTask();
-            ConnectionSettings con = null;
-            if (downloadFile.getState() == DownloadState.SLEEPING || downloadFile.getState() == DownloadState.ERROR) {
-                con = downloadFile.getConnectionSettings();
-            }
-
-            if (con == null && task != null) {
-                final HttpDownloadClient client = task.getClient();
-                con = client.getSettings();
-            }
-
-            if (con != null) {
-                if (con.isProxySet()) {
-                    value = String.format("%s:%s", con.getProxyURL(), con.getProxyPort());
-                    if (con.getUserName() != null) {
-                        value = con.getUserName() + "@" + value;
-                    }
-                } else value = defaultConnection;
-            } else value = "";
-
-            return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        }
     }
 
 
@@ -1201,7 +906,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         }
     }
 
-    private static String stateToString(DownloadState state) {
+    static String stateToString(DownloadState state) {
         return states[state.ordinal()];
     }
 
@@ -1220,106 +925,4 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     }
 
 
-    private static class ServiceCellRenderer extends DefaultTableCellRenderer {
-        private final PluginsManager manager;
-        private final Map<String, Icon> iconCache = new HashMap<String, Icon>();
-
-        private ServiceCellRenderer(ManagerDirector director) {
-            this.manager = director.getPluginsManager();
-            final Icon icon = director.getContext().getResourceMap().getIcon("serviceWithNoIcon");
-            iconCache.put("default", icon);
-        }
-
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            final DownloadFile downloadFile = (DownloadFile) value;
-            final String shareDownloadServiceID = downloadFile.getShareDownloadServiceID();
-            assert shareDownloadServiceID != null;
-            final String serviceName = downloadFile.getServiceName();
-            Icon faviconImage = null;
-            super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            if (AppPrefs.getProperty(UserProp.SHOW_SERVICES_ICONS, UserProp.SHOW_SERVICES_ICONS_DEFAULT)) {
-                faviconImage = iconCache.get(shareDownloadServiceID);
-                if (faviconImage == null) {
-                    try {
-                        if (manager.hasPlugin(shareDownloadServiceID) && manager.getPluginMetadata(shareDownloadServiceID).hasFavicon()) {
-                            final ShareDownloadService service = manager.getPluginInstance(shareDownloadServiceID);
-                            faviconImage = service.getFaviconImage();
-                            if (faviconImage != null) {
-                                iconCache.put(shareDownloadServiceID, faviconImage);
-                            }
-                        }
-                    } catch (NotSupportedDownloadServiceException e) {
-                        //do nothing
-                    }
-                    if (faviconImage == null)
-                        faviconImage = iconCache.get("default");
-                }
-            }
-            if (faviconImage != null) {
-                this.setIcon(faviconImage);
-                this.setHorizontalAlignment(CENTER);
-                this.setText(null);
-                this.setToolTipText(serviceName);
-            } else {
-                this.setIcon(null);
-                this.setHorizontalAlignment(LEFT);
-                this.setToolTipText(null);
-                this.setText(serviceName);
-            }
-            return this;
-        }
-    }
-
-    private class AverageSpeedCellRenderer extends DefaultTableCellRenderer {
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            final DownloadFile downloadFile = (DownloadFile) value;
-            final DownloadState state = downloadFile.getState();
-            if (state == DownloadState.DOWNLOADING) {
-                if (downloadFile.getSpeed() >= 0) {
-                    value = bytesToAnother((long) downloadFile.getAverageSpeed()) + "/s";
-                } else value = "0 B/s";
-            } else value = "";
-
-            return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        }
-    }
-
-    private static class CheckedCellRenderer extends DefaultTableCellRenderer {
-        private final Icon notFound;
-        private final Icon checked;
-        private final Icon unknown;
-        private final ApplicationContext context;
-
-
-        private CheckedCellRenderer(ApplicationContext context) {
-            this.context = context;
-            final ResourceMap map = context.getResourceMap();
-            this.notFound = map.getIcon("notFoundIcon");
-            this.checked = map.getIcon("checkedIcon");
-            this.unknown = map.getIcon("unknownIcon");
-        }
-
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            final DownloadFile downloadFile = (DownloadFile) value;
-            assert downloadFile != null;
-            this.setIconTextGap(2);
-            this.setHorizontalAlignment(CENTER);
-            final Component rendererComponent = super.getTableCellRendererComponent(table, null, isSelected, hasFocus, row, column);
-            switch (downloadFile.getFileState()) {
-                case FILE_NOT_FOUND:
-                    this.setIcon(notFound);
-                    this.setToolTipText(context.getResourceMap().getString("checked_fileNotFound"));
-                    break;
-                case CHECKED_AND_EXISTING:
-                    this.setIcon(checked);
-                    this.setToolTipText(context.getResourceMap().getString("checked_success"));
-                    break;
-                default:
-                    this.setToolTipText(context.getResourceMap().getString("checked_unknown"));
-                    this.setIcon(unknown);
-                    break;
-            }
-            return rendererComponent;
-        }
-    }
 }
