@@ -18,10 +18,10 @@ public class XMLBind {
     private static final String RESOURCES_SCHEMA_XSD = "resources/schema.xsd";
 
     /**
-     * Naète data z XML pomocí technologie JAXB a vloží je
+     * Nacte data z XML pomoci technologie JAXB a vlozi je
      *
      * @param xmlData xml struktura dat
-     * @return instance objektu Plugins, který obsahuje seznam dostupných pluginù na server
+     * @return instance objektu Plugins, ktery obsahuje seznam dostupnych pluginu na server
      * @throws JAXBException
      * @throws SAXException
      */
