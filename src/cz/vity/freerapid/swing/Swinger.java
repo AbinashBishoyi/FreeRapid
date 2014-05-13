@@ -163,8 +163,9 @@ public class Swinger {
     }
 
     public static void bringToFront(Frame frame) {
-        if (frame != null && frame.getExtendedState() == JFrame.ICONIFIED) {
-            frame.setExtendedState(JFrame.NORMAL);
+        if (frame != null) {
+            if (frame.getExtendedState() == JFrame.ICONIFIED)
+                frame.setExtendedState(JFrame.NORMAL);
             frame.setVisible(true);
             frame.toFront();
         }

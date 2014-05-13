@@ -120,17 +120,19 @@ public class EditorPaneLinkDetector extends JEditorPane {
             //ignore
         }
         final StringBuilder builder = new StringBuilder();
-        if (!s.endsWith("\n") && s.length() > 0) {
+        s = s.trim();
+        builder.append(s);
+        if (s.length() > 0) {
             builder.append('\n');
         }
         for (String item : list) {
             builder.append(item).append('\n');
         }
         final String str = builder.toString();
-        if (str.length() > 0)
-            this.setText(""); //pro pripad ze je tam demo
+//        if (str.length() > 0)
+//            this.setText(""); //pro pripad ze je tam demo
         try {
-
+            this.setText("");
             document.insertString(0, str, null);
         } catch (BadLocationException e) {
             LogUtils.processException(logger, e);

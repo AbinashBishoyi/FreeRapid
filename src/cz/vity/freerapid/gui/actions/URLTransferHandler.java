@@ -1,5 +1,7 @@
 package cz.vity.freerapid.gui.actions;
 
+import cz.vity.freerapid.gui.managers.ManagerDirector;
+import cz.vity.freerapid.gui.managers.PluginsManager;
 import cz.vity.freerapid.utilities.LogUtils;
 
 import javax.swing.*;
@@ -28,10 +30,16 @@ public abstract class URLTransferHandler extends TransferHandler {
     private final static Logger logger = Logger.getLogger(URLTransferHandler.class.getName());
 
     private List<URL> urls;
+    private PluginsManager pluginsManager;
+
 
     protected abstract void doDropAction(List<URL> urlList);
 
-    private static List<URL> textURIListToFileList(String data) {
+    public URLTransferHandler(ManagerDirector director) {
+        pluginsManager = director.getPluginsManager();
+    }
+
+    private List<URL> textURIListToFileList(String data) {
         final List<URL> list = new LinkedList<URL>();
 //        final String[] strings = data.split("\\p{Space}");
 //        logger.info("Dragged string data " + data);
@@ -55,7 +63,9 @@ public abstract class URLTransferHandler extends TransferHandler {
         int start = 0;
         while (match.find(start)) {
             try {
-                list.add(new URL(match.group()));
+                final URL url = new URL(match.group());
+                if (pluginsManager.isSupported(url))
+                    list.add(url);
             } catch (MalformedURLException e) {
                 //ignore
             }
@@ -125,7 +135,9 @@ public abstract class URLTransferHandler extends TransferHandler {
             if (urlFlavor != null && transferable.isDataFlavorSupported(urlFlavor)) {
                 final Object transferData = transferable.getTransferData(urlFlavor);
                 if (transferData instanceof URL) {
-                    urls.add((URL) transferData);
+                    final URL url = (URL) transferData;
+                    if (pluginsManager.isSupported(url))
+                        urls.add(url);
                 }
             } else if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                 String data = (String) transferable.getTransferData(DataFlavor.stringFlavor);

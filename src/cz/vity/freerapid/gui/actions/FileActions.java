@@ -23,6 +23,7 @@ import java.util.List;
 public class FileActions extends AbstractBean {
 
     private MainApp app;
+    private NewLinksDialog dialog;
 
 
     public FileActions() {
@@ -40,21 +41,27 @@ public class FileActions extends AbstractBean {
         }
         final ManagerDirector managerDirector = app.getManagerDirector();
         final DataManager dataManager = managerDirector.getDataManager();
-        final NewLinksDialog dialog = new NewLinksDialog(managerDirector, app.getMainFrame());
+
+        final boolean showing = dialog != null;
+        if (!showing)
+            dialog = new NewLinksDialog(managerDirector, app.getMainFrame());
+
         if (urlList != null)
             dialog.setURLs(urlList);
-
-        app.prepareDialog(dialog, true);
-        if (dialog.getModalResult() == NewLinksDialog.RESULT_OK) {
-            final List<DownloadFile> files = dialog.getDownloadFiles();
-            dataManager.addToList(files);
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    if (!dialog.isStartPaused())
-                        dataManager.addToQueue(files);
-                    managerDirector.getContentManager().getContentPanel().selectAdded(files);
-                }
-            });
+        if (!showing) {
+            app.prepareDialog(dialog, true);
+            if (dialog.getModalResult() == NewLinksDialog.RESULT_OK) {
+                final List<DownloadFile> files = dialog.getDownloadFiles();
+                dataManager.addToList(files);
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        if (!dialog.isStartPaused())
+                            dataManager.addToQueue(files);
+                        managerDirector.getContentManager().getContentPanel().selectAdded(files);
+                    }
+                });
+            }
+            dialog = null;
         }
     }
     //TODO https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=donations@wordrider.net&item_name=FreeRapid&no_shipping=1&cn=Optional comments&tax=0

@@ -44,7 +44,6 @@ public class DownloadClient implements HttpDownloadClient {
 
         // Get initial state object
 
-        //initialState.purgeExpiredCookies();
         client.setState(initialState);
     }
 

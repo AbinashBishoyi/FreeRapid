@@ -47,9 +47,11 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
     private final DataManager dataManager;
     private final List<URL> removeList;
     private PluginsManager pluginsManager;
+    private final ManagerDirector director;
 
     public NewLinksDialog(ManagerDirector director, Frame owner) throws HeadlessException {
         super(owner, true);
+        this.director = director;
         this.dataManager = director.getDataManager();
         this.pluginsManager = director.getPluginsManager();
         this.setName("NewLinksDialog");
@@ -136,14 +138,14 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
         new CompoundUndoManager(urlsArea);
         new CompoundUndoManager(descriptionArea);
         urlsArea.setPreferredSize(new Dimension(130, 100));
-        //urlsArea.setURLs("http://www.filefactory.com/file/a3f880/n/KOW_-_Monica_divx_002");
+
         comboPath.setModel(new RecentsFilesComboModel(UserProp.LAST_USED_SAVED_PATH, true));
         //AutoCompleteDecorator.decorate(comboPath);
 
         comboPath.setSelectedItem(AppPrefs.getProperty(UserProp.LAST_COMBO_PATH, ""));
 
 
-        this.setTransferHandler(new URLTransferHandler() {
+        this.setTransferHandler(new URLTransferHandler(director) {
             protected void doDropAction(List<URL> files) {
                 urlsArea.setURLList(files);
             }

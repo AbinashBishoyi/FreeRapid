@@ -5,6 +5,7 @@ import cz.vity.freerapid.gui.actions.HelpActions;
 import cz.vity.freerapid.gui.actions.ViewActions;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.swing.Swinger;
+import org.jdesktop.application.ApplicationActionMap;
 import org.jdesktop.application.ApplicationContext;
 
 import javax.swing.*;
@@ -94,6 +95,8 @@ public class MenuManager {
         final Object[] optionsMenuActionNames = {
                 createConnectionsMenu(),
                 MENU_SEPARATOR,
+                CHECKED + "monitorClipboardAction",
+                MENU_SEPARATOR,
                 "options"
         };
 
@@ -166,7 +169,9 @@ public class MenuManager {
         menuBar.add(createMenu("helpMenu", helpMenuActionNames));
         menuBar.putClientProperty(SELECTED_TEXT_PROPERTY, "");
 
-        context.getActionMap().get("showCompletedAction").putValue(AbstractAction.SELECTED_KEY, viewActions.isShowCompleted());
+        final ApplicationActionMap map = context.getActionMap();
+        map.get("showCompletedAction").putValue(AbstractAction.SELECTED_KEY, viewActions.isShowCompleted());
+        map.get("monitorClipboardAction").putValue(AbstractAction.SELECTED_KEY, viewActions.isClipboardMonitoringSelected());
 //        final MainApp app = (MainApp) context.getApplication();
 
     }

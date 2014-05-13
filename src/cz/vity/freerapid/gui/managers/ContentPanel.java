@@ -432,7 +432,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         table.setColumnMargin(10);
         table.setShowGrid(false, false);
 
-        table.setTransferHandler(new URLTransferHandler() {
+        table.setTransferHandler(new URLTransferHandler(director) {
             @Override
             protected void doDropAction(final List<URL> files) {
                 SwingUtilities.invokeLater(new Runnable() {

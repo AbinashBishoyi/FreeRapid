@@ -3,6 +3,7 @@ package cz.vity.freerapid.gui.managers;
 import com.jgoodies.binding.list.ArrayListModel;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.UserProp;
+import cz.vity.freerapid.core.application.GlobalEDTExceptionHandler;
 import cz.vity.freerapid.core.tasks.DownloadTask;
 import cz.vity.freerapid.core.tasks.DownloadTaskError;
 import cz.vity.freerapid.model.DownloadFile;
@@ -60,6 +61,8 @@ public class ProcessManager extends Thread {
 
     @Override
     public void run() {
+        this.setUncaughtExceptionHandler(new GlobalEDTExceptionHandler());
+
         while (!isInterrupted()) {
             synchronized (manipulation) {
                 if (canCreateAnotherConnection() && !forceDownloadFiles.isEmpty())

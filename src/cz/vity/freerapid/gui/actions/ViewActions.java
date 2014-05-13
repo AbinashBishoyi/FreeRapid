@@ -26,9 +26,13 @@ public class ViewActions extends AbstractBean {
     private boolean showCompleted;
     private final static String SHOW_COMPLETED_PROPERTY = "showCompleted";
 
+    private boolean clipboardMonitoringSelected;
+    private static final String CLIPBOARD_MONITORING_PROPERTY = "clipboardMonitoringSelected";
+
     public ViewActions() {
         app = MainApp.getInstance(MainApp.class);
         setShowCompleted(AppPrefs.getProperty(UserProp.SHOW_COMPLETED, true));
+        setClipboardMonitoringSelected(AppPrefs.getProperty(UserProp.CLIPBOARD_MONITORING, UserProp.CLIPBOARD_MONITORING_DEFAULT));
     }
 
     @Action
@@ -89,6 +93,11 @@ public class ViewActions extends AbstractBean {
         }
     }
 
+    @Action(selectedProperty = ViewActions.CLIPBOARD_MONITORING_PROPERTY)
+    public void monitorClipboardAction() {
+        AppPrefs.storeProperty(UserProp.CLIPBOARD_MONITORING, isClipboardMonitoringSelected());
+    }
+
     @Action(selectedProperty = ViewActions.SHOW_COMPLETED_PROPERTY)
     public void showCompletedAction() {
         //setShowCompleted(!isShowCompleted());
@@ -110,5 +119,15 @@ public class ViewActions extends AbstractBean {
         boolean oldValue = this.showCompleted;
         this.showCompleted = showCompleted;
         firePropertyChange("showCompleted", oldValue, showCompleted);
+    }
+
+    public boolean isClipboardMonitoringSelected() {
+        return clipboardMonitoringSelected;
+    }
+
+    public void setClipboardMonitoringSelected(boolean clipboardMonitoringSelected) {
+        boolean oldValue = this.clipboardMonitoringSelected;
+        this.clipboardMonitoringSelected = clipboardMonitoringSelected;
+        firePropertyChange("clipboardMonitoringSelected", oldValue, clipboardMonitoringSelected);
     }
 }

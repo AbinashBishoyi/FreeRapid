@@ -21,7 +21,10 @@ public class GlobalEDTExceptionHandler implements Thread.UncaughtExceptionHandle
             if (e.getMessage().contains("cannot open system"))
                 return;
         }
-        logger.log(Level.SEVERE, "Uncaught exception on EDT. ", e);
+        if (SwingUtilities.isEventDispatchThread())
+            logger.log(Level.SEVERE, "Uncaught exception on EDT. ", e);
+        else
+            logger.log(Level.SEVERE, "Uncaught exception on thread " + t.getName(), e);
         //final MainApp app = MainApp.getInstance();
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {

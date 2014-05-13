@@ -21,11 +21,11 @@ final class OneInstanceServer extends Thread {
 
     public OneInstanceServer() {
         super();    //call to super
-        this.setName("OneInstanceServer");
         this.setPriority(Thread.MIN_PRIORITY);
     }
 
     public final void run() {
+        this.setName("OneInstanceServer");
         Socket clientSocket = null;
         try {
             logger.info("Creating a local socket server");

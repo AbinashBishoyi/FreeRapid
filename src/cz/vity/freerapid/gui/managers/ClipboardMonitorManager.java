@@ -2,18 +2,25 @@ package cz.vity.freerapid.gui.managers;
 
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.UserProp;
+import cz.vity.freerapid.core.application.GlobalEDTExceptionHandler;
 import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.application.ApplicationContext;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
 /**
+ * Clipboard Monitoring je aktivni pouze, pokud je aplikace aktivni.
+ * Pri precvakavani oken dochazi k tomu, ze activeWindow je na jednu chvili null,
+ * proto se to kontroluje jeste v cyklu.
+ *
  * @author Vity
  */
 public class ClipboardMonitorManager extends Thread implements ClipboardOwner {
@@ -26,26 +33,19 @@ public class ClipboardMonitorManager extends Thread implements ClipboardOwner {
     private final static String URL_LIST_MIME_TYPE = "application/x-java-url; class=java.net.URL";
 
     private DataFlavor urlFlavor;
-
+    private volatile Object currentClipboardData;
 
     public ClipboardMonitorManager(ApplicationContext context, ManagerDirector managerDirector) {
         this.context = context;
         this.managerDirector = managerDirector;
         this.setPriority(Thread.MIN_PRIORITY);
-//        final MainApp app = (MainApp) context.getApplication();
-//        mainFrame = app.getMainFrame();
+
         synchronized (this) {
             threadSuspended = true;
         }
 
-        updateThreadSleep();
+        init();
 
-        AppPrefs.getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
-            public void preferenceChange(PreferenceChangeEvent evt) {
-                if (UserProp.CLIPBOARD_MONITORING.equals(evt.getKey()))
-                    updateThreadSleep();
-            }
-        });
     }
 
 
@@ -53,11 +53,9 @@ public class ClipboardMonitorManager extends Thread implements ClipboardOwner {
     public void run() {
         this.setName("ClipboardMonitorManager");
 
+        this.setUncaughtExceptionHandler(new GlobalEDTExceptionHandler());
+
         final Clipboard clipboard = context.getClipboard();
-
-        init();
-
-        Object currentStringData = "";
 
         boolean urlFlavorAvailable;
         while (!interrupted()) {
@@ -73,8 +71,6 @@ public class ClipboardMonitorManager extends Thread implements ClipboardOwner {
                 //ignore
             }
 
-//            final Window window = KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow();
-//            System.out.println("activeWindow = " + window);
             try {
                 final boolean stFlavorAvailable = clipboard.isDataFlavorAvailable(DataFlavor.stringFlavor);
                 urlFlavorAvailable = !stFlavorAvailable && clipboard.isDataFlavorAvailable(urlFlavor);
@@ -85,10 +81,12 @@ public class ClipboardMonitorManager extends Thread implements ClipboardOwner {
                     try {
                         final Object data = (stFlavorAvailable) ?
                                 contents.getTransferData(DataFlavor.stringFlavor) : contents.getTransferData(urlFlavor);
-                        if (!currentStringData.equals(data)) {
-                            currentStringData = data;
+                        if (!currentClipboardData.equals(data)) {
+                            currentClipboardData = data;
+
                             if (!isApplicationActive())
                                 paste();
+
                         }
                     } catch (UnsupportedFlavorException e) {
                         //ignore
@@ -104,28 +102,42 @@ public class ClipboardMonitorManager extends Thread implements ClipboardOwner {
         logger.info("ClipboardMonitorManager was interrupted");
     }
 
-    private boolean isApplicationActive() {
-        final Frame[] frames = Frame.getFrames();
-        boolean active = false;
-        for (Frame frame : frames) {
-            if (frame.isActive()) {
-                active = true;
-                break;
-            }
-        }
-        return active;
+    private static boolean isApplicationActive() {
+        return KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow() != null;
     }
 
     private void init() {
+        currentClipboardData = "";
         try {
             this.urlFlavor = new DataFlavor(URL_LIST_MIME_TYPE);
         } catch (ClassNotFoundException e) {
             LogUtils.processException(logger, e);
         }
+
+        updateThreadSleep();
+
+        AppPrefs.getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
+            public void preferenceChange(PreferenceChangeEvent evt) {
+                if (UserProp.CLIPBOARD_MONITORING.equals(evt.getKey()))
+                    updateThreadSleep();
+            }
+        });
+
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addPropertyChangeListener("activeWindow", new PropertyChangeListener() {
+
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (evt.getOldValue() != null && evt.getNewValue() == null) {
+                    copyClipboard(); //aby zkopirovane uvnitr aplikace se ihned neobjevilo jako zkopirovane externe
+                }
+                updateThreadSleep();
+            }
+        });
+
+
     }
 
     private boolean isEnabled() {
-        return AppPrefs.getProperty(UserProp.CLIPBOARD_MONITORING, UserProp.CLIPBOARD_MONITORING_DEFAULT);
+        return AppPrefs.getProperty(UserProp.CLIPBOARD_MONITORING, UserProp.CLIPBOARD_MONITORING_DEFAULT) && !isApplicationActive();
     }
 
     private void updateThreadSleep() {
@@ -163,6 +175,31 @@ public class ClipboardMonitorManager extends Thread implements ClipboardOwner {
         synchronized (this) {
             this.notify();
         }
+    }
+
+    private void copyClipboard() {
+
+        final Clipboard clipboard = context.getClipboard();
+        try {
+            final boolean stFlavorAvailable = clipboard.isDataFlavorAvailable(DataFlavor.stringFlavor);
+            final boolean urlFlavorAvailable = !stFlavorAvailable && clipboard.isDataFlavorAvailable(urlFlavor);
+            if (stFlavorAvailable || urlFlavorAvailable) {
+
+                final Transferable contents = clipboard.getContents(this);
+
+                try {
+                    currentClipboardData = (stFlavorAvailable) ?
+                            contents.getTransferData(DataFlavor.stringFlavor) : contents.getTransferData(urlFlavor);
+                } catch (UnsupportedFlavorException e) {
+                    //ignore
+                } catch (IOException e) {
+                    //ignore
+                }
+            }
+        } catch (IllegalStateException e) {
+            //ignore
+        }
+
     }
 
 }
