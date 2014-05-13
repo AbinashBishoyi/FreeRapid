@@ -85,6 +85,9 @@
 
         <native2ascii src="${classes.dir}" encoding="utf-8" includes="**/?*.stripped" excludes="log*,lookandfeels*"
                       dest="${classes.dir}" ext=".properties"/>
+        <delete>
+            <fileset dir="${classes.dir}" includes="**/?*.stripped"/>
+        </delete>
 
         <jar jarfile="${build.dir}/${mainjar.file}" compress="false">
             <manifest>
