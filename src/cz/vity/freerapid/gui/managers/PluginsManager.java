@@ -13,6 +13,7 @@ import org.java.plugin.PluginManager;
 import org.java.plugin.registry.PluginDescriptor;
 import org.java.plugin.standard.ShadingPathResolver;
 import org.java.plugin.standard.StandardPluginLocation;
+import org.java.plugin.util.ExtendedProperties;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.ApplicationContext;
 
@@ -44,11 +45,17 @@ public class PluginsManager {
         this.context = context;
         this.context.getApplication().addExitListener(new Application.ExitListener() {
             public boolean canExit(EventObject event) {
-                return false;
+                return true;
             }
 
             public void willExit(EventObject event) {
-                pluginManager.shutdown();
+                //pluginManager.isPluginActivated()
+                try {
+                    pluginManager.shutdown();
+                    //TODO neco co smaze soubory z tempu? framework na to sere!
+                } catch (Exception e) {
+                    //ignore
+                }
             }
         });
         loadPlugins();
@@ -61,6 +68,11 @@ public class PluginsManager {
 //        final ExtendedProperties config = new ExtendedProperties(Utils.loadProperties("jpf.properties", true));
         final ObjectFactory objectFactory = ObjectFactory.newInstance();
         final ShadingPathResolver resolver = new ShadingPathResolver();
+        try {
+            resolver.configure(new ExtendedProperties());
+        } catch (Exception e) {
+            LogUtils.processException(logger, e);
+        }
         //    pluginManager = objectFactory.createManager(objectFactory.createRegistry(), resolver);
         pluginManager = objectFactory.createManager(objectFactory.createRegistry(), resolver);
 
@@ -78,10 +90,10 @@ public class PluginsManager {
         try {
             if (plugins == null)
                 throw new IllegalStateException("Plugins directory does not exists");
-            final PluginManager.PluginLocation[] loc = new PluginManager.PluginLocation[plugins.length];
+            final int length = plugins.length;
+            final PluginManager.PluginLocation[] loc = new PluginManager.PluginLocation[length];
 
-
-            for (int i = 0; i < plugins.length; i++) {
+            for (int i = 0; i < length; i++) {
 
                 try {
                     final String path = fileToUrl(plugins[i]).toExternalForm();
