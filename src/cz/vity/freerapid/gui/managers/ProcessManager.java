@@ -46,6 +46,7 @@ public class ProcessManager extends Thread {
     private final java.util.Timer errorTimer = new java.util.Timer();
     private PluginsManager pluginsManager;
     private volatile int downloading;
+    private volatile int runChecking;
     private TaskService taskService;
     private ClientManager clientManager;
 
@@ -222,7 +223,9 @@ public class ProcessManager extends Thread {
         try {
             final DownloadTask task;
             if (runCheck) {
-                task = new RunCheckTask(context.getApplication(), client, downloadFile, service);
+                final RunCheckTask runCheckTask = new RunCheckTask(context.getApplication(), client, downloadFile, service);
+                runCheckTask.setWillSleep(++runChecking);
+                task = runCheckTask;
             } else
                 task = new DownloadTask(context.getApplication(), client, downloadFile, service);
             downloadFile.setTask(task);
@@ -251,6 +254,8 @@ public class ProcessManager extends Thread {
                 service.finishedDownloading(client);
             clientManager.pushWorkingClient(client);
             setDownloading(downloading - 1);
+            if (runCheck)
+                --runChecking;
 
             if (task != null) {
                 DownloadTaskError error = task.getServiceError();
