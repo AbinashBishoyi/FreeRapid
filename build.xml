@@ -126,6 +126,8 @@
             </manifest>
             <fileset dir="${classes.dir}" includes="**/plugins/**"/>
             <fileset dir="${classes.dir}" includes="**/**/EDTPropertyChangeSupport**"/>
+            <fileset dir="${classes.dir}" includes="**/**/Utils**"/>
+            <fileset dir="${classes.dir}" includes="**/**/LogUtils**"/>
         </jar>
 
     </target>
