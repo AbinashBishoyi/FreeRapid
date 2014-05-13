@@ -688,7 +688,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             }
 
             super.getTableCellRendererComponent(table, " " + value, isSelected, hasFocus, row, column);
-            this.setForeground(Color.BLUE);
+            //this.setForeground(Color.BLUE);
             if (value != null) {
                 this.setToolTipText(url);
                 this.setIcon(iconProvider.getIconImageByFileType(downloadFile.getFileType(), false));

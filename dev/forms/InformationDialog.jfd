@@ -46,7 +46,7 @@
            <class>com.jgoodies.forms.layout.FormLayout</class> 
            <void method="setProperty"> 
             <string>$columnSpecs</string> 
-            <string>49dlu, labelcompgap, default, labelcompgap, default:grow, labelcompgap, default, labelcompgap, max(min;50dlu)</string> 
+            <string>49dlu, labelcompgap, default, labelcompgap, default:grow, labelcompgap, default, labelcompgap, max(min;70dlu)</string> 
            </void> 
            <void method="setProperty"> 
             <string>$rowSpecs</string> 

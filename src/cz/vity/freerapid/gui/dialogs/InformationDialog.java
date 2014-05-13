@@ -111,6 +111,11 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
         progressBar.setStringPainted(true);
 
         Swinger.inputFocus(descriptionArea);
+
+        fieldFrom.setOpaque(false);
+        fieldSize.setOpaque(false);
+        fieldFrom.setBackground(this.getBackground());
+        fieldSize.setBackground(this.getBackground());
     }
 
     @org.jdesktop.application.Action
@@ -303,7 +308,7 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
                                 FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                                 FormFactory.DEFAULT_COLSPEC,
                                 FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                new ColumnSpec("max(min;50dlu)")
+                                new ColumnSpec("max(min;70dlu)")
                         },
                         new RowSpec[]{
                                 FormFactory.DEFAULT_ROWSPEC,

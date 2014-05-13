@@ -23,7 +23,6 @@ import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.OSDesktop;
 import org.jdesktop.application.Action;
 import org.jdesktop.swinghelper.buttonpanel.JXButtonPanel;
-import org.jdesktop.swingx.JXHyperlink;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.FilterPipeline;
 import org.jdesktop.swingx.decorator.PatternFilter;
@@ -37,7 +36,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -833,12 +831,14 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         }
     }
 
-    private static class URLCellRenderer extends JXHyperlink implements TableCellRenderer {
+    private static class URLCellRenderer extends DefaultTableCellRenderer {
+        private static final Color LINK_COLOR = Color.BLUE.brighter();
+
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             //value = String.format("<html><u><font color=blue>%s</blue></u></html>", value);
-            this.setRolloverEnabled(true);
-            this.setText(value.toString());
-            return this;
+
+            this.setForeground(LINK_COLOR);
+            return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         }
     }
 

@@ -157,7 +157,7 @@ public class InformationDialog extends JFrame {
 						FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
 						FormFactory.DEFAULT_COLSPEC,
 						FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-						new ColumnSpec("max(min;50dlu)")
+						new ColumnSpec("max(min;70dlu)")
 					},
 					new RowSpec[] {
 						FormFactory.DEFAULT_ROWSPEC,

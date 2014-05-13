@@ -26,10 +26,12 @@ import java.util.logging.Logger;
  * @author Vity
  */
 public final class LookAndFeels {
+    private final static String DEFAULT_LAF = "com.pagosoft.plaf.PgsLookAndFeel";
+    private final static String DEFAULT_THEME = "com.pagosoft.plaf.themes.SilverTheme";
     /**
      * Trida Kunstoffu
      */
-    private static final String KUNSTSTOFF = "org.jvnet.substance.skin.SubstanceMistAquaLookAndFeel";
+    private static final String KUNSTSTOFF = "com.incors.plaf.kunststoff.KunststoffLookAndFeel";
 
     /**
      * aktualne zvoleny lookandfeel
@@ -69,9 +71,9 @@ public final class LookAndFeels {
      */
     private LookAndFeels() {
         classLoader = initClassLoader();
-        final String selectedLookAndFeelClassName = AppPrefs.getProperty(FWProp.LOOK_AND_FEEL_SELECTED_KEY, KUNSTSTOFF);
+        final String selectedLookAndFeelClassName = AppPrefs.getProperty(FWProp.LOOK_AND_FEEL_SELECTED_KEY, DEFAULT_LAF);
         final boolean opaque = AppPrefs.getProperty(FWProp.LOOK_AND_FEEL_OPAQUE_KEY, true);
-        String selectedTheme = AppPrefs.getProperty(FWProp.THEME_SELECTED_KEY, "");
+        String selectedTheme = AppPrefs.getProperty(FWProp.THEME_SELECTED_KEY, DEFAULT_THEME);
 
         if (selectedTheme == null && selectedLookAndFeelClassName.equals(KUNSTSTOFF))
             selectedTheme = KunstoffMetalTheme.class.getName();

@@ -125,6 +125,8 @@ public class ToolbarManager implements PropertyChangeListener {
         if (s != null && s.endsWith("..."))
             s = s.substring(0, s.length() - 3);
         button.setText(s);
+        final Font font = button.getFont();
+        button.setFont(font.deriveFont(11.0F));
         button.setVerticalTextPosition(JButton.BOTTOM);
         button.setHorizontalTextPosition(JButton.CENTER);
         button.setMinimumSize(buttonDimension);
