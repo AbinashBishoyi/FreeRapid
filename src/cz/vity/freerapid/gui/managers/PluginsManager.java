@@ -11,7 +11,9 @@ import org.java.plugin.ObjectFactory;
 import org.java.plugin.Plugin;
 import org.java.plugin.PluginManager;
 import org.java.plugin.registry.PluginDescriptor;
+import org.java.plugin.standard.ShadingPathResolver;
 import org.java.plugin.standard.StandardPluginLocation;
+import org.jdesktop.application.Application;
 import org.jdesktop.application.ApplicationContext;
 
 import java.io.File;
@@ -40,6 +42,15 @@ public class PluginsManager {
 
     public PluginsManager(ApplicationContext context) {
         this.context = context;
+        this.context.getApplication().addExitListener(new Application.ExitListener() {
+            public boolean canExit(EventObject event) {
+                return false;
+            }
+
+            public void willExit(EventObject event) {
+                pluginManager.shutdown();
+            }
+        });
         loadPlugins();
     }
 
@@ -48,8 +59,10 @@ public class PluginsManager {
 
         logger.info("Init Plugins Manager");
 //        final ExtendedProperties config = new ExtendedProperties(Utils.loadProperties("jpf.properties", true));
-        pluginManager = ObjectFactory.newInstance().createManager();
-
+        final ObjectFactory objectFactory = ObjectFactory.newInstance();
+        final ShadingPathResolver resolver = new ShadingPathResolver();
+        //    pluginManager = objectFactory.createManager(objectFactory.createRegistry(), resolver);
+        pluginManager = objectFactory.createManager(objectFactory.createRegistry(), resolver);
 
         final File pluginsDir = new File(Utils.getAppPath(), "plugins");
         logger.info("Plugins dir: " + pluginsDir.getAbsolutePath());
@@ -76,6 +89,7 @@ public class PluginsManager {
                     final URL context = new URL("jar:" + path + "!/");
                     final URL manifest = new URL("jar:" + path + "!/plugin.xml");
 
+                    //loc[i] = StandardPluginLocation.create(plugins[i]);
                     loc[i] = new StandardPluginLocation(context, manifest);
                 } catch (MalformedURLException e) {
                     LogUtils.processException(logger, e);
@@ -90,7 +104,6 @@ public class PluginsManager {
             final Collection<PluginDescriptor> pluginDescriptorCollection = pluginManager.getRegistry().getPluginDescriptors();
             for (PluginDescriptor pluginDescriptor : pluginDescriptorCollection) {
                 final String id = pluginDescriptor.getId();
-                logger.info("Loading plugin with ID=" + id);
                 if (supportedPlugins.containsKey(id)) {
                     supportedPlugins.get(id).setPluginDescriptor(pluginDescriptor);
                 } else {
@@ -147,26 +160,28 @@ public class PluginsManager {
      * Vraci samotny plugin z registry podle jeho ID.
      * Provadi jeho dynamickou alokaci.
      *
-     * @param shareDownloadServiceID ID pluginu
+     * @param id ID pluginu
      * @return nacteny plugin - tato hodnota neni nikdy null
      * @throws NotSupportedDownloadServiceException
      *          pokud doslo k chybe pri ziskani pluginu podle daneho ID
      */
-    public ShareDownloadService getPluginInstance(final String shareDownloadServiceID) throws NotSupportedDownloadServiceException {
+    public ShareDownloadService getPluginInstance(final String id) throws NotSupportedDownloadServiceException {
 
         synchronized (lock) {
             Plugin p;
             try {
-                p = pluginManager.getPlugin(shareDownloadServiceID);
+                logger.info("Loading plugin with ID=" + id);
+                p = pluginManager.getPlugin(id);
             } catch (Exception e) {
-                throw new NotSupportedDownloadServiceException(shareDownloadServiceID);
+                LogUtils.processException(logger, e);
+                throw new NotSupportedDownloadServiceException(id);
             }
             if (!(p instanceof ShareDownloadService))
-                throw new NotSupportedDownloadServiceException(shareDownloadServiceID);
+                throw new NotSupportedDownloadServiceException(id);
             final ShareDownloadService plugin = (ShareDownloadService) p;
             if (plugin.getPluginContext() == null)
                 plugin.setPluginContext(createPluginContext());
-
+            logger.info("Plugin with ID=" + id + " was loaded");
             return plugin;
         }
     }
