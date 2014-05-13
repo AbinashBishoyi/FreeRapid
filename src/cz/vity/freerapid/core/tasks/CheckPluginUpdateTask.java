@@ -14,6 +14,7 @@ import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.xmlimport.XMLBind;
 import cz.vity.freerapid.xmlimport.ver1.Plugin;
 import cz.vity.freerapid.xmlimport.ver1.Plugins;
+import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.java.plugin.registry.Version;
@@ -57,12 +58,18 @@ public class CheckPluginUpdateTask extends CoreTask<ConnectResult, Void> {
             throw new NoAvailableConnection(getResourceMap().getString("noAvailableConnection"));
         final DownloadClient client = new DownloadClient();
         client.initClient(connectionSettingses.get(0));
-        final PostMethod postMethod = client.getPostMethod(AppPrefs.getProperty(UserProp.PLUGIN_CHECK_URL_SELECTED, Consts.PLUGIN_CHECK_UPDATE_URL));
-        postMethod.addParameter(PRODUCT_PARAM, Consts.PRODUCT);
-        postMethod.addParameter(VERSION__PARAM, Consts.VERSION);
-
+        HttpMethod method;
+        final String url = AppPrefs.getProperty(UserProp.PLUGIN_CHECK_URL_SELECTED, Consts.PLUGIN_CHECK_UPDATE_URL);
+        if (url.toLowerCase().endsWith(".xml")) { //for testing purposes
+            method = client.getGetMethod(url);
+        } else {
+            PostMethod postMethod = client.getPostMethod(url);
+            postMethod.addParameter(PRODUCT_PARAM, Consts.PRODUCT);
+            postMethod.addParameter(VERSION__PARAM, Consts.VERSION);
+            method = postMethod;
+        }
         message("message.connecting");
-        if (client.makeRequest(postMethod) != HttpStatus.SC_OK)
+        if (client.makeRequest(method) != HttpStatus.SC_OK)
             throw new IOException("Connection failed");
         message("message.checkingData");
         final Plugins rootPlugins = new XMLBind().loadSchema(client.getContentAsString());
