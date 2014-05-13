@@ -144,13 +144,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 //            return;
         final int[] indexes = getSelectedRows();
         final java.util.List<DownloadFile> files = manager.getSelectionToList(indexes);
-        final StringBuilder builder = new StringBuilder();
-        for (DownloadFile file : files) {
-            if (file.getOutputFile() != null && file.getOutputFile().exists())
-                builder.append('\n').append(Utils.shortenFileName(file.getOutputFile(), 60));
-        }
-
-        final String s = builder.toString();
+        final String s = getFileList(files);
         final int result;
         final boolean confirm = AppPrefs.getProperty(UserProp.CONFIRM_FILE_DELETE, UserProp.CONFIRM_FILE_DELETE_DEFAULT);
         final boolean showedDialog;
@@ -213,8 +207,35 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     @org.jdesktop.application.Action(enabledProperty = CANCEL_ACTION_ENABLED_PROPERTY)
     public void cancelAction() {
-        if (isCancelActionEnabled())
-            manager.cancelSelected(getSelectedRows());
+        if (!isCancelActionEnabled())
+            return;
+        final int[] indexes = getSelectedRows();
+        final java.util.List<DownloadFile> files = manager.getSelectionToList(indexes);
+        final String s = getFileList(files);
+        final int result;
+        final boolean confirm = AppPrefs.getProperty(UserProp.CONFIRM_FILE_DELETE, UserProp.CONFIRM_FILE_DELETE_DEFAULT);
+        final boolean deleteFiles;
+        if (confirm && !s.isEmpty()) {
+            result = Swinger.getChoiceYesNoCancel("message.areyousuredelete", s);
+            deleteFiles = result == Swinger.RESULT_YES;
+        } else {
+            result = Swinger.RESULT_YES;
+            deleteFiles = true;
+        }
+
+        if (result == Swinger.RESULT_YES || result == Swinger.RESULT_NO) {
+            manager.cancelSelected(getSelectedRows(), deleteFiles);
+        }
+    }
+
+    private String getFileList(List<DownloadFile> files) {
+        final StringBuilder builder = new StringBuilder();
+        for (DownloadFile file : files) {
+            if (file.getOutputFile() != null && file.getOutputFile().exists())
+                builder.append('\n').append(Utils.shortenFileName(file.getOutputFile(), 60));
+        }
+
+        return builder.toString();
     }
 
     @org.jdesktop.application.Action(enabledProperty = REMOVECOMPLETED_ACTION_ENABLED_PROPERTY)

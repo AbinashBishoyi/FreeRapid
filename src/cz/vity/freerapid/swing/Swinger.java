@@ -77,6 +77,11 @@ public class Swinger {
                 map.getString(MESSAGE_BTN_YES_CODE));
     }
 
+    public static int getChoiceYesNoCancel(final String messageCode, Object... args) {
+        final ResourceMap map = getResourceMap();
+        return getChoiceYesNoCancel(map.getString(messageCode, args));
+    }
+
     public static int getChoiceOKCancel(final String messageCode, Object... args) {
         final ResourceMap map = getResourceMap();
         return JOptionPane.showOptionDialog(getActiveFrame(), map.getString(messageCode, args), map.getString(MESSAGE_CONFIRM_TITLE_CODE),

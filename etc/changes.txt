@@ -13,6 +13,8 @@ Fixed - indicates a bug fix
 
 XXth October 2008 - FreeRapid Downloader 0.7 released
   Added : plugins - support for xtraupload.de [implemented by Lukiz]
+  Added : both traditional and simplified chinese translation [thanks to Jodyp!]
+  Added : confirm cancel if there are completed downloads [requested by Saymon] 
   Added : slovak translation [thanks to dDwarf!] 
   Added : autobackup files (filelist.xml, history.xml)  
   Added : new download state WAIT! to show to user "you have to wait XX minutes"
@@ -28,7 +30,7 @@ XXth October 2008 - FreeRapid Downloader 0.7 released
   Changed : removed heap memory indicator
   Changed : updated czech translation
   Changed : plugin file names renamed - version info removed
-  Fixed : NewLinks dialog - pressed ENTER caused calling insert action twice  
+  Fixed : NewLinks dialog - pressed key ENTER caused calling insert action twice  
   Fixed : fixed renaming file with many dots in its name
   Fixed : exception when target disk space has not enough space 
   Fixed : shift+DELETE shortcut does not work in History dialog

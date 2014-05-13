@@ -277,7 +277,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
 
     }
 
-    public void cancelSelected(final int[] indexes) {
+    public void cancelSelected(final int[] indexes, final boolean delete) {
         synchronized (this.lock) {
             List<DownloadFile> toRemoveList = selectionToList(indexes);
             for (DownloadFile file : toRemoveList) {
@@ -289,9 +289,11 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                     }
                     file.setState(DownloadState.CANCELLED);
                     file.setDownloaded(0);
-                    final File outputFile = file.getOutputFile();
-                    if (outputFile.exists()) {
-                        outputFile.delete();
+                    if (delete) {
+                        final File outputFile = file.getOutputFile();
+                        if (outputFile.exists()) {
+                            outputFile.delete();
+                        }
                     }
                 }
             }
