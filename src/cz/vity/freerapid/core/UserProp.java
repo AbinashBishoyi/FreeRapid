@@ -188,4 +188,7 @@ final public class UserProp {
     public static final String TEST_FILE = "testFiles"; //spusti test pred stahovanim
     public static final boolean TEST_FILE_DEFAULT = true;
 
+    public static final String SHOW_SERVICES_ICONS = "showServicesAsIcons"; //spusti test pred stahovanim
+    public static final boolean SHOW_SERVICES_ICONS_DEFAULT = true;
+
 }

@@ -46,7 +46,9 @@ import java.io.File;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
@@ -644,7 +646,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         tableColumnModel.getColumn(COLUMN_SIZE).setCellRenderer(new SizeCellRenderer(context));
         tableColumnModel.getColumn(COLUMN_SPEED).setCellRenderer(new SpeedCellRenderer());
         tableColumnModel.getColumn(COLUMN_AVERAGE_SPEED).setCellRenderer(new AverageSpeedCellRenderer());
-        tableColumnModel.getColumn(COLUMN_SERVICE).setCellRenderer(new ServiceCellRenderer(director.getPluginsManager()));
+        tableColumnModel.getColumn(COLUMN_SERVICE).setCellRenderer(new ServiceCellRenderer(director));
         tableColumnModel.getColumn(COLUMN_PROXY).setCellRenderer(new ConnectionCellRenderer(context));
 
         table.addMouseListener(new MouseAdapter() {
@@ -1220,33 +1222,45 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     private static class ServiceCellRenderer extends DefaultTableCellRenderer {
         private final PluginsManager manager;
+        private final Map<String, Icon> iconCache = new HashMap<String, Icon>();
 
-        private ServiceCellRenderer(PluginsManager manager) {
-            this.manager = manager;
+        private ServiceCellRenderer(ManagerDirector director) {
+            this.manager = director.getPluginsManager();
+            final Icon icon = director.getContext().getResourceMap().getIcon("serviceWithNoIcon");
+            iconCache.put("default", icon);
         }
 
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             final DownloadFile downloadFile = (DownloadFile) value;
             final String shareDownloadServiceID = downloadFile.getShareDownloadServiceID();
-            boolean hasImage = false;
+            assert shareDownloadServiceID != null;
             final String serviceName = downloadFile.getServiceName();
+            Icon faviconImage = null;
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            if (manager.hasPlugin(shareDownloadServiceID) && manager.getPluginMetadata(shareDownloadServiceID).hasFavicon()) {
-                try {
-                    final ShareDownloadService service = manager.getPluginInstance(shareDownloadServiceID);
-                    final Icon faviconImage = service.getFaviconImage();
-                    if (faviconImage != null) {
-                        this.setIcon(faviconImage);
-                        this.setHorizontalAlignment(CENTER);
-                        this.setText(null);
-                        this.setToolTipText(serviceName);
-                        hasImage = true;
+            if (AppPrefs.getProperty(UserProp.SHOW_SERVICES_ICONS, UserProp.SHOW_SERVICES_ICONS_DEFAULT)) {
+                faviconImage = iconCache.get(shareDownloadServiceID);
+                if (faviconImage == null) {
+                    try {
+                        if (manager.hasPlugin(shareDownloadServiceID) && manager.getPluginMetadata(shareDownloadServiceID).hasFavicon()) {
+                            final ShareDownloadService service = manager.getPluginInstance(shareDownloadServiceID);
+                            faviconImage = service.getFaviconImage();
+                            if (faviconImage != null) {
+                                iconCache.put(shareDownloadServiceID, faviconImage);
+                            }
+                        }
+                    } catch (NotSupportedDownloadServiceException e) {
+                        //do nothing
                     }
-                } catch (NotSupportedDownloadServiceException e) {
-                    //do nothing
+                    if (faviconImage == null)
+                        faviconImage = iconCache.get("default");
                 }
             }
-            if (!hasImage) {
+            if (faviconImage != null) {
+                this.setIcon(faviconImage);
+                this.setHorizontalAlignment(CENTER);
+                this.setText(null);
+                this.setToolTipText(serviceName);
+            } else {
                 this.setIcon(null);
                 this.setHorizontalAlignment(LEFT);
                 this.setToolTipText(null);
