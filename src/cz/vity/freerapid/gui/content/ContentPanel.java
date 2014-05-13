@@ -208,7 +208,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         final int[] indexes = getSelectedRows();
         final java.util.List<DownloadFile> files = manager.getSelectionToList(indexes);
         for (DownloadFile file : files) {
-            OSDesktop.openFile(file.getOutputFile().getParentFile());
+            OSDesktop.openDirectoryForFile(file.getOutputFile());
         }
     }
 

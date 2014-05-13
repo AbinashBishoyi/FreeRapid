@@ -50,6 +50,7 @@ import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -249,8 +250,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         final int[] indexes = getSelectedRows();
         final java.util.List<FileHistoryItem> files = manager.getSelectionToList(indexes);
         for (FileHistoryItem file : files) {
-            if (file.getOutputFile().exists())
-                OSDesktop.openFile(file.getOutputFile().getParentFile());
+            OSDesktop.openDirectoryForFile(file.getOutputFile());
         }
     }
 
@@ -678,6 +678,27 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
     }
 
     private void showPopMenu(MouseEvent e) {
+        int[] selectedRows = getSelectedRows();//vraci model
+        ListSelectionModel selectionModel = table.getSelectionModel();
+        int rowNumber = table.rowAtPoint(e.getPoint());//vraci view
+        if (rowNumber != -1) {
+            if (selectedRows.length <= 0) {
+                if (getVisibleRowCount() > 0) {
+                    selectionModel.setSelectionInterval(rowNumber, rowNumber);//chce view
+                }
+            } else {
+                Arrays.sort(selectedRows);
+                if (Arrays.binarySearch(selectedRows, table.convertRowIndexToModel(rowNumber)) < 0) {
+                    selectionModel.setValueIsAdjusting(true);
+                    table.clearSelection();
+                    selectionModel.setSelectionInterval(rowNumber, rowNumber);//chce view
+                    selectionModel.setValueIsAdjusting(false);
+                }
+            }
+        } else table.clearSelection();
+//        selectedRows = getSelectedRows();//znovu
+
+
         final MenuManager menuManager = director.getMenuManager();
         final JPopupMenu popup = new JPopupMenu();
         final Object[] objects = {"openFileAction", "deleteFileAction", "openDirectoryAction", MenuManager.MENU_SEPARATOR, "copyContent", MenuManager.MENU_SEPARATOR, "copyURL", "openInBrowser", MenuManager.MENU_SEPARATOR, "removeSelectedAction"};
