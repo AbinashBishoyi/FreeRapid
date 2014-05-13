@@ -104,9 +104,11 @@ final public class DownloadClient implements HttpDownloadClient {
 
         if (statuscode == HttpStatus.SC_INTERNAL_SERVER_ERROR || statuscode == HttpStatus.SC_FORBIDDEN) {//bezpecnost
             logger.severe("Status code je 500");
+            updateAsString(method);
             return null;
         } else if (statuscode >= HttpStatus.SC_INTERNAL_SERVER_ERROR) {
             logger.severe("Status code > 500:" + statuscode);
+            updateAsString(method);
             return null;
         }
 

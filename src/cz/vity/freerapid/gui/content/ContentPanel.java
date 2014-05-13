@@ -612,13 +612,13 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         table.setAutoCreateColumnsFromModel(false);
         table.setEditable(false);
         table.setColumnControlVisible(true);
+        table.setColumnSelectionAllowed(false);
         table.setSortable(false);
         //table.setColumnMargin(10);
         final WinampMoveStyle w = new WinampMoveStyle();
         table.addMouseListener(w);
         table.addMouseMotionListener(w);
 
-        table.packAll();
 
         table.setTransferHandler(new URLTransferHandler(director) {
             @Override
@@ -675,6 +675,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             }
         });
 
+        table.packAll();
+
         final InputMap inputMap = table.getInputMap();
         final ActionMap actionMap = table.getActionMap();
 
@@ -706,6 +708,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         //inputMap.remove("find");
         inputMap.remove(KeyStroke.getKeyStroke("F8"));
         actionMap.remove("find");
+        actionMap.remove("focusHeader");
 
 //        paste();
 
