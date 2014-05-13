@@ -10,9 +10,7 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
+import java.net.*;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -40,7 +38,8 @@ public abstract class URLTransferHandler extends TransferHandler {
     }
 
     private List<URL> textURIListToFileList(String data) {
-        final Set<URL> list = new LinkedHashSet<URL>();
+        final Set<URI> list = new HashSet<URI>();
+        final LinkedList<URL> result = new LinkedList<URL>();
 //        final String[] strings = data.split("\\p{Space}");
 //        logger.info("Dragged string data " + data);
 //        for (String s : strings) {
@@ -59,7 +58,7 @@ public abstract class URLTransferHandler extends TransferHandler {
 //            }
 //
 //        }
-        data = data.replaceAll("\\p{Punct}http", "  http");//2 spaces
+        data = data.replaceAll("(\\p{Punct}|[\\t\\n\\x0B\\f\\r])http", "  http");//2 spaces
         final Matcher match = REGEXP_URL.matcher(data);
         int start = 0;
         final String http = "http://";
@@ -72,17 +71,24 @@ public abstract class URLTransferHandler extends TransferHandler {
                 if (pluginsManager.isSupported(url)) {
                     final String s = url.toExternalForm();
                     boolean containable = false;
-                    for (URL u : list) {
-                        final String previouslyAdded = u.toExternalForm();
+                    for (URI u : list) {
+                        final String previouslyAdded = u.toURL().toExternalForm();
                         if (previouslyAdded.length() > s.length() && previouslyAdded.startsWith(s)) {
                             containable = true;
                             break;
                         }
                     }
-                    if (!containable)
-                        list.add(url);
+                    if (!containable) {
+                        final URI uri = url.toURI();
+                        if (!list.contains(uri)) {
+                            list.add(uri);
+                            result.add(uri.toURL());
+                        }
+                    }
                 }
             } catch (MalformedURLException e) {
+                //ignore
+            } catch (URISyntaxException e) {
                 //ignore
             }
             start = match.end();
@@ -92,7 +98,8 @@ public abstract class URLTransferHandler extends TransferHandler {
 //            String s = st.nextToken().trim();
 //            // the line is a comment (as per the RFC 2483)
 //        }
-        return new LinkedList<URL>(list);
+
+        return result;
     }
 
     @Override
