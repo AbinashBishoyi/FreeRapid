@@ -12,6 +12,7 @@ import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 
 import java.io.*;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
@@ -198,7 +199,7 @@ public class DownloadClient implements HttpDownloadClient {
             isStream = false;
             logger.warning("No Content-Type!");
         } else {
-            final String value = contentType.getValue();
+            final String value = contentType.getValue().toLowerCase(Locale.ENGLISH);
             final boolean isImage = value.startsWith("image/");
             final boolean isAudioVideo = value.startsWith("audio/") || value.startsWith("video/");
             if (!value.startsWith("application/") && !isImage && !isAudioVideo) {
