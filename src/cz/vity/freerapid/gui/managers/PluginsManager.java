@@ -3,10 +3,11 @@ package cz.vity.freerapid.gui.managers;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.model.PluginMetaData;
 import cz.vity.freerapid.plugimpl.PluginContextImpl;
+import cz.vity.freerapid.plugimpl.StandardDialogSupport;
 import cz.vity.freerapid.plugins.exceptions.NotSupportedDownloadServiceException;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
-import cz.vity.freerapid.plugins.webclient.PluginContext;
-import cz.vity.freerapid.plugins.webclient.ShareDownloadService;
+import cz.vity.freerapid.plugins.webclient.interfaces.PluginContext;
+import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
 import org.java.plugin.ObjectFactory;
@@ -245,7 +246,7 @@ public class PluginsManager {
     }
 
     private PluginContext createPluginContext() {
-        return PluginContextImpl.create(null, null);
+        return PluginContextImpl.create(new StandardDialogSupport(context), null);
     }
 
     public List<PluginMetaData> getSupportedPlugins() {

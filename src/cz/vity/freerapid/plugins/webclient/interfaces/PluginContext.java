@@ -1,10 +1,10 @@
-package cz.vity.freerapid.plugins.webclient;
+package cz.vity.freerapid.plugins.webclient.interfaces;
 
 /**
  * @author Ladislav Vitasek
  */
 public interface PluginContext {
-    OptionsDialogSupport getDialogSupport();
+    DialogSupport getDialogSupport();
 
     ConfigurationStorageSupport getConfigurationStorageSupport();
 }

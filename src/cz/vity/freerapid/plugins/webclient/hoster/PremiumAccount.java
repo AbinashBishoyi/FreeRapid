@@ -1,4 +1,4 @@
-package cz.vity.freerapid.plugins.webclient;
+package cz.vity.freerapid.plugins.webclient.hoster;
 
 import org.jdesktop.application.AbstractBean;
 

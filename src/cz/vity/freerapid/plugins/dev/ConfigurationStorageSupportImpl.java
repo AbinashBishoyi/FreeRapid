@@ -1,6 +1,6 @@
 package cz.vity.freerapid.plugins.dev;
 
-import cz.vity.freerapid.plugins.webclient.ConfigurationStorageSupport;
+import cz.vity.freerapid.plugins.webclient.interfaces.ConfigurationStorageSupport;
 
 /**
  * @author Ladislav Vitasek

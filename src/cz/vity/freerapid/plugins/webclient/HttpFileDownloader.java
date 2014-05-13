@@ -19,9 +19,12 @@ public interface HttpFileDownloader {
 
     boolean isTerminated();
 
+    @Deprecated
     BufferedImage getCaptchaImage(final String url) throws FailedToLoadCaptchaPictureException;
 
+    @Deprecated
     String askForCaptcha(BufferedImage image) throws Exception;
 
+    @Deprecated
     String getCaptcha(final String url) throws FailedToLoadCaptchaPictureException;
 }

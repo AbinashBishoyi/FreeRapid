@@ -1,4 +1,4 @@
-package cz.vity.freerapid.plugins.webclient;
+package cz.vity.freerapid.plugins.webclient.utils;
 
 import com.sun.media.jai.codec.ImageCodec;
 import com.sun.media.jai.codec.ImageEncoder;
@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 /**
  * @author Ladislav Vitasek
  */
-class GOCR {
+public class GOCR {
     private final static Logger logger = Logger.getLogger(GOCR.class.getName());
 
     private final BufferedImage image;
@@ -24,14 +24,14 @@ class GOCR {
     private final static String PATH_WINDOWS = "tools/gocr/gocr046.exe";
     private final static String PATH_LINUX = "gocr";
 
-    GOCR(BufferedImage image, String commandLineOptions) {
+    public GOCR(BufferedImage image, String commandLineOptions) {
 
         this.image = image;
         this.commandLineOptions = commandLineOptions;
     }
 
 
-    String recognize() throws IOException {
+    public String recognize() throws IOException {
 
         final String command;
         if (Utils.isWindows()) {

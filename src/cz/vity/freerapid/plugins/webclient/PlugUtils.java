@@ -1,6 +1,7 @@
 package cz.vity.freerapid.plugins.webclient;
 
 import cz.vity.freerapid.plugins.webclient.utils.Entities;
+import cz.vity.freerapid.plugins.webclient.utils.GOCR;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;

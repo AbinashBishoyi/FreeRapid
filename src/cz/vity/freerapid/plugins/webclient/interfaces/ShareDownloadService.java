@@ -1,4 +1,6 @@
-package cz.vity.freerapid.plugins.webclient;
+package cz.vity.freerapid.plugins.webclient.interfaces;
+
+import cz.vity.freerapid.plugins.webclient.HttpFileDownloader;
 
 /**
  * @author Vity

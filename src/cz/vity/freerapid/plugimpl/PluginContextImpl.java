@@ -1,15 +1,15 @@
 package cz.vity.freerapid.plugimpl;
 
-import cz.vity.freerapid.plugins.webclient.ConfigurationStorageSupport;
-import cz.vity.freerapid.plugins.webclient.OptionsDialogSupport;
-import cz.vity.freerapid.plugins.webclient.PluginContext;
+import cz.vity.freerapid.plugins.webclient.interfaces.ConfigurationStorageSupport;
+import cz.vity.freerapid.plugins.webclient.interfaces.DialogSupport;
+import cz.vity.freerapid.plugins.webclient.interfaces.PluginContext;
 
 /**
  * @author Ladislav Vitasek
  */
 public class PluginContextImpl implements PluginContext {
 
-    private OptionsDialogSupport optionsDialogSupport;
+    private DialogSupport dialogSupport;
     private ConfigurationStorageSupport storageSupport;
 
 
@@ -17,17 +17,17 @@ public class PluginContextImpl implements PluginContext {
         return storageSupport;
     }
 
-    private PluginContextImpl(OptionsDialogSupport optionsDialogSupport, ConfigurationStorageSupport storageSupport) {
-        this.optionsDialogSupport = optionsDialogSupport;
+    private PluginContextImpl(DialogSupport dialogSupport, ConfigurationStorageSupport storageSupport) {
+        this.dialogSupport = dialogSupport;
         this.storageSupport = storageSupport;
     }
 
-    public OptionsDialogSupport getDialogSupport() {
-        return optionsDialogSupport;
+    public DialogSupport getDialogSupport() {
+        return dialogSupport;
     }
 
-    public static PluginContext create(OptionsDialogSupport optionsDialogSupport, ConfigurationStorageSupport storageSupport) {
-        return new PluginContextImpl(optionsDialogSupport, storageSupport);
+    public static PluginContext create(DialogSupport dialogSupport, ConfigurationStorageSupport storageSupport) {
+        return new PluginContextImpl(dialogSupport, storageSupport);
     }
 
 }

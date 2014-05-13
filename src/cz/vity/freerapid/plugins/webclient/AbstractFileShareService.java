@@ -1,6 +1,9 @@
 package cz.vity.freerapid.plugins.webclient;
 
 import cz.vity.freerapid.plugins.exceptions.NotSupportedDownloadByServiceException;
+import cz.vity.freerapid.plugins.webclient.interfaces.PluginContext;
+import cz.vity.freerapid.plugins.webclient.interfaces.PluginRunner;
+import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 import org.java.plugin.Plugin;
 import org.java.plugin.registry.PluginAttribute;
 import org.java.plugin.registry.PluginDescriptor;
@@ -49,17 +52,22 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
     }
 
     public void run(HttpFileDownloader downloader) throws Exception {
-        if (!supportURL(downloader.getDownloadFile().getFileUrl().toExternalForm())) {
-            throw new NotSupportedDownloadByServiceException();
-        }
+        checkSupportedURL(downloader);
+        final PluginRunner pluginRunner = getPluginRunnerInstance();
+        if (pluginRunner != null)
+            pluginRunner.run(downloader);
+
+    }
+
+    public void runCheck(HttpFileDownloader downloader) throws Exception {
+        checkSupportedURL(downloader);
+        final PluginRunner pluginRunner = getPluginRunnerInstance();
+        if (pluginRunner != null)
+            pluginRunner.runCheck(downloader);
     }
 
     public boolean supportsRunCheck() {
         return false;
-    }
-
-    public void runCheck(HttpFileDownloader downloader) throws Exception {
-
     }
 
     public void showOptions() throws Exception {
@@ -70,7 +78,17 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
         return pluginContext;
     }
 
+    protected void checkSupportedURL(HttpFileDownloader downloader) throws NotSupportedDownloadByServiceException {
+        if (!supportURL(downloader.getDownloadFile().getFileUrl().toExternalForm())) {
+            throw new NotSupportedDownloadByServiceException();
+        }
+    }
+
     public void setPluginContext(PluginContext pluginContext) {
         this.pluginContext = pluginContext;
+    }
+
+    protected PluginRunner getPluginRunnerInstance() {
+        return null;
     }
 }

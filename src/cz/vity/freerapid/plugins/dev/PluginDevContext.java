@@ -1,8 +1,8 @@
 package cz.vity.freerapid.plugins.dev;
 
-import cz.vity.freerapid.plugins.webclient.ConfigurationStorageSupport;
-import cz.vity.freerapid.plugins.webclient.OptionsDialogSupport;
-import cz.vity.freerapid.plugins.webclient.PluginContext;
+import cz.vity.freerapid.plugins.webclient.interfaces.ConfigurationStorageSupport;
+import cz.vity.freerapid.plugins.webclient.interfaces.DialogSupport;
+import cz.vity.freerapid.plugins.webclient.interfaces.PluginContext;
 
 /**
  * @author Ladislav Vitasek
@@ -12,7 +12,7 @@ public class PluginDevContext implements PluginContext {
 
     }
 
-    public OptionsDialogSupport getDialogSupport() {
+    public DialogSupport getDialogSupport() {
         return null;
     }
 

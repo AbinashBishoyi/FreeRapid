@@ -2,7 +2,7 @@ package cz.vity.freerapid.gui.managers;
 
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.HttpDownloadClient;
-import cz.vity.freerapid.plugins.webclient.ShareDownloadService;
+import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 
 import java.util.*;
 

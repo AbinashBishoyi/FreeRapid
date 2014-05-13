@@ -23,7 +23,7 @@ import cz.vity.freerapid.gui.managers.ClientManager;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
 import cz.vity.freerapid.gui.managers.MenuManager;
 import cz.vity.freerapid.model.PluginMetaData;
-import cz.vity.freerapid.plugins.webclient.ShareDownloadService;
+import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 import cz.vity.freerapid.swing.*;
 import cz.vity.freerapid.swing.components.PopdownButton;
 import cz.vity.freerapid.swing.models.RecentsFilesComboModel;
