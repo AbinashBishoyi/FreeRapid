@@ -5,6 +5,7 @@ package cz.vity.freerapid.core;
  */
 final public class UserProp {
 
+
     private UserProp() {
     }
 
@@ -210,5 +211,8 @@ final public class UserProp {
 
     public static final String SHOW_PAYPAL = "showPaypal";
     public static final boolean SHOW_PAYPAL_DEFAULT = true;
+
+    public static final String USE_SYSTEM_PROXIES = "useSystemProxies";
+    public static final boolean USE_SYSTEM_PROXIES_DEFAULT = false;
 
 }

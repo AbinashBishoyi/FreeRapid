@@ -35,6 +35,8 @@ public class ClientManager {
     public ClientManager(ManagerDirector managerDirector) {
         this.managerDirector = managerDirector;
         defaultConnectionSettings.setDefault(true);
+        final String useSystemProxies = String.valueOf(AppPrefs.getProperty(UserProp.USE_SYSTEM_PROXIES, UserProp.USE_SYSTEM_PROXIES_DEFAULT));
+        System.setProperty("java.net.useSystemProxies", useSystemProxies);
 
         popCount = 0;
         updateConnectionSettings();
