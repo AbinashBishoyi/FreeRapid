@@ -5,6 +5,7 @@ import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.params.HttpClientParams;
 
 import java.io.*;
 import java.util.logging.Level;
@@ -32,6 +33,7 @@ public class DownloadClient implements HttpDownloadClient {
         this.settings = settings;
         client.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
         this.client.setHttpConnectionManager(new SimpleHttpConnectionManager(true));
+
         HttpState initialState = new HttpState();
         if (settings.isProxySet()) {
             HostConfiguration configuration = new HostConfiguration();
@@ -41,6 +43,7 @@ public class DownloadClient implements HttpDownloadClient {
                 initialState.setProxyCredentials(AuthScope.ANY, new NTCredentials(settings.getUserName(), settings.getPassword(), "", ""));
         } else client.setHostConfiguration(new HostConfiguration());
 
+        client.getParams().setBooleanParameter(HttpClientParams.ALLOW_CIRCULAR_REDIRECTS, true);
         // Get initial state object
 
         client.setState(initialState);

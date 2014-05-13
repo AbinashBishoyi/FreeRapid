@@ -15,7 +15,7 @@ public class Consts {
     /**
      * Version
      */
-    public static final String VERSION = "0.5";
+    public static final String VERSION = "0.6";
 
     /**
      * verze a jmeno programu
@@ -59,7 +59,7 @@ public class Consts {
 
     public static final String WEBURL_CHECKNEWVERSION = "http://wordrider.net/checkfrd.php";
 
-    public static final String WEBURL = "http://wordrider.net/forum/read.php?6,414";
+    public static final String WEBURL = "http://wordrider.net/freerapid";
 
     // hodnoty pro defaultni hodnoty pripojeni
 
