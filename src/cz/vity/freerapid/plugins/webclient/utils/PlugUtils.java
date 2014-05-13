@@ -24,6 +24,10 @@ public final class PlugUtils {
      * instance of logger
      */
     private final static Logger logger = Logger.getLogger(PlugUtils.class.getName());
+    /**
+     * regexp pattern for form parameter matching - cached because of speed optimization
+     */
+    private static Pattern parameterPattern;
 
 
     /**
@@ -158,7 +162,10 @@ public final class PlugUtils {
             throw new IllegalArgumentException("You have to provide some parameter names");
         final Set<String> set = new HashSet<String>(parameters.length);
         set.addAll(Arrays.asList(parameters));
-        final Matcher matcher = Pattern.compile("name=(\"|')?(.*?)(\"|'|\\s).*?value=(\"|')?(.*?)(\"|'|\\s*>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE).matcher(content);
+        if (parameterPattern == null)
+            parameterPattern = Pattern.compile("name=(\"|')?(.*?)(\"|'|\\s).*?value=(\"|')?(.*?)(\"|'|\\s*>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+
+        final Matcher matcher = parameterPattern.matcher(content);
         int start = 0;
         String param;
         while (matcher.find(start)) {
