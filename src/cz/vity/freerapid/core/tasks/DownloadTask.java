@@ -380,7 +380,6 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     private void setCompleted() {
         downloadFile.setCompleteTaskDuration(this.getExecutionDuration(TimeUnit.SECONDS));
         downloadFile.setState(DownloadState.COMPLETED);
-
     }
 
     private void runMoveFileTask(boolean overWriteFile) {
@@ -409,7 +408,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
             @Override
             public void succeeded(TaskEvent<Void> event) {
                 this.succeeded = true;
-                downloadFile.setState(DownloadState.COMPLETED);
+                setCompleted();
             }
 
             @Override
@@ -481,7 +480,8 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     public String askForCaptcha(final BufferedImage image) throws Exception {
         SwingUtilities.invokeAndWait(new Runnable() {
             public void run() {
-                Swinger.bringToFront(((SingleFrameApplication) getApplication()).getMainFrame());
+                if (AppPrefs.getProperty(UserProp.ACTIVATE_WHEN_CAPTCHA, UserProp.ACTIVATE_WHEN_CAPTCHA_DEFAULT))
+                    Swinger.bringToFront(((SingleFrameApplication) getApplication()).getMainFrame());
                 captchaResult = "";
                 while (captchaResult.isEmpty()) {
                     captchaResult = (String) JOptionPane.showInputDialog(null, getResourceMap().getString("InsertWhaYouSee"), getResourceMap().getString("InsertCaptcha"), JOptionPane.PLAIN_MESSAGE, new ImageIcon(image), null, null);

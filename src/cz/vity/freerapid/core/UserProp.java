@@ -106,6 +106,9 @@ public class UserProp {
     public static final String OUTPUT_FILE_BUFFER_SIZE = "outputFileBufferSize";
     public static final String INPUT_BUFFER_SIZE = "inputBufferSize";
 
+    public static final String ACTIVATE_WHEN_CAPTCHA = "activateOnCaptcha";
+    public static final boolean ACTIVATE_WHEN_CAPTCHA_DEFAULT = true;
+
     public static final String PAYPAL = "paypal";
     public static final String DEMO_URL = "demoURL";
 }

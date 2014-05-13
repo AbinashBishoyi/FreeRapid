@@ -292,7 +292,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
         return completeTaskDuration;
     }
 
-    public void setCompleteTaskDuration(long completeTaskDuration) {
+    public void setCompleteTaskDuration(final long completeTaskDuration) {
         this.completeTaskDuration = completeTaskDuration;
     }
 }

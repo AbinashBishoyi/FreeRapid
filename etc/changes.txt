@@ -11,6 +11,14 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
+XXth October 2008 - FreeRapid Downloader 0.62 released - minor release
+  Added : option to minimize to Tray on Close
+  Added : option to disable using default connection (only connections from proxy list will be used)
+  Changed : minor redesign Apperance panel in User Preferences dialog
+  Changed : improved pre-allocation files
+  Changed : minor changes in RapidShare, FileFactory plugins
+  Fixed : removed czech labels from open file dialog 
+
 20th September 2008 - FreeRapid Downloader 0.61 released - bug fix release + 1 great option ;-)
   Fixed : updated a few labels  
   Fixed : clipboard monitoring doesn't work properly on Windows [thanks to ATom!]
