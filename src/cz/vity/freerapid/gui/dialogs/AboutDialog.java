@@ -4,6 +4,7 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import cz.vity.freerapid.core.Consts;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.application.Action;
@@ -11,6 +12,9 @@ import org.jdesktop.application.Action;
 import javax.swing.*;
 import java.applet.AudioClip;
 import java.awt.*;
+import java.net.URL;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 import java.util.logging.Logger;
 
 /**
@@ -28,6 +32,13 @@ public class AboutDialog extends AppDialog {
         try {
             initComponents();
             build();
+            String title = this.getTitle();
+            title = title + ' ' + Consts.VERSION;
+            final String buildNumber = readBuildNumber();
+            if (buildNumber != null)
+                title = title + "  build #" + buildNumber;
+            this.setTitle(title);
+
         } catch (Exception e) {
             LogUtils.processException(logger, e);
         }
@@ -62,6 +73,21 @@ public class AboutDialog extends AppDialog {
 
 
     }
+
+
+    private String readBuildNumber() {
+        try {
+            String classContainer = AboutDialog.class.getProtectionDomain().getCodeSource().getLocation().toString();
+            URL manifestUrl = new URL("jar:" + classContainer + "!/META-INF/MANIFEST.MF");
+            Manifest manifest = new Manifest(manifestUrl.openStream());
+            final Attributes attributes = manifest.getMainAttributes();
+            return attributes.getValue("Build");
+        } catch (Exception e) {
+            LogUtils.processException(logger, e);
+            return null;
+        }
+    }
+
 
     private void buildGUI() {
         final Icon imageIcon = Swinger.getResourceMap().getIcon("splash.iconImage");
