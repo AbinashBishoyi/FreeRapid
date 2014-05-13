@@ -8,12 +8,10 @@ import org.java.plugin.ObjectFactory;
 import org.java.plugin.PluginManager;
 import org.java.plugin.registry.PluginDescriptor;
 import org.java.plugin.standard.StandardPluginLocation;
-import org.java.plugin.util.ExtendedProperties;
 import org.jdesktop.application.ApplicationContext;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Hashtable;
@@ -39,8 +37,8 @@ public class PluginsManager {
     private void loadPlugins() {
 
         logger.info("Init Plugins Manager");
-        final ExtendedProperties config = new ExtendedProperties(Utils.loadProperties("jpf.properties", true));
-        final PluginManager pluginManager = ObjectFactory.newInstance(config).createManager();
+//        final ExtendedProperties config = new ExtendedProperties(Utils.loadProperties("jpf.properties", true));
+        final PluginManager pluginManager = ObjectFactory.newInstance().createManager();
 
 
         final File pluginsDir = new File(Utils.getAppPath(), "plugins");
@@ -96,15 +94,16 @@ public class PluginsManager {
 //        loadedPlugins.put(factoryShareService.getName(), factoryShareService);
     }
 
-    private static URL fileToUrl(final File plugin) {
-        try {
-            return plugin.toURI().toURL();
-        } catch (MalformedURLException e) {
-            LogUtils.processException(logger, e);
-            return null;
-        }
-    }
+//    private static URL fileToUrl(final File plugin) {
+//        try {
+//            return plugin.toURI().toURL();
+//        } catch (MalformedURLException e) {
+//            LogUtils.processException(logger, e);
+//            return null;
+//        }
+//    }
 
+    //
     public ShareDownloadService getPlugin(String shareDownloadServiceID) throws NotSupportedDownloadServiceException {
         if (!loadedPlugins.containsKey(shareDownloadServiceID))
             throw new NotSupportedDownloadServiceException(shareDownloadServiceID);
