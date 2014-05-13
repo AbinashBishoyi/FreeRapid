@@ -44,6 +44,7 @@ public class MenuManager {
     private final static String RADIO2 = "*2";
     private final static String CHECKED = "!";
     private ViewActions viewActions;
+    private JMenu useConnections;
 
 //    private final static String AUTOSEARCH_PROPERTY = "autosearch";
 //    private boolean isAutoSearchEnabled = false;
@@ -258,22 +259,11 @@ public class MenuManager {
 //    }
 
     private JMenu createConnectionsMenu() {
-        final JMenu useConnections = new JMenu();
+        useConnections = new JMenu();
         useConnections.setName("useConnectionsMenu");
 
-        final ClientManager clientManager = director.getClientManager();
-        final List<ConnectionSettings> connectionSettingses = clientManager.getAvailableConnections();
-        for (final ConnectionSettings settings : connectionSettingses) {
-            final JCheckBoxMenuItem item = new JCheckBoxMenuItem(settings.toString());
-            item.setSelected(settings.isEnabled());
-            item.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    settings.setEnabled(!settings.isEnabled());
-                    director.getDataManager().checkQueue();
-                }
-            });
-            useConnections.add(item);
-        }
+        updateConnectionSettings(director.getClientManager().getAvailableConnections());
+
         return useConnections;
     }
 
@@ -350,5 +340,21 @@ public class MenuManager {
             }
         }
         return menu;
+    }
+
+    public void updateConnectionSettings(List<ConnectionSettings> connectionSettingses) {
+        useConnections.removeAll();
+        for (final ConnectionSettings settings : connectionSettingses) {
+            final JCheckBoxMenuItem item = new JCheckBoxMenuItem(settings.toString());
+            item.setSelected(settings.isEnabled());
+            item.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    settings.setEnabled(!settings.isEnabled());
+                    director.getDataManager().checkQueue();
+                }
+            });
+            useConnections.add(item);
+        }
+
     }
 }

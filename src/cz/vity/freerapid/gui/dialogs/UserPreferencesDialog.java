@@ -19,6 +19,7 @@ import cz.vity.freerapid.core.*;
 import cz.vity.freerapid.gui.MyPreferencesAdapter;
 import cz.vity.freerapid.gui.MyPresentationModel;
 import cz.vity.freerapid.gui.dialogs.filechooser.OpenSaveDialogFactory;
+import cz.vity.freerapid.gui.managers.ClientManager;
 import cz.vity.freerapid.swing.LaF;
 import cz.vity.freerapid.swing.LookAndFeels;
 import cz.vity.freerapid.swing.Swinger;
@@ -52,6 +53,8 @@ public class UserPreferencesDialog extends AppDialog {
     @SuppressWarnings({"FieldAccessedSynchronizedAndUnsynchronized"})
     private ResourceMap bundle;
     private final ApplicationContext context;
+    private ClientManager clientManager;
+    private boolean updateDefaultConnection;
 
     private static enum Card {
         CARD1, CARD2, CARD3, CARD4, CARD5
@@ -60,6 +63,8 @@ public class UserPreferencesDialog extends AppDialog {
     public UserPreferencesDialog(Frame owner, ApplicationContext context) throws Exception {
         super(owner, true);
         this.context = context;
+        updateDefaultConnection = false;
+        clientManager = ((MainApp) context.getApplication()).getManagerDirector().getClientManager();
         this.setName("UserPreferencesDialog");
         bundle = getResourceMap();
         try {
@@ -139,6 +144,7 @@ public class UserPreferencesDialog extends AppDialog {
         this.getApp().prepareDialog(connectDialog, true);
         if (connectDialog.getModalResult() == ConnectDialog.RESULT_OK) {
             model.setBuffering(true);
+            updateDefaultConnection = true;
         }
     }
 
@@ -328,6 +334,9 @@ public class UserPreferencesDialog extends AppDialog {
 
     @org.jdesktop.application.Action
     public void okBtnAction() {
+        final boolean updateProxyConnectionList = isBuffering(UserProp.PROXY_LIST_PATH) || isBuffering(UserProp.USE_PROXY_LIST);
+        updateDefaultConnection = updateDefaultConnection || isBuffering(UserProp.USE_DEFAULT_CONNECTION);
+
         model.triggerCommit();
 //        final String s = AppPrefs.getProperty(UserProp.PROXY_LIST_PATH, "");
 //        System.out.println("s = " + s);
@@ -346,7 +355,20 @@ public class UserPreferencesDialog extends AppDialog {
 
         }
 
+        if (updateDefaultConnection && updateProxyConnectionList) {
+            clientManager.updateConnectionSettings();
+        } else {
+            if (updateDefaultConnection)
+                clientManager.updateDefaultConnection();
+            if (updateProxyConnectionList)
+                clientManager.updateProxyConnectionList();
+        }
+
         doClose();
+    }
+
+    private boolean isBuffering(final String property) {
+        return model.getBufferedModel(property).isBuffering();
     }
 
     private void updateLng() {
@@ -1094,6 +1116,7 @@ public class UserPreferencesDialog extends AppDialog {
                         panelConnectionSettingsBuilder.add(panelErrorHandling, cc.xy(1, 5));
                         panelConnectionSettingsBuilder.add(labelRequiresRestart, cc.xy(1, 7));
                     }
+                    labelRequiresRestart.setVisible(false);
                     panelCard.add(panelConnectionSettings, "CARD2");
                 }
                 contentPanel.add(panelCard, BorderLayout.CENTER);

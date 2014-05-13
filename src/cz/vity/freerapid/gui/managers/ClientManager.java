@@ -28,24 +28,36 @@ public class ClientManager {
     private static final String PROXY_LIST_DEFAULT_PATH = new File(Utils.getAppPath(), "proxy.list").getAbsolutePath();
     public static final int MAX_DOWNLOADING = 9;
 
+    private ConnectionSettings defaultConnectionSettings = new ConnectionSettings();
+
     private int popCount;
+    private final Object connectionSettingsLock = new Object();
+    private final ManagerDirector managerDirector;
 
-    public ClientManager() {
-        if (AppPrefs.getProperty(UserProp.USE_DEFAULT_CONNECTION, UserProp.USE_DEFAULT_CONNECTION_DEFAULT)) {
-            final ConnectionSettings connectionSettings = new ConnectionSettings();
-            initDefaultProxySettings(connectionSettings);
-            availableConnections.add(connectionSettings);
-        }
+    public ClientManager(ManagerDirector managerDirector) {
+        this.managerDirector = managerDirector;
+
         popCount = 0;
-        //maxClients = AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, 5);
-        //String input = "    vity:heslo@exfort.org:8787 vity2:angor@@exfort2.org:8788  exfort3.org:5478  pavel@exfort.org:564 exfort5.org";
+        updateConnectionSettings();
+    }
 
+    private void updateProxies() {
         if (AppPrefs.getProperty(UserProp.USE_PROXY_LIST, true)) {
             final String file = AppPrefs.getProperty(UserProp.PROXY_LIST_PATH, PROXY_LIST_DEFAULT_PATH);
             final File f = new File(file);
             if (f.exists() && f.isFile() && f.canRead()) {
                 readProxyList(f);
             }
+        }
+    }
+
+    private void updateDefault() {
+        if (AppPrefs.getProperty(UserProp.USE_DEFAULT_CONNECTION, UserProp.USE_DEFAULT_CONNECTION_DEFAULT)) {
+            final boolean isEnabled = defaultConnectionSettings.isEnabled();
+            defaultConnectionSettings = new ConnectionSettings();
+            initDefaultProxySettings(defaultConnectionSettings);
+            defaultConnectionSettings.setEnabled(isEnabled);
+            availableConnections.add(defaultConnectionSettings);
         }
     }
 
@@ -71,6 +83,9 @@ public class ClientManager {
     }
 
     private void readProxyList(File f) {
+        //maxClients = AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, 5);
+        //String input = "    vity:heslo@exfort.org:8787 vity2:angor@@exfort2.org:8788  exfort3.org:5478  pavel@exfort.org:564 exfort5.org";
+
         final Pattern patternWhole = Pattern.compile("((\\w*)(:(.*?))?@)?(.*?):(\\d{2,5})");
         final String[] strings = Utils.loadFile(f).split("(\\s)");
         for (String s : strings) {
@@ -104,7 +119,9 @@ public class ClientManager {
     }
 
     public List<ConnectionSettings> getAvailableConnections() {
-        return Collections.unmodifiableList(availableConnections);
+        synchronized (connectionSettingsLock) {
+            return Collections.unmodifiableList(availableConnections);
+        }
     }
 
     public synchronized HttpDownloadClient popWorkingClient() {
@@ -125,4 +142,23 @@ public class ClientManager {
 //        return AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT);
 //    }
 
+    public void updateDefaultConnection() {
+        updateConnectionSettings();
+    }
+
+    public void updateConnectionSettings() {
+        synchronized (connectionSettingsLock) {
+            availableConnections.clear();
+            updateDefault();
+
+            updateProxies();
+        }
+        final MenuManager menuManager = managerDirector.getMenuManager();
+        if (menuManager != null)
+            menuManager.updateConnectionSettings(getAvailableConnections());
+    }
+
+    public void updateProxyConnectionList() {
+        updateConnectionSettings();
+    }
 }

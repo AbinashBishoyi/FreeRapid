@@ -42,7 +42,6 @@ public class ProcessManager extends Thread {
     private boolean threadSuspended;
     //private final Object queueLock;
     private final Object manipulation = new Object();
-    private List<ConnectionSettings> availableConnections;
     private final java.util.Timer errorTimer = new java.util.Timer();
     private PluginsManager pluginsManager;
     private volatile int downloading;
@@ -59,7 +58,6 @@ public class ProcessManager extends Thread {
         this.context = context;
         taskService = director.getTaskServiceManager().getTaskService(TaskServiceManager.DOWNLOAD_SERVICE);
         clientManager = director.getClientManager();
-        availableConnections = clientManager.getAvailableConnections();
 
         setDownloading(0);
 
@@ -134,7 +132,7 @@ public class ProcessManager extends Thread {
             }
 
             if (!forceDownload) {
-                for (ConnectionSettings settings : availableConnections) {
+                for (ConnectionSettings settings : clientManager.getAvailableConnections()) {
                     if (!settings.isEnabled())
                         continue;
                     if (downloadService.canDownloadWith(settings)) {

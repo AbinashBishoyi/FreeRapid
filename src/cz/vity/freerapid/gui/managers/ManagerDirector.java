@@ -76,7 +76,7 @@ public class ManagerDirector {
         this.rootContainer.setPreferredSize(new Dimension(700, 550));
 
         taskServiceManager = new TaskServiceManager(context);
-        this.clientManager = new ClientManager();
+        this.clientManager = new ClientManager(this);
 
         this.fileHistoryManager = new FileHistoryManager(this, context);
 

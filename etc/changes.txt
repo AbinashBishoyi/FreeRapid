@@ -27,6 +27,7 @@ XXth October 2008 - FreeRapid Downloader 0.7 released
   Added : autoshutdown options - standby, hibernate, reboot, shutdown, quit when all downloads complete; 
           Linux/MacOS users can configure syscmd.properties file
   Added : command line option to reset application properties (--reset)
+  Changed : updating proxy list or proxy settings for default connection does not require a restart anymore  
   Changed : force download passes max current number of connections (9 concurrent downloads is a limit)
   Changed : remapped selection shortcuts - HOME-first row , END-last row, ctrl+HOME-first column, ctrl+END-last column
   Changed : removed heap memory indicator

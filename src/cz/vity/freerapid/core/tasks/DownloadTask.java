@@ -317,7 +317,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 
     @Override
     protected void failed(Throwable cause) {
-        if (!(cause instanceof YouHaveToWaitException) && !(cause instanceof URLNotAvailableAnymoreException))
+        if (!(cause instanceof YouHaveToWaitException) && !(cause instanceof URLNotAvailableAnymoreException) && !(cause instanceof CaptchaEntryInputMismatchException))
             super.failed(cause);
         error(cause);
         if (cause instanceof NotEnoughSpaceException) {

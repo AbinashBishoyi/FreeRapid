@@ -129,6 +129,8 @@ IV.    Known bugs and Limitations
 - Substance look and feel throws org.jvnet.substance.api.UiThreadingViolationException:
                                                      Component creation must be done on Event Dispatch Thread
     X ignore this exception in the app.log
+- java.lang.UnsupportedClassVersionError exception
+    X You are using old Java version, you should use version Sun Java version 6 or newer
 - DirectoryChooser throws java.lang.InternalError or freezes on Win Vista (64bit)
     X ignore this exception in the app.log
 - java.lang.ClassCastException: java.awt.TrayIcon cannot be cast to java.awt.Component
