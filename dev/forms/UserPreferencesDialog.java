@@ -207,14 +207,17 @@ public class UserPreferencesDialog extends JDialog {
 								pluginPanelSettings.setBorder(new CompoundBorder(
 									new EmptyBorder(4, 4, 4, 4),
 									new EtchedBorder()));
+								pluginPanelSettings.setLayout(new BorderLayout());
 
 								//======== scrollPane1 ========
 								{
 									scrollPane1.setViewportView(pluginTable);
 								}
+								pluginPanelSettings.add(scrollPane1, BorderLayout.CENTER);
 
 								//======== pluginsButtonPanel ========
 								{
+									pluginsButtonPanel.setBorder(new EmptyBorder(4, 4, 4, 4));
 
 									//---- labelPluginInfo ----
 									labelPluginInfo.setText(bundle.getString("labelPluginInfo.text"));
@@ -243,19 +246,7 @@ public class UserPreferencesDialog extends JDialog {
 									pluginsButtonPanelBuilder.add(popmenuButton,    cc.xy(5, 1));
 									pluginsButtonPanelBuilder.add(btnPluginOptions, cc.xy(7, 1));
 								}
-
-								PanelBuilder pluginPanelSettingsBuilder = new PanelBuilder(new FormLayout(
-									ColumnSpec.decodeSpecs("default:grow"),
-									new RowSpec[] {
-										new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-										FormFactory.LINE_GAP_ROWSPEC,
-										FormFactory.DEFAULT_ROWSPEC,
-										FormFactory.LINE_GAP_ROWSPEC,
-										FormFactory.GLUE_ROWSPEC
-									}), pluginPanelSettings);
-
-								pluginPanelSettingsBuilder.add(scrollPane1,        cc.xy(1, 1));
-								pluginPanelSettingsBuilder.add(pluginsButtonPanel, cc.xy(1, 3));
+								pluginPanelSettings.add(pluginsButtonPanel, BorderLayout.SOUTH);
 							}
 							pluginTabbedPane.addTab(bundle.getString("pluginPanelSettings.tab.title"), pluginPanelSettings);
 
@@ -323,7 +314,7 @@ public class UserPreferencesDialog extends JDialog {
 							new RowSpec[] {
 								new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
 								FormFactory.RELATED_GAP_ROWSPEC,
-								FormFactory.DEFAULT_ROWSPEC
+								new RowSpec("15px")
 							}), panelPlugins);
 
 						panelPluginsBuilder.add(pluginTabbedPane, cc.xy(1, 1));

@@ -36,7 +36,6 @@ import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.swinghelper.buttonpanel.JXButtonPanel;
 import org.jdesktop.swingx.JXTable;
-import org.jdesktop.swingx.decorator.HighlighterFactory;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
@@ -44,6 +43,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import java.awt.*;
@@ -186,9 +186,6 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
         pluginTable.setHorizontalScrollEnabled(true);
 
-
-        pluginTable.setHighlighters(HighlighterFactory.createAlternateStriping());
-
         pluginTable.setSortable(true);
         pluginTable.setColumnMargin(10);
         pluginTable.setRolloverEnabled(true);
@@ -238,10 +235,11 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         tableColumn.setWidth(22);
         tableColumn.setMaxWidth(22);
         pluginTable.setRolloverEnabled(true);
-        Swinger.updateColumn(pluginTable, "ID", PluginMetaDataTableModel.COLUMN_ID, -1, 70, null);
-        Swinger.updateColumn(pluginTable, "Version", PluginMetaDataTableModel.COLUMN_VERSION, -1, 40, null);
-        Swinger.updateColumn(pluginTable, "Services", PluginMetaDataTableModel.COLUMN_SERVICES, -1, 100, null);
-        Swinger.updateColumn(pluginTable, "Author", PluginMetaDataTableModel.COLUMN_AUTHOR, -1, -1, null);
+        //final GrayHighlighter grayHighlighter = new GrayHighlighter();
+        Swinger.updateColumn(pluginTable, "ID", PluginMetaDataTableModel.COLUMN_ID, -1, 70, new GrayHighlighter());
+        Swinger.updateColumn(pluginTable, "Version", PluginMetaDataTableModel.COLUMN_VERSION, -1, 40, new GrayHighlighter());
+        Swinger.updateColumn(pluginTable, "Services", PluginMetaDataTableModel.COLUMN_SERVICES, -1, 100, new GrayHighlighter());
+        Swinger.updateColumn(pluginTable, "Author", PluginMetaDataTableModel.COLUMN_AUTHOR, -1, -1, new GrayHighlighter());
         Swinger.updateColumn(pluginTable, "WWW", PluginMetaDataTableModel.COLUMN_WWW, -1, -1, SwingXUtils.getHyperLinkTableCellRenderer());
 
         pluginTable.addMouseListener(new MouseAdapter() {
@@ -270,7 +268,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 //        };
 //        tableActionMap.put("getFocusFind", focusFilterAction);
 
-        pluginTable.getParent().setPreferredSize(new Dimension(230, 200));
+        pluginTable.getParent().setPreferredSize(new Dimension(230, 150));
 
         tableInputMap.put(SwingUtils.getShiftKeyStroke(KeyEvent.VK_HOME), "selectFirstRowExtendSelection");
         tableInputMap.put(SwingUtils.getShiftKeyStroke(KeyEvent.VK_END), "selectLastRowExtendSelection");
@@ -297,14 +295,18 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         if (rows.length <= 0)
             return;
 
-        final TableModel tableModel = pluginTable.getModel();
+        final PluginMetaDataTableModel tableModel = (PluginMetaDataTableModel) pluginTable.getModel();
 
         final int selCol = pluginTable.convertColumnIndexToModel(pluginTable.getColumnModel().getSelectionModel().getLeadSelectionIndex());
         if (selCol == PluginMetaDataTableModel.COLUMN_ACTIVE || selCol == PluginMetaDataTableModel.COLUMN_UPDATE)
             return;
-        final Object value = tableModel.getValueAt(rows[0], selCol);
+        Object value;
+        if (selCol == PluginMetaDataTableModel.COLUMN_WWW)
+            value = tableModel.getObject(rows[0]).getWWW();
+        else value = tableModel.getValueAt(rows[0], selCol);
 
-        SwingUtils.copyToClipboard(value.toString(), this);
+        if (value != null)
+            SwingUtils.copyToClipboard(value.toString(), this);
     }
 
 
@@ -1268,14 +1270,17 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                                 pluginPanelSettings.setBorder(new CompoundBorder(
                                         new EmptyBorder(4, 4, 4, 4),
                                         new EtchedBorder()));
+                                pluginPanelSettings.setLayout(new BorderLayout());
 
                                 //======== scrollPane1 ========
                                 {
                                     scrollPane1.setViewportView(pluginTable);
                                 }
+                                pluginPanelSettings.add(scrollPane1, BorderLayout.CENTER);
 
                                 //======== pluginsButtonPanel ========
                                 {
+                                    pluginsButtonPanel.setBorder(new EmptyBorder(4, 4, 4, 4));
 
                                     //---- labelPluginInfo ----
                                     labelPluginInfo.setName("labelPluginInfo");
@@ -1293,7 +1298,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                                                     new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
                                                     FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                                                     FormFactory.DEFAULT_COLSPEC,
-                                                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                                    FormFactory.UNRELATED_GAP_COLSPEC,
                                                     FormFactory.DEFAULT_COLSPEC,
                                                     FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                                                     FormFactory.UNRELATED_GAP_COLSPEC
@@ -1304,19 +1309,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                                     pluginsButtonPanelBuilder.add(popmenuButton, cc.xy(5, 1));
                                     pluginsButtonPanelBuilder.add(btnPluginOptions, cc.xy(7, 1));
                                 }
-
-                                PanelBuilder pluginPanelSettingsBuilder = new PanelBuilder(new FormLayout(
-                                        ColumnSpec.decodeSpecs("default:grow"),
-                                        new RowSpec[]{
-                                                new RowSpec(RowSpec.CENTER, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-                                                FormFactory.LINE_GAP_ROWSPEC,
-                                                FormFactory.DEFAULT_ROWSPEC,
-                                                FormFactory.LINE_GAP_ROWSPEC,
-                                                FormFactory.GLUE_ROWSPEC
-                                        }), pluginPanelSettings);
-
-                                pluginPanelSettingsBuilder.add(scrollPane1, cc.xy(1, 1));
-                                pluginPanelSettingsBuilder.add(pluginsButtonPanel, cc.xy(1, 3));
+                                pluginPanelSettings.add(pluginsButtonPanel, BorderLayout.SOUTH);
                             }
                             pluginTabbedPane.addTab(bundle.getString("pluginPanelSettings.tab.title"), pluginPanelSettings);
 
@@ -1381,9 +1374,9 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                         PanelBuilder panelPluginsBuilder = new PanelBuilder(new FormLayout(
                                 ColumnSpec.decodeSpecs("default:grow"),
                                 new RowSpec[]{
-                                        new RowSpec(RowSpec.CENTER, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
+                                        new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
                                         FormFactory.RELATED_GAP_ROWSPEC,
-                                        FormFactory.DEFAULT_ROWSPEC
+                                        new RowSpec("5px")
                                 }), panelPlugins);
 
                         panelPluginsBuilder.add(pluginTabbedPane, cc.xy(1, 1));
@@ -1765,4 +1758,16 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
     }
 
 
+    private static class GrayHighlighter extends DefaultTableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            final Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            row = table.convertRowIndexToModel(row);
+            if (Boolean.FALSE.equals(table.getModel().getValueAt(row, PluginMetaDataTableModel.COLUMN_ACTIVE))) {
+                comp.setForeground(Color.GRAY);
+            } else
+                comp.setForeground(Color.BLACK);
+            return comp;
+        }
+    }
 }

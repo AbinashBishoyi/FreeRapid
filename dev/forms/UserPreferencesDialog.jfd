@@ -342,7 +342,7 @@
                </void> 
                <void method="setProperty"> 
                 <string>$rowSpecs</string> 
-                <string>fill:default:grow, relgap, default</string> 
+                <string>fill:default:grow, relgap, 15px</string> 
                </void> 
               </object> 
               <void method="setProperty"> 
@@ -377,15 +377,7 @@
                  <object class="com.jformdesigner.model.FormContainer"> 
                   <string>javax.swing.JPanel</string> 
                   <object class="com.jformdesigner.model.FormLayoutManager"> 
-                   <class>com.jgoodies.forms.layout.FormLayout</class> 
-                   <void method="setProperty"> 
-                    <string>$columnSpecs</string> 
-                    <string>default:grow</string> 
-                   </void> 
-                   <void method="setProperty"> 
-                    <string>$rowSpecs</string> 
-                    <string>fill:default:grow, linegap, default, linegap, glue</string> 
-                   </void> 
+                   <class>java.awt.BorderLayout</class> 
                   </object> 
                   <void method="setProperty"> 
                    <string>border</string> 
@@ -439,14 +431,10 @@
                     </void> 
                    </object> 
                    <object class="com.jformdesigner.model.FormLayoutConstraints"> 
-                    <class>com.jgoodies.forms.layout.CellConstraints</class> 
+                    <class>java.lang.String</class> 
                     <void method="setProperty"> 
-                     <string>gridX</string> 
-                     <int>1</int> 
-                    </void> 
-                    <void method="setProperty"> 
-                     <string>gridY</string> 
-                     <int>1</int> 
+                     <string>value</string> 
+                     <string>Center</string> 
                     </void> 
                    </object> 
                   </void> 
@@ -464,6 +452,17 @@
                       <string>default</string> 
                      </void> 
                     </object> 
+                    <void method="setProperty"> 
+                     <string>border</string> 
+                     <object class="javax.swing.border.EmptyBorder"> 
+                      <object class="java.awt.Insets"> 
+                       <int>4</int> 
+                       <int>4</int> 
+                       <int>4</int> 
+                       <int>4</int> 
+                      </object> 
+                     </object> 
+                    </void> 
                     <void method="auxiliary"> 
                      <void method="setProperty"> 
                       <string>JavaCodeGenerator.variableLocal</string> 
@@ -565,14 +564,10 @@
                     </void> 
                    </object> 
                    <object class="com.jformdesigner.model.FormLayoutConstraints"> 
-                    <class>com.jgoodies.forms.layout.CellConstraints</class> 
+                    <class>java.lang.String</class> 
                     <void method="setProperty"> 
-                     <string>gridX</string> 
-                     <int>1</int> 
-                    </void> 
-                    <void method="setProperty"> 
-                     <string>gridY</string> 
-                     <int>3</int> 
+                     <string>value</string> 
+                     <string>South</string> 
                     </void> 
                    </object> 
                   </void> 
@@ -964,8 +959,8 @@
       <void method="setProperty"> 
        <string>size</string> 
        <object class="java.awt.Dimension"> 
-        <int>540</int> 
-        <int>415</int> 
+        <int>520</int> 
+        <int>375</int> 
        </object> 
       </void> 
      </object> 
