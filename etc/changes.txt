@@ -11,6 +11,10 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
+XXth October 2008 - FreeRapid Downloader 0.71 released
+  Changed : UI - open folder (Ctrl+Enter) on file which hasn’t been yet downloaded  [requested by Tuiz] 
+  Changed : UI - choose another file by right click [requested by Tuiz]
+
 22th October 2008 - FreeRapid Downloader 0.7 released
   Added : plugins - support for shareator.com [implemented by Lukiz, thanks!]
   Added : plugins - support for load.to [implemented by Lukiz, thanks!]

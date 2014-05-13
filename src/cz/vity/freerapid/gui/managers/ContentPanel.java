@@ -185,7 +185,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         }
     }
 
-    @org.jdesktop.application.Action(enabledProperty = COMPLETED_OK_ACTION_ENABLED_PROPERTY)
+    @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
     public void openDirectoryAction() {
         final int[] indexes = getSelectedRows();
         final java.util.List<DownloadFile> files = manager.getSelectionToList(indexes);
@@ -706,6 +706,25 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     }
 
     private void showPopMenu(MouseEvent e) {
+        int[] selectedRows = getSelectedRows();//vraci model
+        ListSelectionModel selectionModel = table.getSelectionModel();
+        int rowNumber = table.rowAtPoint(e.getPoint());//vraci view
+        if (rowNumber != -1) {
+            if (selectedRows.length <= 0) {
+                if (getVisibleRowCount() > 0) {
+                    selectionModel.setSelectionInterval(rowNumber, rowNumber);//chce view
+                }
+            } else {
+                Arrays.sort(selectedRows);
+                if (Arrays.binarySearch(selectedRows, table.convertRowIndexToModel(rowNumber)) < 0) {
+                    selectionModel.setValueIsAdjusting(true);
+                    table.clearSelection();
+                    selectionModel.setSelectionInterval(rowNumber, rowNumber);//chce view
+                    selectionModel.setValueIsAdjusting(false);
+                }
+            }
+        } else table.clearSelection();
+        selectedRows = getSelectedRows();//znovu
         final JPopupMenu popup = new JPopupMenu();
         final ApplicationActionMap map = this.context.getActionMap();
         popup.add(map.get("downloadInformationAction"));
@@ -731,7 +750,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         context.getResourceMap().injectComponent(forceMenu);
 
 //      menu.add(forceMenu);
-        boolean forceEnabled = isSelectedEnabled() && this.manager.hasDownloadFilesStates(getSelectedRows(), DownloadState.forceEnabledStates);
+        boolean forceEnabled = isSelectedEnabled() && this.manager.hasDownloadFilesStates(selectedRows, DownloadState.forceEnabledStates);
         forceMenu.setEnabled(forceEnabled);
         final List<ConnectionSettings> connectionSettingses = director.getClientManager().getAvailableConnections();
         for (ConnectionSettings settings : connectionSettingses) {
