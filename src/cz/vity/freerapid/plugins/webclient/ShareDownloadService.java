@@ -10,6 +10,8 @@ public interface ShareDownloadService {
 
     int getMaxDownloadsFromOneIP();
 
+    boolean supportsRunCheck();
+
 //    Icon getFaviconImage();
 //
 //    Icon getSmallImage();
@@ -17,6 +19,8 @@ public interface ShareDownloadService {
 //    Icon getBigImage();
 
     void run(HttpFileDownloader downloader) throws Exception;
+
+    void runCheck(HttpFileDownloader downloader) throws Exception;
 
     void showOptions() throws Exception;
 

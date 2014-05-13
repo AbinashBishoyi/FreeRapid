@@ -235,7 +235,7 @@ public class UserPreferencesDialog extends JDialog {
 											new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
 											FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
 											FormFactory.DEFAULT_COLSPEC,
-											FormFactory.UNRELATED_GAP_COLSPEC,
+											new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
 											FormFactory.DEFAULT_COLSPEC,
 											FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
 											FormFactory.UNRELATED_GAP_COLSPEC
@@ -314,7 +314,7 @@ public class UserPreferencesDialog extends JDialog {
 							new RowSpec[] {
 								new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
 								FormFactory.RELATED_GAP_ROWSPEC,
-								new RowSpec("15px")
+								new RowSpec("5px")
 							}), panelPlugins);
 
 						panelPluginsBuilder.add(pluginTabbedPane, cc.xy(1, 1));

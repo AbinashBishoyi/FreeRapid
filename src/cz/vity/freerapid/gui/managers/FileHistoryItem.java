@@ -8,7 +8,7 @@ import java.net.URL;
 /**
  * @author Vity
  */
-public class FileHistoryItem {
+final public class FileHistoryItem {
     private URL url;
     private long finishedTime;
 

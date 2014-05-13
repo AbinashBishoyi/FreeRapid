@@ -1031,10 +1031,10 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 //                    value = String.format("%s (%s)", stateToString(state), secondsToHMin(downloadFile.getSleep()));
 //                else value = "";
             }
-            if (state == DownloadState.ERROR || state == DownloadState.SLEEPING) {
+            if (state == DownloadState.ERROR || state == DownloadState.SLEEPING || state == DownloadState.DISABLED) {
                 final String errorMessage = downloadFile.getErrorMessage();
                 if (errorMessage != null) {
-                    if (state == DownloadState.ERROR)
+                    if (state == DownloadState.ERROR || state == DownloadState.DISABLED)
                         value = value + " - " + errorMessage.replaceAll("<.*?>", "");
                     this.setToolTipText(String.format(tooltip, errorMessage));
                 }
@@ -1074,7 +1074,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             } else
             if (state == DownloadState.CANCELLED || state == DownloadState.ERROR || state == DownloadState.DELETED) {
                 this.setBackground(BG_RED);
-            } else if (state == DownloadState.PAUSED) {
+            } else if (state == DownloadState.PAUSED || state == DownloadState.DISABLED) {
                 this.setBackground(Color.BLACK);
             } else if (state == DownloadState.QUEUED) {
                 this.setBackground(BG_ORANGE);

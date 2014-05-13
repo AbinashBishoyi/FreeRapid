@@ -6,6 +6,7 @@ import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.application.GlobalEDTExceptionHandler;
 import cz.vity.freerapid.core.tasks.DownloadTask;
 import cz.vity.freerapid.core.tasks.DownloadTaskError;
+import cz.vity.freerapid.core.tasks.RunCheckTask;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.exceptions.NotSupportedDownloadServiceException;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
@@ -116,15 +117,11 @@ public class ProcessManager extends Thread {
     private boolean execute(Collection<DownloadFile> files, boolean forceDownload) {
         for (DownloadFile file : files) {
             logger.info("Getting downloadFile " + file);
-            final String serviceID = file.getShareDownloadServiceID();
-            final ShareDownloadService service;
-            try {
-                service = pluginsManager.getPluginInstance(serviceID);
-            } catch (NotSupportedDownloadServiceException e) {
-                file.setState(DownloadState.ERROR);
-                file.setErrorMessage("Not supported service - " + serviceID);
+
+            final ShareDownloadService service = pluginsManager.getService(file);
+            if (service == null)
                 continue;
-            }
+            final String serviceID = file.getShareDownloadServiceID();
             DownloadService downloadService = services.get(serviceID);
             if (downloadService == null) {
                 downloadService = new DownloadService(service);
@@ -133,10 +130,14 @@ public class ProcessManager extends Thread {
 
             if (!forceDownload) {
                 final List<ConnectionSettings> connectionSettingses = clientManager.getRotatedEnabledConnections();
-                for (ConnectionSettings settings : connectionSettingses) {
-                    if (downloadService.canDownloadWith(settings)) {
-                        queueDownload(file, settings, downloadService, service);
-                        break;
+                if (service.supportsRunCheck() && !file.isCheckedFileName() && !connectionSettingses.isEmpty()) {
+                    queueDownload(file, connectionSettingses.get(0), downloadService, service, true);
+                } else {
+                    for (ConnectionSettings settings : connectionSettingses) {
+                        if (downloadService.canDownloadWith(settings)) {
+                            queueDownload(file, settings, downloadService, service, false);
+                            break;
+                        }
                     }
                 }
             } else {
@@ -145,7 +146,7 @@ public class ProcessManager extends Thread {
                 } else {
                     final ConnectionSettings settings = forceDownloadFiles.remove(file);
                     logger.info("Force downloading with settings " + settings);
-                    queueDownload(file, settings, downloadService, service);
+                    queueDownload(file, settings, downloadService, service, false);
                 }
             }
             if (!canCreateAnotherConnection(forceDownload))
@@ -167,7 +168,7 @@ public class ProcessManager extends Thread {
         queueUpdated();
     }
 
-    private void queueDownload(final DownloadFile downloadFile, final ConnectionSettings settings, DownloadService downloadService, final ShareDownloadService service) {
+    private void queueDownload(final DownloadFile downloadFile, final ConnectionSettings settings, DownloadService downloadService, final ShareDownloadService service, final boolean runCheck) {
         if (downloadFile.getState() != DownloadState.QUEUED) {
             logger.info("QUEUED not found - found " + downloadFile.getState());
             return;
@@ -175,15 +176,17 @@ public class ProcessManager extends Thread {
         final HttpDownloadClient client = clientManager.popWorkingClient();
         setDownloading(downloading + 1);
         client.initClient(settings);
-        downloadService.addDownloadingClient(client);
+        if (!runCheck)
+            downloadService.addDownloadingClient(client);
         downloadFile.setState(DownloadState.GETTING);
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                if (downloadFile.getState() != DownloadState.GETTING)
-                    finishedDownloading(downloadFile, client, null);
-                else
-                    startDownload(downloadFile, client, service);
+                if (downloadFile.getState() != DownloadState.GETTING) {
+                    finishedDownloading(downloadFile, client, null, runCheck);
+                } else {
+                    startDownload(downloadFile, client, service, runCheck);
+                }
             }
         });
     }
@@ -213,17 +216,21 @@ public class ProcessManager extends Thread {
         //}
     }
 
-    private void startDownload(final DownloadFile downloadFile, final HttpDownloadClient client, ShareDownloadService service) {
+    private void startDownload(final DownloadFile downloadFile, final HttpDownloadClient client, ShareDownloadService service, final boolean runCheck) {
         final DownloadState s = downloadFile.getState();
         logger.info("starting download in state s = " + s);
         try {
-            final DownloadTask task = new DownloadTask(context.getApplication(), client, downloadFile, service);
+            final DownloadTask task;
+            if (runCheck) {
+                task = new RunCheckTask(context.getApplication(), client, downloadFile, service);
+            } else
+                task = new DownloadTask(context.getApplication(), client, downloadFile, service);
             downloadFile.setTask(task);
             task.addTaskListener(new TaskListener.Adapter<Void, Long>() {
 
                 @Override
                 public void finished(TaskEvent<Void> event) {
-                    finishedDownloading(downloadFile, client, task);
+                    finishedDownloading(downloadFile, client, task, runCheck);
                     downloadFile.setTask(null);
                 }
 
@@ -234,13 +241,14 @@ public class ProcessManager extends Thread {
         }
     }
 
-    private void finishedDownloading(final DownloadFile file, final HttpDownloadClient client, final DownloadTask task) {
+    private void finishedDownloading(final DownloadFile file, final HttpDownloadClient client, final DownloadTask task, final boolean runCheck) {
         synchronized (manipulation) {
             final String serviceName = file.getShareDownloadServiceID();
             final DownloadService service = services.get(serviceName);
             if (service == null)
                 throw new IllegalStateException("Download service not found:" + serviceName);
-            service.finishedDownloading(client);
+            if (!runCheck)
+                service.finishedDownloading(client);
             clientManager.pushWorkingClient(client);
             setDownloading(downloading - 1);
 

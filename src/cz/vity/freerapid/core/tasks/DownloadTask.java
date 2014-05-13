@@ -38,7 +38,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     private final static Logger logger = Logger.getLogger(DownloadTask.class.getName());
     protected final HttpDownloadClient client;
     protected final DownloadFile downloadFile;
-    private ShareDownloadService service;
+    protected ShareDownloadService service;
     private long speedInBytes;
     private float averageSpeed;
     private volatile long counter;
@@ -74,11 +74,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     }
 
     protected Void doInBackground() throws Exception {
-        client.getHTTPClient().setHttpConnectionManager(new SimpleHttpConnectionManager());
-        final int timerPurge = timer.purge();
-        if (timerPurge > 0)
-            logger.info("Purged timers " + timerPurge);
-        client.getHTTPClient().getHttpConnectionManager().closeIdleConnections(0);
+        initDownloadThread();
 //        final GetMethod getMethod = client.getGetMethod("http://data.idnes.cz/televize/img/1/1466255.jpg");
 //        InputStream stream = client.makeRequestForFile(getMethod);
 //        final BufferedImage image = loadCaptcha(stream);
@@ -92,6 +88,14 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         service.run(this);//run plugin
         service = null;
         return null;
+    }
+
+    protected void initDownloadThread() {
+        client.getHTTPClient().setHttpConnectionManager(new SimpleHttpConnectionManager());
+        final int timerPurge = timer.purge();
+        if (timerPurge > 0)
+            logger.info("Purged timers " + timerPurge);
+        client.getHTTPClient().getHttpConnectionManager().closeIdleConnections(0);
     }
 
     protected OutputStream getFileOutputStream(final File f, final long fileSize) throws NotEnoughSpaceException, IOException {

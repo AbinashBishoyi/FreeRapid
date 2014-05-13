@@ -259,14 +259,8 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         tableInputMap.put(SwingUtils.getCtrlKeyStroke(KeyEvent.VK_C), "copy");
         tableActionMap.put("copy", actionMap.get("copyContent"));
 
-//        final KeyStroke ctrlF = SwingUtils.getCtrlKeyStroke(KeyEvent.VK_F);
-//        tableInputMap.put(ctrlF, "getFocusFind");
-//        final AbstractAction focusFilterAction = new AbstractAction() {
-//            public void actionPerformed(ActionEvent e) {
-//                Swinger.inputFocus(fieldFilter);
-//            }
-//        };
-//        tableActionMap.put("getFocusFind", focusFilterAction);
+        final KeyStroke ctrlF = SwingUtils.getCtrlKeyStroke(KeyEvent.VK_F);
+        tableInputMap.remove(ctrlF);
 
         pluginTable.getParent().setPreferredSize(new Dimension(230, 150));
 
@@ -311,21 +305,13 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
 
     private void updatePremium(PluginMetaData data) {
-        final java.util.List<PluginMetaData> dataList = managerDirector.getPluginsManager().getSupportedPlugins();
         if (!data.isEnabled())
             return;
-        if (data.hasPremium()) {
-            for (PluginMetaData metaData : dataList) {
-                if (data.isPremiumFor(metaData)) {
-                    metaData.setEnabled(false);
-                }
-            }
-        } else {
-            for (PluginMetaData metaData : dataList) {
-                if (metaData.isPremiumFor(data)) {
-                    metaData.setEnabled(false);
-                }
-            }
+        final java.util.List<PluginMetaData> dataList = managerDirector.getPluginsManager().getSupportedPlugins();
+        final String s = data.getServices();
+        for (PluginMetaData metaData : dataList) {
+            if (metaData.getServices().equals(s) && !data.equals(metaData))
+                metaData.setEnabled(false);
         }
     }
 
@@ -637,9 +623,9 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                 clientManager.updateProxyConnectionList();
         }
 
-//        if (pluginTableWasChanged) {
-//            Swinger.showInformationDialog(getResourceMap().getString("pluginSettingsTakeEffectOnRestart"));
-//        }
+        if (pluginTableWasChanged) {
+            managerDirector.getPluginsManager().updatePluginSettings();
+        }
 
         doClose();
     }

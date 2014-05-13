@@ -1,5 +1,6 @@
 package cz.vity.freerapid.gui.actions;
 
+import com.jgoodies.binding.list.ArrayListModel;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
@@ -37,16 +38,30 @@ public class FileActions extends AbstractBean {
     @SuppressWarnings({"unchecked"})
     @Action
     public void addNewLinksAction(ActionEvent event) {
+        final ManagerDirector managerDirector = app.getManagerDirector();
         List<URL> urlList = null;
+        final DataManager dataManager = managerDirector.getDataManager();
+        final boolean showing = dialog != null;
         if (event.getSource() instanceof List) {
             urlList = (List<URL>) event.getSource();
             if (urlList.isEmpty())
                 return;
-        }
-        final ManagerDirector managerDirector = app.getManagerDirector();
-        final DataManager dataManager = managerDirector.getDataManager();
 
-        final boolean showing = dialog != null;
+            if (!showing) {
+                synchronized (dataManager.getLock()) {//overeni, jestli uz tam ty pastovane nejsou na seznamu
+                    final ArrayListModel<DownloadFile> files = dataManager.getDownloadFiles();
+                    int counterFound = 0;
+                    for (DownloadFile file : files) {
+                        final URL urlAddress = file.getFileUrl();
+                        if (urlList.contains(urlAddress))
+                            ++counterFound;
+                    }
+                    if (counterFound == urlList.size())
+                        return;
+                }
+            }
+        }
+
         if (!showing)
             dialog = new NewLinksDialog(managerDirector, app.getMainFrame());
 

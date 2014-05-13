@@ -24,7 +24,6 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
     protected void doStart() throws Exception {
         final PluginDescriptor desc = this.getDescriptor();
         final PluginAttribute attribute = desc.getAttribute("urlRegex");
-        System.out.println("attribute = " + attribute.getValue());
         pattern = Pattern.compile(attribute.getValue(), Pattern.CASE_INSENSITIVE);
     }
 
@@ -53,6 +52,14 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
         if (!supportURL(downloader.getDownloadFile().getFileUrl().toExternalForm())) {
             throw new NotSupportedDownloadByServiceException();
         }
+    }
+
+    public boolean supportsRunCheck() {
+        return false;
+    }
+
+    public void runCheck(HttpFileDownloader downloader) throws Exception {
+
     }
 
     public void showOptions() throws Exception {

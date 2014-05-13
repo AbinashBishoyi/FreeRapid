@@ -20,14 +20,14 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
     private final static Logger logger = Logger.getLogger(PluginMetaData.class.getName());
 
     private String id;
-    private boolean enabled;
     private boolean updatesEnabled;
+    private boolean enabled;
     private Pattern supportedURL;
     private PluginDescriptor descriptor;
     private boolean hasOptions;
     private String services;
     private String www;
-    private String premium;
+    private boolean premium;
 
     static {
         try {
@@ -52,17 +52,18 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
     public PluginMetaData(PluginDescriptor descriptor) {
         this.descriptor = descriptor;
         this.id = descriptor.getId();
+        setPluginDescriptor(descriptor);
         this.enabled = true;
         this.updatesEnabled = true;
-        setPluginDescriptor(descriptor);
     }
 
     public void setPluginDescriptor(PluginDescriptor descriptor) {
+        this.descriptor = descriptor;
         supportedURL = Pattern.compile(DescriptorUtils.getAttribute("urlRegex", "XX", descriptor), Pattern.CASE_INSENSITIVE);
         hasOptions = DescriptorUtils.getAttribute("hasOptions", false, descriptor);
         services = DescriptorUtils.getAttribute("services", "", descriptor);
         www = DescriptorUtils.getAttribute("www", Consts.WEBURL, descriptor);
-        premium = DescriptorUtils.getAttribute("premiumFor", null, descriptor);
+        premium = DescriptorUtils.getAttribute("premium", false, descriptor);
     }
 
 
@@ -108,14 +109,11 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
         return descriptor != null;
     }
 
-    public boolean hasPremium() {
-        return premium != null;
-    }
 
     public void setEnabled(boolean enabled) {
         boolean oldValue = this.enabled;
         this.enabled = enabled;
-        firePropertyChange("enabled", oldValue, this.enabled);
+        firePropertyChange("enabled", oldValue, enabled);
     }
 
     public boolean isUpdatesEnabled() {
@@ -125,9 +123,10 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
     public void setUpdatesEnabled(boolean updatesEnabled) {
         boolean oldValue = this.updatesEnabled;
         this.updatesEnabled = updatesEnabled;
-        firePropertyChange("updatesEnabled", oldValue, this.updatesEnabled);
+        firePropertyChange("updatesEnabled", oldValue, updatesEnabled);
     }
 
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -138,10 +137,12 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
 
     }
 
+    @Override
     public int compareTo(PluginMetaData o) {
         return this.id.compareToIgnoreCase(o.id);
     }
 
+    @Override
     public int hashCode() {
         return id.hashCode();
     }
@@ -151,7 +152,7 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
         return descriptor.getVersion().toString();
     }
 
-    public boolean isPremiumFor(PluginMetaData data) {
-        return this.premium != null && data.getId().equals(premium);
+    public boolean isPremium() {
+        return premium;
     }
 }

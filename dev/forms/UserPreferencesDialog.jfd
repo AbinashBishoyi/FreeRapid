@@ -342,7 +342,7 @@
                </void> 
                <void method="setProperty"> 
                 <string>$rowSpecs</string> 
-                <string>fill:default:grow, relgap, 15px</string> 
+                <string>fill:default:grow, relgap, 5px</string> 
                </void> 
               </object> 
               <void method="setProperty"> 
@@ -445,7 +445,7 @@
                      <class>com.jgoodies.forms.layout.FormLayout</class> 
                      <void method="setProperty"> 
                       <string>$columnSpecs</string> 
-                      <string>labelcompgap, labelcompgap, default:grow, labelcompgap, default, unrelgap, default, labelcompgap, unrelgap</string> 
+                      <string>labelcompgap, labelcompgap, default:grow, labelcompgap, default, default:grow, default, labelcompgap, unrelgap</string> 
                      </void> 
                      <void method="setProperty"> 
                       <string>$rowSpecs</string> 

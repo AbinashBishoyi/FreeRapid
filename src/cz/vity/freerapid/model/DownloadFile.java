@@ -43,6 +43,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
     private volatile String shareDownloadServiceID;
     private volatile String serviceName = null;
     private volatile ConnectionSettings connectionSettings;
+    private volatile boolean checkedFileName;
 
 
     static {
@@ -77,6 +78,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
         this.sleep = -1;
         this.averageSpeed = 0;
         this.speed = 0;
+        this.checkedFileName = false;
         this.timeToQueued = -1;
         setFileType(FileTypeIconProvider.identifyFileType(fileName));
     }
@@ -251,6 +253,13 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
         return shareDownloadServiceID;
     }
 
+    public boolean isCheckedFileName() {
+        return checkedFileName;
+    }
+
+    public void setCheckedFileName(boolean checkedFileName) {
+        this.checkedFileName = checkedFileName;
+    }
 
     public void setTimeToQueued(int i) {
         int oldValue = this.timeToQueued;
@@ -276,7 +285,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
 
     public void setShareDownloadServiceID(String shareDownloadServiceID) {
         this.shareDownloadServiceID = shareDownloadServiceID;
-        this.serviceName = shareDownloadServiceID.toLowerCase();
+        this.serviceName = shareDownloadServiceID.toLowerCase().replace('_', ' ');
     }
 
     public int getTimeToQueuedMax() {
