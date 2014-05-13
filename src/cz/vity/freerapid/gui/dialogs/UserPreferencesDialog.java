@@ -265,7 +265,9 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
             public void mouseClicked(MouseEvent e) {
                 if (!pluginTable.hasFocus())
                     Swinger.inputFocus(pluginTable);
-                if (SwingUtilities.isRightMouseButton(e))
+                if (e.getClickCount() >= 2 && SwingUtilities.isLeftMouseButton(e)) {
+                    btnPluginOptionsAction();
+                } else if (SwingUtilities.isRightMouseButton(e))
                     SwingUtils.showPopMenu(popmenuButton.getPopupMenu(), e, pluginTable, UserPreferencesDialog.this);
             }
         });
@@ -343,7 +345,11 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
     @org.jdesktop.application.Action(enabledProperty = PLUGIN_OPTIONS_ENABLED_PROPERTY)
     public void btnPluginOptionsAction() {
         final int selectedRow = pluginTable.getSelectedRow();
+        if (selectedRow == -1)
+            return;
         final int i = pluginTable.convertRowIndexToModel(selectedRow);
+        if (i == -1)
+            return;
         final PluginMetaData data = ((PluginMetaDataTableModel) pluginTable.getModel()).getObject(i);
         final ShareDownloadService service = managerDirector.getPluginsManager().getPluginInstance(data.getId());
         try {

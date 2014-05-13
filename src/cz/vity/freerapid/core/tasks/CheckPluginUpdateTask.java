@@ -85,7 +85,11 @@ public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
                 logger.info("id = " + id + "  oldVersion = " + oldVersion + "  newVersion = " + newVersion);
                 if (newVersion.isGreaterThan(oldVersion))
                     newPlugins.add(plugin);
-            } else newPlugins.add(plugin);
+            } else {
+                logger.info("found new plugin with id =" + id);
+                newPlugins.add(plugin);
+            }
+
         }
         return newPlugins;
     }

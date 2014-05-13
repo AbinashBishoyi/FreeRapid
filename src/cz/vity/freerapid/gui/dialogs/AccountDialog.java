@@ -103,9 +103,9 @@ public class AccountDialog extends AppDialog {
         JPanel contentPanel = new JPanel();
         JLabel labelIcon = new JLabel();
         JLabel labelUserName = new JLabel();
-        fieldUserName = new JTextField();
+        fieldUserName = ComponentFactory.getTextField();
         JLabel labelPassword = new JLabel();
-        fieldPassword = new JPasswordField();
+        fieldPassword = ComponentFactory.getPasswordField();
         JPanel buttonBar = new JPanel();
         btnOK = new JButton();
         btnCancel = new JButton();

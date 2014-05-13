@@ -146,6 +146,12 @@
             <void property="name"> 
              <string>fieldUserName</string> 
             </void> 
+            <void method="auxiliary"> 
+             <void method="setProperty"> 
+              <string>JavaCodeGenerator.customCreateCode</string> 
+              <string>ComponentFactory.getTextField()</string> 
+             </void> 
+            </void> 
            </object> 
            <object class="com.jformdesigner.model.FormLayoutConstraints"> 
             <class>com.jgoodies.forms.layout.CellConstraints</class> 
@@ -206,6 +212,12 @@
             <string>javax.swing.JPasswordField</string> 
             <void property="name"> 
              <string>fieldPassword</string> 
+            </void> 
+            <void method="auxiliary"> 
+             <void method="setProperty"> 
+              <string>JavaCodeGenerator.customCreateCode</string> 
+              <string>ComponentFactory.getPasswordField()</string> 
+             </void> 
             </void> 
            </object> 
            <object class="com.jformdesigner.model.FormLayoutConstraints"> 
