@@ -118,6 +118,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         final LocalStorage localStorage = context.getLocalStorage();
         final boolean downloadOnStart = AppPrefs.getProperty(UserProp.DOWNLOAD_ON_APPLICATION_START, UserProp.DOWNLOAD_ON_APPLICATION_START_DEFAULT);
         if (new File(localStorage.getDirectory(), FILES_LIST_XML).exists()) {
+            final boolean removeCompleted = AppPrefs.getProperty(UserProp.REMOVE_COMPLETED_DOWNLOADS, UserProp.REMOVE_COMPLETED_DOWNLOADS_DEFAULT) == UserProp.REMOVE_COMPLETED_DOWNLOADS_AT_STARTUP;
             try {
                 final Object o = localStorage.load(FILES_LIST_XML);
                 if (o instanceof ArrayListModel) {
@@ -125,6 +126,9 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                         final DownloadState state = file.getState();
                         if (state == DownloadState.DELETED)
                             continue;
+                        if (state == DownloadState.COMPLETED && removeCompleted) {
+                            continue;
+                        }
                         if (state != DownloadState.COMPLETED) {
                             file.setDownloaded(0);
                         }
@@ -166,6 +170,16 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                 }
             });
         }
+        this.addPropertyChangeListener("state", new PropertyChangeListener() {
+
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (evt.getNewValue() == DownloadState.COMPLETED) {
+                    if (AppPrefs.getProperty(UserProp.REMOVE_COMPLETED_DOWNLOADS, UserProp.REMOVE_COMPLETED_DOWNLOADS_DEFAULT) == UserProp.REMOVE_COMPLETED_DOWNLOADS_IMMEDIATELY) {
+                        removeCompleted();
+                    }
+                }
+            }
+        });
     }
 
     public void addToQueue(List<DownloadFile> files) {
@@ -216,7 +230,8 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 // logger.info("Firing contents changed");
-                downloadFiles.fireContentsChanged(getIndex((DownloadFile) evt.getSource()));
+                final DownloadFile downloadFile = (DownloadFile) evt.getSource();
+                downloadFiles.fireContentsChanged(getIndex(downloadFile));
                 if ("state".equals(s)) {
                     firePropertyChange(s, evt.getOldValue(), evt.getNewValue());
                     fireDataChanged();
@@ -432,14 +447,17 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
 
     public void removeCompleted() {
         synchronized (lock) {
-            if (getCompleted() <= 0)
-                return;
+//            if (getCompleted() <= 0)
+//                return;
             List<DownloadFile> toRemoveList = new LinkedList<DownloadFile>();
             for (DownloadFile file : downloadFiles) {
                 if (file.getState() == DownloadState.COMPLETED)
                     toRemoveList.add(file);
             }
             downloadFiles.removeAll(toRemoveList);
+            for (DownloadFile file : toRemoveList) {
+                file.setState(DownloadState.DELETED);
+            }
         }
     }
 
@@ -584,7 +602,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
     /**
      * Bere v uvahu i radky vybrane na preskacku.
      *
-     * @param indexes
+     * @param indexes list of indexes
      * @return Vraci -1 pokud nedoslo ke zmene.
      */
     public int sortByName(int[] indexes) {

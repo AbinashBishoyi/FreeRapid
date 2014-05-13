@@ -66,7 +66,7 @@ public abstract class URLTransferHandler extends TransferHandler {
             try {
                 String spec = match.group();
                 if (!spec.startsWith(http))
-                    spec += http;
+                    spec = http + spec;
                 final URL url = new URL(spec);
                 if (pluginsManager.isSupported(url))
                     list.add(url);

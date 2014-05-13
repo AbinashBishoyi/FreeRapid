@@ -364,7 +364,7 @@ public class MultipleSettingsDialog extends AppFrame implements PropertyChangeLi
         if (fs >= 0) {
             value = ContentPanel.bytesToAnother(fs);
             if (fs >= 1024)
-                value += "  (" + NumberFormat.getIntegerInstance().format(fs) + " B)";
+                value = value + "  (" + NumberFormat.getIntegerInstance().format(fs) + " B)";
         } else {
             value = getResourceMap().getString("unknown");
         }

@@ -29,8 +29,8 @@ public class HelpActions {
 
     @Action
     public void paypalSupportAction() {
-        final String paypal = "https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=donations%40wordrider.net&item_name=FreeRapid&no_shipping=1&cn=Optional+comments&tax=0";
-        Browser.openBrowser(AppPrefs.getProperty(UserProp.PAYPAL, paypal));
+        final String paypal = "";
+        Browser.openBrowser(AppPrefs.getProperty(UserProp.PAYPAL, UserProp.PAYPAL_DEFAULT));
     }
 
     @Action

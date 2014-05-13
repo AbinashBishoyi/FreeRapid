@@ -110,8 +110,16 @@ public class UserProp {
     public static final boolean ACTIVATE_WHEN_CAPTCHA_DEFAULT = true;
 
     public static final String PAYPAL = "paypal";
+    public static final String PAYPAL_DEFAULT = "http://wordrider.net/freerapid/paypal";
     public static final String DEMO_URL = "demoURL";
 
     public static final String BRING_TO_FRONT_WHEN_PASTED = "bringToFrontWhenPasted";
     public static final boolean BRING_TO_FRONT_WHEN_PASTED_DEFAULT = true;
+
+    public static final String REMOVE_COMPLETED_DOWNLOADS = "removeCompletedDownloads";
+    public static final int REMOVE_COMPLETED_DOWNLOADS_NEVER = 0;
+    public static final int REMOVE_COMPLETED_DOWNLOADS_DEFAULT = REMOVE_COMPLETED_DOWNLOADS_NEVER;
+    public static final int REMOVE_COMPLETED_DOWNLOADS_IMMEDIATELY = 1;
+    public static final int REMOVE_COMPLETED_DOWNLOADS_AT_STARTUP = 2;
+
 }

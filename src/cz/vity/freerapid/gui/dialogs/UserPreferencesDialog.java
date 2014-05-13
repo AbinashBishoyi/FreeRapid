@@ -246,6 +246,7 @@ public class UserPreferencesDialog extends AppDialog {
         PropertyConnector.connectAndUpdate(valueModel, checkHideWhenMinimized, "enabled");
 
         bind(comboFileExists, UserProp.FILE_ALREADY_EXISTS, UserProp.FILE_ALREADY_EXISTS_DEFAULT, "fileAlreadyExistsOptions");
+        bind(comboRemoveCompleted, UserProp.REMOVE_COMPLETED_DOWNLOADS, UserProp.REMOVE_COMPLETED_DOWNLOADS_DEFAULT, "removeCompletedOptions");
 
         bindLaFCombobox();
 
@@ -422,11 +423,19 @@ public class UserPreferencesDialog extends AppDialog {
         checkShowVerticalLinesInTable.setName("checkShowVerticalLinesInTable");
         JLabel labelIfFilenameExists = new JLabel();
         JLabel labelLanguage = new JLabel();
+
         labelLanguage.setName("language");
         labelLanguage.setLabelFor(comboLng);
         comboLng = new JComboBox();
+        comboRemoveCompleted = new JComboBox();
+        comboRemoveCompleted.setName("comboRemoveCompleted");
         comboLng.setName("comboLng");
         comboFileExists = new JComboBox();
+
+        JLabel labelRemoveCompleted = new JLabel();
+        labelRemoveCompleted.setLabelFor(comboRemoveCompleted);
+        labelRemoveCompleted.setName("labelRemoveCompleted");
+
         JPanel panelSoundSettings = new JPanel();
         JPanel panelMiscSettings = new JPanel();
         JPanel panelDescSettings = new JPanel();
@@ -563,8 +572,10 @@ public class UserPreferencesDialog extends AppDialog {
                                             FormFactory.DEFAULT_COLSPEC,
                                             FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                                             FormFactory.DEFAULT_COLSPEC,
+                                            new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
+                                            FormFactory.DEFAULT_COLSPEC,
                                             FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                            new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
+                                            FormFactory.DEFAULT_COLSPEC,
                                     },
                                     new RowSpec[]{
                                             FormFactory.DEFAULT_ROWSPEC,
@@ -574,11 +585,13 @@ public class UserPreferencesDialog extends AppDialog {
                                             FormFactory.DEFAULT_ROWSPEC
                                     }), panelDownloadsSettings);
 
-                            panelDownloadsSettingsBuilder.add(checkContinueInterrupted, cc.xywh(3, 1, 5, 1));
-                            panelDownloadsSettingsBuilder.add(checkProcessFromTop, cc.xywh(3, 2, 5, 1));
-                            panelDownloadsSettingsBuilder.add(checkCloseWhenAllComplete, cc.xywh(3, 3, 5, 1));
+                            panelDownloadsSettingsBuilder.add(checkContinueInterrupted, cc.xywh(3, 1, 7, 1));
+                            panelDownloadsSettingsBuilder.add(checkProcessFromTop, cc.xywh(3, 2, 7, 1));
+                            panelDownloadsSettingsBuilder.add(checkCloseWhenAllComplete, cc.xywh(3, 3, 7, 1));
                             panelDownloadsSettingsBuilder.add(labelIfFilenameExists, cc.xywh(3, 5, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
                             panelDownloadsSettingsBuilder.add(comboFileExists, cc.xy(5, 5));
+                            panelDownloadsSettingsBuilder.add(labelRemoveCompleted, cc.xywh(7, 5, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
+                            panelDownloadsSettingsBuilder.add(comboRemoveCompleted, cc.xy(9, 5));
                         }
 
                         PanelBuilder panelGeneralBuilder = new PanelBuilder(new FormLayout(
@@ -954,6 +967,7 @@ public class UserPreferencesDialog extends AppDialog {
     private JCheckBox checkContinueInterrupted;
     private JCheckBox checkCloseWhenAllComplete;
     private JComboBox comboFileExists;
+    private JComboBox comboRemoveCompleted;
     private JCheckBox checkPlaySoundInCaseOfError;
     private JCheckBox checkPlaySoundWhenComplete;
     private JComboBox comboLaF;
