@@ -237,7 +237,8 @@ public class ProcessManager extends Thread {
             clientManager.pushWorkingClient(client);
             setDownloading(downloading - 1);
             int errorAttemptsCount = file.getErrorAttemptsCount();
-            if (file.getState() == DownloadState.ERROR && errorAttemptsCount != 0) {
+            final DownloadState state = file.getState();
+            if ((state == DownloadState.ERROR && errorAttemptsCount != 0) || (state == DownloadState.SLEEPING)) {
                 assert task != null;
                 final DownloadTaskError error = task.getServiceError();
                 if (error == DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR && errorAttemptsCount != -1) {
@@ -291,9 +292,10 @@ public class ProcessManager extends Thread {
         }
 
         public void run() {
-            if (file.getState() != DownloadState.ERROR) { //doslo ke zmene stavu z venci
+            final DownloadState state = file.getState();
+            if (state != DownloadState.ERROR && state != DownloadState.SLEEPING) { //doslo ke zmene stavu z venci
                 this.cancel(); //zrusime timer
-                if (file.getState() != DownloadState.WAITING) {
+                if (state != DownloadState.WAITING) {
                     file.setTimeToQueued(-1); //odecitani casu
                     file.setTimeToQueuedMax(-1);
                 }

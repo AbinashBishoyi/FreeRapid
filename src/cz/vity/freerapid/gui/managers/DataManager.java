@@ -137,7 +137,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                         if (state != DownloadState.COMPLETED) {
                             file.setDownloaded(0);
                         }
-                        if (state == DownloadState.ERROR) {
+                        if (state == DownloadState.ERROR || state == DownloadState.SLEEPING) {
                             file.setDownloaded(0);
                             if (downloadOnStart && file.getTimeToQueued() > 0) {
                                 file.setTimeToQueued(-1);
@@ -217,7 +217,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                 file.setShareDownloadServiceID(pluginsManager.getServiceIDForURL(file.getFileUrl()));
             } catch (NotSupportedDownloadServiceException e) {
                 file.setState(DownloadState.ERROR);
-                file.setErrorMessage("NotSupportedDownloadServiceException");
+                file.setErrorMessage("Not Supported Download Service Exception");
             }
             file.addPropertyChangeListener(this);
             if (startFromTop)

@@ -95,6 +95,7 @@ public class ToolbarManager implements PropertyChangeListener {
         btn.setText(null);
         btn.setBorder(new EmptyBorder(0, 0, 0, 0));
         toolbar.add(btn);
+        toolbar.add(Box.createHorizontalStrut(18));
 //        this.labelWorkingProgress = new JXBusyLabel();
 //        this.labelWorkingProgress.setName("labelWorkingProgress");
 //        labelWorkingProgress.setBorder(BorderFactory.createEmptyBorder(2, 10, 2, 10));

@@ -10,6 +10,7 @@ import cz.vity.freerapid.plugins.webclient.*;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.FileUtils;
 import cz.vity.freerapid.utilities.Sound;
+import org.apache.commons.httpclient.SimpleHttpConnectionManager;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
@@ -68,6 +69,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     }
 
     protected Void doInBackground() throws Exception {
+        client.getHTTPClient().setHttpConnectionManager(new SimpleHttpConnectionManager());
         final int timerPurge = timer.purge();
         if (timerPurge > 0)
             logger.info("Purged timers " + timerPurge);
@@ -324,7 +326,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     }
 
     private void error(Throwable cause) {
-        downloadFile.setState(DownloadState.ERROR);
+
         if (getResourceMap().containsKey(cause.getMessage()))
             downloadFile.setErrorMessage(getResourceMap().getString(cause.getMessage()));
         else
@@ -333,7 +335,8 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         if (!(cause instanceof YouHaveToWaitException)) {
             if (AppPrefs.getProperty(UserProp.PLAY_SOUNDS_FAILED, true))
                 Sound.playSound(getContext().getResourceMap().getString("errorWav"));
-        }
+            downloadFile.setState(DownloadState.ERROR);
+        } else downloadFile.setState(DownloadState.SLEEPING);
     }
 
     @Override

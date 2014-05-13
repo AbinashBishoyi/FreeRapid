@@ -128,4 +128,7 @@ final public class UserProp {
 
     public static final String BIG_ICON_IN_HISTORY = "historyBiggerLine";
     public static final boolean BIG_ICON_IN_HISTORY_DEFAULT = true;
+
+    public static final String SHOW_PROGRESS_IN_PROGRESSBAR = "showPercentProgress";
+    public static final boolean SHOW_PROGRESS_IN_PROGRESSBAR_DEFAULT = false;
 }

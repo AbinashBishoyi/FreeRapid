@@ -360,7 +360,8 @@ public class Swinger {
     public static int[] getSelectedRows(final JTable table) {
         final int[] ints = table.getSelectedRows();
 
-        for (int i = 0; i < ints.length; i++) {
+        final int length = ints.length;
+        for (int i = 0; i < length; i++) {
             ints[i] = table.convertRowIndexToModel(ints[i]);
         }
         return ints;

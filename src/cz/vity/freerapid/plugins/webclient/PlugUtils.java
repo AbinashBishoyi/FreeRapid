@@ -47,7 +47,7 @@ public final class PlugUtils {
         }
         value = value.trim().replaceAll(" ", "").replaceAll(",", ".");
         if (value.indexOf('.') > 0)
-            return new BigDecimal(value).multiply(BigDecimal.valueOf(constant)).setScale(0, RoundingMode.HALF_EVEN).longValue();
+            return new BigDecimal(value).multiply(BigDecimal.valueOf(constant)).setScale(0, RoundingMode.UP).longValue();
         else
             return Long.parseLong(value) * constant;
     }

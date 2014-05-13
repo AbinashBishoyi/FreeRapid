@@ -151,6 +151,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                 file.getOutputFile().delete();
             }
             this.removeSelectedAction();
+            selectFirstIfNoSelection();
         }
     }
 
@@ -203,7 +204,15 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         final ListSelectionModel selectionModel = table.getSelectionModel();
         selectionModel.setValueIsAdjusting(true);
         manager.removeCompleted();
+        selectFirstIfNoSelection();
         selectionModel.setValueIsAdjusting(false);
+    }
+
+    private void selectFirstIfNoSelection() {
+        final int[] rows = getSelectedRows();
+        if (rows.length == 0) {
+            table.getSelectionModel().setSelectionInterval(0, 0);
+        }
     }
 
     @org.jdesktop.application.Action(enabledProperty = NONEMPTY_ACTION_ENABLED_PROPERTY)
@@ -227,6 +236,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             }
         }
         selectionModel.setValueIsAdjusting(false);
+        scrollToVisible(true);
     }
 
     @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
@@ -239,7 +249,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         final int min = getArrayMin(indexes);
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                int count = table.getFilters().getOutputSize();
+                int count = getVisibleRowCount();
                 if (count > 0) {//pokud je neco videt
                     int index = count - 1; //vypoctem si posledni viditelnou
                     if (index > min) {
@@ -249,12 +259,17 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                     }
 
                     selectionModel.addSelectionInterval(index, index);
+                    scrollToVisible(true);
                 }
             }
         });
     }
 
-    private int getArrayMin(int[] indexes) {
+    private int getVisibleRowCount() {
+        return table.getFilters().getOutputSize();
+    }
+
+    private int getArrayMin(final int[] indexes) {
         int min = Integer.MAX_VALUE;
         for (int i : indexes) {
             if (min > i) {
@@ -278,6 +293,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         if (resultIndex != -1) {
             int index = table.convertRowIndexToView(resultIndex);
             selectionModel.setSelectionInterval(index, index + indexes.length - 1);
+            scrollToVisible(true);
         }
     }
 
@@ -289,6 +305,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         manager.moveTop(indexes);
         selectionModel.setValueIsAdjusting(false);
         selectionModel.setSelectionInterval(0, indexes.length - 1);
+        scrollToVisible(true);
     }
 
     @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
@@ -303,6 +320,14 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             selectionModel.addSelectionInterval(index, index);
         }
         selectionModel.setValueIsAdjusting(false);
+        scrollToVisible(true);
+    }
+
+    private void scrollToVisible(final boolean up) {
+        final int[] rows = table.getSelectedRows();
+        final int length = rows.length;
+        if (length > 0)
+            table.scrollRowToVisible((up) ? rows[0] : rows[length - 1]);
     }
 
     @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
@@ -317,6 +342,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             selectionModel.addSelectionInterval(index, index);
         }
         selectionModel.setValueIsAdjusting(false);
+        scrollToVisible(false);
     }
 
     @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
@@ -328,6 +354,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         selectionModel.setValueIsAdjusting(false);
         final int rowCount = table.getRowCount();
         selectionModel.setSelectionInterval(rowCount - indexes.length, rowCount - 1);
+        scrollToVisible(false);
     }
 
 
@@ -707,6 +734,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         final int index = manager.getDownloadFiles().indexOf(files.get(0));
         final int viewIndex = table.convertRowIndexToView(index);
         selectionModel.setSelectionInterval(viewIndex, viewIndex + files.size() - 1);
+        scrollToVisible(true);
     }
 
     public void lostOwnership(Clipboard clipboard, Transferable contents) {
@@ -896,10 +924,11 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                     value = String.format("%s (%s)", stateToString(state), secondsToHMin(downloadFile.getSleep()));
                 else value = "";
             }
-            if (state == DownloadState.ERROR) {
+            if (state == DownloadState.ERROR || state == DownloadState.SLEEPING) {
                 final String errorMessage = downloadFile.getErrorMessage();
                 if (errorMessage != null) {
-                    value = value + " - " + errorMessage.replaceAll("<.*?>", "");
+                    if (state == DownloadState.ERROR)
+                        value = value + " - " + errorMessage.replaceAll("<.*?>", "");
                     this.setToolTipText(String.format(tooltip, errorMessage));
                 }
             } else if (DownloadState.isProcessState(state)) {
@@ -916,6 +945,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         private static final Color BG_RED = new Color(0xFFD0D0);
         private static final Color BG_ORANGE = new Color(0xFFEDD0);
         private static final Color BG_GREEN = new Color(0xD0FFE9);
+        private static final Color BG_BLUE = new Color(0xb6e9ff);
         private String autoReconnectIn;
         private String attemptForDownloading;
 
@@ -939,13 +969,15 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                 this.setBackground(Color.BLACK);
             } else if (state == DownloadState.QUEUED) {
                 this.setBackground(BG_ORANGE);
+            } else if (state == DownloadState.SLEEPING) {
+                this.setBackground(BG_BLUE);
             } else if (state == DownloadState.COMPLETED) {
                 // this.setBackground(Color.GREEN);
             } else
                 this.setBackground(Color.BLACK);
 
             final int toQueued = downloadFile.getTimeToQueued();
-            if (state == DownloadState.ERROR && toQueued >= 0) {
+            if ((state == DownloadState.ERROR || state == DownloadState.SLEEPING) && toQueued >= 0) {
                 final int max = downloadFile.getTimeToQueuedMax();
                 this.setStringPainted(true);
                 this.setString(toQueued + "/" + max);
@@ -961,8 +993,15 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                     this.setToolTipText(String.format(attemptForDownloading, sleep));
                 } else {
                     this.setToolTipText(null);
-                    this.setStringPainted(false);
-                    this.setValue(getProgress(downloadFile));
+                    final int progress = getProgress(downloadFile);
+
+                    if (AppPrefs.getProperty(UserProp.SHOW_PROGRESS_IN_PROGRESSBAR, UserProp.SHOW_PROGRESS_IN_PROGRESSBAR_DEFAULT)) {
+                        this.setStringPainted(true);
+                        this.setString(progress + "%");
+                    } else {
+                        this.setStringPainted(false);
+                    }
+                    this.setValue(progress);
                 }
             }
             return this;
