@@ -303,7 +303,8 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 
     @Override
     protected void failed(Throwable cause) {
-        super.failed(cause);
+        if (!(cause instanceof YouHaveToWaitException) && !(cause instanceof URLNotAvailableAnymoreException))
+            super.failed(cause);
         error(cause);
         if (cause instanceof NotEnoughSpaceException) {
             Swinger.showErrorMessage(getResourceMap(), "NotEnoughSpaceException", (storeFile != null) ? storeFile : "");

@@ -513,11 +513,19 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             }
         });
 
-        table.getInputMap().put(KeyStroke.getKeyStroke("control C"), "copy");
-        table.getActionMap().put("copy", Swinger.getAction("copyContent"));
+        final InputMap inputMap = table.getInputMap();
+        final ActionMap actionMap = table.getActionMap();
 
-        table.getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "deleteItem");
-        table.getActionMap().put("deleteItem", Swinger.getAction("cancelAction"));
+        inputMap.put(KeyStroke.getKeyStroke("control C"), "copy");
+        inputMap.put(KeyStroke.getKeyStroke("control alt C"), "copy");
+
+        actionMap.put("copy", Swinger.getAction("copyContent"));
+
+        inputMap.put(KeyStroke.getKeyStroke("ESCAPE"), "deleteItem");
+        actionMap.put("deleteItem", Swinger.getAction("cancelAction"));
+
+        inputMap.put(KeyStroke.getKeyStroke("shift DELETE"), "deleteFileAction");
+        actionMap.put("deleteFileAction", Swinger.getAction("deleteFileAction"));
 
 //        paste();
 

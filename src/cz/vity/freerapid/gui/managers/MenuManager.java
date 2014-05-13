@@ -174,6 +174,10 @@ public class MenuManager {
         final ApplicationActionMap map = context.getActionMap();
         map.get("showCompletedAction").putValue(AbstractAction.SELECTED_KEY, viewActions.isShowCompleted());
         map.get("monitorClipboardAction").putValue(AbstractAction.SELECTED_KEY, viewActions.isClipboardMonitoringSelected());
+
+        final JRootPane rootPane = director.getMainFrame().getRootPane();
+        rootPane.registerKeyboardAction(Swinger.getAction("showDownloadHistoryAction"), KeyStroke.getKeyStroke("control H"), JComponent.WHEN_IN_FOCUSED_WINDOW);
+
 //        final MainApp app = (MainApp) context.getApplication();
 
     }
