@@ -11,7 +11,9 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
-XXX December 2008 - FreeRapid Downloader 0.8 released
+21st December 2008 - FreeRapid Downloader 0.8 released
+  Added : new plugin - usercash.com (crypter) [thanks to me! ;-)]
+  Added : new plugin - CobraShare.sk [thanks to me! ;-)]
   Added : new plugin - flyshare.cz [thanks to me! ;-)]
   Added : new plugin - Upnito.sk [thanks to me! ;-)]
   Added : new plugin - SaveFile.com [thanks to Alex!]
@@ -19,6 +21,13 @@ XXX December 2008 - FreeRapid Downloader 0.8 released
   Added : new plugin - EnterUpload.com [thanks to Alex!]
   Added : new plugin - MediaFire.com [thanks to Lukiz!]
   Added : new plugin - edisk.cz [thanks to Lukiz!]
+  ###Added : Russian translation [thanks to CasTeT!] next time ;-)
+  Added : Italian translation [thanks to Steffano!]
+  Added : Japanese translation [thanks to Tilt!]
+  Added : Danish translation [thanks to Topexso!]
+  Added : Ukrainan translation [thanks to Vadim!]
+  Added : Indonesian translation [thanks to Alex!]
+  Added : Polish translation [thanks to Soft4UAdmin!]
   Added : UI - added action to remove invalid/not existing links [requested by Alex]
   Added : UI - ability to hide text under toolbar buttons [requested by Alex]
   Added : --portable command line switch for application start [requested by Rusttaf]
@@ -39,10 +48,14 @@ XXX December 2008 - FreeRapid Downloader 0.8 released
   Added : UI - clipboard monitoring catches links like http://blabla.com/?url=http:%25%25service.com%25 (decoding URL)
   Added : UI - About Dialog title shows build number
   Added : plugins - RapidShare plugin - ability to choose download mirror [thanks to Lukiz!]
+  Changed : UI - MS Windows - open directory on completed files, file is selected when opened in explorer [requested by Alex]
   Changed : UI - clipboard monitoring is ON by default
   Changed : plugins are loaded on the fly (not during start) from the system temporary directory
   Changed : plugins - major intern changes and fixes in most of plugins
   Changed : plugins - completely reworked intern API for plugins - now it's easier and faster to implement any plugin
+  Changed : translations - updated all existing translations [thanks to all translators!]
+  Changed : MS Windows - newly application indentifies itself as frd.exe in Task manager (not java.exe)
+  Fixed : could not connect with enabled proxy in Internet Explorer
   Fixed : UI - unable to set Raven Graphics Glass Look and Feel
   Fixed : UI - clipboard monitoring didn't catch html links like <a href="http://service.com/asdasd/">Part1</a> [reported by Alex]
 

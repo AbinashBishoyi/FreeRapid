@@ -690,6 +690,8 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
         ((SimplePreferencesComboModel) comboPluginServers.getModel()).store();
 
+        boolean updateQueue = false;
+
         if (updateDefaultConnection && updateProxyConnectionList) {
             clientManager.updateConnectionSettings();
         } else {
@@ -697,12 +699,16 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                 clientManager.updateDefaultConnection();
             if (updateProxyConnectionList)
                 clientManager.updateProxyConnectionList();
+            updateQueue = updateProxyConnectionList || updateDefaultConnection;
         }
 
         if (pluginTableWasChanged) {
+            updateQueue = true;
             managerDirector.getPluginsManager().updatePluginSettings();
         }
 
+        if (updateQueue)
+            managerDirector.getDataManager().getProcessManager().queueUpdated();
         doClose();
     }
 

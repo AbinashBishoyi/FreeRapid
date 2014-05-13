@@ -3,7 +3,7 @@
 *      by Ladislav Vitasek aka Vity                          *
 *   Website/Forum/Bugtracker: http://wordrider.net/freerapid *
 *   Mail: info@wordrider.net - suggestions                   *
-*   Last change: 14th December 2008                          *
+*   Last change: 20th December 2008                          *
 **************************************************************
 
 =======================================
@@ -35,35 +35,44 @@ Main features:
  - auto shutdown
  - many UI settings 
  - works on MS Windows, Linux and MacOS
- - looks amazingly and simply works!s
+ - looks amazingly (many color styles)
+ - simply works!
 
 Misc.:
  - Drag&Drop URLs
  - easy programming interface (API) for adding other services like plugins
 
-Currently supported services are:
- -  Rapidshare.com (+ premium account)
- -  MegaUpload.com
- -  Megarotic.com and Sexuploader.com
- -  NetLoad.in
- -  MediaFire.com
- -  FileFactory.com
- -  Uploaded.to
+Currently supported services are (in alphabetical order):
+ -  CobraShare.sk
  -  DepositFiles.com
- -  Share-online.biz
- -  Egoshare.com
  -  Easy-share.com
- -  XtraUpload.de
- -  Shareator.com
- -  SaveFile.com
- -  Load.to
- -  Iskladka.cz
- -  HellShare.com
- -  QuickShare.cz
- -  FlyShare.cz
  -  Edisk.cz
+ -  Egoshare.com
+ -  Filebase.to
+ -  FileFactory.com
+ -  FlyShare.cz
+ -  HellShare.com
+ -  Iskladka.cz
+ -  Kewlshare.com
+ -  Letibit.net
+ -  Load.to
+ -  MediaFire.com
+ -  Megarotic.com and Sexuploader.com
+ -  MegaUpload.com
+ -  NetLoad.in
+ -  QuickShare.cz
+ -  Rapidshare.com (+ premium account)
+ -  SaveFile.com
+ -  Shareator.com
+ -  Share-online.biz
  -  Uloz.to
+ -  Uploaded.to
  -  Upnito.sk
+ -  XtraUpload.de
+ -  Ziddu.com
+ -  +usercash.com (crypter)
+
+ -  others are coming...
 
 
  II.    System requirements
@@ -159,7 +168,7 @@ IV.    Known bugs and Limitations
     X ignore this exception in the app.log    
 - Linux users reported not showing icon in tray on Linux
     X the only one known solution for this problem could be an upgrade JRE to version 1.6.0_10-rc or higher
-
+- limitation: version 0.7x is not usable once you are using version 0.8 or newer (the only possible solution is to remove configuration files)
 
 IV.    Troubleshooting
 =======================================
@@ -212,4 +221,7 @@ A: 1) Because I don't want to be dependant on the russian software, which is pro
 
 Q: How to enable a support for shutdown/restart commands on Linux and MacOS?
 A: Please see 'syscmd.properties' configuration file in application directory for more details.
+
+Q: Where are configuration files located?
+A: See Installation section.
 
