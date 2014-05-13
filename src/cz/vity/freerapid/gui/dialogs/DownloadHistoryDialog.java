@@ -22,6 +22,7 @@ import cz.vity.freerapid.utilities.Browser;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.OSDesktop;
 import org.jdesktop.application.Action;
+import org.jdesktop.application.ResourceMap;
 import org.jdesktop.swinghelper.buttonpanel.JXButtonPanel;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.FilterPipeline;
@@ -121,7 +122,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
 
     private void initTable() {
         table.setName("historyTable");
-        table.setModel(new CustomTableModel(manager.getItems(), new String[]{"Date", "File name", "Description", "Size", "URL"}));
+        table.setModel(new CustomTableModel(manager.getItems(), getList("columns")));
         table.setAutoCreateColumnsFromModel(false);
         table.setEditable(false);
         table.setColumnControlVisible(true);
@@ -136,7 +137,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         table.getSelectionModel().addListSelectionListener(this);
 
         table.createDefaultColumnsFromModel();
-        Swinger.updateColumn(table, "Date", COLUMN_DATE, -1, 40, new DateCellRenderer());
+        Swinger.updateColumn(table, "Date", COLUMN_DATE, -1, 40, new DateCellRenderer(getResourceMap()));
         Swinger.updateColumn(table, "Name", COLUMN_NAME, -1, 150, new FileNameCellRenderer(director.getFileTypeIconProvider()));
         Swinger.updateColumn(table, "Description", COLUMN_DESCRIPTION, -1, 170, new DescriptionCellRenderer());
         Swinger.updateColumn(table, "Size", COLUMN_SIZE, -1, 40, new SizeCellRenderer());
@@ -734,6 +735,12 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
 
 
     private static class DateCellRenderer extends DefaultTableCellRenderer {
+        private String yesterday;
+
+        private DateCellRenderer(ResourceMap map) {
+            this.yesterday = map.getString("yesterday");
+        }
+
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             value = millisToString((Long) value);
             this.setHorizontalAlignment(CENTER);
@@ -754,7 +761,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
             today.add(Calendar.DATE, -1);
             //  System.out.printf("today = %1$tm %1$te,%1$tY %1$tH:%1$tM", today);
             if (valueDate.after(today)) {
-                return "yesterday";
+                return yesterday;
             }
             today.add(Calendar.DATE, -6);
             if (valueDate.after(today)) {

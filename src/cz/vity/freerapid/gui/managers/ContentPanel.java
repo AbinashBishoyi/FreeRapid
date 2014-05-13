@@ -141,6 +141,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     @org.jdesktop.application.Action(enabledProperty = COMPLETED_OK_ACTION_ENABLED_PROPERTY)
     public void deleteFileAction() {
+        if (!isCompleteWithFilesEnabled())
+            return;
         final int[] indexes = getSelectedRows();
         final java.util.List<DownloadFile> files = manager.getSelectionToList(indexes);
         StringBuilder builder = new StringBuilder();
@@ -186,7 +188,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     @org.jdesktop.application.Action(enabledProperty = RESUME_ACTION_ENABLED_PROPERTY)
     public void resumeAction() {
-        manager.resumeSelected(getSelectedRows());
+        if (isResumeActionEnabled())
+            manager.resumeSelected(getSelectedRows());
     }
 
     @org.jdesktop.application.Action(enabledProperty = PAUSE_ACTION_ENABLED_PROPERTY)
@@ -560,6 +563,9 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
         inputMap.put(KeyStroke.getKeyStroke("shift DELETE"), "deleteFileAction");
         actionMap.put("deleteFileAction", Swinger.getAction("deleteFileAction"));
+
+        inputMap.put(KeyStroke.getKeyStroke("SPACE"), "resumeAction");
+        actionMap.put("resumeAction", Swinger.getAction("resumeAction"));
 
 //        paste();
 
