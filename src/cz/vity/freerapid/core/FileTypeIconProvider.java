@@ -63,14 +63,14 @@ public class FileTypeIconProvider {
         return fileType;
     }
 
-    public static String identifyFileName(String url) {
-        int indexFrom = url.length();
-        if (url.endsWith("/"))
-            --indexFrom;
-        final int foundIndex = url.lastIndexOf("/", indexFrom);
-        if (foundIndex >= 0) {
-            return url.substring(foundIndex + 1, indexFrom);
-        } else return "";
+    public static String identifyFileName(final String url) {
+        final String[] strings = url.split("/");
+        for (int i = strings.length; i >= 0; i--) {
+            final String s = strings[i].trim();
+            if (!s.isEmpty())
+                return s;
+        }
+        return url.replaceAll("\\:", "_");
     }
 
     public Icon getIconImageByFileType(String fileType, boolean bigImage) {

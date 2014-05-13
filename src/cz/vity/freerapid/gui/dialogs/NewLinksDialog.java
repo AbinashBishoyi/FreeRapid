@@ -137,7 +137,8 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
     private void buildGUI() {
         new CompoundUndoManager(urlsArea);
         new CompoundUndoManager(descriptionArea);
-        urlsArea.setPreferredSize(new Dimension(130, 100));
+        urlsArea.setPreferredSize(new Dimension(230, 100));
+        urlsArea.getParent().setPreferredSize(new Dimension(230, 100));
 
         comboPath.setModel(new RecentsFilesComboModel(UserProp.LAST_USED_SAVED_PATH, true));
         //AutoCompleteDecorator.decorate(comboPath);
