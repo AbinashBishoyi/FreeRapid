@@ -1,7 +1,5 @@
 package cz.vity.freerapid.gui.managers;
 
-import cz.vity.freerapid.core.AppPrefs;
-import cz.vity.freerapid.core.UserProp;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.TaskService;
 
@@ -38,8 +36,8 @@ public class TaskServiceManager {
     }
 
     private TaskService initDownloadTaskService() {
-        final int poolSize = AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT);
-        return initTaskService(poolSize, 10, 5L, DOWNLOAD_SERVICE, new LinkedBlockingQueue<Runnable>(10));
+        //final int poolSize = AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT);
+        return initTaskService(10, 10, 5L, DOWNLOAD_SERVICE, new LinkedBlockingQueue<Runnable>(10));
     }
 
     private TaskService initMoveFileTaskService() {

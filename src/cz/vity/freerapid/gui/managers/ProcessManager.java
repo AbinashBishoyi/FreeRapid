@@ -21,6 +21,8 @@ import org.jdesktop.application.TaskService;
 import javax.swing.*;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 
 /**
  * @author Vity
@@ -30,7 +32,6 @@ public class ProcessManager extends Thread {
     private final ApplicationContext context;
     private DataManager dataManager;
 
-    private volatile Stack<HttpDownloadClient> workingClients;
     private volatile Map<String, DownloadService> services = new Hashtable<String, DownloadService>();
     private volatile Map<DownloadFile, ConnectionSettings> forceDownloadFiles = new Hashtable<DownloadFile, ConnectionSettings>();
 
@@ -42,25 +43,32 @@ public class ProcessManager extends Thread {
     private PluginsManager pluginsManager;
     private volatile int downloading;
     private TaskService taskService;
+    private ClientManager clientManager;
 
 
     public ProcessManager(ManagerDirector director, ApplicationContext context) {
         dataManager = director.getDataManager();
         pluginsManager = director.getPluginsManager();
-        //  queueLock = dataManager.getLock();
+
         this.context = context;
         taskService = director.getTaskServiceManager().getTaskService(TaskServiceManager.DOWNLOAD_SERVICE);
-        final ClientManager clientManager = director.getClientManager();
+        clientManager = director.getClientManager();
         availableConnections = clientManager.getAvailableConnections();
-        this.workingClients = new Stack<HttpDownloadClient>();
-        this.workingClients.addAll(clientManager.getClients());
-        this.setName("ProcessManagerThread");
+
         downloading = 0;
+
+        AppPrefs.getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
+            public void preferenceChange(PreferenceChangeEvent evt) {
+                if (UserProp.MAX_DOWNLOADS_AT_A_TIME.equals(evt.getKey()))
+                    queueUpdated();
+            }
+        });
     }
 
 
     @Override
     public void run() {
+        this.setName("ProcessManagerThread");
         this.setUncaughtExceptionHandler(new GlobalEDTExceptionHandler());
 
         while (!isInterrupted()) {
@@ -86,7 +94,9 @@ public class ProcessManager extends Thread {
     }
 
     private boolean canCreateAnotherConnection() {
-        return !this.workingClients.isEmpty();
+        final int maxDownloads = AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT);
+
+        return maxDownloads > downloading;
     }
 
     private LinkedList<DownloadFile> getFilesForForceDownload() {
@@ -149,7 +159,8 @@ public class ProcessManager extends Thread {
     }
 
     private void queueDownload(final DownloadFile downloadFile, final ConnectionSettings settings, DownloadService downloadService, final ShareDownloadService service) {
-        final HttpDownloadClient client = workingClients.pop();
+        final HttpDownloadClient client = clientManager.popWorkingClient();
+        ++downloading;
         client.initClient(settings);
         downloadService.addDownloadingClient(client);
         downloadFile.setState(DownloadState.GETTING);
@@ -190,7 +201,6 @@ public class ProcessManager extends Thread {
     }
 
     private void startDownload(final DownloadFile downloadFile, final HttpDownloadClient client, ShareDownloadService service) {
-        ++downloading;
         final DownloadState s = downloadFile.getState();
         logger.info("starting download in state s = " + s);
         try {
@@ -212,14 +222,14 @@ public class ProcessManager extends Thread {
     }
 
     private void finishedDownloading(final DownloadFile file, final HttpDownloadClient client, final DownloadTask task) {
-        --downloading;
         synchronized (manipulation) {
             final String serviceName = file.getShareDownloadServiceID();
             final DownloadService service = services.get(serviceName);
             if (service == null)
                 throw new IllegalStateException("Download service not found:" + serviceName);
             service.finishedDownloading(client);
-            this.workingClients.add(client);
+            clientManager.pushWorkingClient(client);
+            --downloading;
             int errorAttemptsCount = file.getErrorAttemptsCount();
             if (file.getState() == DownloadState.ERROR && errorAttemptsCount > 0) {
                 assert task != null;

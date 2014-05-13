@@ -9,9 +9,9 @@ import cz.vity.freerapid.utilities.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Stack;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,16 +23,15 @@ public class ClientManager {
     private final static Logger logger = Logger.getLogger(ClientManager.class.getName());
 
     private final List<ConnectionSettings> availableConnections = new ArrayList<ConnectionSettings>(2);
-    private final int maxClients;
-    private Collection<HttpDownloadClient> clients;
+    private Stack<HttpDownloadClient> workingClientsPool = new Stack<HttpDownloadClient>();
     private static final String PROXY_LIST_DEFAULT_PATH = new File(Utils.getAppPath(), "proxy.list").getAbsolutePath();
-
+    private int popCount;
 
     public ClientManager() {
         if (AppPrefs.getProperty(UserProp.USE_DEFAULT_CONNECTION, true))
             availableConnections.add(new ConnectionSettings());
-
-        maxClients = AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, 5);
+        popCount = 0;
+        //maxClients = AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, 5);
         //String input = "    vity:heslo@exfort.org:8787 vity2:angor@@exfort2.org:8788  exfort3.org:5478  pavel@exfort.org:564 exfort5.org";
 
         if (AppPrefs.getProperty(UserProp.USE_PROXY_LIST, true)) {
@@ -81,17 +80,22 @@ public class ClientManager {
         return Collections.unmodifiableList(availableConnections);
     }
 
-    public Collection<HttpDownloadClient> getClients() {
-        if (clients == null) {
-            clients = new ArrayList<HttpDownloadClient>(maxClients);
-            for (int i = 0; i < maxClients; i++) {
-                clients.add(new DownloadClient());
-            }
-        }
-        return clients;
+    public synchronized HttpDownloadClient popWorkingClient() {
+        if (popCount < getMaxDownloads()) {
+            ++popCount;
+            if (workingClientsPool.isEmpty()) {
+                return new DownloadClient();
+            } else return workingClientsPool.pop();
+        } else throw new IllegalStateException("Cannot pop more connections");
     }
 
-    public int getMaxClients() {
-        return maxClients;
+    public synchronized void pushWorkingClient(HttpDownloadClient client) {
+        --popCount;
+        workingClientsPool.add(client);
     }
+
+    private int getMaxDownloads() {
+        return AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT);
+    }
+
 }
