@@ -3,14 +3,15 @@ package cz.vity.freerapid.gui.managers;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.TaskService;
 
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.logging.Logger;
 
 /**
  * @author Vity
  */
 public class TaskServiceManager {
+    private final static Logger logger = Logger.getLogger(TaskServiceManager.class.getName());
+
     public static final String DOWNLOAD_SERVICE = "downloadService";
     public static final String MOVE_FILE_SERVICE = "moveFile";
     public static final String WORK_WITH_FILE_SERVICE = "workWithFile";
@@ -37,18 +38,18 @@ public class TaskServiceManager {
 
     private TaskService initDownloadTaskService() {
         //final int poolSize = AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT);
-        return initTaskService(10, 10, 5L, DOWNLOAD_SERVICE, new LinkedBlockingQueue<Runnable>(10));
+        return initTaskService(1, 10, 60L, DOWNLOAD_SERVICE, new SynchronousQueue<Runnable>());
     }
 
     private TaskService initMoveFileTaskService() {
-        return initTaskService(1, 1, 5L, WORK_WITH_FILE_SERVICE, new LinkedBlockingQueue<Runnable>());
-    }
-
-    private TaskService initWorkWithFileTaskService() {
         return initTaskService(1, 1, 5L, MOVE_FILE_SERVICE, new LinkedBlockingQueue<Runnable>());
     }
 
-    private TaskService initTaskService(int corePoolSize, int maximumPoolSize, long keepAliveTime, String name, LinkedBlockingQueue<Runnable> runnables) {
+    private TaskService initWorkWithFileTaskService() {
+        return initTaskService(1, 1, 5L, WORK_WITH_FILE_SERVICE, new LinkedBlockingQueue<Runnable>());
+    }
+
+    private TaskService initTaskService(int corePoolSize, int maximumPoolSize, long keepAliveTime, String name, BlockingQueue<Runnable> runnables) {
         final ThreadPoolExecutor threadPool = new ThreadPoolExecutor(
                 corePoolSize,   // corePool size
                 maximumPoolSize,  // maximumPool size
@@ -56,6 +57,7 @@ public class TaskServiceManager {
                 runnables);
         final TaskService service = new TaskService(name, threadPool);
         context.addTaskService(service);
+        logger.info("Creating pool " + name);
         return service;
     }
 

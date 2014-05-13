@@ -247,6 +247,9 @@ public class ProcessManager extends Thread {
                         file.setErrorAttemptsCount(errorAttemptsCount - 1);
                     final ConnectionSettings settings = client.getSettings();
                     service.addProblematicConnection(settings);
+                    final int purge = errorTimer.purge();
+                    if (purge > 0)
+                        logger.info("Purging timer threads count:" + purge);
                     if (error == DownloadTaskError.YOU_HAVE_TO_WAIT_ERROR) {
                         int waitTime = task.getYouHaveToSleepSecondsTime();
                         errorTimer.schedule(new ErrorTimerTask(service, settings, file, waitTime), 0, 1000);

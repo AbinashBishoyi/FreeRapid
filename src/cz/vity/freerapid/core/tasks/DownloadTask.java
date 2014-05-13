@@ -34,11 +34,11 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     private ShareDownloadService service;
     private long speedInBytes;
     private float averageSpeed;
-    private long counter;
+    private volatile long counter;
     private Integer sleep = 0;
     private File outputFile;
     private File storeFile;
-    private static java.util.Timer timer = new java.util.Timer(true);
+    private static java.util.Timer timer = new java.util.Timer();
     private DownloadTaskError serviceError;
 
     private int youHaveToSleepSecondsTime = 0;
@@ -61,9 +61,13 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         this.connectionTimeOut = false;
         this.speedInBytes = 0;
         this.averageSpeed = 0;
+
     }
 
     protected Void doInBackground() throws Exception {
+        final int timerPurge = timer.purge();
+        if (timerPurge > 0)
+            logger.info("Purged timers " + timerPurge);
         client.getHTTPClient().getHttpConnectionManager().closeIdleConnections(0);
 //        final GetMethod getMethod = client.getGetMethod("http://data.idnes.cz/televize/img/1/1466255.jpg");
 //        InputStream stream = client.makeRequestForFile(getMethod);
