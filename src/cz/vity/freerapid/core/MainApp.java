@@ -40,7 +40,7 @@ public class MainApp extends SingleXFrameApplication {
         LogUtils.initLogging(debug);//logovani nejdrive    
         this.appPrefs = new AppPrefs(this.getContext());
 
-        if (OneInstanceClient.checkInstance(null)) {
+        if (OneInstanceClient.checkInstance(null, appPrefs)) {
             this.exit();
             return;
         }

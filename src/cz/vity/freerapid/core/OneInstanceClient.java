@@ -17,7 +17,7 @@ final class OneInstanceClient {
     private OneInstanceClient() {
     }
 
-    public static boolean checkInstance(final Collection<String> openFiles) {
+    public static boolean checkInstance(final Collection<String> openFiles, AppPrefs prefs) {
         if (!AppPrefs.getProperty(FWProp.ONEINSTANCE, true))
             return false;
         Socket clientSocket = null;
@@ -51,7 +51,7 @@ final class OneInstanceClient {
             return true;
         } catch (IOException e) {
             logger.info("No other instance is running.");
-            final OneInstanceServer server = new OneInstanceServer();
+            final OneInstanceServer server = new OneInstanceServer(prefs);
             server.start();
         } finally {
             if (clientSocket != null)

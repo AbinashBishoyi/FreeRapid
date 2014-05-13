@@ -18,9 +18,11 @@ import java.util.logging.Logger;
  */
 final class OneInstanceServer extends Thread {
     private final static Logger logger = Logger.getLogger(OneInstanceServer.class.getName());
+    private final AppPrefs prefs;
 
-    public OneInstanceServer() {
+    public OneInstanceServer(AppPrefs prefs) {
         super();    //call to super
+        this.prefs = prefs;
         this.setPriority(Thread.MIN_PRIORITY);
     }
 
@@ -29,8 +31,30 @@ final class OneInstanceServer extends Thread {
         Socket clientSocket = null;
         try {
             logger.info("Creating a local socket server");
-            final int port = AppPrefs.getProperty(FWProp.ONE_INSTANCE_SERVER_PORT, Consts.ONE_INSTANCE_SERVER_PORT);
-            ServerSocket serverSocket = new ServerSocket(port, 1);
+            final String portString = AppPrefs.getProperty(FWProp.ONE_INSTANCE_SERVER_PORT, null);
+            ServerSocket serverSocket = null;
+            if (portString == null) { //first run
+                int checkPort = Consts.ONE_INSTANCE_SERVER_PORT;
+                int attempts = 10;
+                while (--attempts > 0) {
+                    try {
+                        logger.info("Trying to create a local socket server on port " + checkPort);
+                        serverSocket = new ServerSocket(checkPort, 1);
+                        AppPrefs.storeProperty(FWProp.ONE_INSTANCE_SERVER_PORT, checkPort);
+                        prefs.store();
+                        break;
+                    } catch (IOException e) {
+                        logger.info("Failed to create a local socket server on port " + checkPort + "  Reason:" + e.getMessage());
+                        ++checkPort;
+                    }
+                }
+
+            } else
+                serverSocket = new ServerSocket(AppPrefs.getProperty(FWProp.ONE_INSTANCE_SERVER_PORT, Consts.ONE_INSTANCE_SERVER_PORT), 1);
+
+            if (serverSocket == null)
+                throw new IOException("Cannot find available free port for starting");
+
             while (!isInterrupted()) {
                 logger.info("Waiting for connection");
                 clientSocket = serverSocket.accept();
