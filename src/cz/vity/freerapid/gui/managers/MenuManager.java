@@ -201,7 +201,7 @@ public class MenuManager {
         menuBar.putClientProperty(SELECTED_TEXT_PROPERTY, "");
 
         final ApplicationActionMap map = context.getActionMap();
-        disableOnLinux(map, "shutdownDisabledAction", "shutdownQuitAction", "shutdownHibernateAction", "shutdownShutdownAction", "shutdownStandByAction", "shutdownRebootAction");
+
         map.get("showCompletedAction").putValue(AbstractAction.SELECTED_KEY, viewActions.isShowCompleted());
         map.get("monitorClipboardAction").putValue(AbstractAction.SELECTED_KEY, viewActions.isClipboardMonitoringSelected());
 
@@ -251,14 +251,14 @@ public class MenuManager {
         return action;
     }
 
-    private void disableOnLinux(ApplicationActionMap map, String... actions) {
-        final boolean b = Utils.isWindows();
-        if (b)
-            return;
-        for (String action : actions) {
-            map.get(action).setEnabled(false);
-        }
-    }
+//    private void disableOnLinux(ApplicationActionMap map, String... actions) {
+//        final boolean b = Utils.isWindows();
+//        if (b)
+//            return;
+//        for (String action : actions) {
+//            map.get(action).setEnabled(false);
+//        }
+//    }
 
     private JMenu createConnectionsMenu() {
         final JMenu useConnections = new JMenu();
