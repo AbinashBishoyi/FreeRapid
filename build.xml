@@ -67,12 +67,14 @@
     </pathconvert>
 
     <target name="build" depends="compile" description="building ERModeller">
+        <buildnumber file="build.txt"/>
+
         <jar jarfile="${build.dir}/${mainjar.file}" compress="false">
             <manifest>
                 <attribute name="Build-Date" value="${TODAY}"/>
+                <attribute name="Build" value="${build.number}"/>
                 <attribute name="Class-Path" value="${classpath}"/>
                 <attribute name="Main-Class" value="${mainclass}"/>
-
                 <attribute name="SplashScreen-Image" value="${splash}"/>
             </manifest>
             <fileset dir="${classes.dir}" includes="**/*" excludes="**/services/**,**/dev/**,**/sandbox/**"/>

@@ -84,8 +84,6 @@ IV.   Known bugs and Limitations
                                                               Component creation must be done on Event Dispatch Thread
     X ignore this exception in the app.log
 - autocomplete combobox in AddUrls dialog throws exception
-- frd.exe does not work on Windows Vista64bit
-    X use command "java -jar frd.jar" or double click frd.jar
 - This application does not work on MacOS, because Java 6 was not implemented on this platform yet.
 
 

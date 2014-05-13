@@ -16,6 +16,11 @@ public class GlobalEDTExceptionHandler implements Thread.UncaughtExceptionHandle
     private final static Logger logger = Logger.getLogger(GlobalEDTExceptionHandler.class.getName());
 
     public void uncaughtException(final Thread t, final Throwable e) {
+        //https://appframework.dev.java.net/issues/show_bug.cgi?id=65
+        if (e instanceof IllegalStateException) { //app framework hack
+            if (e.getMessage().contains("cannot open system"))
+                return;
+        }
         logger.log(Level.SEVERE, "Uncaught exception on EDT. ", e);
         //final MainApp app = MainApp.getInstance();
         SwingUtilities.invokeLater(new Runnable() {
