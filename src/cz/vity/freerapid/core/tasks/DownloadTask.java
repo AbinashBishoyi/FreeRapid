@@ -94,7 +94,9 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
             synchronized (DownloadTask.class) {
                 if (isTerminated())
                     return null;
-                fos = FileUtils.createEmptyFile(f, fileSize);
+                fos = FileUtils.createEmptyFile(f, fileSize, this);
+                if (isTerminated())
+                    return null;
             }
         } else {
             fos = new FileOutputStream(f);
