@@ -81,9 +81,9 @@ public class ClipboardMonitorManager extends Thread implements ClipboardOwner {
                 urlFlavorAvailable = !stFlavorAvailable && clipboard.isDataFlavorAvailable(urlFlavor);
                 if (stFlavorAvailable || urlFlavorAvailable) {
 
-                    final Transferable contents = clipboard.getContents(this);
-
                     try {
+                        final Transferable contents = clipboard.getContents(this);
+
                         final Object data = (stFlavorAvailable) ?
                                 contents.getTransferData(DataFlavor.stringFlavor) : contents.getTransferData(urlFlavor);
                         if (!currentClipboardData.equals(data)) {
@@ -92,9 +92,7 @@ public class ClipboardMonitorManager extends Thread implements ClipboardOwner {
                             paste();
 
                         }
-                    } catch (UnsupportedFlavorException e) {
-                        //ignore
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         //ignore
                     }
                 }
