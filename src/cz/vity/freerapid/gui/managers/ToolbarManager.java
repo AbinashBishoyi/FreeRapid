@@ -127,7 +127,7 @@ public class ToolbarManager implements PropertyChangeListener {
 
     private static AbstractButton setButtonProperties(AbstractButton button, Action action) {
         button.setRolloverEnabled(true);
-        button.setIconTextGap(-2);
+        button.setIconTextGap(0);
         final Object desc = action.getValue(Action.SHORT_DESCRIPTION);
         String s = (String) action.getValue(Action.NAME);
         if (s != null && s.endsWith("..."))
