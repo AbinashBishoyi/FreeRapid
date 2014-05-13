@@ -94,7 +94,7 @@ public class ViewActions extends AbstractBean {
         //setShowCompleted(!isShowCompleted());
         AppPrefs.storeProperty(UserProp.SHOW_COMPLETED, isShowCompleted());
         final ManagerDirector managerDirector = app.getManagerDirector();
-        final ContentPanel panel = managerDirector.getDockingManager().getContentPanel();
+        final ContentPanel panel = managerDirector.getContentManager().getContentPanel();
         panel.updateFilters();
     }
 

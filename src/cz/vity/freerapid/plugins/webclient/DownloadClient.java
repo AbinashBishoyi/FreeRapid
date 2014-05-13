@@ -13,6 +13,7 @@ import java.util.zip.GZIPInputStream;
 
 /**
  * @author Vity
+ *         //TODO File Factory - This file has been deleted.
  */
 public class DownloadClient implements HttpDownloadClient {
     private final static Logger logger = Logger.getLogger(DownloadClient.class.getName());

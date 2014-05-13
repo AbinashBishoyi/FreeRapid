@@ -47,7 +47,7 @@ public class FileActions extends AbstractBean {
                 public void run() {
                     if (!dialog.isStartPaused())
                         dataManager.addToQueue(files);
-                    managerDirector.getDockingManager().getContentPanel().selectAdded(files);
+                    managerDirector.getContentManager().getContentPanel().selectAdded(files);
                 }
             });
         }

@@ -33,7 +33,7 @@ public class ManagerDirector {
     /**
      * spravce obrazku
      */
-    private ContentManager dockingManager;
+    private ContentManager contentManager;
     /**
      * hlavni container okna
      */
@@ -83,8 +83,8 @@ public class ManagerDirector {
 
         this.inputDataManager = new DataManager(this, context);
 
-        this.dockingManager = new ContentManager(context, this);
-        this.dockingManager.getContentPanel();
+        this.contentManager = new ContentManager(context, this);
+        this.contentManager.getContentPanel();
 
         this.menuManager = new MenuManager(context, this);
 
@@ -94,7 +94,7 @@ public class ManagerDirector {
         this.inputDataManager.initProcessManager();
 
         rootContainer.add(getToolbarManager().getComponent(), BorderLayout.NORTH);
-        rootContainer.add(getDockingManager().getComponent(), BorderLayout.CENTER);
+        rootContainer.add(getContentManager().getComponent(), BorderLayout.CENTER);
         rootContainer.add(getStatusBarManager().getStatusBar(), BorderLayout.SOUTH);
 
         //male popmenu pro jtextcomponenty
@@ -132,8 +132,8 @@ public class ManagerDirector {
         return mainFrame;
     }
 
-    public ContentManager getDockingManager() {
-        return dockingManager;
+    public ContentManager getContentManager() {
+        return contentManager;
     }
 
 
