@@ -250,8 +250,12 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     private void selectFirstIfNoSelection() {
         final int[] rows = getSelectedRows();
         if (rows.length == 0) {
-            if (getVisibleRowCount() > 0)
-                table.getSelectionModel().setSelectionInterval(0, 0);
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    if (getVisibleRowCount() > 0)
+                        table.getSelectionModel().setSelectionInterval(0, 0);
+                }
+            });
         }
     }
 
