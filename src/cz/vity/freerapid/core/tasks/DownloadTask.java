@@ -58,8 +58,6 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         this.setInputBlocker(null);
         this.setUserCanCancel(true);
         this.youHaveToSleepSecondsTime = 0;
-
-        downloadFile.setState(DownloadState.GETTING);
     }
 
     protected Void doInBackground() throws Exception {
@@ -70,6 +68,10 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 //        final String s = askForCaptcha(image);
 //        System.out.println("s = " + s);
         downloadFile.setDownloaded(0);
+        final int seconds = AppPrefs.getProperty(UserProp.ERROR_SLEEP_TIME, UserProp.ERROR_SLEEP_TIME_DEFAULT);
+        if (seconds > 0)
+            sleep(seconds);
+        downloadFile.setState(DownloadState.GETTING);
         service.run(this);//run plugin
         service = null;
         return null;

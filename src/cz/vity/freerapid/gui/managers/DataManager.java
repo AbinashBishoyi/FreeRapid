@@ -71,7 +71,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                 final DownloadTask task = file.getTask();
                 if (task != null && !task.isTerminated()) {
                     task.cancel(true);
-                    if (AppPrefs.getProperty(UserProp.DOWNLOAD_ON_APPLICATION_START, false)) {
+                    if (AppPrefs.getProperty(UserProp.DOWNLOAD_ON_APPLICATION_START, true)) {
                         file.setState(DownloadState.QUEUED);
                     } else
                         file.setState(DownloadState.PAUSED);

@@ -206,7 +206,7 @@ public class UserPreferencesDialog extends AppDialog {
         bind(checkPlaySoundInCaseOfError, UserProp.PLAY_SOUNDS_FAILED, true);
 
         bind(checkDecoratedFrames, FWProp.DECORATED_FRAMES, false);
-        bind(checkHideWhenMinimized, FWProp.MINIMIZE_TO_TRAY, true);
+        bind(checkHideWhenMinimized, FWProp.MINIMIZE_TO_TRAY, false);
 
         bind(checkShowIconInSystemTray, FWProp.SHOW_TRAY, true);
 

@@ -1,6 +1,6 @@
 *********************************************************
 *   FreeRapid Downloader                                *
-*      by Ladislav Vitasek                              *
+*      by Ladislav Vitasek aka Vity                     *
 *   Mail: info@wordrider.net - questions/suggestions    *
 *   Forum: http://wordrider.net/forum/read.php?6,414    *
 *   Last change: 10th September 2008                    *

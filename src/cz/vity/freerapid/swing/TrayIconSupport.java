@@ -13,6 +13,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 
 /**
  * @author Vity
@@ -71,6 +73,7 @@ public class TrayIconSupport implements PropertyChangeListener {
         };
 
         PopupMenu popup = buildPopmenu(app, map);
+
         final Font font = frame.getFont().deriveFont((float) 11);
         popup.setFont(font);
         this.trayIcon = new TrayIcon(image, frame.getTitle(), popup);
@@ -94,11 +97,20 @@ public class TrayIconSupport implements PropertyChangeListener {
 
     private PopupMenu buildPopmenu(final MainApp app, ResourceMap map) {
         PopupMenu popup = new PopupMenu();
+
         //final Action quitAction = actionMap.get("quit");
         MenuItem defaultItem = new MenuItem(map.getString("trayQuit"));
         MenuItem restoreItem = new MenuItem(map.getString("trayRestore"));
         final CheckboxMenuItem hideWhenMinimizedItem = new CheckboxMenuItem(map.getString("trayHideWhenMinimized"));
         hideWhenMinimizedItem.setState(AppPrefs.getProperty(FWProp.MINIMIZE_TO_TRAY, false));
+
+        AppPrefs.getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
+            public void preferenceChange(PreferenceChangeEvent evt) {
+                if (FWProp.MINIMIZE_TO_TRAY.equals(evt.getKey())) {
+                    hideWhenMinimizedItem.setState(AppPrefs.getProperty(FWProp.MINIMIZE_TO_TRAY, false));
+                }
+            }
+        });
 
         defaultItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

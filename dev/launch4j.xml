@@ -1,8 +1,8 @@
 <launch4jConfig>
     <dontWrapJar>true</dontWrapJar>
     <headerType>gui</headerType>
-    <jar>photogrammetry.jar</jar>
-    <outfile>C:\develope\fotogrametrie\etc\fotogrammetrie.exe</outfile>
+    <jar>frd.jar</jar>
+    <outfile>C:\develope\freerapid\etc\frd.exe</outfile>
     <errTitle></errTitle>
     <cmdLine></cmdLine>
     <chdir></chdir>
@@ -12,13 +12,11 @@
     <customProcName>false</customProcName>
     <stayAlive>false</stayAlive>
     <manifest></manifest>
-    <icon>C:\develope\fotogrametrie\etc\fotogrammetrie.ico</icon>
+    <icon>C:\develope\freerapid\etc\frd.ico</icon>
     <jre>
         <path></path>
         <minVersion>1.6.0</minVersion>
         <maxVersion></maxVersion>
         <jdkPreference>preferJre</jdkPreference>
-        <initialHeapSize>64</initialHeapSize>
-        <maxHeapSize>512</maxHeapSize>
     </jre>
 </launch4jConfig>

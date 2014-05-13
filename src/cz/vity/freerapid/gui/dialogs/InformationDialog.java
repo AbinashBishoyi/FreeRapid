@@ -19,7 +19,6 @@ import cz.vity.freerapid.swing.models.RecentsFilesComboModel;
 import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.application.Task;
 import org.jdesktop.swinghelper.buttonpanel.JXButtonPanel;
-import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -104,7 +103,7 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
         new CompoundUndoManager(descriptionArea);
 
         comboPath.setModel(new RecentsFilesComboModel(UserProp.LAST_USED_SAVED_PATH, true));
-        AutoCompleteDecorator.decorate(comboPath);
+        //AutoCompleteDecorator.decorate(comboPath);
 
         comboPath.setSelectedItem(file.getSaveToDirectory().getAbsolutePath());
         progressBar.setFont(progressBar.getFont().deriveFont(Font.BOLD, 16.0F));
@@ -116,6 +115,8 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
         fieldSize.setOpaque(false);
         fieldFrom.setBackground(this.getBackground());
         fieldSize.setBackground(this.getBackground());
+
+        descriptionArea.setFont(descriptionArea.getFont().deriveFont(11.0F));
     }
 
     @org.jdesktop.application.Action

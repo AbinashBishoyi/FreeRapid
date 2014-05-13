@@ -20,7 +20,6 @@ import cz.vity.freerapid.swing.models.RecentsFilesComboModel;
 import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.application.Action;
 import org.jdesktop.swinghelper.buttonpanel.JXButtonPanel;
-import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -139,7 +138,7 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
         urlsArea.setPreferredSize(new Dimension(130, 100));
         //urlsArea.setURLs("http://www.filefactory.com/file/a3f880/n/KOW_-_Monica_divx_002");
         comboPath.setModel(new RecentsFilesComboModel(UserProp.LAST_USED_SAVED_PATH, true));
-        AutoCompleteDecorator.decorate(comboPath);
+        //AutoCompleteDecorator.decorate(comboPath);
 
         comboPath.setSelectedItem(AppPrefs.getProperty(UserProp.LAST_COMBO_PATH, ""));
 
@@ -173,11 +172,32 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
 
 
         final String dir = (String) comboPath.getEditor().getItem();
-        if (dir == null || !new File(dir).isDirectory()) {
+        if (dir == null || dir.isEmpty()) {
             Swinger.showErrorMessage(this.getResourceMap(), "noDirectoryMessage");
             btnSelectPathAction();
             return false;
         }
+        final File outputDir = new File(dir);
+        if (!outputDir.isDirectory()) {
+            final int choiceYesNo = Swinger.getChoiceYesNo(getResourceMap().getString("directoryCreateMessage"));
+            if (choiceYesNo == Swinger.RESULT_YES) {
+                if (!outputDir.mkdirs()) {
+                    Swinger.showErrorMessage(getResourceMap(), "directoryCreatingFailed", outputDir.getAbsolutePath());
+                    btnSelectPathAction();
+                    return false;
+                } else {
+                    if (!outputDir.isDirectory()) {
+                        Swinger.showErrorMessage(getResourceMap(), "itsNotDirectory", outputDir.getAbsolutePath());
+                        btnSelectPathAction();
+                        return false;
+                    }
+                }
+            } else {
+                btnSelectPathAction();
+                return false;
+            }
+        }
+
 
         for (URL url : urlList) {
             final String s = url.toExternalForm();

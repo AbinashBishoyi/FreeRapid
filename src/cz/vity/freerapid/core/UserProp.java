@@ -58,4 +58,7 @@ public class UserProp {
     public static final String PROXY_LIST_PATH = "proxyListPath";
     public static final String PLAY_SOUNDS_FAILED = "playSoundsFailed";
     public static final int FILE_ALREADY_EXISTS_DEFAULT = UserProp.ASK;
+
+    public static final String ERROR_SLEEP_TIME = "firstSleepTime";
+    public static final int ERROR_SLEEP_TIME_DEFAULT = 4;
 }
