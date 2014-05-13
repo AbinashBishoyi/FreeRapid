@@ -156,7 +156,7 @@
     </target>
 
     <target name="resources-tosrc">
-        <native2ascii dest="${src.dir}" src="${resources.dir}" includes="**/**/*.properties"/>
+        <native2ascii dest="${src.dir}" src="${resources.dir}" includes="**/**/*.properties" encoding="UTF-8"/>
     </target>
 
     <target name="resources" depends="init">
