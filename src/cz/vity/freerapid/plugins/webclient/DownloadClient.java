@@ -84,7 +84,7 @@ public class DownloadClient implements HttpDownloadClient {
         toString(method);
         client.executeMethod(method);
 
-        int statuscode = method.getStatusCode();
+        final int statuscode = method.getStatusCode();
 
         if (statuscode != HttpStatus.SC_OK) { //selhalo pripojeni
             logger.warning("Loading file failed - invalid HTTP return status code:" + statuscode);
@@ -92,23 +92,40 @@ public class DownloadClient implements HttpDownloadClient {
             return null;
         }
 
-        boolean isImage = false;
+        boolean isStream = true;
         final Header contentType = method.getResponseHeader("Content-Type");
         if (contentType == null) {
             logger.warning("No Content-Type!");
         } else {
             final String value = contentType.getValue();
-            isImage = contentType.getValue().startsWith("image/");
+            boolean isImage = value.startsWith("image/");
             if (!value.startsWith("application/") && !isImage) {
+                isStream = false;
                 logger.warning("Suspicious Content-Type:" + contentType.getValue());
             } else {
                 final Header contentLength = method.getResponseHeader("Content-Length");
-                if (contentLength == null)
+                if (contentLength == null) {
+                    isStream = false;
                     logger.warning("No Content-Length in header");
-                else
+                } else
                     file.setFileSize(new Long(contentLength.getValue()));
             }
         }
+        final String fileName = getFileName(method);
+        if (fileName != null) {
+            file.setFileName(fileName);
+        }
+
+        if (isStream) {
+            return method.getResponseBodyAsStream();
+        } else {
+            logger.warning("Loading file failed");
+            updateAsString(method);
+        }
+        return null;
+    }
+
+    private String getFileName(HttpMethod method) {
         final Header disposition = method.getResponseHeader("Content-Disposition");
         if (disposition != null && disposition.getValue().toLowerCase().contains("attachment")) {
             final String value = disposition.getValue();
@@ -118,16 +135,9 @@ public class DownloadClient implements HttpDownloadClient {
                 String s = value.substring(index + str.length());
                 if (s.startsWith("\"") && s.endsWith("\""))
                     s = s.substring(1, s.length() - 1);
-                file.setFileName(s);
-            } else logger.warning("File name was not found in:" + value);
-
-            return method.getResponseBodyAsStream();
-        } else {
-            if (isImage) {
-                return method.getResponseBodyAsStream();
+                return s;
             } else {
-                logger.warning("Loading file failed");
-                updateAsString(method);
+                logger.warning("File name was not found in:" + value);
             }
         }
         return null;
