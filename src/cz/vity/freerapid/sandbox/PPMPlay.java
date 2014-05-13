@@ -46,10 +46,14 @@ public class PPMPlay {
             processOut.flush();
             processOut.close();
             final Scanner scanner = new Scanner(process.getInputStream());
+            if (scanner.hasNext())
+                System.out.println("has next");
             final String s = scanner.next();
             scanner.close();
             System.out.println("s = " + s);
             process.waitFor();
+            final int i = process.exitValue();
+            System.out.println("i = " + i);
             //return process.exitValue() == 0;
         } catch (IOException e) {
             LogUtils.processException(logger, e);

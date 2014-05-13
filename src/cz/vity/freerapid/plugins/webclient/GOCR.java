@@ -42,7 +42,6 @@ class GOCR {
 
 
         Scanner scanner = null;
-        OutputStream processOut = null;
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
             final ImageEncoder encoder = ImageCodec.createImageEncoder("PNM", out, new PNMEncodeParam());
@@ -51,16 +50,19 @@ class GOCR {
 
 
             final Process process = Runtime.getRuntime().exec(command + " " + commandLineOptions + " -f ASCII -");
-            processOut = process.getOutputStream();
+            OutputStream processOut = process.getOutputStream();
             processOut.write(out.toByteArray());
             processOut.flush();
-
+            processOut.close();
             scanner = new Scanner(process.getInputStream());
-            return scanner.next();
-//            process.waitFor();
-//            if (process.exitValue() != 0)
-//                throw new IOException("Process exited abnormally");
-            //return s;
+            final String s;
+            if (scanner.hasNext()) {
+                s = scanner.next();
+            } else throw new IllegalStateException("No output");
+            process.waitFor();
+            if (process.exitValue() != 0)
+                throw new IOException("Process exited abnormally");
+            return s;
         } catch (Exception e) {
             LogUtils.processException(logger, e);
             throw new IOException(e);
@@ -69,14 +71,6 @@ class GOCR {
                 out.close();
             } catch (IOException e) {
                 LogUtils.processException(logger, e);
-            }
-
-            if (processOut != null) {
-                try {
-                    processOut.close();
-                } catch (IOException e) {
-                    LogUtils.processException(logger, e);
-                }
             }
 
             if (scanner != null)
