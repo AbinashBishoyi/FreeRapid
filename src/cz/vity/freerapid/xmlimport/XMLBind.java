@@ -17,14 +17,21 @@ public class XMLBind {
 
     private static final String RESOURCES_SCHEMA_XSD = "resources/schema.xsd";
 
-    public Plugins loadSchema(String xmlData) throws JAXBException, SAXException {
-        //System.getProperties().put("javax.xml.bind.JAXBContext", "com.sun.xml.internal.bind.v2.ContextFactory");
+    /**
+     * Naète data z XML pomocí technologie JAXB a vloží je
+     *
+     * @param xmlData xml struktura dat
+     * @return instance objektu Plugins, který obsahuje seznam dostupných pluginù na server
+     * @throws JAXBException
+     * @throws SAXException
+     */
+    public Plugins loadPluginList(String xmlData) throws JAXBException, SAXException {
         final JAXBContext ctx = getContext();
         final Unmarshaller unmarshaller = ctx.createUnmarshaller();
         unmarshaller.setEventHandler(new DefaultValidationEventHandler());
         SchemaFactory sf = SchemaFactory.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        unmarshaller.setSchema(sf.newSchema(XMLBind.class.getResource(RESOURCES_SCHEMA_XSD)));
-        //unmarshaller.getSchema();
+        unmarshaller.setSchema(sf.newSchema(this.getClass().getResource(RESOURCES_SCHEMA_XSD)));
+        //unmarshalling XML dat
         return (Plugins) unmarshaller.unmarshal(new StringReader(xmlData));
     }
 
