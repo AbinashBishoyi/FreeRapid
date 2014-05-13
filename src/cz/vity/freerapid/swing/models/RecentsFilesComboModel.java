@@ -2,12 +2,11 @@ package cz.vity.freerapid.swing.models;
 
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.Consts;
+import cz.vity.freerapid.utilities.Utils;
 
 import javax.swing.*;
 import java.io.File;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * @author Vity
@@ -53,6 +52,8 @@ public final class RecentsFilesComboModel extends DefaultComboBoxModel {
                 super.insertElementAt(anObject, 0);
                 if (stack.size() > Consts.MAX_RECENT_PHRASES_COUNT) {
                     this.remove(Consts.MAX_RECENT_PHRASES_COUNT - 1);
+                    if (autosave)
+                        store();
                 }
             }
             if (autosave)
@@ -77,12 +78,24 @@ public final class RecentsFilesComboModel extends DefaultComboBoxModel {
     }
 
     public void store() {
-        StringBuilder builder = new StringBuilder();
-        for (final Iterator<String> it = stack.iterator(); it.hasNext();) {
-            builder.append(it.next());
+        final StringBuilder builder = new StringBuilder();
+        final Set<File> set = new HashSet<File>(stack.size());
+        final boolean isWindows = Utils.isWindows();
+        for (String str : stack) {
+            if (isWindows && !str.endsWith("\\"))
+                str = str + "\\";
+            final File file = new File(str);
+            if (!set.contains(file)) {
+                set.add(file);
+            }
+        }
+        for (final Iterator<File> it = set.iterator(); it.hasNext();) {
+            File str = it.next();
+            builder.append(str.getAbsolutePath());
             if (it.hasNext())
                 builder.append("|");
         }
+
         AppPrefs.storeProperty(keyProperties, builder.toString());
 
     }
