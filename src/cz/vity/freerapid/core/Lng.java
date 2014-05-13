@@ -6,12 +6,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 /**
  * @author Vity
  */
 public final class Lng {
-    //private final static Logger logger = Logger.getLogger(Lng.class.getName());
+    private final static Logger logger = Logger.getLogger(Lng.class.getName());
 
     private static List<SupportedLanguage> supportedLanguages = null;
 
@@ -87,7 +88,9 @@ public final class Lng {
         selLanguageCode = result.getLanguageCode();
         selCountryCode = result.getCountry();
 
-        final Locale selLocale = new Locale(selLanguageCode.toLowerCase(), ("".equals(selCountryCode) ? localeCountry : selCountryCode).toUpperCase());
+        final Locale selLocale = new Locale(selLanguageCode.toLowerCase(), ("".equals(selCountryCode) ? localeCountry : selCountryCode).toLowerCase());
+        logger.config("Setting locale " + selLocale);
+        //logger.config("Taiwan locale " + Locale.TAIWAN);
         Locale.setDefault(selLocale);
     }
 

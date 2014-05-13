@@ -80,13 +80,17 @@
                     <comment value="#"/>
                 </striplinecomments>
             </filterchain>
-            <fileset dir="${src.dir}" includes="**/?*.properties"/>
+            <fileset dir="${src.dir}" includes="**/?*.properties" excludes="**/?*_zh*.properties"/>
             <mapper type="glob" from="*.properties" to="*.stripped">
             </mapper>
         </copy>
 
         <native2ascii src="${classes.dir}" encoding="utf-8" includes="**/?*.stripped"
                       dest="${classes.dir}" ext=".properties"/>
+
+        <native2ascii src="${src.dir}" encoding="unicode" includes="**/?*_zh*.properties"
+                      dest="${classes.dir}" ext=".properties"/>
+
         <delete>
             <fileset dir="${classes.dir}" includes="**/?*.stripped"/>
         </delete>
@@ -203,7 +207,7 @@
 
 
     <target name="dist" depends="build" description="creating release">
-        <zip zipfile="${dist.dir}/${version.name}.zip" level="9" compress="">
+        <zip zipfile="${dist.dir}/${version.name}.zip" level="9" compress="true">
             <fileset dir=".">
                 <include name="${build.dir}/"/>
                 <!--<exclude name="${build.dir}/${mainjar-packed.file}"/>-->
