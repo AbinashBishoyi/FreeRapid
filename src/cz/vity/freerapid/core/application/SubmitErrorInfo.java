@@ -3,7 +3,7 @@ package cz.vity.freerapid.core.application;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.Consts;
 import cz.vity.freerapid.core.FWProp;
-import cz.vity.freerapid.utilities.Utils;
+import org.apache.commons.httpclient.methods.PostMethod;
 import org.jdesktop.beans.AbstractBean;
 import org.jdesktop.swingx.error.ErrorInfo;
 
@@ -76,24 +76,23 @@ public class SubmitErrorInfo extends AbstractBean {
     }
 
 
-    public String toURLPostData() {
+    public void toURLPostData(PostMethod method) {
         AppPrefs.storeProperty(FWProp.SUBMIT_ERROR_EMAIL, getEmail());
         AppPrefs.storeProperty(FWProp.SUBMIT_ERROR_NAME, getName());
 
-        final StringBuilder builder = new StringBuilder();
-        Utils.addParam(builder, "product", Consts.PRODUCT);
-        Utils.addParam(builder, "version", Consts.VERSION);
-        Utils.addParam(builder, "name", getName());
-        Utils.addParam(builder, "locale", Locale.getDefault().getLanguage());
-        Utils.addParam(builder, "os", System.getProperty("os.name", "Unknown"));
-        Utils.addParam(builder, "comment", getComment());
-        Utils.addParam(builder, "email", getEmail());
-        Utils.addParam(builder, "userinfo", getUserInfo());
+
+        method.addParameter("product", Consts.PRODUCT);
+        method.addParameter("version", Consts.VERSION);
+        method.addParameter("name", getName());
+        method.addParameter("locale", Locale.getDefault().getLanguage());
+        method.addParameter("os", System.getProperty("os.name", "Unknown"));
+        method.addParameter("comment", getComment());
+        method.addParameter("email", getEmail());
+        method.addParameter("userinfo", getUserInfo());
         getErrorInfo().getErrorException().printStackTrace();
         final StringWriter sw = new StringWriter();
         getErrorInfo().getErrorException().printStackTrace(new PrintWriter(sw));
-        Utils.addParam(builder, "exception", sw.toString());
-        return builder.toString();
+        method.addParameter("exception", sw.toString());
     }
 
 }

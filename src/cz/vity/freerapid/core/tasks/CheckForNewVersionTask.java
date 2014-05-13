@@ -3,20 +3,22 @@ package cz.vity.freerapid.core.tasks;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.Consts;
 import cz.vity.freerapid.core.FWProp;
-import cz.vity.freerapid.core.application.ProxyHelper;
+import cz.vity.freerapid.core.MainApp;
+import cz.vity.freerapid.core.tasks.exceptions.NoAvailableConnection;
+import cz.vity.freerapid.gui.managers.ClientManager;
+import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
+import cz.vity.freerapid.plugins.webclient.DownloadClient;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.Browser;
 import cz.vity.freerapid.utilities.LogUtils;
-import cz.vity.freerapid.utilities.Utils;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.PostMethod;
 import org.jdesktop.application.Application;
+import org.jdesktop.application.ResourceMap;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.ConnectException;
 import java.net.UnknownHostException;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -34,46 +36,41 @@ public class CheckForNewVersionTask extends CoreTask<ConnectResult, Void> {
         logger.info("Starting to check for a new version");
         this.showInfoMessages = showInfoMessages;
         this.setUserCanCancel(false);
-        ProxyHelper.initProxy();//init proxy settings
+//        ProxyHelper.initProxy();//init proxy settings
         setTaskToForeground();
     }
 
 
     @Override
     protected ConnectResult doInBackground() throws Exception {
-        HttpURLConnection urlConn = null;
         message("message.connecting");
-        try {
-            final String url = AppPrefs.getProperty(FWProp.CHECK_FOR_NEW_VERSION_URL, Consts.WEBURL_CHECKNEWVERSION);
-            urlConn = (HttpURLConnection) new URL(url).openConnection();
-            urlConn.setDoOutput(true);
-            urlConn.setDoInput(true);
-            urlConn.setUseCaches(false);
-            final DataOutputStream bufferOut = new DataOutputStream(urlConn.getOutputStream());
-            logger.info("Connected to the web, Writing params");
-            bufferOut.write(Utils.addParam("", PARAM_VERSION, Consts.APPVERSION).getBytes());
-            message("message.connect.status.checking");
-            bufferOut.close();
-            final BufferedReader br = new BufferedReader(new InputStreamReader(urlConn.getInputStream()));
-            final String line = br.readLine();
-            br.close();
 
-            logger.info("disconnecting");
-            message("message.connect.status.disconnect");
-            urlConn.disconnect();
-            if (line != null && line.toLowerCase().contains("yes"))
-                //   return CONNECT_SAME_VERSION;
-                return ConnectResult.CONNECT_NEW_VERSION;
+        final String url = AppPrefs.getProperty(FWProp.CHECK_FOR_NEW_VERSION_URL, Consts.WEBURL_CHECKNEWVERSION);
+        final ClientManager clientManager = ((MainApp) getApplication()).getManagerDirector().getClientManager();
+        final List<ConnectionSettings> connectionSettingses = clientManager.getEnabledConnections();
+        final ResourceMap map = getApplication().getContext().getResourceMap(CheckPluginUpdateTask.class);
+        if (connectionSettingses.isEmpty())
+            throw new NoAvailableConnection(map.getString("noAvailableConnection"));
+        final DownloadClient client = new DownloadClient();
+        client.initClient(connectionSettingses.get(0));
+        PostMethod postMethod = client.getPostMethod(url);
+        postMethod.addParameter(PARAM_VERSION, Consts.APPVERSION);
+        logger.info("Connected to the web, Writing params");
+        message("message.connect.status.checking");
+        if (client.makeRequest(postMethod, true) != HttpStatus.SC_OK)
+            throw new ConnectException(map.getString("Connection_failed"));
+        message("message.checkingData");
+        if (isCancelled())
+            throw new InterruptedException();
 
-        } catch (UnknownHostException e) { //Inet not available
-            if (urlConn != null) urlConn.disconnect();
-            throw e;
-        } catch (IOException e) {
-            LogUtils.processException(logger, e);
-            if (urlConn != null) urlConn.disconnect();
-            throw e;
-        }
-        return ConnectResult.SAME_VERSION;
+        logger.info("disconnecting");
+        message("message.connect.status.disconnect");
+        final String line = client.getContentAsString();
+        if (line != null && line.toLowerCase().contains("yes"))
+            //   return CONNECT_SAME_VERSION;
+            return ConnectResult.CONNECT_NEW_VERSION;
+        else
+            return ConnectResult.SAME_VERSION;
     }
 
     @Override
