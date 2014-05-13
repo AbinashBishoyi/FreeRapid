@@ -95,10 +95,6 @@ public class MainApp extends SingleXFrameApplication {
 
         if (minimizeOnStart)
             Swinger.minimize(mainFrame);
-
-        final JPasswordField field = new JPasswordField();
-        final int i = Swinger.showInputDialog("asasd", field, true);
-        System.out.println("i = " + i);
     }
 
     private void initMainFrame() {

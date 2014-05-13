@@ -39,6 +39,7 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DragSource;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -944,6 +945,15 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     }
 
 
+    private boolean isSelectedRow(int row) {
+        final int[] ints = getSelectedRows();
+        for (int i : ints) {
+            if (i == row)
+                return true;
+        }
+        return false;
+    }
+
     private class WinampMoveStyle extends MouseAdapter {
         private boolean active = false;
         private int rowPosition;
@@ -953,16 +963,22 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             if (SwingUtilities.isRightMouseButton(e)) {
                 if (AppPrefs.getProperty(UserProp.DRAG_ON_RIGHT_MOUSE, UserProp.DRAG_ON_RIGHT_MOUSE_DEFAULT)) {
                     rowPosition = table.rowAtPoint(e.getPoint());
-                    if (rowPosition != -1)
+                    if (rowPosition != -1 && isSelectedRow(rowPosition)) {
+                        table.setCursor(DragSource.DefaultMoveDrop);
                         active = true;
+                    }
                 }
             }
         }
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            if (SwingUtilities.isRightMouseButton(e))
-                active = false;
+            if (SwingUtilities.isRightMouseButton(e)) {
+                if (active) {
+                    table.setCursor(Cursor.getDefaultCursor());
+                    active = false;
+                }
+            }
         }
 
         @Override
