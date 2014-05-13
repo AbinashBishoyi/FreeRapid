@@ -33,7 +33,7 @@ public final class PlugUtils {
     /**
      * Parses input string and converts it into bytes.<br />
      * Acceptable input:<br />
-     * <code>1.35 Gb, 0.5 Mb 5 465kB, 45654 6544 bytes, 54654654</code> - default value is kB<br />
+     * <code>1.35 Gb, 0.5 Mb 5 465kB, 45654 6544 bytes, 54654654, 280B</code> - default value is kB<br />
      * Function is not case sensitive. Spaces among numbers are not important (they are removed).<br />
      * All ',' are converted to '.'<br />
      *
@@ -55,6 +55,8 @@ public final class PlugUtils {
             constant = 1024 * 1024 * 1024;
         } else {
             index = value.lastIndexOf("BYTES");
+            if (index < 0)
+                index = value.lastIndexOf("B");
         }
         if (index > 0) {
             value = value.substring(0, index);

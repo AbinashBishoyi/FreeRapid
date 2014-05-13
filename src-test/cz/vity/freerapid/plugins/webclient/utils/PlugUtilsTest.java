@@ -29,6 +29,7 @@ public class PlugUtilsTest {
 
     @Test
     public void testGetFileSizeFromString() {
+        assertEquals("File size from B", PlugUtils.getFileSizeFromString("280B"), 280L);
         assertEquals("File size from MB", PlugUtils.getFileSizeFromString("\t  2500 MB"), 2500 * 1024 * 1024L);
         assertEquals("File size from GB", PlugUtils.getFileSizeFromString("  2 \t500 GB"), 2500 * 1024L * 1024 * 1024L);
         assertEquals("File size from bytes", PlugUtils.getFileSizeFromString(" 2500 byTes"), 2500);
