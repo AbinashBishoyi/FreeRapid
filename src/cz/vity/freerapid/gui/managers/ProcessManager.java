@@ -87,7 +87,7 @@ public class ProcessManager extends Thread {
                         executeForceDownload();
                     if (canCreateAnotherConnection(true) && !forceValidateCheck.isEmpty())
                         executeForceValidateCheck();
-                    if (canCreateAnotherConnection(false))
+                    if (canCreateAnotherConnection(true))
                         execute();
                 }
             }
@@ -153,6 +153,7 @@ public class ProcessManager extends Thread {
     private boolean execute() {
         final List<DownloadFile> files = new ArrayList<DownloadFile>(dataManager.getDownloadFiles());
 
+        final boolean testFiles = AppPrefs.getProperty(UserProp.TEST_FILE, UserProp.TEST_FILE_DEFAULT);
         final List<DownloadFile> queuedFiles = getQueued(files);
         for (DownloadFile file : queuedFiles) {
             logger.info("Getting downloadFile " + file);
@@ -163,20 +164,23 @@ public class ProcessManager extends Thread {
             final DownloadService downloadService = getDownloadService(service);
 
             final List<ConnectionSettings> connectionSettingses = clientManager.getRotatedEnabledConnections();
-            if (file.getFileState() == FileState.NOT_CHECKED && service.supportsRunCheck() && !connectionSettingses.isEmpty()) {
+            if (testFiles && file.getFileState() == FileState.NOT_CHECKED && service.supportsRunCheck() && !connectionSettingses.isEmpty()) {
                 //pokud to podporuje plugin a  soucasne nebyl jeste ocheckovan a soucasne je k dispozici vubec nejake spojeni
+                //a soucasne je to zapnuto v nastavenich
                 queueDownload(file, connectionSettingses.get(0), downloadService, service, true);
             } else {
-                if (downloadService.canDownloadBeforeCheck(file, files, isStartFromTop())) {
-                    for (ConnectionSettings settings : connectionSettingses) {
-                        if (downloadService.canDownloadWith(settings)) {
-                            queueDownload(file, settings, downloadService, service, false);
-                            break;
+                if (canCreateAnotherConnection(false)) {
+                    if (downloadService.canDownloadBeforeCheck(file, files, isStartFromTop())) {
+                        for (ConnectionSettings settings : connectionSettingses) {
+                            if (downloadService.canDownloadWith(settings)) {
+                                queueDownload(file, settings, downloadService, service, false);
+                                break;
+                            }
                         }
                     }
                 }
             }
-            if (!canCreateAnotherConnection(false))
+            if (!canCreateAnotherConnection(true))
                 return true;
         }
         return false;
