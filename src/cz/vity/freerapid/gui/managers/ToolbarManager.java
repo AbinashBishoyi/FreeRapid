@@ -8,6 +8,7 @@ import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.swingx.JXFrame;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -84,6 +85,12 @@ public class ToolbarManager implements PropertyChangeListener {
 //        toolbar.add(new ToolbarSeparator());
 //        toolbar.add(getButton(Swinger.getAction("quit")));
         toolbar.add(Box.createGlue());
+        final AbstractButton btn = getButton(Swinger.getAction("paypalSupportAction"));
+        btn.setOpaque(false);
+        btn.setRolloverEnabled(false);
+        btn.setText(null);
+        btn.setBorder(new EmptyBorder(0, 0, 0, 0));
+        toolbar.add(btn);
 //        this.labelWorkingProgress = new JXBusyLabel();
 //        this.labelWorkingProgress.setName("labelWorkingProgress");
 //        labelWorkingProgress.setBorder(BorderFactory.createEmptyBorder(2, 10, 2, 10));
@@ -148,6 +155,11 @@ public class ToolbarManager implements PropertyChangeListener {
         final JXFrame jxFrame = (JXFrame) (MainApp.getInstance(MainApp.class).getMainFrame());
         jxFrame.setWaiting(enabled);
         //labelWorkingProgress.setBusy(enabled);
+    }
+
+    @org.jdesktop.application.Action
+    public void paypalSupportAction() {
+
     }
 
 }

@@ -27,6 +27,8 @@ September 2008 - FreeRapid Downloader 0.6 released
   Added : clipboard monitoring (optionable)
   Added : frame title information (optionable)
   Added : ESC key cancels current download(s)
+  Added : new icons in help menu
+  Added : link to paypal.com to support this project
   Added : automatic smart saving current queue and downloaded files history
           (if application/OS crashes it preserves everything)
   Added : support for depositfiles.com

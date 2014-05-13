@@ -438,7 +438,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     private void initTable() {
         table.setName("mainTable");
-        table.setModel(new CustomTableModel(manager.getDownloadFiles(), new String[]{"Name", "Progress", "Completition", "Est. time", "Size", "Speed", "Average Speed", "Service", "Connection"}));
+        final String[] columns = (String[]) context.getResourceMap().getObject("mainTableColumns", String[].class);
+        table.setModel(new CustomTableModel(manager.getDownloadFiles(), columns));
         table.setAutoCreateColumnsFromModel(false);
         table.setEditable(false);
         table.setColumnControlVisible(true);
@@ -800,10 +801,14 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                 final float speed = downloadFile.getAverageSpeed();
 
                 if (Float.compare(0, speed) != 0) {
-                    value = secondsToHMin(Math.round(hasToBeDownloaded / speed));
+                    if (hasToBeDownloaded >= 0) {
+                        value = secondsToHMin(Math.round(hasToBeDownloaded / speed));
+                    } else value = stateToString(state);
                 } else value = stateToString(state);
             } else if (state == DownloadState.WAITING) {
-                value = String.format("%s (%s)", stateToString(state), secondsToHMin(downloadFile.getSleep()));
+                if (downloadFile.getSleep() >= 0)
+                    value = String.format("%s (%s)", stateToString(state), secondsToHMin(downloadFile.getSleep()));
+                else value = "";
             } else value = stateToString(state);
             if (state == DownloadState.ERROR) {
                 final String errorMessage = downloadFile.getErrorMessage();

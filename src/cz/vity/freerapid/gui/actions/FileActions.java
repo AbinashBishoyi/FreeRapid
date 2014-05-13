@@ -70,6 +70,5 @@ public class FileActions extends AbstractBean {
             dialog = null;
         }
     }
-    //TODO https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=donations@wordrider.net&item_name=FreeRapid&no_shipping=1&cn=Optional comments&tax=0
 
 }

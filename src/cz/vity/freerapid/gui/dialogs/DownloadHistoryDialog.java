@@ -110,6 +110,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         registerKeyboardAction("openInBrowser");
         registerKeyboardAction("removeSelectedAction");
         registerKeyboardAction("copyContent");
+        registerKeyboardAction("copyURL");
 
         updateActions();
 
