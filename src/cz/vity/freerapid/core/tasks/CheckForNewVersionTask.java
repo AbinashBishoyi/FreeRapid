@@ -84,7 +84,7 @@ public class CheckForNewVersionTask extends CoreTask<ConnectResult, Void> {
                     Swinger.showInformationDialog(getResourceMap().getString("message.connect.sameVersion"));
                 break;
             case CONNECT_NEW_VERSION:
-                int res = Swinger.getChoiceYesNoCancel(this.getResourceMap().getString("message.connect.newVersion"));
+                int res = Swinger.getChoiceYesNo(this.getResourceMap().getString("message.connect.newVersion"));
                 if (res == Swinger.RESULT_YES)
                     Browser.showHomepage();
                 break;
