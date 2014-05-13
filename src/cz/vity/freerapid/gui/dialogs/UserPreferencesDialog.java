@@ -353,6 +353,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         final ShareDownloadService service = managerDirector.getPluginsManager().getPluginInstance(data.getId());
         try {
             service.showOptions();
+            model.setBuffering(true);
         } catch (Exception e) {
             LogUtils.processException(logger, e);
         }

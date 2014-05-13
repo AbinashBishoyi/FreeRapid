@@ -9,6 +9,7 @@ import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
 import cz.vity.freerapid.utilities.Utils;
 
 import java.io.File;
+import java.net.ProxySelector;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -35,8 +36,10 @@ public class ClientManager {
     public ClientManager(ManagerDirector managerDirector) {
         this.managerDirector = managerDirector;
         defaultConnectionSettings.setDefault(true);
-        final String useSystemProxies = String.valueOf(AppPrefs.getProperty(UserProp.USE_SYSTEM_PROXIES, UserProp.USE_SYSTEM_PROXIES_DEFAULT));
-        System.setProperty("java.net.useSystemProxies", useSystemProxies);
+        final boolean useSystemProxies = AppPrefs.getProperty(UserProp.USE_SYSTEM_PROXIES, UserProp.USE_SYSTEM_PROXIES_DEFAULT);
+        if (!useSystemProxies)
+            ProxySelector.setDefault(null);
+        //System.setProperty("java.net.useSystemProxies", useSystemProxies);
 
         popCount = 0;
         updateConnectionSettings();
