@@ -75,7 +75,7 @@ public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
         message("message.checkingData");
         if (isCancelled())
             throw new InterruptedException();
-        final Plugins rootPlugins = new XMLBind().loadSchema(client.getContentAsString());
+        final Plugins rootPlugins = new XMLBind().loadPluginList(client.getContentAsString());
         final List<Plugin> plugins = rootPlugins.getPlugin();
         final PluginsManager pluginsManager = director.getPluginsManager();
         for (Plugin plugin : plugins) {
