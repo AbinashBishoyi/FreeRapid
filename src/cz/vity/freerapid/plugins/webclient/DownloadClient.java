@@ -11,6 +11,7 @@ import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
+import java.net.URLDecoder;
 
 /**
  * @author Vity
@@ -149,7 +150,11 @@ final public class DownloadClient implements HttpDownloadClient {
                 if (index >= 0) {
                     final String s = value.substring(index + str.length());
                     if (!s.isEmpty())
-                        return s;
+                        try {
+                            return URLDecoder.decode(s,"UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                          logger.warning("Unsupported encoding");
+                        }
                 } else {
                     logger.warning("File name was not found in:" + value);
                 }
