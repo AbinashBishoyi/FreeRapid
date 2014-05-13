@@ -14,6 +14,7 @@ Fixed - indicates a bug fix
 XX YYYY 2009 - FreeRapid Downloader 0.81 released
   Added : Russian translation [thanks to Vdm17!]
   Added : Brazilian portuguese translation [thanks to Tiago Hillebrandt!]
+  Added : Windows - open directory selects file if the file exists
   Changed : UI - User preferences dialog - languages are sorted based on the current locale
   Fixed : Linux - commands from syscmd.properties are not loaded properly [reported by Andre Grott]
   Fixed : clipboard monitoring merged some URL into one at special cases [reported by Alex]

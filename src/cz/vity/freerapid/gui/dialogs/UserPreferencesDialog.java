@@ -85,6 +85,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
     private static final String PLUGIN_OPTIONS_ENABLED_PROPERTY = "pluginOptionsEnabled";
     private boolean pluginOptionsEnabled;
     private JTabbedPane pluginTabbedPane;
+    private LaF backupLaF;
 
 
     private static enum Card {
@@ -134,11 +135,14 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         setAction(btnCreateQuickLaunchShortcut, "createQuickLaunchShortcut");
         setAction(btnCreateStartMenuShortcut, "createStartMenuShortcut");
         setAction(btnCreateStartupShortcut, "createStartupShortcut");
+        setAction(btnApplyLookAndFeel, "applyLookAndFeelAction");
 
         setAction(btnPluginOptions, "btnPluginOptionsAction");
         setAction(btnResetDefaultPluginServer, "btnResetDefaultPluginServerAction");
         setAction(btnUpdatePlugins, "btnUpdatePluginsAction");
 
+
+        btnApplyLookAndFeel.setVisible(false);
 
         initPluginTable();
 
@@ -163,6 +167,21 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         if (files.length > 0) {
             fieldProxyListPath.setText(files[0].getAbsolutePath());
             Swinger.inputFocus(fieldProxyListPath);
+        }
+    }
+
+    @org.jdesktop.application.Action
+    public void applyLookAndFeelAction() {
+        LaF laf = (LaF) comboLaF.getSelectedItem();
+        applyLookAndFeel(laf);
+    }
+
+    private void applyLookAndFeel(LaF laf) {
+        final LaF selLaf = LookAndFeels.getInstance().getSelectedLaF();
+        if (laf != null) {
+            if (!selLaf.equals(laf)) {
+                updateLookAndFeel(laf);
+            }
         }
     }
 
@@ -422,6 +441,8 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
     private void buildModels() throws CloneNotSupportedException {
 
+        backupLaF = LookAndFeels.getInstance().getSelectedLaF();
+
         trigger = new Trigger();
 
         model = new MyPresentationModel(null, trigger);
@@ -676,13 +697,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         AppPrefs.storeProperty(UserProp.PROXY_LIST_PATH, property);
 
 
-        final LaF selLaf = LookAndFeels.getInstance().getSelectedLaF();
-        LaF laf = (LaF) comboLaF.getSelectedItem();
-        if (laf != null) {
-            if (!selLaf.equals(laf)) {
-                updateLookAndFeel();
-            }
-        }
+        applyLookAndFeelAction();
 
         final SupportedLanguage lng = Lng.getSelectedLanguage();
         if (!lng.equals(comboLng.getSelectedItem())) {
@@ -743,6 +758,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
     @org.jdesktop.application.Action
     public void cancelBtnAction() {
+        applyLookAndFeel(backupLaF);
         doClose();
     }
 
@@ -937,6 +953,9 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         checkContinueInterrupted = new JCheckBox();
         checkShowToolbarText = new JCheckBox();
         checkShowToolbarText.setName("checkShowToolbarText");
+
+        btnApplyLookAndFeel = new JButton();
+        btnApplyLookAndFeel.setName("btnApplyLookAndFeel");
 
         checkConfirmExiting = new JCheckBox();
         checkConfirmFileDeletion = new JCheckBox();
@@ -1542,6 +1561,8 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                                             FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                                             FormFactory.PREF_COLSPEC,
                                             FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                            FormFactory.PREF_COLSPEC,
+                                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                                             new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
                                     },
                                     new RowSpec[]{
@@ -1558,13 +1579,14 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
                             panelAppearanceBuilder.add(labelLaF, cc.xy(3, 1));
                             panelAppearanceBuilder.add(comboLaF, cc.xy(5, 1));
-                            panelAppearanceBuilder.add(labelRequiresRestart2, cc.xy(7, 1));//1
-                            panelAppearanceBuilder.add(checkDecoratedFrames, cc.xywh(3, 2, 5, 1));
-                            panelAppearanceBuilder.add(checkShowHorizontalLinesInTable, cc.xywh(3, 5, 5, 1));
-                            panelAppearanceBuilder.add(checkShowVerticalLinesInTable, cc.xywh(3, 6, 5, 1));
-                            panelAppearanceBuilder.add(checkShowTitle, cc.xywh(3, 7, 5, 1));
-                            panelAppearanceBuilder.add(checkShowToolbarText, cc.xywh(3, 8, 5, 1));
-                            panelAppearanceBuilder.add(checkServiceAsIconOnly, cc.xywh(3, 9, 5, 1));
+                            panelAppearanceBuilder.add(btnApplyLookAndFeel, cc.xy(7, 1));//1
+                            panelAppearanceBuilder.add(labelRequiresRestart2, cc.xy(9, 1));//1
+                            panelAppearanceBuilder.add(checkDecoratedFrames, cc.xywh(3, 2, 7, 1));
+                            panelAppearanceBuilder.add(checkShowHorizontalLinesInTable, cc.xywh(3, 5, 7, 1));
+                            panelAppearanceBuilder.add(checkShowVerticalLinesInTable, cc.xywh(3, 6, 7, 1));
+                            panelAppearanceBuilder.add(checkShowTitle, cc.xywh(3, 7, 7, 1));
+                            panelAppearanceBuilder.add(checkShowToolbarText, cc.xywh(3, 8, 7, 1));
+                            panelAppearanceBuilder.add(checkServiceAsIconOnly, cc.xywh(3, 9, 7, 1));
                         }
 
                         //======== panel System tray ========
@@ -1831,6 +1853,8 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
     private JSpinner spinnerAutoReconnectTime;
     private JButtonBar toolbar;
 
+    private JButton btnApplyLookAndFeel;
+
     private JXTable pluginTable;
     private JButton btnPluginOptions;
     private JCheckBox check4PluginUpdatesAutomatically;
@@ -1845,10 +1869,9 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
     private JSpinner spinnerUpdateHour;
 
-    private void updateLookAndFeel() {
+    private void updateLookAndFeel(LaF laf) {
         boolean succesful;
         final ResourceMap map = getResourceMap();
-        LaF laf = (LaF) comboLaF.getSelectedItem();
         final LookAndFeels lafManager = LookAndFeels.getInstance();
         try {
             succesful = lafManager.loadLookAndFeel(laf, true);

@@ -50,7 +50,7 @@ public class MainApp extends SingleXFrameApplication {
         minimizeOnStart = line.isMinimize();
 
         final Map<String, String> map = line.getProperties();
-        if (Utils.isWindows() && new java.io.File("C:/Program files/Eset").exists()) {
+        if (Utils.isWindows() && (new java.io.File("C:/Program files/Eset").exists() || new java.io.File("D:/Program files/Eset").exists())) {
             if (!map.containsKey(FWProp.ONEINSTANCE)) {
                 java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainApp.class.getName());
                 logger.info("Detecting ESET - disabling OneInstance functionality");

@@ -73,7 +73,7 @@ Currently supported services are (in alphabetical order):
  -  +usercash.com (crypter)
 
  -  others are coming...
-
+Note: This list might be not actual - the current list you can find at http://wordrider.net/freerapid/
 
  II.    System requirements
 =======================================
@@ -231,3 +231,11 @@ For using premium account go to Options->Preferences->Plugins->Settings panel, t
 To setup your login details click on the Options button. Confirm account details by OK button.
 
 Only numerical account ID is supported. Other premium plugins are not implemented yet.
+
+Q: Windows users: How to run program from command line?
+A: Go to Start->Run and type:
+cmd ENTER
+cd path_to_freerapid_directory' ENTER
+frd.exe ENTER
+
+if you need to enter parameters, use eg. frd.exe --portable

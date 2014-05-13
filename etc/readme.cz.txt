@@ -51,7 +51,7 @@ Hlavní vlastnosti:
 
 Rùzné:
  - Drag&Drop URL adres
--  jednoduche rozhraní pro programování aplikací (API) pro pøidání dalších služeb jako pluginy
+-  jednoduché rozhraní pro programování aplikací (API) pro pøidání dalších služeb jako pluginy
 
 V souèasné dobì jsou podporovány následující služby:
  -  Rapidshare.com (+ premium úèet)
@@ -77,6 +77,7 @@ V souèasné dobì jsou podporovány následující služby:
  -  Uloz.to
  -  Upnito.sk
 
+Pozn.: Tento seznam nemusí být vždy aktuální - aktuální seznam lze nalézt na http://wordrider.net/freerapid
 
  II.    Systémové požadavky
 =======================================
@@ -118,7 +119,7 @@ Windows
 Linux
  Spuste pøíkazem ./frd.sh
 
-All platforms
+Všechny OS platformy
  Spuste pøíkazem java -jar frd.jar
 
 
@@ -228,3 +229,10 @@ A: Jako výchozí je zapnut plugin pro FREE Rapidshare, proto je nutné aktivovat p
 Jdìte do Nastavení->Možnosti->Pluginy -> panel Nastavení , dále naleznìte plugin Rapidshare_premium a aktivujte ho (kliknìte v prvním sloupci oznaèeném jako X).
 Dále kliknìte na tlaèítko možností pro zvolený RapidShare_premium plugin a vložte autentifikaèní údaje. Potvrïte tlaèítkem OK.
 Podporováno je pouze èíselné uživatelské ID.
+
+Q:Uživatelé Windows - jak spustit program z pøíkazové øádky?
+A: Start->Spustit
+cmd ENTER
+cd cesta_k_adresari_freerapidu ENTER
+frd.exe ENTER
+pokud chcete napsat parametry tak napø. frd.exe --debug 

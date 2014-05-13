@@ -14,7 +14,7 @@ import java.util.List;
 public class Convertor {
     public static void main(String[] args) {
         final List<File> list = new LinkedList<File>();
-        findFiles(new File("c:\\develope\\freerapid\\resources"), list);
+        findFiles(new File("c:\\Temp\\ch"), list);
         for (File file : list) {
             final String f = Utils.loadFile(file, "Windows-1252");
             file.delete();
