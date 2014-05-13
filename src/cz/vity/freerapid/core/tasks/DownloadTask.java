@@ -46,7 +46,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 
     private int youHaveToSleepSecondsTime = 0;
     private volatile String captchaResult;
-    private static final int NO_DATA_TIMEOUT_LIMIT = 75;
+    private static final int NO_DATA_TIMEOUT_LIMIT = 100;
     private static final int INPUT_BUFFER_SIZE = 50000;
     private static final int OUTPUT_FILE_BUFFER_SIZE = 600000;
     private volatile boolean connectionTimeOut;
