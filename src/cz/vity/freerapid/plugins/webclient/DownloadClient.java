@@ -8,10 +8,10 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpClientParams;
 
 import java.io.*;
+import java.net.URLDecoder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
-import java.net.URLDecoder;
 
 /**
  * @author Vity
@@ -158,9 +158,9 @@ final public class DownloadClient implements HttpDownloadClient {
                     final String s = value.substring(index + str.length());
                     if (!s.isEmpty())
                         try {
-                            return URLDecoder.decode(s,"UTF-8");
+                            return URLDecoder.decode(s, "UTF-8");
                         } catch (UnsupportedEncodingException e) {
-                          logger.warning("Unsupported encoding");
+                            logger.warning("Unsupported encoding");
                         }
                 } else {
                     logger.warning("File name was not found in:" + value);
@@ -207,6 +207,8 @@ final public class DownloadClient implements HttpDownloadClient {
 
     public int makeRequest(HttpMethod method) throws IOException {
         //toString(method);
+        asString = ""; //pro sichr aby tam nebylo nikdy null
+
         client.executeMethod(method);
 
         int statuscode = method.getStatusCode();
