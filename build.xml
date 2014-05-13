@@ -11,6 +11,10 @@
     <!-- output data directories -->
     <property name="build.dir" value="${version.name}"/>
     <property name="classes.dir" value="_classes"/>
+    <property name="build.tests" value="_testClasses"/>
+    <property name="reports.tests" value="_reportTests"/>
+    <property name="src.tests" value="src-test"/>
+
     <property name="dist.dir" value="dist"/>
 
     <property name="javadoc.dir" value="${dist.dir}/javadoc"/>
@@ -33,6 +37,7 @@
     <property name="ignoreProperties" value="log*,lookandfeels*"/>
 
     <fileset id="jars" dir="${lib.dir}" includes="**/*"/>
+    <fileset id="devjars" dir="dev/lib" includes="**/*"/>
 
     <patternset id="compiler.resources">
         <!--<include name="**/?*.properties"/>-->
@@ -54,6 +59,7 @@
 
     <path id="cp">
         <fileset refid="jars"/>
+        <fileset refid="devjars"/>
     </path>
 
     <path id="dist-jars">
@@ -153,6 +159,14 @@
         <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="cp" optimize="on" target="1.6">
 
         </javac>
+
+        <mkdir dir="${build.tests}"/>
+        <javac srcdir="${src.tests}" destdir="${build.tests}" classpathref="cp" optimize="on" target="1.6">
+            <classpath location="${classes.dir}">
+
+            </classpath>
+        </javac>
+
         <!-- zkopirovani resourcu -->
 
         <copy todir="${classes.dir}">
@@ -189,6 +203,8 @@
         <delete dir="${classes.dir}"/>
         <delete dir="${dist.dir}"/>
         <delete dir="${resources.dir}"/>
+        <delete dir="${build.tests}"/>
+        <delete dir="${reports.tests}"/>
     </target>
 
     <target name="all" depends="clean,init,compile, build, dist" description="build all"/>
@@ -197,6 +213,27 @@
 
     <target name="run" depends="build">
         <java fork="true" jar="${build.dir}/${mainjar.file}"/>
+    </target>
+
+
+    <target name="tests" depends="build">
+        <mkdir dir="${reports.tests}"/>
+        <junit printsummary="yes" haltonfailure="yes">
+            <classpath>
+                <path refid="cp"/>
+                <pathelement location="${build.tests}"/>
+                <pathelement location="${classes.dir}"/>
+                <pathelement path="${java.class.path}"/>
+            </classpath>
+
+            <formatter type="plain"/>
+
+            <batchtest fork="yes" todir="${reports.tests}">
+                <fileset dir="${src.tests}">
+                    <include name="**/*Test*.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
     </target>
 
 
@@ -232,18 +269,18 @@
                 <!--<exclude name="${build.dir}/${mainjar-packed.file}"/>-->
             </fileset>
         </zip>
-        <!--<zip destfile="${dist.dir}/${version.name}-src.zip">-->
-        <!--<fileset dir=".">-->
-        <!--<include name="${lib.dir}/"/>-->
-        <!--<include name="${lib-src.dir}/"/>-->
-        <!--<include name="${etc.dir}/"/>-->
-        <!--<include name="${src.dir}/"/>-->
-        <!--<include name="${dev.dir}/"/>-->
-        <!--<include name="${plugins.dir}/"/>-->
-        <!--<include name="${doc.dir}/"/>-->
-        <!--<include name="build.xml"/>-->
-        <!--</fileset>-->
-        <!--</zip>-->
+        <zip destfile="${dist.dir}/${version.name}-src.zip">
+            <fileset dir=".">
+                <include name="${lib.dir}/"/>
+                <include name="${lib-src.dir}/"/>
+                <include name="${etc.dir}/"/>
+                <include name="${src.dir}/"/>
+                <include name="${dev.dir}/"/>
+                <include name="${plugins.dir}/"/>
+                <include name="${doc.dir}/"/>
+                <include name="build.xml"/>
+            </fileset>
+        </zip>
     </target>
 
 </project>
