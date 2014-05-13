@@ -16,9 +16,9 @@ public class LogUtils {
     }
 
     /**
-     * Provede inicializaci logovani
+     * Logging utilities initialization
      *
-     * @param file soubor s nastavenim logovani
+     * @param file logging file for configuration
      */
     public static void initLogging(String file) {
         InputStream inputStream = null;

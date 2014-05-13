@@ -51,28 +51,20 @@ public class MainApp extends SingleXFrameApplication {
 
         final Map<String, String> map = line.getProperties();
         if (Utils.isWindows() && new java.io.File("C:/Program files/Eset").exists()) {
-            if (!map.containsKey(FWProp.ONEINSTANCE))
+            if (!map.containsKey(FWProp.ONEINSTANCE)) {
+                java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainApp.class.getName());
+                logger.info("Detecting ESET - disabling OneInstance functionality");
                 map.put(FWProp.ONEINSTANCE, "false");
+            }
         }
 
-        this.appPrefs = new AppPrefs(this.getContext(), map, line.isResetOptions());
+        try {
+            this.appPrefs = new AppPrefs(this.getContext(), map, line.isResetOptions());
+        } catch (IllegalStateException e) {
+            exitWithErrorMessage("Fatal Error - not all required libraries are available.\nYou probably didn't extract the zip file properly.\nYou have to have /lib directory with all libraries in the FreeRapid directory.\nExiting.");
+        }
 
-        final String path = Utils.getAppPath();//Utils pouzivaji AppPrefs i logovani
-        int index = path.indexOf('+');
-        if (index == -1)
-            index = path.indexOf("!/");
-        if (index == -1)
-            index = path.indexOf("!\\");
-        if (index > 0 || path.endsWith("!")) {
-            java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainApp.class.getName());
-            logger.severe("Application cannot be started on the path containing '+' or '!' characters ('" + path.substring(0, index + 1) + "'...)\nExiting.");
-            System.exit(-1);
-        }
-        if (!Utils.isWindows() && Utils.isJVMVersion("1.6.0_0")) {
-            java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainApp.class.getName());
-            logger.severe("Application cannot be started on JRE 1.6.0_0 on Linux - this version is buggy and FRD wouldn't work properly.\nUpgrade to newer version.");
-            System.exit(-1);
-        }
+        checkBugs();
 
 
         System.getProperties().put("arguments", args);
@@ -91,6 +83,30 @@ public class MainApp extends SingleXFrameApplication {
         ResourceConverter.register(new ListItemsConvertor());
         this.getContext().getTaskMonitor().setAutoUpdateForegroundTask(false);
     }
+
+    private void checkBugs() {
+        final String path = Utils.getAppPath();//Utils pouzivaji AppPrefs i logovani
+        int index = path.indexOf('+');
+        if (index == -1)
+            index = path.indexOf("!/");
+        if (index == -1)
+            index = path.indexOf("!\\");
+
+        if (index > 0 || path.endsWith("!")) {
+            exitWithErrorMessage("errorInvalidPath", path.substring(0, index + 1));
+        }
+        if (!Utils.isWindows() && Utils.isJVMVersion("1.6.0_0")) {
+            exitWithErrorMessage("errorInvalidJRE");
+        }
+    }
+
+    private void exitWithErrorMessage(final String s, final Object... args) {
+        java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainApp.class.getName());
+        logger.severe(s);
+        Swinger.showErrorMessage(this.getContext().getResourceMap(), s, args);
+        System.exit(-1);
+    }
+
 
     @Override
     protected void startup() {

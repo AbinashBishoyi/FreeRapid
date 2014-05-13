@@ -70,7 +70,7 @@ public class Swinger {
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null, new Object[]{map.getString(MESSAGE_BTN_YES_CODE), map.getString(MESSAGE_BTN_NO_CODE),
-                map.getString(MESSAGE_BTN_CANCEL_CODE)},
+                        map.getString(MESSAGE_BTN_CANCEL_CODE)},
                 map.getString(MESSAGE_BTN_YES_CODE));
     }
 
@@ -152,7 +152,7 @@ public class Swinger {
     }
 
     public static void showErrorMessage(ResourceMap map, final String message, final Object... args) {
-        JOptionPane.showMessageDialog(getActiveFrame(), map.getString(message, args), getResourceMap().getString("errorMessage"), JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(getActiveFrame(), (map.containsKey(message)) ? map.getString(message, args) : message, getResourceMap().getString("errorMessage"), JOptionPane.ERROR_MESSAGE);
     }
 
     public static void showErrorMessage(ResourceMap map, final Throwable cause) {
@@ -330,7 +330,7 @@ public class Swinger {
             if (frame.isActive())
                 return frame;
         }
-        return frames[0];
+        return frames.length > 0 ? frames[0] : null;
     }
 
 //    private static int showOptionDialog(Component parentComponent,
