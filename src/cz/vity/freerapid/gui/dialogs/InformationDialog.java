@@ -42,7 +42,7 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
     private PresentationModel<DownloadFile> model;
 
 
-    public InformationDialog(Frame owner, ManagerDirector director, DownloadFile file) throws HeadlessException {
+    public InformationDialog(Frame owner, ManagerDirector director, DownloadFile file) throws Exception {
         super(owner);
         this.director = director;
         this.file = file;
@@ -54,6 +54,7 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
         } catch (Exception e) {
             LogUtils.processException(logger, e);
             doClose();
+            throw e;
         }
 
     }

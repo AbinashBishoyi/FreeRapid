@@ -134,7 +134,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     }
 
     @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
-    public void downloadInformationAction() {
+    public void downloadInformationAction() throws Exception {
         final int[] indexes = getSelectedRows();
         final java.util.List<DownloadFile> files = manager.getSelectionToList(indexes);
 

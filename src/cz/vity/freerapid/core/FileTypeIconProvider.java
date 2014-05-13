@@ -6,10 +6,9 @@ import sun.awt.shell.ShellFolder;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -21,7 +20,6 @@ import java.util.regex.Pattern;
  */
 public class FileTypeIconProvider {
     private ResourceMap map;
-    private HashSet<String> supportedTypes;
     private final static Logger logger = Logger.getLogger(FileTypeIconProvider.class.getName());
     private static Pattern pattern;
     private static final String DEFAULT_EXTENSION = "iso";
@@ -32,7 +30,6 @@ public class FileTypeIconProvider {
     public FileTypeIconProvider(ApplicationContext context) {
         map = context.getResourceMap();
         final String[] strings = (String[]) map.getObject("fileTypes", String[].class);
-        supportedTypes = new HashSet<String>(Arrays.asList(strings));
         StringBuilder builder = new StringBuilder();
         builder.append("(\\.|_)(");
         for (int i = 0; i < strings.length; i++) {
@@ -113,37 +110,51 @@ public class FileTypeIconProvider {
     private Icon getSmallSystemIcon(String extension) {
         if (this.systemSmallIcons.containsKey(extension))
             return systemSmallIcons.get(extension);
+        File file = null;
         try {
 //Create a temporary file with the specified extension
-            File file = File.createTempFile("icon", "." + extension);
-
+            file = File.createTempFile("icon", "." + extension);
             FileSystemView view = FileSystemView.getFileSystemView();
             Icon icon = view.getSystemIcon(file);
-
+            if (icon == null) {
+                final ImageIcon ico = map.getImageIcon("iconFileTypeSmall_ISO");
+                systemSmallIcons.put(extension, ico);
+                return ico;
+            }
             //Delete the temporary file
             systemSmallIcons.put(extension, icon);
-            file.delete();
             return icon;
         } catch (IOException e) {
             return map.getImageIcon("iconFileTypeSmall_ISO");
+        } finally {
+            if (file != null)
+                file.delete();
         }
     }
 
     private Icon getBigSystemIcon(String extension) {
         if (this.systemLargeIcons.containsKey(extension))
             return systemLargeIcons.get(extension);
+        File file = null;
         try {
-            File file = File.createTempFile("icon", "." + extension);
+            file = File.createTempFile("icon", "." + extension);
 
             ShellFolder shellFolder = ShellFolder.getShellFolder(file);
-            Icon icon = new ImageIcon(shellFolder.getIcon(true));
-
+            Image ico = shellFolder.getIcon(true);
+            if (ico == null) {
+                Icon icon = map.getImageIcon("iconFileTypeBig_ISO");
+                systemLargeIcons.put(extension, icon);
+                return icon;
+            }
+            Icon icon = new ImageIcon(ico);
             //Delete the temporary file
             systemLargeIcons.put(extension, icon);
-            file.delete();
             return icon;
         } catch (IOException e) {
             return map.getImageIcon("iconFileTypeBig_ISO");
+        } finally {
+            if (file != null)
+                file.delete();
         }
     }
 }
