@@ -196,7 +196,7 @@ public class Swinger {
         TableColumn column = columnModel.getColumn(columnId);
         if (renderer != null)
             column.setCellRenderer(renderer);
-        column.setHeaderValue(name);
+        //column.setHeaderValue(name);
         if (width != -1) {
             column.setPreferredWidth(width);
             //column.setWidth(width);

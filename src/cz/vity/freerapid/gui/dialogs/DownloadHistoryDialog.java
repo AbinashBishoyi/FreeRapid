@@ -240,6 +240,13 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         doClose();
     }
 
+    @Override
+    public void doClose() {
+        if (AppPrefs.getProperty(UserProp.CONTAIN_DOWNLOADS_FILTER, exampleSearchString).equals(exampleSearchString))
+            AppPrefs.storeProperty(UserProp.CONTAIN_DOWNLOADS_FILTER, "");
+        super.doClose();
+    }
+
     private void buildGUI() {
         initTable();
 
