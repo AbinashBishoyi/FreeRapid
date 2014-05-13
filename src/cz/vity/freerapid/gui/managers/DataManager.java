@@ -132,6 +132,14 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                         if (state != DownloadState.COMPLETED) {
                             file.setDownloaded(0);
                         }
+                        if (state == DownloadState.ERROR) {
+                            file.setDownloaded(0);
+                            if (downloadOnStart && file.getTimeToQueued() > 0) {
+                                file.setTimeToQueued(-1);
+                                file.setTimeToQueuedMax(-1);
+                                file.setState(DownloadState.QUEUED);
+                            }
+                        }
                         if (DownloadState.isProcessState(state)) {
                             if (downloadOnStart) {
                                 file.setState(DownloadState.QUEUED);

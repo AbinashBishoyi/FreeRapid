@@ -293,8 +293,10 @@ public class ProcessManager extends Thread {
         public void run() {
             if (file.getState() != DownloadState.ERROR) { //doslo ke zmene stavu z venci
                 this.cancel(); //zrusime timer
-                file.setTimeToQueued(-1); //odecitani casu
-                file.setTimeToQueuedMax(-1);
+                if (file.getState() != DownloadState.WAITING) {
+                    file.setTimeToQueued(-1); //odecitani casu
+                    file.setTimeToQueuedMax(-1);
+                }
                 renewProblematicConnection();
                 file.resetErrorAttempts(); //je nutne vyresetovat pocet error pokusu
                 queueUpdated();
