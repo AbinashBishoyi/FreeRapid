@@ -3,6 +3,7 @@
  */
 package cz.vity.freerapid.utilities.os;
 
+import cz.vity.freerapid.utilities.Utils;
 import org.jdesktop.application.ApplicationContext;
 
 public class SystemCommanderFactory {
@@ -18,12 +19,12 @@ public class SystemCommanderFactory {
 
     public SystemCommander getSystemCommanderInstance(ApplicationContext context) {
         if (commander == null) {
-            commander = new LinuxCmdUtils(context.getLocalStorage().getDirectory());
-//            if (Utils.isWindows())
-//                commander = new NirCmdUtils();
-//            else {
-//                commander = new LinuxCmdUtils(context.getLocalStorage().getDirectory());
-//            }
+//            commander = new LinuxCmdUtils(context.getLocalStorage().getDirectory());
+            if (Utils.isWindows())
+                commander = new NirCmdUtils();
+            else {
+                commander = new LinuxCmdUtils(context.getLocalStorage().getDirectory());
+            }
         }
         return commander;
     }

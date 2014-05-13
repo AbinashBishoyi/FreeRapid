@@ -211,6 +211,10 @@ public class MenuManager {
         if (isWindows)
             selectAutoShutDownMenu(map);
 
+        if (AppPrefs.getProperty(UserProp.AUTOSHUTDOWN_DISABLED_WHEN_EXECUTED, UserProp.AUTOSHUTDOWN_DISABLED_WHEN_EXECUTED_DEFAULT)) {
+            AppPrefs.storeProperty(UserProp.AUTOSHUTDOWN, UserProp.AUTOSHUTDOWN_DISABLED);
+        }
+
 //        final MainApp app = (MainApp) context.getApplication();
 
     }
