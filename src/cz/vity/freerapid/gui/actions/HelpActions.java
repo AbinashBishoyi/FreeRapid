@@ -70,7 +70,7 @@ public class HelpActions {
     @Action
     public void checkForNewPlugins() {
         final UpdateManager updateManager = app.getManagerDirector().getUpdateManager();
-        updateManager.checkUpdate(true);
+        updateManager.checkUpdate(false);
     }
 
 }

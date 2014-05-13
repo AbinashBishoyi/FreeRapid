@@ -46,6 +46,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
 
     private JLabel clipboardMonitoring;
     private MemoryIndicator indicator;
+    private PropertyChangeListener taskPCL;
 
     /**
      * Konstruktor
@@ -92,6 +93,20 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
                 }
             });
 
+            taskPCL = new PropertyChangeListener() {
+                public void propertyChange(PropertyChangeEvent e) {
+                    if ("progress".equals(e.getPropertyName())) {
+                        progress.setIndeterminate(false);
+                        progress.setValue((Integer) e.getNewValue());
+                    } else if ("message".equals(e.getPropertyName())) {
+                        progress.setStringPainted(true);
+                        final String s = (String) e.getNewValue();
+                        progress.setString(s);
+                        progress.setToolTipText(s);
+                    }
+                }
+            };
+
 
             clipboardMonitoring.setName("labelClipboardMonitoring");
             resourceMap.injectComponent(clipboardMonitoring);
@@ -106,7 +121,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
             indicator.setPreferredSize(new Dimension(100, 15));
             infoLabel.setPreferredSize(new Dimension(345, 15));
             clipboardMonitoring.setPreferredSize(new Dimension(17, 15));
-            progress.setPreferredSize(new Dimension(progress.getPreferredSize().width * 2 / 3, 15));
+            progress.setPreferredSize(new Dimension(progress.getPreferredSize().width + 35, 15));
             progress.setVisible(false);
             director.getMenuManager().getMenuBar().addPropertyChangeListener("selectedText", this);
             statusbar.add(infoLabel, JXStatusBar.Constraint.ResizeBehavior.FIXED);
@@ -174,6 +189,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
         if ("speed".equals(propertyName) || "completed".equals(propertyName)) {
             updateInfoStatus();
         } else if ("started".equals(propertyName) || "done".equals(propertyName) || "message".equals(propertyName)) {
+            final Task task = (Task) evt.getSource();
             if (!(evt.getSource() instanceof DownloadTask))
                 updateProgress(evt);
         } else if ("selectedText".equals(propertyName)) {
@@ -202,18 +218,12 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
         final String propertyName = evt.getPropertyName();
         if ("done".equals(propertyName)) {
             progress.setVisible(false);
+            task.removePropertyChangeListener(taskPCL);
         } else if ("started".equals(propertyName)) {
-            final PropertyChangeListener taskPCL = new PropertyChangeListener() {
-                public void propertyChange(PropertyChangeEvent e) {
-                    if ("progress".equals(e.getPropertyName())) {
-                        progress.setVisible(true);
-                        progress.setIndeterminate(false);
-                        progress.setValue((Integer) e.getNewValue());
-                    } else if ("message".equals(e.getPropertyName())) {
-                        progress.setString((String) e.getNewValue());
-                    }
-                }
-            };
+            progress.setStringPainted(false);
+            progress.setVisible(true);
+            progress.setToolTipText(null);
+            progress.setIndeterminate(!task.isProgressPropertyValid());
             task.addPropertyChangeListener(taskPCL);
         }
     }

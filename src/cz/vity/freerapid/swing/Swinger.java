@@ -154,7 +154,7 @@ public class Swinger {
         JOptionPane.showMessageDialog(getActiveFrame(), map.getString(message, args), getResourceMap().getString("errorMessage", args), JOptionPane.ERROR_MESSAGE);
     }
 
-    public static int showOptionDialog(ResourceMap map, final int messageType, final String messageCode, final String[] buttons, final Object... args) {
+    public static int showOptionDialog(ResourceMap map, final int messageType, final String titleCode, final String messageCode, final String[] buttons, final Object... args) {
         final ResourceMap mainMap = getResourceMap();
         final Object[] objects = new Object[buttons.length];
         for (int i = 0; i < buttons.length; i++) {
@@ -165,7 +165,7 @@ public class Swinger {
         final Frame frame = getActiveFrame();
         bringToFront(frame, true);
         Toolkit.getDefaultToolkit().beep();
-        return JOptionPane.showOptionDialog(frame, map.getString(messageCode, args), mainMap.getString("errorMessage"), JOptionPane.NO_OPTION, messageType, null, objects, objects[0]);
+        return JOptionPane.showOptionDialog(frame, map.getString(messageCode, args), mainMap.getString(titleCode), JOptionPane.NO_OPTION, messageType, null, objects, objects[0]);
     }
 
     public static void bringToFront(Frame frame, boolean activate) {

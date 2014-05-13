@@ -11,6 +11,7 @@ import cz.vity.freerapid.gui.dialogs.WrappedPluginData;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.model.PluginMetaData;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
+import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.xmlimport.ver1.Plugin;
 import org.jdesktop.application.ApplicationContext;
@@ -18,9 +19,11 @@ import org.jdesktop.application.Task;
 import org.jdesktop.application.TaskEvent;
 import org.jdesktop.application.TaskListener;
 
+import javax.swing.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.Timer;
 import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
@@ -87,38 +90,56 @@ public class UpdateManager {
         return AppPrefs.getProperty(UserProp.CHECK4_PLUGIN_UPDATES_AUTOMATICALLY, UserProp.CHECK4_PLUGIN_UPDATES_AUTOMATICALLY_DEFAULT);
     }
 
-    public void checkUpdate(boolean quiet) {
+    public void checkUpdate(final boolean quiet) {
 
         final CheckPluginUpdateTask pluginUpdateTask = new CheckPluginUpdateTask(director, context, quiet);
         pluginUpdateTask.addTaskListener(new TaskListener.Adapter<ConnectResult, Void>() {
             public void succeeded(TaskEvent<ConnectResult> event) {
-                final ConnectResult result = event.getValue();
-//                if (result == ConnectResult.CONNECT_NEW_VERSION) {
-//                    //downloadUpdate(result);
-//                    showUpdateDialog(result);
-//                } else if (result == ConnectResult.SAME_VERSION) {
-//                    if (quiet) {
-//
-//                    }
-//                }
+                updateDetected(pluginUpdateTask.getPluginList(), quiet);
             }
         });
         context.getTaskService().execute(pluginUpdateTask);
     }
 
-    private void showUpdateDialog(List<Plugin> result) {
-        final List<WrappedPluginData> datas = generateUpdateData(result, true);
-        if (!datas.isEmpty()) {
-            final UpdateDialog dialog = new UpdateDialog(this.director.getMainFrame(), context, this.director, result);
-            dialog.initData(datas);
-            final MainApp app = (MainApp) context.getApplication();
-            app.prepareDialog(dialog, true);
+    private void updateDetected(List<Plugin> availablePlugins, boolean quiet) {
+        final int method = AppPrefs.getProperty(UserProp.PLUGIN_UPDATE_METHOD, UserProp.PLUGIN_UPDATE_METHOD_DEFAULT);
+        final List<WrappedPluginData> datas;
+        if (method == UserProp.PLUGIN_UPDATE_METHOD_AUTO)
+            datas = generateUpdateData(availablePlugins, false);
+        else
+            datas = generateUpdateData(availablePlugins, true);
+        if (datas.isEmpty()) {
+            if (!quiet) {
+                Swinger.showInformationDialog(context.getResourceMap().getString("updatesNotFoundMessage"));
+            }
+            return;
+        }
+
+        final int result;
+        if (AppPrefs.getProperty(UserProp.CONFIRM_UPDATING_PLUGINS, UserProp.CONFIRM_UPDATING_PLUGINS_DEFAULT)) {
+            result = Swinger.showOptionDialog(context.getResourceMap(), JOptionPane.QUESTION_MESSAGE, "informationMessage", "updatesFoundMessage", new String[]{"updateWithDetails", "updateNowButton", "updateCancel"});
+        } else result = AppPrefs.getProperty(UserProp.PLUGIN_UPDATE_METHOD, UserProp.PLUGIN_UPDATE_METHOD_DEFAULT);
+        switch (result) {
+            case UserProp.PLUGIN_UPDATE_METHOD_DIALOG:
+                showUpdateDialog(datas);
+                break;
+            case UserProp.PLUGIN_UPDATE_METHOD_AUTO:
+                downloadUpdate(datas);
+                break;
+            default:
+                break;
         }
     }
 
-    public void downloadUpdate(List<Plugin> pluginList) {
+    private void showUpdateDialog(List<WrappedPluginData> result) {
+        final UpdateDialog dialog = new UpdateDialog(this.director.getMainFrame(), this.director);
+        dialog.initData(result);
+        final MainApp app = (MainApp) context.getApplication();
+        app.prepareDialog(dialog, true);
+    }
 
-        final Task task = getDownloadPluginsTask(generateUpdateData(pluginList, false));
+    public void downloadUpdate(List<WrappedPluginData> pluginList) {
+        final Task task = getDownloadPluginsTask(pluginList);
         if (task != null)
             executeUpdateTask(task);
     }

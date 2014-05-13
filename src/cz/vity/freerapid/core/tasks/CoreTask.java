@@ -56,4 +56,9 @@ public abstract class CoreTask<T, V> extends Task<T, V> {
         return false;
     }
 
+
+    protected void setTaskToForeground() {
+        getApplication().getContext().getTaskMonitor().setForegroundTask(this);
+    }
+
 }

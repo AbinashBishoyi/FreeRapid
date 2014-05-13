@@ -16,9 +16,7 @@ import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.swing.SwingUtils;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.LogUtils;
-import cz.vity.freerapid.xmlimport.ver1.Plugin;
 import org.jdesktop.application.Action;
-import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.Task;
 import org.jdesktop.swinghelper.buttonpanel.JXButtonPanel;
 import org.jdesktop.swingx.JXTable;
@@ -44,9 +42,7 @@ import java.util.logging.Logger;
 public class UpdateDialog extends AppDialog implements PropertyChangeListener {
     private final static Logger logger = Logger.getLogger(UpdateDialog.class.getName());
 
-    private final ApplicationContext context;
     private final ManagerDirector managerDirector;
-    private final java.util.List<Plugin> list;
 
     private static final int COLUMN_SELECTED = 0;
     private static final int COLUMN_NAME = 1;
@@ -58,11 +54,9 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
     private ArrayListModel<WrappedPluginData> listModel = new ArrayListModel<WrappedPluginData>();
 
 
-    public UpdateDialog(Frame owner, ApplicationContext context, ManagerDirector managerDirector, java.util.List<Plugin> list) throws HeadlessException {
+    public UpdateDialog(Frame owner, ManagerDirector managerDirector) throws HeadlessException {
         super(owner, true);
-        this.context = context;
         this.managerDirector = managerDirector;
-        this.list = list;
 
 
         this.setName("UpdateDialog");
@@ -101,6 +95,7 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
     @Action
     public void okBtnAction() {
         getActionMap().get("okBtnAction").setEnabled(false);
+        table.setEditable(false);
         Swinger.inputFocus(btnCancel);
         final UpdateManager updateManager = managerDirector.getUpdateManager();
         final Task task = updateManager.getDownloadPluginsTask(new LinkedList<WrappedPluginData>(listModel));
@@ -122,7 +117,6 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
         initTable();
 
         labelServer.setText(AppPrefs.getProperty(UserProp.PLUGIN_CHECK_URL_SELECTED, Consts.PLUGIN_CHECK_UPDATE_URL));
-        labelUpdatesCount.setText(getResourceMap().getString("labelUpdatesCount", list.size()));
 
         Swinger.inputFocus(table);
     }
@@ -201,6 +195,7 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
 
     public void initData(java.util.List<WrappedPluginData> list) {
         cleanup();
+        labelUpdatesCount.setText(getResourceMap().getString("labelUpdatesCount", list.size()));
         listModel.clear();
         for (WrappedPluginData wrappedPluginData : list) {
             wrappedPluginData.getHttpFile().addPropertyChangeListener(this);

@@ -467,7 +467,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     }
 
     private int showFileAlreadyExistsDialog() {
-        return Swinger.showOptionDialog(getResourceMap(), JOptionPane.QUESTION_MESSAGE, "fileAlreadyExists", new String[]{"renameFile", "overWriteFile", "skipFile"}, outputFile);
+        return Swinger.showOptionDialog(getResourceMap(), JOptionPane.QUESTION_MESSAGE, "errorMessage", "fileAlreadyExists", new String[]{"renameFile", "overWriteFile", "skipFile"}, outputFile);
     }
 
     private void setCompleted() {

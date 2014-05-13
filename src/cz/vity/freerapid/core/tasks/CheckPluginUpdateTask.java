@@ -3,6 +3,7 @@ package cz.vity.freerapid.core.tasks;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.Consts;
 import cz.vity.freerapid.core.UserProp;
+import cz.vity.freerapid.core.tasks.exceptions.NoAvailableConnection;
 import cz.vity.freerapid.gui.managers.ClientManager;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
 import cz.vity.freerapid.gui.managers.PluginsManager;
@@ -42,7 +43,7 @@ public class CheckPluginUpdateTask extends CoreTask<ConnectResult, Void> {
         quietMode = quiet;
         logger.info("Starting to check for a new plugins version");
         this.newPlugins = new ArrayList<Plugin>();
-        this.firePropertyChange("statusbar", Boolean.FALSE, Boolean.TRUE);
+        setTaskToForeground();
     }
 
 
@@ -52,7 +53,7 @@ public class CheckPluginUpdateTask extends CoreTask<ConnectResult, Void> {
         final ClientManager clientManager = director.getClientManager();
         final List<ConnectionSettings> connectionSettingses = clientManager.getEnabledConnections();
         if (connectionSettingses.isEmpty())
-            throw new IllegalStateException("No available connection");
+            throw new NoAvailableConnection(getResourceMap().getString("noAvailableConnection"));
         final DownloadClient client = new DownloadClient();
         client.initClient(connectionSettingses.get(0));
         final PostMethod postMethod = client.getPostMethod(AppPrefs.getProperty(UserProp.PLUGIN_CHECK_URL_SELECTED, Consts.PLUGIN_CHECK_UPDATE_URL));
@@ -101,7 +102,7 @@ public class CheckPluginUpdateTask extends CoreTask<ConnectResult, Void> {
     @Override
     protected void succeeded(ConnectResult result) {
         for (Plugin plugin : newPlugins) {
-            logger.info("id: " + plugin.getId());
+            logger.info("plugin update from server: " + plugin.getId());
         }
     }
 
