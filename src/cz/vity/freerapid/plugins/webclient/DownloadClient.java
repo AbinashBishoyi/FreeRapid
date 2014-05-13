@@ -104,8 +104,9 @@ final public class DownloadClient implements HttpDownloadClient {
             logger.warning("No Content-Type!");
         } else {
             final String value = contentType.getValue();
-            boolean isImage = value.startsWith("image/");
-            if (!value.startsWith("application/") && !isImage) {
+            final boolean isImage = value.startsWith("image/");
+            final boolean isAudioVideo = value.startsWith("audio/") || value.startsWith("video/");
+            if (!value.startsWith("application/") && !isImage && !isAudioVideo) {
                 isStream = false;
                 logger.warning("Suspicious Content-Type:" + contentType.getValue());
             } else {
