@@ -105,6 +105,7 @@ options
   -v (--version)      print the version information and exit
   -d (--debug)        print debugging information
   -r (--reset)        reset user properties to default values  
+  -m (--minim)        minimize main window on start  
   -Dproperty=value    Passes properties and values to the application (mostly for debug or testing purposes)
 
 If value of option -D is set 'default' (without ') default value will be used.

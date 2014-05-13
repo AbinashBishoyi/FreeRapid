@@ -20,10 +20,12 @@ final class CmdLine {
     private final MainApp app;
     private Map<String, String> properties = new HashMap<String, String>(2);
     private boolean resetOptions;
+    private boolean minimize;
 
     CmdLine(MainApp app) {
         this.app = app;
         resetOptions = false;
+        minimize = false;
     }
 
     private void showVersion() {
@@ -46,6 +48,7 @@ final class CmdLine {
         final DefaultOption versionOption = obuilder.withShortName("v").withLongName("version").withDescription("print the version information and exit").create();
         final DefaultOption debugOption = obuilder.withShortName("d").withLongName("debug").withDescription("print debugging information").create();
         final DefaultOption resetOption = obuilder.withShortName("r").withLongName("reset").withDescription("reset user properties to default values").create();
+        final DefaultOption minimizeOption = obuilder.withShortName("m").withLongName("minim").withDescription("minimize main window on start").create();
 
         final PropertyOption propertyOption = new PropertyOption();
 
@@ -73,6 +76,7 @@ final class CmdLine {
                 .withOption(debugOption)
                 .withOption(resetOption)
                 .withOption(propertyOption)
+                .withOption(minimizeOption)
                 .create();
         Parser parser = new Parser();
         parser.setGroup(options);
@@ -89,6 +93,9 @@ final class CmdLine {
             if (cmd.hasOption(resetOption)) {
                 this.resetOptions = true;
             }
+            if (cmd.hasOption(minimizeOption)) {
+                this.minimize = true;
+            }
             final Set<String> set = (Set<String>) cmd.getProperties(propertyOption);
 
             for (String o : set) {
@@ -99,6 +106,7 @@ final class CmdLine {
 //                return cmd.getValues(fileOption);
 //            }
         } catch (OptionException e) {
+            e.printStackTrace();
             printHelp(options);
             System.exit(-1);
 
@@ -133,5 +141,9 @@ final class CmdLine {
 
     public boolean isResetOptions() {
         return resetOptions;
+    }
+
+    public boolean isMinimize() {
+        return minimize;
     }
 }

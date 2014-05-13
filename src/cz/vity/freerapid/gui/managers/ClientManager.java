@@ -9,10 +9,7 @@ import cz.vity.freerapid.plugins.webclient.HttpDownloadClient;
 import cz.vity.freerapid.utilities.Utils;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,6 +30,7 @@ public class ClientManager {
     private int popCount;
     private final Object connectionSettingsLock = new Object();
     private final ManagerDirector managerDirector;
+    private int rotate = 0;
 
     public ClientManager(ManagerDirector managerDirector) {
         this.managerDirector = managerDirector;
@@ -121,6 +119,38 @@ public class ClientManager {
     public List<ConnectionSettings> getAvailableConnections() {
         synchronized (connectionSettingsLock) {
             return Collections.unmodifiableList(availableConnections);
+        }
+    }
+
+    public List<ConnectionSettings> getEnabledConnections() {
+        synchronized (connectionSettingsLock) {
+            return Collections.unmodifiableList(getEnabled());
+        }
+    }
+
+    public List<ConnectionSettings> getRotatedEnabledConnections() {
+        synchronized (connectionSettingsLock) {
+            final List<ConnectionSettings> list = getEnabled();
+            if (list.size() > 1) {
+                Collections.rotate(list, rotate++);
+            }
+            return Collections.unmodifiableList(list);
+        }
+    }
+
+    private List<ConnectionSettings> getEnabled() {
+        final List<ConnectionSettings> list = new LinkedList<ConnectionSettings>();
+        for (ConnectionSettings settings : availableConnections) {
+            if (settings.isEnabled()) {
+                list.add(settings);
+            }
+        }
+        return list;
+    }
+
+    public void setConnectionEnabled(ConnectionSettings settings, boolean enabled) {
+        synchronized (connectionSettingsLock) {
+            settings.setEnabled(enabled);
         }
     }
 

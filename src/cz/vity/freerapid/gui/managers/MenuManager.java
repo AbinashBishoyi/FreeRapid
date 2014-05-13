@@ -1,5 +1,6 @@
 package cz.vity.freerapid.gui.managers;
 
+import com.jgoodies.binding.beans.PropertyConnector;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.gui.actions.FileActions;
@@ -346,10 +347,12 @@ public class MenuManager {
         useConnections.removeAll();
         for (final ConnectionSettings settings : connectionSettingses) {
             final JCheckBoxMenuItem item = new JCheckBoxMenuItem(settings.toString());
-            item.setSelected(settings.isEnabled());
+            final PropertyConnector propertyConnector = PropertyConnector.connect(settings, "enabled", item, "selected");
+            propertyConnector.updateProperty2();
+            //item.setSelected(settings.isEnabled());
             item.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    settings.setEnabled(!settings.isEnabled());
+                    director.getClientManager().setConnectionEnabled(settings, !settings.isEnabled());
                     director.getDataManager().checkQueue();
                 }
             });

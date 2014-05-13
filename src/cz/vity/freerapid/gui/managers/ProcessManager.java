@@ -132,9 +132,8 @@ public class ProcessManager extends Thread {
             }
 
             if (!forceDownload) {
-                for (ConnectionSettings settings : clientManager.getAvailableConnections()) {
-                    if (!settings.isEnabled())
-                        continue;
+                final List<ConnectionSettings> connectionSettingses = clientManager.getRotatedEnabledConnections();
+                for (ConnectionSettings settings : connectionSettingses) {
                     if (downloadService.canDownloadWith(settings)) {
                         queueDownload(file, settings, downloadService, service);
                         break;
@@ -244,17 +243,26 @@ public class ProcessManager extends Thread {
             service.finishedDownloading(client);
             clientManager.pushWorkingClient(client);
             setDownloading(downloading - 1);
-            int errorAttemptsCount = file.getErrorAttemptsCount();
+
+            DownloadTaskError error = task.getServiceError();
+            final ConnectionSettings settings = client.getSettings();
+            if (error == DownloadTaskError.NO_ROUTE_TO_HOST) {
+                clientManager.setConnectionEnabled(settings, false);
+                final int problematic = service.getProblematicConnectionsCount();
+                if (clientManager.getEnabledConnections().size() - problematic >= 1) {
+                    file.setState(DownloadState.QUEUED);
+                } else error = DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR;
+            }
+
             final DownloadState state = file.getState();
+            int errorAttemptsCount = file.getErrorAttemptsCount();
             if ((state == DownloadState.ERROR && errorAttemptsCount != 0) || (state == DownloadState.SLEEPING)) {
-                assert task != null;
-                final DownloadTaskError error = task.getServiceError();
                 if (error == DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR && errorAttemptsCount != -1) {
                     file.setErrorAttemptsCount(0);
                 } else {
                     if (errorAttemptsCount != -1)
                         file.setErrorAttemptsCount(errorAttemptsCount - 1);
-                    final ConnectionSettings settings = client.getSettings();
+
                     service.addProblematicConnection(settings);
                     final int purge = errorTimer.purge();
                     if (purge > 0)

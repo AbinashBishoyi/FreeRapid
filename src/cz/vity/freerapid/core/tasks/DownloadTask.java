@@ -69,6 +69,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         this.speedInBytes = 0;
         this.averageSpeed = 0;
         fileAlreadyExists = -2;
+        downloadFile.setConnectionSettings(client.getSettings());
     }
 
     protected Void doInBackground() throws Exception {
@@ -326,12 +327,15 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         } else if (cause instanceof UnknownHostException) {
             downloadFile.setErrorMessage(getResourceMap().getString("UnknownHostError"));
         } else
-        if (cause instanceof URLNotAvailableAnymoreException || cause instanceof PluginImplementationException || cause instanceof CaptchaEntryInputMismatchException || cause instanceof NoRouteToHostException) {
+        if (cause instanceof URLNotAvailableAnymoreException || cause instanceof PluginImplementationException || cause instanceof CaptchaEntryInputMismatchException) {
             setServiceError(DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR);
         } else if (cause instanceof YouHaveToWaitException) {
             final YouHaveToWaitException waitException = (YouHaveToWaitException) cause;
             this.youHaveToSleepSecondsTime = waitException.getHowManySecondsToWait();
             setServiceError(DownloadTaskError.YOU_HAVE_TO_WAIT_ERROR);
+        }
+        if (cause instanceof NoRouteToHostException) {
+            setServiceError(DownloadTaskError.NO_ROUTE_TO_HOST);
         }
         if (getServiceError() == DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR) {
             downloadFile.setErrorAttemptsCount(0);

@@ -1,6 +1,9 @@
 package cz.vity.freerapid.plugins.webclient;
 
+import cz.vity.freerapid.swing.EDTPropertyChangeSupport;
 import org.jdesktop.application.Application;
+
+import java.beans.PropertyChangeListener;
 
 /**
  * @author Vity
@@ -15,9 +18,12 @@ public class ConnectionSettings {
     private boolean enabled = true;
     private String defaultConnectionLabel;
 
+    private final EDTPropertyChangeSupport pcs;
+
     public ConnectionSettings() {
         //setProxy("localhost", 8081);
         defaultConnectionLabel = Application.getInstance().getContext().getResourceMap().getString("defaultConnection");
+        pcs = new EDTPropertyChangeSupport(this);
     }
 
     public void setProxy(String proxyURL, int proxyPort, String userName, String password) {
@@ -121,6 +127,28 @@ public class ConnectionSettings {
     }
 
     public void setEnabled(boolean enabled) {
+        final boolean oldValue = this.enabled;
         this.enabled = enabled;
+        pcs.firePropertyChange("enabled", oldValue, enabled);
+    }
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        pcs.removePropertyChangeListener(listener);
+    }
+
+    public PropertyChangeListener[] getPropertyChangeListeners() {
+        return pcs.getPropertyChangeListeners();
+    }
+
+    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(propertyName, listener);
+    }
+
+    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+        pcs.removePropertyChangeListener(propertyName, listener);
     }
 }

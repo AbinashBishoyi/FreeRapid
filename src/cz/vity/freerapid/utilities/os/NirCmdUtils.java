@@ -19,28 +19,28 @@ final class NirCmdUtils implements SystemCommander {
 
     private boolean createDesktopShortcut() {
         //shortcut [filename] [folder] [shortcut title] {arguments} {icon file} {icon resource number} {ShowCmd} {Start In Folder} {Hot Key}
-        return createShortCut(Consts.APPVERSION, "~$folder.desktop$", "");
+        return createShortCut(Consts.APPVERSION, "", "~$folder.desktop$", "");
     }
 
     private boolean createStartMenuShortcut() {
-        return createShortCut(Consts.APPVERSION, "~$folder.programs$", "");
+        return createShortCut(Consts.APPVERSION, "", "~$folder.programs$", "");
     }
 
     private boolean createStartupShortcut() {
-        return createShortCut(Consts.APPVERSION, "~$folder.startup$", "\"\" \"min\"");
+        return createShortCut(Consts.APPVERSION, "-m", "~$folder.startup$", "\"\" \"min\"");
     }
 
     private boolean createQuickLaunchShortcut() {
-        return createShortCut("", "~$folder.appdata$\\Microsoft\\Internet Explorer\\Quick Launch", "");
+        return createShortCut("", "", "~$folder.appdata$\\Microsoft\\Internet Explorer\\Quick Launch", "");
     }
 
-    private boolean createShortCut(final String shortcutTitle, final String type, final String moreCommands) {
+    private boolean createShortCut(final String shortcutTitle, final String arguments, final String type, final String moreCommands) {
         final String appPath = Utils.getAppPath();
         final String appSep = Utils.addFileSeparator(appPath);
         final String exe = appSep + Consts.WINDOWS_EXE_NAME;
         final String icon = appSep + Consts.WINDOWS_ICON_NAME;
 
-        final String cmd = String.format("shortcut \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" %s", exe, type, shortcutTitle, "", icon, moreCommands);
+        final String cmd = String.format("shortcut \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" %s", exe, type, shortcutTitle, arguments, icon, moreCommands);
         return runCommand(cmd, true);
     }
 

@@ -105,6 +105,7 @@ volby
   -v (--version)      tisk informací o verzi a ukonèení
   -d (--debug)        tisk podrobnìjších informací o bìhu programu
   -r (--reset)        reset uživatelských nastavení do výchozího stavu
+  -m (--minim)        minimalizovat aplikaci po startu  
   -Dproperty=value    Nastavení interních hodnot vlastností (vìtšinou pro úèely ladìní, testování)
 
 Pokud je hodnota volby -D nastavena na 'default' (bez '), použije se výchozí hodnota.

@@ -33,6 +33,8 @@ public class MainApp extends SingleXFrameApplication {
     private TrayIconSupport trayIconSupport = null;
     private AppPrefs appPrefs;
 
+    private boolean minimizeOnStart = false;
+
 //    private static Logger logger = null;
 
 
@@ -43,6 +45,8 @@ public class MainApp extends SingleXFrameApplication {
         final List<String> fileList = line.processCommandLine(args);
 
         LogUtils.initLogging(debug);//logovani nejdrive    
+
+        minimizeOnStart = line.isMinimize();
 
         this.appPrefs = new AppPrefs(this.getContext(), line.getProperties(), line.isResetOptions());
 
@@ -82,9 +86,12 @@ public class MainApp extends SingleXFrameApplication {
         initMainFrame();
         this.addExitListener(new MainAppExitListener());
         //this.getContext().getLocalStorage().load()
-        show(getMainFrame());
+        final JFrame mainFrame = getMainFrame();
+        show(mainFrame);
         getTrayIconSupport().setVisibleByDefault();
         setGlobalEDTExceptionHandler();
+        if (minimizeOnStart)
+            Swinger.minimize(mainFrame);
     }
 
     private void initMainFrame() {

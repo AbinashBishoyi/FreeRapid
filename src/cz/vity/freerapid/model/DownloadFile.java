@@ -4,6 +4,7 @@ import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.FileTypeIconProvider;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.DownloadTask;
+import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.plugins.webclient.HttpFile;
 import cz.vity.freerapid.utilities.LogUtils;
@@ -41,6 +42,8 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
     private volatile int errorAttemptsCount;
     private volatile String shareDownloadServiceID;
     private volatile String serviceName = null;
+    private volatile ConnectionSettings connectionSettings;
+
 
     static {
         try {
@@ -48,7 +51,8 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
             PropertyDescriptor[] propertyDescriptors =
                     info.getPropertyDescriptors();
             for (PropertyDescriptor pd : propertyDescriptors) {
-                if ("task".equals(pd.getName()) || "speed".equals(pd.getName())) {
+                final Object name = pd.getName();
+                if ("task".equals(name) || "speed".equals(name) || "connectionSettings".equals(name)) {
                     pd.setValue("transient", Boolean.TRUE);
                 }
             }
@@ -294,5 +298,15 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
 
     public void setCompleteTaskDuration(final long completeTaskDuration) {
         this.completeTaskDuration = completeTaskDuration;
+    }
+
+    public ConnectionSettings getConnectionSettings() {
+        return connectionSettings;
+    }
+
+    public void setConnectionSettings(final ConnectionSettings connectionSettings) {
+        ConnectionSettings oldValue = this.connectionSettings;
+        this.connectionSettings = connectionSettings;
+        firePropertyChange("connectionSettings", oldValue, connectionSettings);
     }
 }

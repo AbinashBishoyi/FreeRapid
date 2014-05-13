@@ -1131,9 +1131,17 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             final DownloadFile downloadFile = (DownloadFile) value;
             final DownloadTask task = downloadFile.getTask();
-            if (task != null) {
+            ConnectionSettings con = null;
+            if (downloadFile.getState() == DownloadState.SLEEPING || downloadFile.getState() == DownloadState.ERROR) {
+                con = downloadFile.getConnectionSettings();
+            }
+
+            if (con == null && task != null) {
                 final HttpDownloadClient client = task.getClient();
-                final ConnectionSettings con = client.getSettings();
+                con = client.getSettings();
+            }
+
+            if (con != null) {
                 if (con.isProxySet()) {
                     value = String.format("%s:%s", con.getProxyURL(), con.getProxyPort());
                     if (con.getUserName() != null) {
@@ -1141,6 +1149,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                     }
                 } else value = defaultConnection;
             } else value = "";
+
             return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         }
     }
