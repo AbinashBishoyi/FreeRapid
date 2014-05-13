@@ -13,6 +13,7 @@ Fixed - indicates a bug fix
 
 XXth November 2008 - FreeRapid Downloader 0.71 released
   Added : Hungarian translation [thanks to Denisz Kosztyukovics!]
+  Added : German translation [thanks to Rabyte!]  
   Added : Spanish translation [thanks to El Lalo!]
   Added : plugins - support for HellShare.com [implemented by Lukiz, thanks!]
           - this server is a bit tricky - the server is buggy :-)

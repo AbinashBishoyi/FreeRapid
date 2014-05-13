@@ -53,8 +53,7 @@ public class MoveFileTask extends CoreTask<Void, Void> {
             } else to.delete();
         }
 
-
-        message("Moving file");
+        //message("Moving file");
         final File parentToDir = to.getParentFile();
         if (from.getParentFile().equals(parentToDir)) {
             if (from.renameTo(to)) {
