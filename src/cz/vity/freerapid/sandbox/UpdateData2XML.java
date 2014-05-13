@@ -34,9 +34,9 @@ public class UpdateData2XML {
 
 
     public static void main(String[] args) {
-        final File f = new File("d:\\www\\plugins");
+        final File f = new File("c:\\develope\\freerapid-plugintools\\dist");
         final File output = new File("d:\\www\\data.xml");
-        new UpdateData2XML().start(f, output, "http://localhost/plugins");
+        new UpdateData2XML().start(f, output, "http://wordrider.net/freerapid/plugs");
     }
 
     private void start(File directory, File output, String url) {

@@ -15,14 +15,17 @@ import java.awt.image.BufferedImage;
 public class DevDialogSupport implements DialogSupport {
     private final static Object captchaLock = new Object();
 
+
     public DevDialogSupport(final ApplicationContext context) {
 
     }
 
+    @Override
     public PremiumAccount showAccountDialog(final PremiumAccount account, final String title) throws Exception {
         return account;
     }
 
+    @Override
     public boolean showOKCancelDialog(final Component container, final String title) throws Exception {
         final boolean[] dialogResult = new boolean[]{false};
         if (!EventQueue.isDispatchThread()) {
@@ -36,6 +39,7 @@ public class DevDialogSupport implements DialogSupport {
 
     }
 
+    @Override
     public void showOKDialog(final Component container, final String title) throws Exception {
         if (!EventQueue.isDispatchThread()) {
             SwingUtilities.invokeAndWait(new Runnable() {
@@ -46,6 +50,7 @@ public class DevDialogSupport implements DialogSupport {
         } else showInputDialog(title, container, false);
     }
 
+    @Override
     public String askForCaptcha(final BufferedImage image) throws Exception {
         synchronized (captchaLock) {
             final String[] captchaResult = new String[]{""};

@@ -1,6 +1,7 @@
 package cz.vity.freerapid.core.tasks;
 
 import cz.vity.freerapid.core.tasks.exceptions.NoAvailableConnection;
+import cz.vity.freerapid.core.tasks.exceptions.UpdateFailedException;
 import cz.vity.freerapid.gui.managers.ClientManager;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
 import cz.vity.freerapid.model.DownloadFile;
@@ -13,6 +14,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.jdesktop.application.ApplicationContext;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.UnknownHostException;
@@ -47,16 +49,20 @@ public class DownloadNewPluginsTask extends DownloadTask {
         initDownloadThread();
 
         final File dir = director.getPluginsManager().getPluginsDir();
+        boolean success = false;
         for (DownloadFile file : fileList) {
             try {
                 setDownloadFile(file);
                 downloadFile.setSaveToDirectory(dir);
                 processFile(file);
+                success = true;
             } catch (Exception e) {
                 file.setState(DownloadState.ERROR);
                 setFileErrorMessage(e);
             }
         }
+        if (!success)
+            throw new UpdateFailedException("UpdateFailed");
         return null;
     }
 
@@ -67,6 +73,8 @@ public class DownloadNewPluginsTask extends DownloadTask {
             saveToFile(inputStream);
             checkRewrite(file);
             file.setState(DownloadState.COMPLETED);
+        } else {
+            throw new IOException("FileWasNotFoundOnServer");
         }
     }
 

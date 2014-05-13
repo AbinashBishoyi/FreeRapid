@@ -13,15 +13,18 @@ public class DevPluginContextImpl implements PluginContext {
     private ConfigurationStorageSupport storageSupport;
 
 
+    @Override
     public ConfigurationStorageSupport getConfigurationStorageSupport() {
         return storageSupport;
     }
+
 
     private DevPluginContextImpl(DialogSupport dialogSupport, ConfigurationStorageSupport storageSupport) {
         this.dialogSupport = dialogSupport;
         this.storageSupport = storageSupport;
     }
 
+    @Override
     public DialogSupport getDialogSupport() {
         return dialogSupport;
     }

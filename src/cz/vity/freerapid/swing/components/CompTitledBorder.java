@@ -34,6 +34,7 @@ public class CompTitledBorder extends TitledBorder {
     }
 
 
+    @Override
     public void paintBorder(Component c, Graphics g,
                             int x, int y, int width, int height) {
         Rectangle borderR = new Rectangle(x + EDGE_SPACING,
@@ -85,6 +86,7 @@ public class CompTitledBorder extends TitledBorder {
     }
 
 
+    @Override
     public Insets getBorderInsets(Component c, Insets insets) {
         Insets borderInsets;
         if (border != null) {

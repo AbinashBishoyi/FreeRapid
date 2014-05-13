@@ -34,6 +34,7 @@ public class CompTitledPane extends JPanel {
         return panel;
     }
 
+    @Override
     public void doLayout() {
         //  super.doLayout();
         Rectangle rect = getBounds();

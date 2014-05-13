@@ -10,7 +10,7 @@ import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.plugins.webclient.FileState;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
-import cz.vity.freerapid.plugins.webclient.interfaces.HttpFileDownloader;
+import cz.vity.freerapid.plugins.webclient.interfaces.HttpFileDownloadTask;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.FileUtils;
@@ -36,7 +36,7 @@ import java.util.logging.Logger;
 /**
  * @author Vity
  */
-public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownloader {
+public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownloadTask {
     private final static Logger logger = Logger.getLogger(DownloadTask.class.getName());
     protected HttpDownloadClient client;
     protected DownloadFile downloadFile;
@@ -82,6 +82,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         fileAlreadyExists = -2;
     }
 
+    @Override
     protected Void doInBackground() throws Exception {
         initDownloadThread();
 
@@ -128,11 +129,15 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         //client.initClient();
     }
 
+    @Override
     public boolean isTerminated() {
         return this.isCancelled() || Thread.currentThread().isInterrupted();
     }
 
+    @Override
     public void saveToFile(InputStream inputStream) throws Exception {
+        if (inputStream == null)
+            throw new NullPointerException("Input stream for saving cannot be null");
         downloadFile.setFileState(FileState.CHECKED_AND_EXISTING);
         final boolean temporary = useTemporaryFiles();
 
@@ -378,6 +383,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         }
     }
 
+
     protected void error(Throwable cause) {
 
         setFileErrorMessage(cause);
@@ -557,10 +563,12 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
             throw new InterruptedException();
     }
 
+    @Override
     public HttpFile getDownloadFile() {
         return downloadFile;
     }
 
+    @Override
     public HttpDownloadClient getClient() {
         return client;
     }

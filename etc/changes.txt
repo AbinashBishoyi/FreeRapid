@@ -16,6 +16,7 @@ XXX December 2008 - FreeRapid Downloader 0.8 released
           - with this switch, configuration files will be stored in the 'config' folder,
             all file paths will be saved relatively to FRD folder (if possible) - useful for USB FLASH drives  
   Added : support for plugins update + many UI settings for it
+  Added : detection of presence of ESET Smart Antivirus on Windows system to avoid startup problems
   Added : UI - new tab sheet in User Preferences dialog for plugins
           - ability to disable plugin for using/updating
   Added : plugins - service server is indicated by icon

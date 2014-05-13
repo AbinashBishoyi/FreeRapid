@@ -17,23 +17,52 @@ import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 
 /**
+ * Robot to browse on the web.
+ *
  * @author Vity
+ * @see cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient
  */
-final public class DownloadClient implements HttpDownloadClient {
+public class DownloadClient implements HttpDownloadClient {
+    /**
+     * Field logger
+     */
     private final static Logger logger = Logger.getLogger(DownloadClient.class.getName());
 
+    /**
+     * Field client
+     *
+     * @see org.apache.commons.httpclient.HttpClient
+     */
     protected HttpClient client;
+    /**
+     * Field referer  - HTTP referer
+     */
     protected String referer = "";
+    /**
+     * string content of last request
+     */
     protected String asString;
+    /**
+     * checks whether redirect is used
+     */
     private int redirect;
+    /**
+     * connection settings those are used for creating TCP/HTTP connections
+     */
     private volatile ConnectionSettings settings;
 
 
+    /**
+     * Constructor - creates a new DownloadClient instance.
+     */
     public DownloadClient() {
         this.client = new HttpClient();
     }
 
+    @Override
     public void initClient(final ConnectionSettings settings) {
+        if (settings == null)
+            throw new NullPointerException("Internet connection settings cannot be null");
         this.settings = settings;
         final HttpClientParams clientParams = client.getParams();
         clientParams.setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
@@ -63,19 +92,25 @@ final public class DownloadClient implements HttpDownloadClient {
         return settings.isProxySet() && settings.getUserName() != null;
     }
 
+    /**
+     * Method setDefaultsForMethod sets default header request values - emulates Mozilla Firefox
+     *
+     * @param method
+     */
     protected void setDefaultsForMethod(HttpMethod method) {
-        method.setRequestHeader("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.1) Gecko/2008070208 Firefox/3.0.1");
+        method.setRequestHeader("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.1) Gecko/2008070208 Firefox/3.0.4");
         method.setRequestHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         method.setRequestHeader("Accept-Language", "cs,en-us;q=0.7,en;q=0.3");
         method.setRequestHeader("Accept-Charset", "windows-1250,utf-8;q=0.7,*;q=0.7");
         //method.setRequestHeader("Accept-Charset", "utf-8, windows-1250;q=0.7,*;q=0.7");
         method.setRequestHeader("Accept-Encoding", "gzip,deflate");
         method.setRequestHeader("Keep-Alive", "30");
-        if (referer.length() > 0)
+        if (referer != null && referer.length() > 0)
             method.setRequestHeader("Referer", referer);
         method.setFollowRedirects(false);
     }
 
+    @Override
     public PostMethod getPostMethod(final String uri) {
         final PostMethod m = new PostMethod(uri);
         setDefaultsForMethod(m);
@@ -83,13 +118,18 @@ final public class DownloadClient implements HttpDownloadClient {
         return m;
     }
 
-
+    @Override
     public String getReferer() {
         return referer;
     }
 
 
+    @Override
     public InputStream makeFinalRequestForFile(HttpMethod method, HttpFile file) throws IOException {
+        if (method == null)
+            throw new NullPointerException("HttpMethod cannot be null");
+        if (file == null)
+            throw new NullPointerException("File cannot be null");
         return makeRequestFile(method, file, 0);
 
     }
@@ -223,6 +263,7 @@ final public class DownloadClient implements HttpDownloadClient {
         return null;
     }
 
+    @Override
     public InputStream makeRequestForFile(HttpMethod method) throws IOException {
         toString(method);
         client.executeMethod(method);
@@ -258,6 +299,7 @@ final public class DownloadClient implements HttpDownloadClient {
         return null;
     }
 
+    @Override
     public int makeRequest(HttpMethod method) throws IOException {
         //toString(method);
         asString = ""; //pro sichr aby tam nebylo nikdy null
@@ -346,6 +388,12 @@ final public class DownloadClient implements HttpDownloadClient {
         return "";
     }
 
+    /**
+     * Checks if the given status code is type redirect
+     *
+     * @param statuscode http response status code
+     * @return true, if status code is one of the redirect code
+     */
     protected boolean isRedirect(int statuscode) {
         return (statuscode == HttpStatus.SC_MOVED_TEMPORARILY) ||
                 (statuscode == HttpStatus.SC_MOVED_PERMANENTLY) ||
@@ -353,6 +401,7 @@ final public class DownloadClient implements HttpDownloadClient {
                 (statuscode == HttpStatus.SC_TEMPORARY_REDIRECT);
     }
 
+    @Override
     public GetMethod getGetMethod(final String uri) {
         final GetMethod m = new GetMethod(uri);
         setDefaultsForMethod(m);
@@ -360,7 +409,11 @@ final public class DownloadClient implements HttpDownloadClient {
         return m;
     }
 
-
+    /**
+     * Help method for to log
+     *
+     * @param method
+     */
     protected void toString(HttpMethod method) {
         logger.info("===============HTTP METHOD===============");
         final String path = method.getPath();
@@ -385,6 +438,15 @@ final public class DownloadClient implements HttpDownloadClient {
         logger.info("=========================================");
     }
 
+    /**
+     * Converts given GZIPed input stream into string. <br>
+     * UTF-8 encoding is used as default.<br>
+     * Shouldn't be called to file input streams.<br>
+     *
+     * @param in input stream which should be converted
+     * @return input stream as string
+     * @throws IOException when there was an error during reading from the stream
+     */
     protected String inflate(InputStream in) throws IOException {
         byte[] buffer = new byte[4000];
         int b;
@@ -399,20 +461,25 @@ final public class DownloadClient implements HttpDownloadClient {
         return builder.toString();
     }
 
+    @Override
     public void setReferer(String referer) {
+        if (referer == null)
+            throw new NullPointerException("Referer cannot be null");
         logger.info("Setting referer to " + referer);
         this.referer = referer;
     }
 
+    @Override
     public ConnectionSettings getSettings() {
         return settings;
     }
 
-
+    @Override
     public HttpClient getHTTPClient() {
         return client;
     }
 
+    @Override
     public String getContentAsString() {
         return asString;
     }

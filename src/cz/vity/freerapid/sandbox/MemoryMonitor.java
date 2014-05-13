@@ -101,19 +101,23 @@ public class MemoryMonitor extends JPanel {
             });
         }
 
+        @Override
         public Dimension getMinimumSize() {
             return getPreferredSize();
         }
 
+        @Override
         public Dimension getMaximumSize() {
             return getPreferredSize();
         }
 
+        @Override
         public Dimension getPreferredSize() {
             return new Dimension(135, 80);
         }
 
 
+        @Override
         public void paint(Graphics g) {
 
             if (big == null) {

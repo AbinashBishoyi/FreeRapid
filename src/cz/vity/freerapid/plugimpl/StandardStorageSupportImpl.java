@@ -6,10 +6,10 @@ import org.jdesktop.application.ApplicationContext;
 /**
  * @author Ladislav Vitasek
  */
-public class StandardStorageSupport implements ConfigurationStorageSupport {
+public class StandardStorageSupportImpl implements ConfigurationStorageSupport {
     private final ApplicationContext context;
 
-    public StandardStorageSupport(ApplicationContext context) {
+    public StandardStorageSupportImpl(ApplicationContext context) {
         this.context = context;
     }
 

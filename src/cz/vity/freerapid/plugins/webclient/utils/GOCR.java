@@ -14,9 +14,11 @@ import java.util.Scanner;
 import java.util.logging.Logger;
 
 /**
+ * Class that compounds access to GOCR extern application - for CAPTCHA recognition
+ *
  * @author Ladislav Vitasek
  */
-public class GOCR {
+class GOCR {
     private final static Logger logger = Logger.getLogger(GOCR.class.getName());
 
     private final BufferedImage image;
@@ -24,13 +26,25 @@ public class GOCR {
     private final static String PATH_WINDOWS = "tools/gocr/gocr046.exe";
     private final static String PATH_LINUX = "gocr";
 
+    /**
+     * Constructor
+     *
+     * @param image              image for OCR recognition
+     * @param commandLineOptions additional command line options for GOCR application
+     */
     public GOCR(BufferedImage image, String commandLineOptions) {
 
         this.image = image;
         this.commandLineOptions = commandLineOptions;
     }
 
-
+    /**
+     * Makes OCR recognition with GOCR application
+     * Calls system application GOCR
+     *
+     * @return
+     * @throws IOException error calling GOCR application or IO working with streams
+     */
     public String recognize() throws IOException {
 
         final String command;

@@ -1,8 +1,6 @@
-package cz.vity.freerapid.plugins.webclient;
+package cz.vity.freerapid.plugins.webclient.utils;
 
 import cz.vity.freerapid.plugins.exceptions.PluginImplementationException;
-import cz.vity.freerapid.plugins.webclient.utils.Entities;
-import cz.vity.freerapid.plugins.webclient.utils.GOCR;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -18,15 +16,18 @@ import java.util.regex.Pattern;
  * @author Ladislav Vitasek
  */
 public final class PlugUtils {
+    /**
+     * instance of logger
+     */
     private final static Logger logger = Logger.getLogger(PlugUtils.class.getName());
 
 
     /**
-     * Parse input string and converts it into bytes
-     * Acceptable input:
-     * 1.35 Gb, 0.5 Mb 5 465kB, default value is kB
-     * Function is not case sensitive.
-     * All ',' are converted to '.'
+     * Parses input string and converts it into bytes.<br />
+     * Acceptable input:<br />
+     * <code>1.35 Gb, 0.5 Mb 5 465kB, 45654 6544 bytes, 54654654</code> - default value is kB<br />
+     * Function is not case sensitive. Spaces among numbers are not important (they are removed).<br />
+     * All ',' are converted to '.'<br />
      *
      * @param value input string parsed from page
      * @return filesize in bytes
@@ -57,12 +58,30 @@ public final class PlugUtils {
             return Long.parseLong(value) * constant;
     }
 
+    /**
+     * Help method to get Matcher for given regular expression and string.<br />
+     * Pattern is case sensitive.<br />
+     *
+     * @param regexp        regular expression
+     * @param contentString string that is searched for regular expression pattern
+     * @return
+     * @see java.util.regex.Pattern
+     */
     public static Matcher matcher(final String regexp, final String contentString) {
         if (contentString == null)
             throw new NullPointerException("Input value cannot be null");
         return Pattern.compile(regexp, Pattern.MULTILINE).matcher(contentString);
     }
 
+    /**
+     * Help method to test whether given regular expression matches given content string.<br />
+     * Pattern is case sensitive.
+     *
+     * @param regexp        regular expression
+     * @param contentString string that is searched for regular expression pattern
+     * @return true if the given pattern was found in given string, false otherwise
+     * @see java.util.regex.Pattern
+     */
     public static boolean find(final String regexp, final String contentString) {
         return matcher(regexp, contentString).find();
     }
@@ -130,6 +149,13 @@ public final class PlugUtils {
         return s.replaceAll("\\&amp;", "&");
     }
 
+    /**
+     * Method calls GOCR implementation to recognize text from image.
+     *
+     * @param image              an image from which text should be recognized
+     * @param commandLineOptions additional command line options for GOCR application
+     * @return text that was recognized, or null if there was an error during calling of GOCR application
+     */
     public static String recognize(final BufferedImage image, final String commandLineOptions) {
         final GOCR gocr = new GOCR(image, commandLineOptions);
         try {

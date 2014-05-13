@@ -1,7 +1,7 @@
 package cz.vity.freerapid.plugins.webclient;
 
 import cz.vity.freerapid.plugins.exceptions.NotSupportedDownloadByServiceException;
-import cz.vity.freerapid.plugins.webclient.interfaces.HttpFileDownloader;
+import cz.vity.freerapid.plugins.webclient.interfaces.HttpFileDownloadTask;
 import cz.vity.freerapid.plugins.webclient.interfaces.PluginContext;
 import cz.vity.freerapid.plugins.webclient.interfaces.PluginRunner;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
@@ -21,16 +21,32 @@ import java.util.regex.Pattern;
  * @author Vity
  */
 public abstract class AbstractFileShareService extends Plugin implements ShareDownloadService {
+    /**
+     * Field logger
+     */
     private final static Logger logger = Logger.getLogger(AbstractFileShareService.class.getName());
 
+    /**
+     * Field pattern
+     */
     private Pattern pattern;
+    /**
+     * Field pluginContext
+     */
     private PluginContext pluginContext;
+    /**
+     * Field image
+     */
     private Icon image;
 
+    /**
+     * Constructor AbstractFileShareService creates a new AbstractFileShareService instance.
+     */
     public AbstractFileShareService() {
         super();
     }
 
+    @Override
     protected void doStart() throws Exception {
         final PluginDescriptor desc = this.getDescriptor();
         final PluginAttribute attribute = desc.getAttribute("urlRegex");
@@ -52,18 +68,27 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
 
     }
 
+    @Override
     protected void doStop() throws Exception {
 
     }
 
+    @Override
     public Icon getFaviconImage() {
         return image;
     }
 
+    @Override
     public String getId() {
         return this.getDescriptor().getId();
     }
 
+    /**
+     * Method supportURL checks whether active plugin supports given URL
+     *
+     * @param url given URL to test
+     * @return boolean true if plugin supports downloading from this URL
+     */
     protected boolean supportURL(String url) {
         if (pattern == null) {
             logger.warning("Pattern for testing url was not initialized.");
@@ -77,46 +102,65 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
         return getName();
     }
 
-    public void run(HttpFileDownloader downloader) throws Exception {
-        checkSupportedURL(downloader);
+    @Override
+    public void run(HttpFileDownloadTask downloadTask) throws Exception {
+        checkSupportedURL(downloadTask);
         final PluginRunner pluginRunner = getPluginRunnerInstance();
         if (pluginRunner != null) {
-            pluginRunner.init(this, downloader);
+            pluginRunner.init(this, downloadTask);
             pluginRunner.run();
         } else throw new NullPointerException("getPluginRunnerInstance must no return null");
 
     }
 
-    public void runCheck(HttpFileDownloader downloader) throws Exception {
-        checkSupportedURL(downloader);
+    @Override
+    public void runCheck(HttpFileDownloadTask downloadTask) throws Exception {
+        checkSupportedURL(downloadTask);
         final PluginRunner pluginRunner = getPluginRunnerInstance();
         if (pluginRunner != null) {
-            pluginRunner.init(this, downloader);
+            pluginRunner.init(this, downloadTask);
             pluginRunner.runCheck();
         } else throw new NullPointerException("getPluginRunnerInstance must no return null");
     }
 
+    @Override
     public boolean supportsRunCheck() {
         return false;
     }
 
+    @Override
     public void showOptions() throws Exception {
 
     }
 
+    @Override
     public PluginContext getPluginContext() {
         return pluginContext;
     }
 
-    protected void checkSupportedURL(HttpFileDownloader downloader) throws NotSupportedDownloadByServiceException {
-        if (!supportURL(downloader.getDownloadFile().getFileUrl().toExternalForm())) {
+    /**
+     * Method checkSupportedURL ...
+     *
+     * @param downloadTask
+     * @throws NotSupportedDownloadByServiceException
+     *          when
+     */
+    protected void checkSupportedURL(HttpFileDownloadTask downloadTask) throws NotSupportedDownloadByServiceException {
+        if (!supportURL(downloadTask.getDownloadFile().getFileUrl().toExternalForm())) {
             throw new NotSupportedDownloadByServiceException();
         }
     }
 
+    @Override
     public void setPluginContext(PluginContext pluginContext) {
         this.pluginContext = pluginContext;
     }
 
+    /**
+     * Returns new instance of "plugin's worker" - its methods are called from this class
+     * Instance should not be cached. It should return always new instance.
+     *
+     * @return instance of PluginRunner
+     */
     protected abstract PluginRunner getPluginRunnerInstance();
 }

@@ -4,9 +4,9 @@ import cz.vity.freerapid.gui.managers.exceptions.NotSupportedDownloadServiceExce
 import cz.vity.freerapid.gui.managers.exceptions.PluginIsNotEnabledException;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.model.PluginMetaData;
-import cz.vity.freerapid.plugimpl.PluginContextImpl;
-import cz.vity.freerapid.plugimpl.StandardDialogSupport;
-import cz.vity.freerapid.plugimpl.StandardStorageSupport;
+import cz.vity.freerapid.plugimpl.StandardDialogSupportImpl;
+import cz.vity.freerapid.plugimpl.StandardPluginContextImpl;
+import cz.vity.freerapid.plugimpl.StandardStorageSupportImpl;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.plugins.webclient.interfaces.PluginContext;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
@@ -157,7 +157,10 @@ public class PluginsManager {
     }
 
     public File getPluginsDir() {
-        return new File(Utils.getAppPath(), "plugins");
+        final File file = new File(Utils.getAppPath(), "plugins");
+        if (!file.exists())
+            file.mkdirs();
+        return file;
     }
 
     private void disablePluginsInConflict() {
@@ -263,7 +266,7 @@ public class PluginsManager {
     }
 
     private PluginContext createPluginContext() {
-        return PluginContextImpl.create(new StandardDialogSupport(context), new StandardStorageSupport(context));
+        return StandardPluginContextImpl.create(new StandardDialogSupportImpl(context), new StandardStorageSupportImpl(context));
     }
 
     public List<PluginMetaData> getSupportedPlugins() {
