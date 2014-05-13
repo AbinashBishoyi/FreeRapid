@@ -563,8 +563,8 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
 
         final ValueModel useDefault = bind(checkUseDefaultConnection, UserProp.USE_DEFAULT_CONNECTION, UserProp.USE_DEFAULT_CONNECTION_DEFAULT);
-        PropertyConnector.connectAndUpdate(useDefault, btnSelectConnectionProxy, "enabled");
 
+        PropertyConnector.connectAndUpdate(useDefault, getActionMap().get("btnSelectConnectionProxy"), "enabled");
 
         valueModel = bind(checkShowIconInSystemTray, FWProp.SHOW_TRAY, true);
 
