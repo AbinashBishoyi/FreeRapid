@@ -12,7 +12,10 @@ Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
 XX YYYY 2009 - FreeRapid Downloader 0.81 released
+  Added : Russian translation [thanks to Vdm17!]
   Changed : UI - User preferences dialog - languages are sorted based on the current locale
+  Fixed : Linux - commands from syscmd.properties are not loaded properly [reported by Andre Grott]
+
 
 21st December 2008 - FreeRapid Downloader 0.8 released
   Added : new plugin - usercash.com (crypter) [thanks to me! ;-)]
@@ -28,7 +31,7 @@ XX YYYY 2009 - FreeRapid Downloader 0.81 released
   Added : Italian translation [thanks to Stefano!]
   Added : Japanese translation [thanks to Tilt!]
   Added : Danish translation [thanks to Topexso!]
-  Added : Ukrainan translation [thanks to Vadim!]
+  Added : Ukrainan translation [thanks to Vdm17!]
   Added : Indonesian translation [thanks to Alex!]
   Added : Polish translation [thanks to Soft4UAdmin!]
   Added : UI - added action to remove invalid/not existing links [requested by Alex]

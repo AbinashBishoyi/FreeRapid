@@ -116,7 +116,7 @@ class LinuxCmdUtils implements SystemCommander {
 
     public boolean isSupported(OSCommand command) {
         final String cmd = getKey(command);
-        return commands.contains(cmd) && !(commands.getProperty(cmd, "").trim().isEmpty());
+        return commands.containsKey(cmd) && !(commands.getProperty(cmd, "").trim().isEmpty());
     }
 
     private String getCommand(OSCommand command) {
