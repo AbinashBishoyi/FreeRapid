@@ -2,8 +2,8 @@
 *   FreeRapid Downloader                                *
 *      by Ladislav Vitasek aka Vity                     *
 *   Mail: info@wordrider.net - questions/suggestions    *
-*   Forum: http://wordrider.net/forum/read.php?6,414    *
-*   Last change: 10th September 2008                    *
+*   Forum: http://wordrider.net/freerapid               *
+*   Last change: 20th September 2008                    *
 *********************************************************
 
 =======================================
@@ -14,7 +14,6 @@ III.   How to run FreeRapid
  IV.   Known problems and limitations
   V.   FAQ
 =======================================
-
 
 
 I.   What is FreeRapid Downloader
@@ -53,7 +52,7 @@ Recommended configuration:
     * Pentium 800MHz processor
     * min 1024x768 screen resolution
     * 40 MB of free RAM
-    * 6 MB free disk space
+    * 10 MB free disk space
     * Java 2 Platform - version at least 1.6 (Java SE 6 Runtime) installed
 
 Application needs at least Java 6.0 to start (http://java.sun.com/javase/downloads/index.jsp , JRE 6).
@@ -62,8 +61,18 @@ Application needs at least Java 6.0 to start (http://java.sun.com/javase/downloa
 III.  How to run FreeRapid Downloader
 =======================================
 
-Unzip files to any of your directory.
+Installation
+------------
+Unzip files to any of your directory. If you make an upgrade to higher version, you can delete previous folder. All user
+settings are preserved. All use settings are saved in home directories:
+MS Windows: c:\Documents and Settings\YOUR_USER_NAME\application data\VitySoft\FRD
+            + registry HKEY_CURRENT_USER\Software\JavaSoft\Prefs\vitysoft\frd
+Linux: ~/.FRD
+DO NOT copy new version over older one.
 
+
+Launching
+-----------
 Windows
  Simply launch frd.exe
 
@@ -72,7 +81,6 @@ Linux
 
 All platforms
  Run command java -jar frd.jar
-
 
 
 IV.   Known bugs and Limitations
@@ -87,7 +95,7 @@ IV.   Known bugs and Limitations
     X ignore this exception in the app.log
 - java.lang.ClassCastException: java.awt.TrayIcon cannot be cast to java.awt.Component
     X ignore this exception in the app.log    
-- some users reported not showing icon in tray on Linux
+- Linux users reported not showing icon in tray on Linux
     X the only one known solution for this problem could be an upgrade JRE to version 1.6.0_10-rc or higher
 
 V.   FAQ
