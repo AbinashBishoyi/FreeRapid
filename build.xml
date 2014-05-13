@@ -159,9 +159,10 @@
         <native2ascii dest="${src.dir}" src="${resources.dir}" includes="**/**/*.properties"/>
     </target>
 
-    <target name="resources">
+    <target name="resources" depends="init">
         <mkdir dir="${resources.dir}"/>
-        <native2ascii dest="${resources.dir}" reverse="true" src="${src.dir}" includes="**/**/*.properties"/>
+        <native2ascii dest="${resources.dir}" reverse="true" src="${src.dir}" includes="**/**/*.properties"
+                      excludes="log*,lookandfeels*"/>
         <zip zipfile="${dist.dir}/resources.zip">
             <fileset dir="${resources.dir}"/>
         </zip>

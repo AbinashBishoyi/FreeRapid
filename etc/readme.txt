@@ -45,6 +45,7 @@ Currently supported services are:
 Bug report:
 bugs@wordrider.net
 http://bugtracker.wordrider.net/
+Please report your JRE version and attach file app.log (if neccessary).  
 
 
 II. System requirements

@@ -13,10 +13,11 @@ Fixed - indicates a bug fix
 
 XXth October 2008 - FreeRapid Downloader 0.62 released
   Added : plugins - support for megarotic.com and sexuploader.com [FS#24 - requested by Anonymous, implemented by Lukiz]   
-  Added : new keystroke for Resume action - SPACE key     
+  Added : new keystroke for Resume action - SPACE key
+  Added : possibility to import (with clipboard monitoring) or paste links without 'http://' at the beginning         
   Added : Sort by name function - available from Downloads menu - ctrl+S [requested by ATom]
   Added : link to the Flash video on the web from Help menu
-  Added : option to remove files after completition (NEVER, IMMEDIATELY, AT STARTUP)
+  Added : option to remove files after completion (NEVER, IMMEDIATELY, AT STARTUP)
   Added : option to minimize to tray on close
   Added : option to disable using default connection (warning: only connections from proxy list will be used)
 #  Added : czech translation
