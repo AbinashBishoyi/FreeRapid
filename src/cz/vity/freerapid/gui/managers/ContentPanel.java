@@ -1011,7 +1011,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             autoReconnectIn = map.getString("autoreconnectIn");
             attemptForDownloading = map.getString("attemptForDownloading");
             final int h = this.getPreferredSize().height;
-            this.setPreferredSize(new Dimension(55, h));
+            this.setPreferredSize(new Dimension(70, h));
         }
 
         @Override

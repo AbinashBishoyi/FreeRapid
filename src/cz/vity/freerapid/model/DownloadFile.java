@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 public class DownloadFile extends AbstractBean implements PropertyChangeListener, HttpFile {
     private final static Logger logger = Logger.getLogger(DownloadFile.class.getName());
 
-    private long fileSize;
+    private volatile long fileSize;
     private DownloadTask task = null;
     private volatile DownloadState state = DownloadState.PAUSED;
     private String fileName;
