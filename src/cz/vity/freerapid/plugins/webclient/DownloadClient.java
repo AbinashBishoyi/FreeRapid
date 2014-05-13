@@ -85,18 +85,59 @@ final public class DownloadClient implements HttpDownloadClient {
 
 
     public InputStream makeFinalRequestForFile(HttpMethod method, HttpFile file) throws IOException {
+        return makeRequestFile(method, file, 0);
+
+    }
+
+    private InputStream makeRequestFile(final HttpMethod method, final HttpFile file, final int deep) throws IOException {
         asString = "";
         toString(method);
         client.executeMethod(method);
 
         final int statuscode = method.getStatusCode();
 
-        if (statuscode != HttpStatus.SC_OK) { //selhalo pripojeni
+
+        if (statuscode == HttpStatus.SC_INTERNAL_SERVER_ERROR || statuscode == HttpStatus.SC_FORBIDDEN) {//bezpecnost
+            logger.severe("Status code je 500");
+            return null;
+        } else if (statuscode >= HttpStatus.SC_INTERNAL_SERVER_ERROR) {
+            logger.severe("Status code > 500:" + statuscode);
+            return null;
+        }
+
+        final boolean isRedirect = isRedirect(statuscode);
+
+        if (statuscode != HttpStatus.SC_OK && !isRedirect) { //selhalo pripojeni
             logger.warning("Loading file failed - invalid HTTP return status code:" + statuscode);
             updateAsString(method);
             return null;
         }
 
+        if (isRedirect && deep < 2) {
+            Header header = method.getResponseHeader("location");
+            if (header != null) {
+                String newuri = header.getValue();
+                if ((newuri == null) || ("".equals(newuri))) {
+                    newuri = "/";
+                }
+                logger.info("Redirect target: " + newuri);
+                setReferer(newuri);
+                method.releaseConnection();
+                GetMethod redirect = getGetMethod(newuri);
+                final InputStream inputStream = makeRequestFile(redirect, file, deep + 1);
+                logger.info("Redirect: " + redirect.getStatusLine().toString());
+                return inputStream;
+// release any connection resources used by the method
+            } else {
+                logger.warning("Invalid redirect");
+                return null;
+            }
+        } else {
+            return processFileForDownload(method, file);
+        }
+    }
+
+    private InputStream processFileForDownload(HttpMethod method, HttpFile file) throws IOException {
         boolean isStream = true;
         final Header contentType = method.getResponseHeader("Content-Type");
         if (contentType == null) {
@@ -214,7 +255,9 @@ final public class DownloadClient implements HttpDownloadClient {
         client.executeMethod(method);
 
         int statuscode = method.getStatusCode();
-
+        final boolean isRedirect = isRedirect(statuscode);
+        if (!isRedirect)
+            redirect = 0;
         if (statuscode == HttpStatus.SC_INTERNAL_SERVER_ERROR || statuscode == HttpStatus.SC_FORBIDDEN) {//bezpecnost
             logger.severe("Status code je 500");
         } else if (statuscode >= HttpStatus.SC_INTERNAL_SERVER_ERROR) {
@@ -222,7 +265,6 @@ final public class DownloadClient implements HttpDownloadClient {
         }
 
 
-        final boolean isRedirect = isRedirect(statuscode);
         if (isRedirect && redirect != 1) {
             redirect = 1;
             Header header = method.getResponseHeader("location");
