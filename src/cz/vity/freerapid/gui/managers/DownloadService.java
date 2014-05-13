@@ -29,11 +29,10 @@ class DownloadService {
         if (problems.contains(connectionSettings))
             return false;
         int foundCount = 0;
-        final int oneIP = getMaxDownloadsFromOneIP();
         for (ConnectionSettings settings : downloading) {
             if (settings.equals(connectionSettings)) {
                 ++foundCount;
-                if (foundCount >= oneIP) {
+                if (foundCount >= maxDownloadsFromOneIP) {
                     return false;
                 }
             }
@@ -108,17 +107,10 @@ class DownloadService {
         return serviceName.hashCode();
     }
 
-    public String getServiceName() {
-        return serviceName;
-    }
-
 
     @Override
     public String toString() {
-        return getServiceName();
+        return serviceName;
     }
 
-    public int getMaxDownloadsFromOneIP() {
-        return maxDownloadsFromOneIP;
-    }
 }

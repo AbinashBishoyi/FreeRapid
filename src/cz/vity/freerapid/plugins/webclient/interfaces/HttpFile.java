@@ -66,7 +66,7 @@ public interface HttpFile {
      * The final filename is updated by during makeFinalRequestForFile method
      *
      * @return this method should never return null value
-     * @see HttpDownloadClient#makeFinalRequestForFile(org.apache.commons.httpclient.HttpMethod, HttpFile);
+     * @see HttpDownloadClient#makeFinalRequestForFile(org.apache.commons.httpclient.HttpMethod, HttpFile, boolean);
      */
     String getFileName();
 

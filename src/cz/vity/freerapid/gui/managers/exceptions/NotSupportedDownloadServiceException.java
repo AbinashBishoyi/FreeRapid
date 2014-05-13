@@ -19,4 +19,9 @@ public class NotSupportedDownloadServiceException extends RuntimeException {
     public NotSupportedDownloadServiceException(Throwable cause) {
         super(cause);
     }
+
+    @Override
+    public String getLocalizedMessage() {
+        return "NotSupportedDownloadByServiceException";
+    }
 }

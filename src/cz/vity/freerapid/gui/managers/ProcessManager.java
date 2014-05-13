@@ -246,7 +246,7 @@ public class ProcessManager extends Thread {
         queueUpdated();
     }
 
-    private void queueDownload(final DownloadFile downloadFile, final ConnectionSettings settings, DownloadService downloadService, final ShareDownloadService service, final boolean runCheck) {
+    private void queueDownload(final DownloadFile downloadFile, final ConnectionSettings settings, final DownloadService downloadService, final ShareDownloadService service, final boolean runCheck) {
         if (downloadFile.getState() != QUEUED) {
             logger.info("QUEUED not found - found " + downloadFile.getState());
             return;
@@ -266,9 +266,9 @@ public class ProcessManager extends Thread {
             public void run() {
                 final DownloadState state = downloadFile.getState();
                 if (!(state == GETTING || state == TESTING)) {
-                    finishedDownloading(downloadFile, client, null, runCheck);
+                    finishedDownloading(downloadFile, client, downloadService, null, runCheck);
                 } else {
-                    startDownload(downloadFile, client, service, runCheck);
+                    startDownload(downloadFile, client, downloadService, service, runCheck);
                 }
             }
         });
@@ -301,7 +301,7 @@ public class ProcessManager extends Thread {
         return AppPrefs.getProperty(UserProp.START_FROM_TOP, UserProp.START_FROM_TOP_DEFAULT);
     }
 
-    private void startDownload(final DownloadFile downloadFile, final HttpDownloadClient client, ShareDownloadService service, final boolean runCheck) {
+    private void startDownload(final DownloadFile downloadFile, final HttpDownloadClient client, final DownloadService downloadService, ShareDownloadService service, final boolean runCheck) {
         final DownloadState s = downloadFile.getState();
         logger.info("starting download in state s = " + s);
         try {
@@ -315,7 +315,7 @@ public class ProcessManager extends Thread {
 
                 @Override
                 public void finished(TaskEvent<Void> event) {
-                    finishedDownloading(downloadFile, client, task, runCheck);
+                    finishedDownloading(downloadFile, client, downloadService, task, runCheck);
                     downloadFile.setTask(null);
                 }
 
@@ -326,16 +326,12 @@ public class ProcessManager extends Thread {
         }
     }
 
-    private void finishedDownloading(final DownloadFile file, final HttpDownloadClient client, final DownloadTask task, final boolean runCheck) {
+    private void finishedDownloading(final DownloadFile file, final HttpDownloadClient client, final DownloadService downloadService, final DownloadTask task, final boolean runCheck) {
         synchronized (manipulation) {
-            final String serviceID = file.getPluginID();
-            final DownloadService service = services.get(pluginsManager.getPluginMetadata(serviceID).getServices());
-            if (service == null)
-                throw new IllegalStateException("Download service not found:" + serviceID);
             if (runCheck) {
-                service.finishedTestingFile(file);
+                downloadService.finishedTestingFile(file);
             } else {
-                service.finishedDownloading(client);
+                downloadService.finishedDownloading(client);
             }
             clientManager.pushWorkingClient(client);
             setDownloading(downloading - 1);
@@ -360,15 +356,15 @@ public class ProcessManager extends Thread {
                         if (errorAttemptsCount != -1)
                             file.setErrorAttemptsCount(errorAttemptsCount - 1);
 
-                        service.addProblematicConnection(settings);
+                        downloadService.addProblematicConnection(settings);
                         final int purge = errorTimer.purge();
                         if (purge > 0)
                             logger.info("Purging timer threads count:" + purge);
                         if (error == DownloadTaskError.YOU_HAVE_TO_WAIT_ERROR) {
                             int waitTime = task.getYouHaveToSleepSecondsTime();
-                            errorTimer.schedule(new ErrorTimerTask(service, settings, file, waitTime), 0, 1000);
+                            errorTimer.schedule(new ErrorTimerTask(downloadService, settings, file, waitTime), 0, 1000);
                         } else
-                            errorTimer.schedule(new ErrorTimerTask(service, settings, file), 0, 1000);
+                            errorTimer.schedule(new ErrorTimerTask(downloadService, settings, file), 0, 1000);
                     }
                 }
             }

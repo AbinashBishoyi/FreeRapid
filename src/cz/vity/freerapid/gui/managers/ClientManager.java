@@ -27,7 +27,7 @@ public class ClientManager {
 
     private ConnectionSettings defaultConnectionSettings = new ConnectionSettings();
 
-    private int popCount;
+    private volatile int popCount;
     private final Object connectionSettingsLock = new Object();
     private final ManagerDirector managerDirector;
     private int rotate = 0;

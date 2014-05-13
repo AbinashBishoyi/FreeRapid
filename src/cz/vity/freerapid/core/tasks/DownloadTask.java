@@ -488,7 +488,8 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 
     private void setCompleted() {
         downloadFile.setCompleteTaskDuration(this.getExecutionDuration(TimeUnit.SECONDS));
-        downloadFile.setState(DownloadState.COMPLETED);
+        if (downloadFile.getState() != DownloadState.QUEUED)
+            downloadFile.setState(DownloadState.COMPLETED);
     }
 
     private void runMoveFileTask(boolean overWriteFile) {
