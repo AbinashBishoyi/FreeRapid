@@ -66,7 +66,7 @@ final class OneInstanceServer extends Thread {
 
 
     static boolean isAppInUse() {
-        if (!AppPrefs.getProperty(FWProp.ONEINSTANCE, false))
+        if (!AppPrefs.getProperty(FWProp.ONEINSTANCE, true))
             return false;
         ServerSocket serverSocket = null;
         try {

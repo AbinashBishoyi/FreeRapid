@@ -36,7 +36,7 @@ public class ClientManager {
         //String input = "    vity:heslo@exfort.org:8787 vity2:angor@@exfort2.org:8788  exfort3.org:5478  pavel@exfort.org:564 exfort5.org";
 
         if (AppPrefs.getProperty(UserProp.USE_PROXY_LIST, true)) {
-            final String file = AppPrefs.getProperty(UserProp.PROXY_LIST_FILE, PROXY_LIST_DEFAULT_PATH);
+            final String file = AppPrefs.getProperty(UserProp.PROXY_LIST_PATH, PROXY_LIST_DEFAULT_PATH);
             final File f = new File(file);
             if (f.exists() && f.isFile() && f.canRead()) {
                 readProxyList(f);

@@ -100,4 +100,10 @@ public class OpenSaveDialogFactory {
             return f;
         }
     }
+
+    public File[] getChooseProxyList() {
+        final List<EnhancedFileFilter> filters = new ArrayList<EnhancedFileFilter>(1);
+        filters.add(EnhancedFileFilter.createFilter(new String[]{"txt", "list"}, "filterTxt"));
+        return getOpenFileDialog(filters, UserProp.LAST_IMPORT_FILTER, UserProp.IMPORT_LAST_USED_FOLDER);
+    }
 }

@@ -37,7 +37,6 @@ public class UserProp {
     public static final int ERROR_ATTEMPTS_COUNT_DEFAULT = 5;
     public static int MAX_DOWNLOADS_AT_A_TIME_DEFAULT = 5;
 
-    public static final String PROXY_LIST_FILE = "proxyListFile";
     public static final String DOWNLOADED_HISTORY_FILE_NAME = "downloads.txt";
 
     public static final String CONTAIN_DOWNLOADS_FILTER = "containDownloadsFilter";
@@ -58,4 +57,5 @@ public class UserProp {
 
     public static final String PROXY_LIST_PATH = "proxyListPath";
     public static final String PLAY_SOUNDS_FAILED = "playSoundsFailed";
+    public static final int FILE_ALREADY_EXISTS_DEFAULT = UserProp.ASK;
 }

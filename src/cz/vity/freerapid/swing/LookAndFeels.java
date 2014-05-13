@@ -27,7 +27,7 @@ import java.util.logging.Logger;
  */
 public final class LookAndFeels {
     private final static String DEFAULT_LAF = "com.pagosoft.plaf.PgsLookAndFeel";
-    private final static String DEFAULT_THEME = "com.pagosoft.plaf.themes.SilverTheme";
+    private final static String DEFAULT_THEME = "";
     /**
      * Trida Kunstoffu
      */

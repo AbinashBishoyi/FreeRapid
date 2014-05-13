@@ -223,7 +223,11 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
 
     public void resumeSelected(int[] indexes) {
         synchronized (this.lock) {
-            addToQueue(selectionToList(indexes));
+            final List<DownloadFile> files = selectionToList(indexes);
+            for (DownloadFile file : files) {
+                file.resetErrorAttempts();
+            }
+            addToQueue(files);
         }
 
     }
@@ -446,5 +450,9 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
             forceDownloadList = selectionToList(indexes);
         }
         processManager.forceDownload(settings, forceDownloadList);
+    }
+
+    public void checkQueue() {
+        processManager.queueUpdated();
     }
 }

@@ -44,7 +44,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 
     private int youHaveToSleepSecondsTime = 0;
     private String captchaResult;
-    private static final int NO_DATA_TIMEOUT_LIMIT = 30;
+    private static final int NO_DATA_TIMEOUT_LIMIT = 75;
     private static final int INPUT_BUFFER_SIZE = 50000;
     private static final int OUTPUT_FILE_BUFFER_SIZE = 600000;
 
@@ -253,8 +253,10 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         downloadFile.setState(DownloadState.ERROR);
         downloadFile.setErrorMessage(cause.getMessage());
         setServiceError(DownloadTaskError.GENERAL_ERROR);
-        if (AppPrefs.getProperty(UserProp.PLAY_SOUNDS_FAILED, true))
-            Sound.playSound("error.wav");
+        if (!(cause instanceof YouHaveToWaitException)) {
+            if (AppPrefs.getProperty(UserProp.PLAY_SOUNDS_FAILED, true))
+                Sound.playSound("error.wav");
+        }
     }
 
     @Override
@@ -276,7 +278,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
             if (outputFile.exists()) {
                 //Rename/Overwrite/Skip/Ask
 
-                int property = AppPrefs.getProperty(UserProp.FILE_ALREADY_EXISTS, UserProp.ASK);
+                int property = AppPrefs.getProperty(UserProp.FILE_ALREADY_EXISTS, UserProp.FILE_ALREADY_EXISTS_DEFAULT);
                 if (property == UserProp.ASK) {
                     property = Swinger.showOptionDialog(getResourceMap(), JOptionPane.QUESTION_MESSAGE, "fileAlreadyExists", new String[]{"renameFile", "overWriteFile", "skipFile"}, outputFile);
                 }

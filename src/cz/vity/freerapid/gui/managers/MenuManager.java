@@ -183,6 +183,7 @@ public class MenuManager {
             item.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     settings.setEnabled(!settings.isEnabled());
+                    director.getDataManager().checkQueue();
                 }
             });
             useConnections.add(item);

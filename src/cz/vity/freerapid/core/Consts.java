@@ -59,7 +59,7 @@ public class Consts {
 
     public static final String WEBURL_CHECKNEWVERSION = "http://wordrider.net/checkfrd.php";
 
-    public static final String WEBURL = "http://wordrider.net";
+    public static final String WEBURL = "http://wordrider.net/forum/read.php?6,414";
 
     // hodnoty pro defaultni hodnoty pripojeni
 

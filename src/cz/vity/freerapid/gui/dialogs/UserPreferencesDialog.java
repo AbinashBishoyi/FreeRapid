@@ -8,6 +8,7 @@ import com.jgoodies.binding.list.ArrayListModel;
 import com.jgoodies.binding.list.SelectionInList;
 import com.jgoodies.binding.value.Trigger;
 import com.jgoodies.binding.value.ValueHolder;
+import com.jgoodies.binding.value.ValueModel;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.FormFactory;
@@ -17,10 +18,13 @@ import com.l2fprod.common.swing.plaf.blue.BlueishButtonBarUI;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.FWProp;
 import cz.vity.freerapid.core.MainApp;
+import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.gui.MyPreferencesAdapter;
 import cz.vity.freerapid.gui.MyPresentationModel;
+import cz.vity.freerapid.gui.dialogs.filechooser.OpenSaveDialogFactory;
 import cz.vity.freerapid.swing.LaF;
 import cz.vity.freerapid.swing.LookAndFeels;
+import cz.vity.freerapid.swing.Swinger;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.swinghelper.buttonpanel.JXButtonPanel;
 
@@ -29,6 +33,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
@@ -42,6 +47,7 @@ public class UserPreferencesDialog extends AppDialog {
     private MyPresentationModel model;
     private static final String CARD_PROPERTY = "card";
     private static final String LAF_PROPERTY = "lafFakeProperty";
+    @SuppressWarnings({"FieldAccessedSynchronizedAndUnsynchronized"})
     private ApplyPreferenceChangeListener prefListener = null;
     private ResourceMap bundle;
 
@@ -91,6 +97,15 @@ public class UserPreferencesDialog extends AppDialog {
 
     }
 
+    @org.jdesktop.application.Action
+    public void btnSelectProxyListAction() {
+        final File[] files = OpenSaveDialogFactory.getInstance().getChooseProxyList();
+        if (files.length > 0) {
+            fieldProxyListPath.setText(files[0].getAbsolutePath());
+            Swinger.inputFocus(fieldProxyListPath);
+        }
+    }
+
     private void buildGUI() {
         toolbar.setUI(new BlueishButtonBarUI());//nenechat to default?
         //  toolbar.setOrientation(JButtonBar.HORIZONTAL);
@@ -104,6 +119,8 @@ public class UserPreferencesDialog extends AppDialog {
         addButton(map.get("connectionsBtnAction"), Card.CARD2, group);
         addButton(map.get("soundBtnAction"), Card.CARD3, group);
         addButton(map.get("viewsBtnAction"), Card.CARD4, group);
+
+        setAction(btnProxyListPathSelect, "btnSelectProxyListAction");
 
     }
 
@@ -170,7 +187,30 @@ public class UserPreferencesDialog extends AppDialog {
 
     private void bindBasicComponents() {
 
+        bind(checkAllowOnlyOneInstance, FWProp.ONEINSTANCE, true);
+        bind(checkForNewVersion, FWProp.NEW_VERSION, true);
+        bind(checkContinueInterrupted, UserProp.DOWNLOAD_ON_APPLICATION_START, true);
+        bind(checkCloseWhenAllComplete, UserProp.CLOSE_WHEN_COMPLETED, false);
+
+        bind(spinnerMaxConcurrentDownloads, UserProp.MAX_DOWNLOADS_AT_A_TIME, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT, 1, 9, 1);
+        bind(spinnerErrorAttemptsCount, UserProp.ERROR_ATTEMPTS_COUNT, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT, 0, 20, 1);
+        bind(spinnerAutoReconnectTime, UserProp.AUTO_RECONNECT_TIME, UserProp.AUTO_RECONNECT_TIME_DEFAULT, 10, 10000, 10);
+
+        final ValueModel valueModel = bind(checkUseProxyList, UserProp.USE_PROXY_LIST, false);
+        PropertyConnector.connectAndUpdate(valueModel, fieldProxyListPath, "enabled");
+        PropertyConnector.connectAndUpdate(valueModel, btnProxyListPathSelect, "enabled");
+
+        bind(fieldProxyListPath, UserProp.PROXY_LIST_PATH, "");
+
+        bind(checkPlaySoundWhenComplete, UserProp.PLAY_SOUNDS_OK, true);
+        bind(checkPlaySoundInCaseOfError, UserProp.PLAY_SOUNDS_FAILED, true);
+
+        bind(checkDecoratedFrames, FWProp.DECORATED_FRAMES, false);
+        bind(checkHideWhenMinimized, FWProp.MINIMIZE_TO_TRAY, true);
+
         bind(checkShowIconInSystemTray, FWProp.SHOW_TRAY, true);
+
+        bind(comboFileExists, UserProp.FILE_ALREADY_EXISTS, UserProp.FILE_ALREADY_EXISTS_DEFAULT, "fileAlreadyExistsOptions");
 
         bindLaFCombobox();
     }
@@ -193,8 +233,10 @@ public class UserPreferencesDialog extends AppDialog {
                 step)); // step
     }
 
-    private void bind(final JCheckBox checkBox, final String key, final Object defaultValue) {
-        Bindings.bind(checkBox, model.getBufferedPreferences(key, defaultValue));
+    private ValueModel bind(final JCheckBox checkBox, final String key, final Object defaultValue) {
+        final ValueModel valueModel = model.getBufferedPreferences(key, defaultValue);
+        Bindings.bind(checkBox, valueModel);
+        return valueModel;
     }
 
     private void bind(final JTextField field, final String key, final Object defaultValue) {
@@ -214,6 +256,7 @@ public class UserPreferencesDialog extends AppDialog {
         final MyPreferencesAdapter adapter = new MyPreferencesAdapter(key, defaultValue);
         final SelectionInList<String> inList = new SelectionInList<String>(values, new ValueHolder(values[(Integer) adapter.getValue()]), model.getBufferedModel(adapter));
         Bindings.bind(combobox, inList);
+
     }
 
 
@@ -224,6 +267,8 @@ public class UserPreferencesDialog extends AppDialog {
     @org.jdesktop.application.Action
     public void okBtnAction() {
         model.triggerCommit();
+//        final String s = AppPrefs.getProperty(UserProp.PROXY_LIST_PATH, "");
+//        System.out.println("s = " + s);
 
         LaF laf = (LaF) comboLaF.getSelectedItem();
         LookAndFeels.getInstance().storeSelectedLaF(laf);
@@ -259,15 +304,6 @@ public class UserPreferencesDialog extends AppDialog {
         return true;
     }
 
-//    @Action
-//    public void alarmsBtnAction(ActionEvent e) {
-//        showCard(e);
-//    }
-//
-//    @Action
-//    public void categoriesBtnAction(ActionEvent e) {
-//        showCard(e);
-//    }
 
     @org.jdesktop.application.Action
     public void viewsBtnAction(ActionEvent e) {
@@ -293,10 +329,6 @@ public class UserPreferencesDialog extends AppDialog {
         }
     }
 
-//    private ActionMap getActionMap() {
-//        return Swinger.getActionMap(this.getClass(), this);
-//    }
-
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
@@ -308,7 +340,7 @@ public class UserPreferencesDialog extends AppDialog {
         btnOK = new JButton();
         btnCancel = new JButton();
         panelCard = new JPanel();
-        panelGeneral = new JPanel();
+        JPanel panelGeneral = new JPanel();
         JPanel panelApplicationSettings = new JPanel();
         checkForNewVersion = new JCheckBox();
         checkAllowOnlyOneInstance = new JCheckBox();
@@ -317,7 +349,7 @@ public class UserPreferencesDialog extends AppDialog {
         checkCloseWhenAllComplete = new JCheckBox();
         JLabel labelIfFilenameExists = new JLabel();
         comboFileExists = new JComboBox();
-        panelSoundSettings = new JPanel();
+        JPanel panelSoundSettings = new JPanel();
         JPanel panelSound = new JPanel();
         checkPlaySoundInCaseOfError = new JCheckBox();
         checkPlaySoundWhenComplete = new JCheckBox();
@@ -329,7 +361,7 @@ public class UserPreferencesDialog extends AppDialog {
         checkDecoratedFrames = new JCheckBox();
         checkShowIconInSystemTray = new JCheckBox();
         checkHideWhenMinimized = new JCheckBox();
-        panelConnectionSettings = new JPanel();
+        JPanel panelConnectionSettings = new JPanel();
         JPanel panelConnections1 = new JPanel();
         JLabel labelMaxConcurrentDownloads = new JLabel();
         spinnerMaxConcurrentDownloads = new JSpinner();
@@ -713,13 +745,9 @@ public class UserPreferencesDialog extends AppDialog {
             dialogPane.add(toolbar, BorderLayout.NORTH);
         }
         contentPane.add(dialogPane, BorderLayout.CENTER);
-        pack();
-        setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
-    // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-    // Generated using JFormDesigner Open Source Project license - unknown
     private JButton btnOK;
     private JButton btnCancel;
     private JPanel panelCard;
@@ -729,14 +757,12 @@ public class UserPreferencesDialog extends AppDialog {
     private JCheckBox checkContinueInterrupted;
     private JCheckBox checkCloseWhenAllComplete;
     private JComboBox comboFileExists;
-    private JPanel panelSoundSettings;
     private JCheckBox checkPlaySoundInCaseOfError;
     private JCheckBox checkPlaySoundWhenComplete;
     private JComboBox comboLaF;
     private JCheckBox checkDecoratedFrames;
     private JCheckBox checkShowIconInSystemTray;
     private JCheckBox checkHideWhenMinimized;
-    private JPanel panelConnectionSettings;
     private JSpinner spinnerMaxConcurrentDownloads;
     private JCheckBox checkUseProxyList;
     private JTextField fieldProxyListPath;
@@ -744,9 +770,6 @@ public class UserPreferencesDialog extends AppDialog {
     private JSpinner spinnerErrorAttemptsCount;
     private JSpinner spinnerAutoReconnectTime;
     private JButtonBar toolbar;
-    // JFormDesigner - End of variables declaration  //GEN-END:variables
-    private JPanel panelGeneral;
-    private JPanel panelViews;
 
 
     private class ApplyPreferenceChangeListener implements PreferenceChangeListener {
