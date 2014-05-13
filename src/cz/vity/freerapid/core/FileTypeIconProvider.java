@@ -22,7 +22,7 @@ public class FileTypeIconProvider {
     private ResourceMap map;
     private final static Logger logger = Logger.getLogger(FileTypeIconProvider.class.getName());
     private static Pattern pattern;
-    private static final String DEFAULT_EXTENSION = "iso";
+//    private static final String DEFAULT_EXTENSION = "unknown";
     private final Map<String, Icon> systemLargeIcons = new Hashtable<String, Icon>();
     private final Map<String, Icon> systemSmallIcons = new Hashtable<String, Icon>();
 
@@ -49,7 +49,7 @@ public class FileTypeIconProvider {
         if (pattern == null)
             throw new IllegalStateException("Not initialized yet");
         if (fileName == null)
-            return DEFAULT_EXTENSION;
+            return "";
         fileName = fileName.toLowerCase();
 
         final Matcher matcher = pattern.matcher(fileName);
@@ -57,9 +57,9 @@ public class FileTypeIconProvider {
         if (matcher.find()) {
             fileType = matcher.group(2);
         } else {
-            fileType = DEFAULT_EXTENSION;
+            fileType = "";
         }
-        //logger.info("Found file type for file " + fileName + " (" + fileType + ")");
+        
         return fileType;
     }
 
@@ -114,6 +114,8 @@ public class FileTypeIconProvider {
     }
 
     private Icon getSmallSystemIcon(String extension) {
+//        if ("".equals(extension))
+//            return null;
         if (this.systemSmallIcons.containsKey(extension))
             return systemSmallIcons.get(extension);
         File file = null;
@@ -123,7 +125,7 @@ public class FileTypeIconProvider {
             FileSystemView view = FileSystemView.getFileSystemView();
             Icon icon = view.getSystemIcon(file);
             if (icon == null) {
-                final ImageIcon ico = map.getImageIcon("iconFileTypeSmall_ISO");
+                final ImageIcon ico = map.getImageIcon("iconFileTypeSmall_UNKNOWN");
                 systemSmallIcons.put(extension, ico);
                 return ico;
             }
@@ -131,7 +133,7 @@ public class FileTypeIconProvider {
             systemSmallIcons.put(extension, icon);
             return icon;
         } catch (IOException e) {
-            return map.getImageIcon("iconFileTypeSmall_ISO");
+            return map.getImageIcon("iconFileTypeSmall_UNKNOWN");
         } finally {
             if (file != null)
                 file.delete();
@@ -148,7 +150,7 @@ public class FileTypeIconProvider {
             ShellFolder shellFolder = ShellFolder.getShellFolder(file);
             Image ico = shellFolder.getIcon(true);
             if (ico == null) {
-                Icon icon = map.getImageIcon("iconFileTypeBig_ISO");
+                Icon icon = map.getImageIcon("iconFileTypeBig_UNKNOWN");
                 systemLargeIcons.put(extension, icon);
                 return icon;
             }
@@ -157,7 +159,7 @@ public class FileTypeIconProvider {
             systemLargeIcons.put(extension, icon);
             return icon;
         } catch (IOException e) {
-            return map.getImageIcon("iconFileTypeBig_ISO");
+            return map.getImageIcon("iconFileTypeBig_UNKNOWN");
         } finally {
             if (file != null)
                 file.delete();

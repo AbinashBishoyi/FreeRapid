@@ -16,7 +16,7 @@ import java.util.zip.GZIPInputStream;
 /**
  * @author Vity
  */
-public class DownloadClient implements HttpDownloadClient {
+final public class DownloadClient implements HttpDownloadClient {
     private final static Logger logger = Logger.getLogger(DownloadClient.class.getName());
 
     protected HttpClient client;

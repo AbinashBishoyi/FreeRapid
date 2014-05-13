@@ -3,7 +3,11 @@ package cz.vity.freerapid.core;
 /**
  * @author Vity
  */
-public class UserProp {
+final public class UserProp {
+
+    private UserProp() {
+    }
+
     public static final String LAST_IMPORT_FILTER = "lastUsedImportFilter";
     public static final String IMPORT_LAST_USED_FOLDER = "importLastUsedFolder";
 
@@ -122,4 +126,6 @@ public class UserProp {
     public static final int REMOVE_COMPLETED_DOWNLOADS_IMMEDIATELY = 1;
     public static final int REMOVE_COMPLETED_DOWNLOADS_AT_STARTUP = 2;
 
+    public static final String BIG_ICON_IN_HISTORY = "historyBiggerLine";
+    public static final boolean BIG_ICON_IN_HISTORY_DEFAULT = true;
 }
