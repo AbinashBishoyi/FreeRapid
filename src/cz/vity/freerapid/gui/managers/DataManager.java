@@ -13,6 +13,7 @@ import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import static cz.vity.freerapid.plugins.webclient.DownloadState.*;
+import cz.vity.freerapid.plugins.webclient.FileState;
 import static cz.vity.freerapid.plugins.webclient.FileState.NOT_CHECKED;
 import cz.vity.freerapid.swing.Swinger;
 import org.jdesktop.application.AbstractBean;
@@ -602,5 +603,21 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         }
         if (!files.isEmpty())
             processManager.forceValidateCheck(files);
+    }
+
+    public void removeInvalidLinks() {
+        synchronized (lock) {
+//            if (getCompleted() <= 0)
+//                return;
+            List<DownloadFile> toRemoveList = new LinkedList<DownloadFile>();
+            for (DownloadFile file : downloadFiles) {
+                if (file.getFileState() == FileState.FILE_NOT_FOUND)
+                    toRemoveList.add(file);
+            }
+            downloadFiles.removeAll(toRemoveList);
+            for (DownloadFile file : toRemoveList) {
+                file.setState(DELETED);
+            }
+        }
     }
 }

@@ -9,6 +9,7 @@ import cz.vity.freerapid.gui.dialogs.InformationDialog;
 import cz.vity.freerapid.gui.dialogs.MultipleSettingsDialog;
 import cz.vity.freerapid.gui.managers.DataManager;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
+import cz.vity.freerapid.gui.managers.MenuManager;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
@@ -174,7 +175,10 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                     outputFile.delete();
             }
             removeSelected(files, indexes, showedDialog);
-            selectFirstIfNoSelection();
+            if (indexes.length > 0) {
+                Arrays.sort(indexes);
+                renewSelection(new int[]{indexes[0]});
+            } else selectFirstIfNoSelection();
         }
     }
 
@@ -251,10 +255,11 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     @org.jdesktop.application.Action(enabledProperty = REMOVECOMPLETED_ACTION_ENABLED_PROPERTY)
     public void removeCompletedAction() {
+        final int[] rows = getSelectedRows();
         final ListSelectionModel selectionModel = table.getSelectionModel();
         selectionModel.setValueIsAdjusting(true);
         manager.removeCompleted();
-        selectFirstIfNoSelection();
+        renewSelection(rows);
         selectionModel.setValueIsAdjusting(false);
     }
 
@@ -299,6 +304,30 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         final int[] indexes = getSelectedRows();
         final List<DownloadFile> files = manager.getSelectionToList(indexes);
         removeSelected(files, indexes, false);
+    }
+
+    @org.jdesktop.application.Action(enabledProperty = NONEMPTY_ACTION_ENABLED_PROPERTY)
+    public void removeInvalidLinksAction() {
+        final int[] ints = getSelectedRows();
+        final ListSelectionModel selectionModel = table.getSelectionModel();
+        selectionModel.setValueIsAdjusting(true);
+        manager.removeInvalidLinks();
+        renewSelection(ints);
+        selectionModel.setValueIsAdjusting(false);
+    }
+
+    private void renewSelection(final int[] rows) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                for (int row : rows) {
+                    final int i = table.convertRowIndexToView(row);
+                    if (i != -1)
+                        table.getSelectionModel().addSelectionInterval(i, i);
+                }
+                selectFirstIfNoSelection();
+                scrollToVisible(true);
+            }
+        });
     }
 
     private void removeSelected(List<DownloadFile> files, int[] indexes, boolean quiet) {
@@ -658,7 +687,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             public boolean isHighlighted(Component renderer, org.jdesktop.swingx.decorator.ComponentAdapter adapter) {
                 return FileState.FILE_NOT_FOUND.equals(((DownloadFile) adapter.getValue(COLUMN_CHECKED)).getFileState());
             }
-        }, new Color(0xFFD2D2), null);
+        }, new Color(0xFFD2D2), Color.BLACK);
 
         table.getSelectionModel().addListSelectionListener(this);
 
@@ -677,7 +706,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         column.setMaxWidth(30);
         column.setWidth(30);
         column.setCellRenderer(new CheckedCellRenderer(context));
-        ((TableColumnExt) tableColumnModel.getColumn(COLUMN_CHECKED)).setToolTipText("Toooooooooltip");
+
+        ((TableColumnExt) tableColumnModel.getColumn(COLUMN_CHECKED)).setToolTipText(context.getResourceMap().getString("checkedColumnTooltip"));
         tableColumnModel.getColumn(COLUMN_PROGRESS).setCellRenderer(new ProgressCellRenderer());
         tableColumnModel.getColumn(COLUMN_STATE).setCellRenderer(new EstTimeCellRenderer(context));
         tableColumnModel.getColumn(COLUMN_SIZE).setCellRenderer(new SizeCellRenderer(context));
@@ -788,6 +818,9 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         selectedRows = getSelectedRows();//znovu
         final JPopupMenu popup = new JPopupMenu();
         final ApplicationActionMap map = this.context.getActionMap();
+        final MenuManager mm = director.getMenuManager();
+        final JMenu removeMenu = mm.createMenu("removeMenu", map, "removeCompletedAction", "removeInvalidLinksAction", "removeSelectedAction");
+        context.getResourceMap().injectComponent(removeMenu);
         popup.add(map.get("downloadInformationAction"));
         popup.addSeparator();
         popup.add(map.get("openFileAction"));
@@ -798,14 +831,12 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         popup.add(map.get("pauseAction"));
         popup.add(map.get("cancelAction"));
         popup.addSeparator();
-        popup.add(map.get("removeCompletedAction"));
+        popup.add(removeMenu);
         popup.addSeparator();
         popup.add(map.get("validateLinksAction"));
         popup.addSeparator();
         popup.add(map.get("selectAllAction"));
         popup.add(map.get("invertSelectionAction"));
-        popup.addSeparator();
-        popup.add(map.get("removeSelectedAction"));
 //        final JMenu menu = new JMenu("Misc");
 //        popup.add(menu);
         JMenu forceMenu = new JMenu();

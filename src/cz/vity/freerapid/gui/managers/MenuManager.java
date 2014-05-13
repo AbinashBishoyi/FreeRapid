@@ -75,6 +75,12 @@ public class MenuManager {
                 "quit"
         };
 
+        final Object[] removeActionNames = {
+                "removeCompletedAction",
+                "removeInvalidLinksAction",
+                "removeSelectedAction",
+        };
+
         final Object[] downloadActionNames = {
                 "downloadInformationAction",
                 MENU_SEPARATOR,
@@ -86,9 +92,9 @@ public class MenuManager {
                 "pauseAction",
                 "cancelAction",
                 MENU_SEPARATOR,
-                "removeCompletedAction",
-                MENU_SEPARATOR,
                 "validateLinksAction",
+                MENU_SEPARATOR,
+                createMenu("removeMenu", removeActionNames),
                 MENU_SEPARATOR,
                 "selectAllAction",
                 "invertSelectionAction",
@@ -99,8 +105,6 @@ public class MenuManager {
                 "upAction",
                 "downAction",
                 "bottomAction",
-                MENU_SEPARATOR,
-                "removeSelectedAction"
         };
 
         final Object[] shutdownActionNames = {
