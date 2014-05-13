@@ -13,7 +13,8 @@ Content:
 III.   How to run FreeRapid
  IV.   Known problems and limitations
   V.   Bug report
- VI.   FAQ 
+ VI.   Donate
+VII.   FAQ
 =======================================
 
 
@@ -104,7 +105,7 @@ IV.   Known bugs and Limitations
 - Selection from "top to bottom" in the main table during dragging while downloading partly disappears
     X select table rows by ctrl+mouse click or select items from bottom to top
 - Substance look and feel throws org.jvnet.substance.api.UiThreadingViolationException:
-                                                              Component creation must be done on Event Dispatch Thread
+                                                     Component creation must be done on Event Dispatch Thread
     X ignore this exception in the app.log
 - DirectoryChooser throws java.lang.InternalError or freezes on Win Vista (64bit)
     X ignore this exception in the app.log
@@ -120,12 +121,23 @@ If you see a bug, please do not assume that i know about it. Let me know as soon
 the next release. Since my resources are limited, i can not backport bug fixes to earlier releases.
 To report a bug, you can use the issue tracker (preferred), project forums or my personal e-mail.
 
-Please report your JRE version and attach file app.log (if neccessary).
+Please report your JRE version and attach file app.log. It can help us to recognize a problem.
 http://bugtracker.wordrider.net/
 bugs@wordrider.net
 
 
-VI.   FAQ
+VI.    Donate
+=======================================
+FreeRapid downloader is distributed as freeware, but if you wish to express your appreciation for the time and resources
+the author has spent developing, we do accept and appreciate monetary donations.
+We are students and we must pay for webhosting, bills for our girlfriends etc...
+
+PayPal: http://wordrider.net/freerapid/paypal
+   or
+use bank account described on the homepage http://wordrider.net/freerapid/
+
+
+VII.   FAQ
 =======================================
 
 Q: Why did you create another "RapidShare Downloader"?

@@ -12,6 +12,7 @@ import org.jdesktop.application.ApplicationContext;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Hashtable;
@@ -47,7 +48,7 @@ public class PluginsManager {
         File[] plugins = pluginsDir.listFiles(new FilenameFilter() {
 
             public boolean accept(File dir, String name) {
-                return name.toLowerCase().endsWith(".zip");
+                return name.toLowerCase().endsWith(".frp");
             }
 
         });
@@ -60,18 +61,18 @@ public class PluginsManager {
 
             for (int i = 0; i < plugins.length; i++) {
 
-//                try {
-//                    final String path = fileToUrl(plugins[i]).toExternalForm();
-//                    logger.info("Plugins path:" + path);
-//                    final URL context = new URL("jar:" + path + "!/");
-//                    final URL manifest = new URL("jar:" + path + "!/plugin.xml");
-//
-//                    loc[i] = new StandardPluginLocation(context, manifest);
-//                } catch (MalformedURLException e) {
-//                    LogUtils.processException(logger, e);
-//                }
+                try {
+                    final String path = fileToUrl(plugins[i]).toExternalForm();
+                    logger.info("Plugins path:" + path);
+                    final URL context = new URL("jar:" + path + "!/");
+                    final URL manifest = new URL("jar:" + path + "!/plugin.xml");
 
-                loc[i] = StandardPluginLocation.create(plugins[i]);
+                    loc[i] = new StandardPluginLocation(context, manifest);
+                } catch (MalformedURLException e) {
+                    LogUtils.processException(logger, e);
+                }
+
+                //loc[i] = StandardPluginLocation.create(plugins[i]);
                 //logger.info("Plugin location: " + loc);
             }
 
@@ -94,14 +95,9 @@ public class PluginsManager {
 //        loadedPlugins.put(factoryShareService.getName(), factoryShareService);
     }
 
-//    private static URL fileToUrl(final File plugin) {
-//        try {
-//            return plugin.toURI().toURL();
-//        } catch (MalformedURLException e) {
-//            LogUtils.processException(logger, e);
-//            return null;
-//        }
-//    }
+    private static URL fileToUrl(final File plugin) throws MalformedURLException {
+        return plugin.toURI().toURL();
+    }
 
     //
     public ShareDownloadService getPlugin(String shareDownloadServiceID) throws NotSupportedDownloadServiceException {
