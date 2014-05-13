@@ -131,12 +131,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     }
 
     private int[] getSelectedRows() {
-        final int[] ints = table.getSelectedRows();
-
-        for (int i = 0; i < ints.length; i++) {
-            ints[i] = table.convertRowIndexToModel(ints[i]);
-        }
-        return ints;
+        return Swinger.getSelectedRows(table);
     }
 
     @org.jdesktop.application.Action(enabledProperty = COMPLETED_OK_ACTION_ENABLED_PROPERTY)
@@ -499,6 +494,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         table.setSortable(false);
         table.setColumnMargin(10);
 
+
         table.setTransferHandler(new URLTransferHandler(director) {
             @Override
             protected void doDropAction(final List<URL> files) {
@@ -561,6 +557,9 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
         inputMap.put(KeyStroke.getKeyStroke("ENTER"), "smartEnterAction");
         actionMap.put("smartEnterAction", Swinger.getAction("smartEnterAction"));
+
+        //inputMap.remove("find");
+        actionMap.remove("find");
 
 //        paste();
 

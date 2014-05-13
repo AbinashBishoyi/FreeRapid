@@ -162,7 +162,19 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         table.getInputMap().put(KeyStroke.getKeyStroke("control C"), "copy");
         table.getActionMap().put("copy", getActionMap().get("copyContent"));
 
+        final KeyStroke ctrlF = KeyStroke.getKeyStroke("control F");
+        table.getInputMap().put(ctrlF, "getFocusFind");
+        final AbstractAction focusFilterAction = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                Swinger.inputFocus(fieldFilter);
+            }
+        };
+        table.getActionMap().put("getFocusFind", focusFilterAction);
+
         table.getParent().setPreferredSize(new Dimension(600, 400));
+
+        this.getRootPane().getInputMap().put(ctrlF, "getFocusFind");
+        this.getRootPane().getActionMap().put("getFocusFind", focusFilterAction);
     }
 
     @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
@@ -189,14 +201,6 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         clipboard.setContents(stringSelection, this);
     }
 
-    private int[] getSelectedRows() {
-        final int[] ints = table.getSelectedRows();
-
-        for (int i = 0; i < ints.length; i++) {
-            ints[i] = table.convertRowIndexToModel(ints[i]);
-        }
-        return ints;
-    }
 
     @Action
     public void copyURL() {
@@ -252,6 +256,9 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
     private void buildGUI() {
         initTable();
 
+        if (AppPrefs.getProperty(UserProp.CONTAIN_DOWNLOADS_FILTER, "").equals("Search..."))//hack for 0.6 and older
+            AppPrefs.storeProperty(UserProp.CONTAIN_DOWNLOADS_FILTER, "");
+
         if ("".equals(AppPrefs.getProperty(UserProp.CONTAIN_DOWNLOADS_FILTER, "")))
             AppPrefs.storeProperty(UserProp.CONTAIN_DOWNLOADS_FILTER, exampleSearchString);
 
@@ -270,13 +277,33 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
                 if (exampleSearchString.equals(fieldFilter.getText())) {
                     fieldFilter.setForeground(Color.BLACK);
                     fieldFilter.setText("");
-                }
+                } else fieldFilter.selectAll();
             }
 
             public void focusLost(FocusEvent e) {
                 if (fieldFilter.getText().isEmpty()) {
                     fieldFilter.setForeground(Color.GRAY);
                     fieldFilter.setText(exampleSearchString);
+                }
+            }
+        });
+
+        fieldFilter.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                final int keyCode = e.getKeyCode();
+                if (KeyEvent.VK_ESCAPE == keyCode) {
+                    if (!"".equals(fieldFilter.getText())) {
+                        fieldFilter.setText("");
+                        e.consume();
+                    }
+                } else if (KeyEvent.VK_ENTER == keyCode || KeyEvent.VK_DOWN == keyCode) {
+                    if (getSelectedRows().length == 0) {
+                        if (table.getRowCount() > 0)
+                            table.setRowSelectionInterval(0, 0);
+                    }
+                    Swinger.inputFocus(table);
+                    e.consume();
                 }
             }
         });
@@ -307,6 +334,9 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         doClose();
     }
 
+    private int[] getSelectedRows() {
+        return Swinger.getSelectedRows(table);
+    }
 
     private void bindCombobox(final JComboBox combobox, final String key, final Object defaultValue, final String propertyResourceMap) {
         final String[] stringList = getList(propertyResourceMap);

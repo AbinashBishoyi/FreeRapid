@@ -15,7 +15,7 @@ public class Consts {
     /**
      * Version
      */
-    public static final String VERSION = "0.64";
+    public static final String VERSION = "0.65";
 
     /**
      * verze a jmeno programu

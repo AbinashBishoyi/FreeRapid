@@ -14,7 +14,8 @@ Fixed - indicates a bug fix
 8th October 2008 - FreeRapid Downloader 0.65 released
   Added : plugins - support for letibit.com [FS#25 - requested by Chris C., implemented by Lukiz] 
   Added : plugins - support for egoshare.com, share-online.biz, easy-share.com [implemented by Lukiz]
-  Added : plugins - support for megarotic.com and sexuploader.com [FS#24 - requested by Anonymous, implemented by Lukiz]   
+  Added : plugins - support for megarotic.com and sexuploader.com [FS#24 - requested by Anonymous, implemented by Lukiz]
+  Added : new keystroke to activate searching in Downloads History dialog - Ctrl+F key
   Added : new keystroke for Resume action - SPACE key
   Added : new alternative keystroke for Open file/Show Information dialog - ENTER key
   Added : possibility to import (with clipboard monitoring) or paste links without 'http://' at the beginning         
