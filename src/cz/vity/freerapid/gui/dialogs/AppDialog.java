@@ -112,8 +112,13 @@ abstract class AppDialog extends JDialog {
                 }
                 final AbstractButton button = getBtnOK();
                 if (button != null) {
+//                    if (catchOKButtonFocus) {
+//                        //AppDialog.this.getContentPane().getFocusTraversalPolicy().
+//                        //Swinger.inputFocus(button);
+//                    } else {
                     actionEvent.setSource(button);
                     doButtonAction(button, actionEvent);
+//                    }
                 }
             }
         };
@@ -140,10 +145,12 @@ abstract class AppDialog extends JDialog {
     }
 
     private static void doButtonAction(final AbstractButton button, final ActionEvent actionEvent) {
-        button.doClick();
         final Action action = button.getAction();
-        if (action != null && action.isEnabled())
-            action.actionPerformed(actionEvent);
+        if (action != null && action.isEnabled()) {
+            button.doClick();
+//            action.actionPerformed(actionEvent);
+        }
+
     }
 
 

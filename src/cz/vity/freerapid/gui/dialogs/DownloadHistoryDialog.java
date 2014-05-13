@@ -22,6 +22,7 @@ import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.Browser;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.OSDesktop;
+import cz.vity.freerapid.utilities.Utils;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.swinghelper.buttonpanel.JXButtonPanel;
@@ -519,7 +520,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         StringBuilder builder = new StringBuilder();
         for (FileHistoryItem file : files) {
             if (file.getOutputFile() != null && file.getOutputFile().exists())
-                builder.append('\n').append(file.getFileName());
+                builder.append('\n').append(Utils.shortenFileName(file.getOutputFile(), 60));
         }
         final String s = builder.toString();
         final int result;

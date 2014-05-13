@@ -19,6 +19,7 @@ import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.Browser;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.OSDesktop;
+import cz.vity.freerapid.utilities.Utils;
 import org.jdesktop.application.ApplicationActionMap;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.ResourceMap;
@@ -146,7 +147,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         final StringBuilder builder = new StringBuilder();
         for (DownloadFile file : files) {
             if (file.getOutputFile() != null && file.getOutputFile().exists())
-                builder.append('\n').append(file.getOutputFile());
+                builder.append('\n').append(Utils.shortenFileName(file.getOutputFile(), 60));
         }
 
         final String s = builder.toString();

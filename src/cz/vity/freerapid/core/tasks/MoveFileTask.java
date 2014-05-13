@@ -37,8 +37,6 @@ public class MoveFileTask extends CoreTask<Void, Void> {
     }
 
     protected Void doInBackground() throws Exception {
-        FileChannel ic = null;
-        FileChannel oc = null;
 
 //        SwingUtilities.invokeAndWait(new Runnable() {
 //            public void run() {
@@ -72,10 +70,14 @@ public class MoveFileTask extends CoreTask<Void, Void> {
 
         saveDescriptionFiles();
 
+        FileChannel ic = null;
+        FileChannel oc = null;
+
         try {
             try {
                 ic = new FileInputStream(from).getChannel();
                 oc = new FileOutputStream(to).getChannel();
+
                 final long size = from.length();
                 ByteBuffer buffer = ByteBuffer.allocate(BSIZE);
                 int read;
@@ -94,6 +96,10 @@ public class MoveFileTask extends CoreTask<Void, Void> {
                 try {
                     if (ic != null)
                         ic.close();
+                } catch (IOException e) {
+                    LogUtils.processException(logger, e);
+                }
+                try {
                     if (oc != null)
                         oc.close();
                 } catch (IOException e) {
@@ -121,7 +127,7 @@ public class MoveFileTask extends CoreTask<Void, Void> {
             return;
         final boolean descriptionFile = AppPrefs.getProperty(UserProp.GENERATE_DESCRIPTION_BY_FILENAME, UserProp.GENERATE_DESCRIPTION_BY_FILENAME_DEFAULT);
         if (descriptionFile) {
-            final File descTxtFile = new File(to.getParentFile(), getNameForFile(Utils.getPureFilename(to) + ".txt"));
+            final File descTxtFile = new File(to.getParentFile(), getNameForFile(Utils.getPureFilenameWithDots(to) + ".txt"));
             if (descTxtFile.exists())
                 descTxtFile.delete();
         }
@@ -210,13 +216,15 @@ public class MoveFileTask extends CoreTask<Void, Void> {
 
     private File getNewUniqueFileName(final File to) {
         final File dir = to.getParentFile();
-        final String pureFileName = Utils.getPureFilename(to);
-        final String ext = Utils.getExtension(to);
+        final String pureFileName = Utils.getPureFilenameWithDots(to);
+        String ext = Utils.getExtension(to);
+        ext = (ext != null) ? ("." + ext) : "";
         File newFile;
         int counter = 2;
-        while ((newFile = new File(dir, pureFileName + "-" + String.valueOf(counter) + "." + ext)).exists()) {
+        while ((newFile = new File(dir, pureFileName + "-" + String.valueOf(counter) + ext)).exists()) {
             ++counter;
         }
         return newFile;
     }
+
 }

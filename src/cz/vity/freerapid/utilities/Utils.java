@@ -105,6 +105,43 @@ public final class Utils {
         return filePath.endsWith(File.separator) ? filePath : filePath + File.separator;
     }
 
+    public static String shortenFileName(final File file, final int lengthLimit) {
+        return shortenFileName(file.getAbsolutePath(), lengthLimit);
+    }
+
+    /**
+     * Makes file name shorter
+     *
+     * @param text        filePath as string
+     * @param lengthLimit max length limit
+     * @return shortened file path
+     */
+    public static String shortenFileName(final String text, final int lengthLimit) {
+        final int textLength = text.length();
+        if (textLength < lengthLimit)
+            return text;
+        final String fileSeparator = File.separator;
+        final String[] separated = text.split((fileSeparator.equals("\\") ? "\\\\" : fileSeparator));
+        final int separatedCount = separated.length;
+        if (separatedCount > 3) {
+            //int charsCount = separated[0].length() + separated[1].length() + separated[separatedCount -2].length() + separated[separatedCount -1].length() + 4;
+            int extractIndex = 2, wouldDelete = 0;
+            for (; extractIndex < (separatedCount - 2); ++extractIndex) {
+                wouldDelete += separated[extractIndex].length();
+                if ((textLength - wouldDelete + 3) < lengthLimit)
+                    break;
+            }
+            final StringBuilder result = new StringBuilder(textLength - wouldDelete + 3);
+            result.append(separated[0]).append(fileSeparator).append(separated[1]).append(fileSeparator).append("...");
+            for (int i = extractIndex + 1; i < separatedCount; ++i) {
+                result.append(fileSeparator);
+                result.append(separated[i]);
+            }
+            return result.toString();
+        } else
+            return text;
+    }
+
     /**
      * Prida dalsi parametr s jeho hodnotou pro odeslani v URL konexi
      *

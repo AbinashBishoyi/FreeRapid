@@ -144,10 +144,12 @@ abstract class AppFrame extends JFrame {
     }
 
     private static void doButtonAction(final AbstractButton button, final ActionEvent actionEvent) {
-        button.doClick();
         final Action action = button.getAction();
-        if (action != null && action.isEnabled())
-            action.actionPerformed(actionEvent);
+        if (action != null && action.isEnabled()) {
+            button.doClick();
+            //action.actionPerformed(actionEvent);
+        }
+
     }
 
 

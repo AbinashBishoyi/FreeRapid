@@ -768,6 +768,8 @@ public class UserPreferencesDialog extends AppDialog {
                                             new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(0), FormSpec.NO_GROW),
                                             FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                                             FormFactory.DEFAULT_COLSPEC,
+                                            new ColumnSpec(Sizes.dluX(9)),
+                                            FormFactory.DEFAULT_COLSPEC,
                                             FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                                             FormFactory.DEFAULT_COLSPEC,
                                             FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
@@ -776,13 +778,14 @@ public class UserPreferencesDialog extends AppDialog {
                                     new RowSpec[]{
                                             FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC,
 
                                     }), panelConfirmation);
 
-                            panelConfirmBuilder.add(checkConfirmExiting, cc.xy(3, 1));
-                            panelConfirmBuilder.add(checkConfirmFileDeletion, cc.xy(5, 1));
-                            panelConfirmBuilder.add(checkConfirmFileRemove, cc.xy(3, 2));
-                            panelConfirmBuilder.add(checkConfirmDownloadingRemoveOnly, cc.xy(5, 2));
+                            panelConfirmBuilder.add(checkConfirmExiting, cc.xyw(3, 1, 3));
+                            panelConfirmBuilder.add(checkConfirmFileDeletion, cc.xy(7, 1));
+                            panelConfirmBuilder.add(checkConfirmFileRemove, cc.xyw(3, 2, 3));
+                            panelConfirmBuilder.add(checkConfirmDownloadingRemoveOnly, cc.xy(5, 3));
                         }
                         panelSoundSettingsBuilder.add(panelSound, cc.xy(1, 1));
                         panelSoundSettingsBuilder.add(panelConfirmation, cc.xy(1, 3));

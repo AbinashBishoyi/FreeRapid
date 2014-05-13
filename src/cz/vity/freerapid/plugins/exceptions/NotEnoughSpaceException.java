@@ -5,5 +5,6 @@ package cz.vity.freerapid.plugins.exceptions;
  */
 public class NotEnoughSpaceException extends Exception {
     public NotEnoughSpaceException() {
+        super("Not enough space on target disk");
     }
 }
