@@ -220,6 +220,15 @@ public class DownloadClient implements HttpDownloadClient {
                 isStream = true;
         }
 
+        //server sends eg. text/plain for binary data
+        if (!isStream && contentType != null && client.getParams().isParameterSet("considerAsStream")) {
+            final String ct = client.getParams().getParameter("considerAsStream").toString();
+            if (contentType.getValue().equalsIgnoreCase(ct)) {
+                logger.info("considering as stream '" + ct + "'");
+                isStream = true;
+            }
+        }
+
         if (isStream) {
             return method.getResponseBodyAsStream();
         } else {
