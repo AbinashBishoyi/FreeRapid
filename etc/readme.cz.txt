@@ -222,3 +222,9 @@ A: 1) Protoe nechci pouívat ruskı software, kterı je pravdìpodobnì plnı malwar
 
 Q: Jak zapnout podporu pøíkazù pro vypínání na Linuxu a MacOS?
 A: Pro více informací nahlédnìte prosím do konfiguraèního souboru 'syscmd.properties', kterı naleznete ve sloce aplikace.
+
+Q: Jak lze nastavit úèet pro Rapidshare premium?
+A: Jako vıchozí je zapnut plugin pro FREE Rapidshare, proto je nutné aktivovat plugin pro Premium.
+Jdìte do Nastavení->Monosti->Pluginy -> panel Nastavení , dále naleznìte plugin Rapidshare_premium a aktivujte ho (kliknìte v prvním sloupci oznaèeném jako X).
+Dále kliknìte na tlaèítko moností pro zvolenı RapidShare_premium plugin a vlote autentifikaèní údaje. Potvrïte tlaèítkem OK.
+Podporováno je pouze èíselné uivatelské ID.

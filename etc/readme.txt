@@ -225,3 +225,9 @@ A: Please see 'syscmd.properties' configuration file in application directory fo
 Q: Where are configuration files located?
 A: See Installation section.
 
+Q: How to setup Rapidshare Premium account?
+A: By default Free Rapidshare plugin is used.
+For using premium account go to Options->Preferences->Plugins->Settings panel, then find Rapidshare_premium plugin and activate it (click on the checkbox in the first column - X).
+To setup your login details click on the Options button. Confirm account details by OK button.
+
+Only numerical account ID is supported. Other premium plugins are not implemented yet.
