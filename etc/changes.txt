@@ -20,6 +20,7 @@ XXth October 2008 - FreeRapid Downloader 0.62 released
   Added : option to remove files after completion (NEVER, IMMEDIATELY, AT STARTUP)
   Added : option to minimize to tray on close
   Added : option to disable using default connection (warning: only connections from proxy list will be used)
+  Added : possibility to set proxy settings for default connection 
   Added : support to set application property from command line (mostly for debug or testing purposes)
 #  Added : Czech translation [thanks to Lukiz&Kajda!]
 #  Added : German translation [thanks to JayDee!]
@@ -30,7 +31,7 @@ XXth October 2008 - FreeRapid Downloader 0.62 released
   Changed : improved pre-allocation files (less file fragmentation)
   Changed : minor changes in RapidShare, FileFactory, Megaupload, Uploaded.to plugins
   Fixed : window size/position was not restored when application crashed
-  Fixed : description area was not enabled after file completion
+  Fixed : description area was not enabled for selection copy after file completion
   Fixed : removed czech labels from open proxy file dialog 
 
 20th September 2008 - FreeRapid Downloader 0.61 released - bug fix release + 1 great option ;-)
