@@ -2,6 +2,7 @@ package cz.vity.freerapid.plugins.webclient;
 
 import cz.vity.freerapid.plugins.webclient.utils.Entities;
 import cz.vity.freerapid.plugins.webclient.utils.GOCR;
+import cz.vity.freerapid.plugins.exceptions.PluginImplementationException;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -95,6 +96,27 @@ public final class PlugUtils {
             return null;
         }
     }
+        /**
+     * <p>Find and return value of given parameter in html tag (eg. input).</p>
+     * <p/>
+     * <p>For example, the for content "input type="hidden" name="par" value="val>"
+     * and parameter "par" returns "val"</p>
+     * <p/>
+     * 
+     * @param name name of parameter
+     * @param content  <code>String</code> to search in
+     * @throws cz.vity.freerapid.plugins.exceptions.PluginImplementationException given name not found in given content
+     * @return <code>String</code> value of parameter
+     */
+
+    public static String getParameter(String name, String content) throws PluginImplementationException {
+        Matcher matcher = PlugUtils.matcher("name=\"" + name + "\"[^v>]*value=\"([^\"]*)\"", content);
+        if (matcher.find()) {
+            return matcher.group(1);
+        } else
+            throw new PluginImplementationException("Parameter " + name + " was not found");
+    }
+
 
     public static String recognize(final BufferedImage image, final String commandLineOptions) {
         final GOCR gocr = new GOCR(image, commandLineOptions);
