@@ -946,8 +946,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         final String propertyName = evt.getPropertyName();
         if ("completed".equals(propertyName)) {
             setRemoveCompletedActionEnabled(((Integer) evt.getNewValue()) > 0);
-        }
-        if ("notFound".equals("propertyName")) {
+        } else if ("notFound".equals(propertyName)) {
             setRemoveInvalidLinksActionEnabled(((Integer) evt.getNewValue()) > 0);
         }
     }
