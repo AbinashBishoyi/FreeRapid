@@ -283,4 +283,12 @@ public class Swinger {
                 null, new Object[]{map.getString(MESSAGE_BTN_YES_CODE), map.getString(MESSAGE_BTN_NO_CODE)},
                 null);
     }
+
+    public static void minimize(JFrame frame) {
+        int state = frame.getExtendedState();
+        // Set the iconified bit
+        state |= Frame.ICONIFIED;
+        // Iconify the frame
+        frame.setExtendedState(state);
+    }
 }

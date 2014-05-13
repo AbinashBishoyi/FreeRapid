@@ -19,6 +19,7 @@ September 2008 - FreeRapid Downloader 0.6 released
   Changed : improved internal counting of actual speed
   Changed : double click opens files if completed or opens download information dialog otherwise
   Changed : reworked enabled status of action buttons (resume, cancel, pause) - at least one active -> enabled true
+  Added : option to set horizontal and/or vertical lines in table  
   Added : option to repeat error downloads indefinitely (-1 value in UserPreferences dialog)
   Added : new Misc panel in UserPreferences dialog      
   Added : multiple settings dialog (if you select more than 1 file)  
@@ -31,9 +32,9 @@ September 2008 - FreeRapid Downloader 0.6 released
   Added : link to paypal.com to support this project
   Added : automatic smart saving current queue and downloaded files history
           (if application/OS crashes it preserves everything)
-  Added : support for depositfiles.com
-  Added : support for megaupload.com
-  Added : support for netload.in
+  Added : support for depositfiles.com [thanks to Lukiz!]
+  Added : support for megaupload.com [thanks to Lukiz!]
+  Added : support for netload.in [thanks to Lukiz!]
   Added : this file :-)
 
 9th September 2008 - FreeRapid Downloader 0.5 released

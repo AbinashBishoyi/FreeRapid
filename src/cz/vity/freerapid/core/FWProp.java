@@ -32,4 +32,6 @@ public class FWProp {
     public static final String NEW_VERSION = "checkForNewVersionAuto";
     public static final String WEBURL_SUBMIT_ERROR = "weburlSubmitError";
     public static final String DECORATED_FRAMES = "decoratedFrames";
+    public static final String MINIMIZE_ON_CLOSE = "minimizeOnClose";
+    public static final boolean MINIMIZE_ON_CLOSE_DEFAULT = false;
 }

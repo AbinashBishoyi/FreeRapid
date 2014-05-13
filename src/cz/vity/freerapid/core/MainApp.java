@@ -5,6 +5,7 @@ import cz.vity.freerapid.core.application.ListItemsConvertor;
 import cz.vity.freerapid.core.tasks.CheckForNewVersionTask;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
 import cz.vity.freerapid.swing.LookAndFeels;
+import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.swing.TrayIconSupport;
 import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.appframework.swingx.SingleXFrameApplication;
@@ -13,6 +14,7 @@ import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.ResourceConverter;
 
 import javax.swing.*;
+import java.awt.event.WindowEvent;
 import java.util.EventObject;
 
 
@@ -145,6 +147,10 @@ public class MainApp extends SingleXFrameApplication {
     private class MainAppExitListener implements Application.ExitListener {
 
         public boolean canExit(EventObject event) {
+            if (AppPrefs.getProperty(FWProp.MINIMIZE_ON_CLOSE, FWProp.MINIMIZE_ON_CLOSE_DEFAULT) && event instanceof WindowEvent) {
+                Swinger.minimize(MainApp.this.getMainFrame());
+                return false;
+            }
             return true;
         }
 

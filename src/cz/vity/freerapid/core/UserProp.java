@@ -98,4 +98,5 @@ public class UserProp {
 
     public static final String SHOW_GRID_VERTICAL = "showVerticalGridLines";
     public static final boolean SHOW_GRID_VERTICAL_DEFAULT = false;
+
 }
