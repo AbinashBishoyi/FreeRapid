@@ -43,7 +43,7 @@ public class CheckForNewVersionTask extends CoreTask<ConnectResult, Void> {
         HttpURLConnection urlConn = null;
         message("message.connecting");
         try {
-            final String url = AppPrefs.getProperty(FWProp.CHECK_FOR_NEW_VERSION_URL, Consts.WEBURL_SUBMIT_ERROR);
+            final String url = AppPrefs.getProperty(FWProp.CHECK_FOR_NEW_VERSION_URL, Consts.WEBURL_CHECKNEWVERSION);
             urlConn = (HttpURLConnection) new URL(url).openConnection();
             urlConn.setDoOutput(true);
             urlConn.setDoInput(true);
