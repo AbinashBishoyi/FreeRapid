@@ -31,6 +31,8 @@ public class AccountDialog extends AppDialog {
         this.setName("AccountDialog");
         if (account == null)
             this.account = new PremiumAccount();
+        else
+            this.account = account;
         try {
             initComponents();
             build();

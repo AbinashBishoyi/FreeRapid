@@ -7,6 +7,7 @@ import cz.vity.freerapid.gui.dialogs.AccountDialog;
 import cz.vity.freerapid.plugins.webclient.hoster.PremiumAccount;
 import cz.vity.freerapid.plugins.webclient.interfaces.DialogSupport;
 import cz.vity.freerapid.swing.Swinger;
+import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.appframework.swingx.SingleXFrameApplication;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.SingleFrameApplication;
@@ -14,6 +15,7 @@ import org.jdesktop.application.SingleFrameApplication;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.logging.Logger;
 
 /**
  * Standard implementation of DialogSupport
@@ -21,6 +23,8 @@ import java.awt.image.BufferedImage;
  * @author Ladislav Vitasek
  */
 public class StandardDialogSupportImpl implements DialogSupport {
+
+    private final static Logger logger = Logger.getLogger(StandardDialogSupportImpl.class.getName());
 
     /**
      * result from the user's input for CAPTCHA
@@ -112,7 +116,11 @@ public class StandardDialogSupportImpl implements DialogSupport {
     private void getAccount(String title, PremiumAccount account, PremiumAccount[] result) {
         final SingleXFrameApplication app = (SingleXFrameApplication) context.getApplication();
         final AccountDialog dialog = new AccountDialog(app.getMainFrame(), title, account);
-        app.prepareDialog(dialog, true);
+        try {
+            app.prepareDialog(dialog, true);
+        } catch (IllegalStateException e) {
+            LogUtils.processException(logger, e);
+        }
         result[0] = dialog.getAccount();
     }
 }

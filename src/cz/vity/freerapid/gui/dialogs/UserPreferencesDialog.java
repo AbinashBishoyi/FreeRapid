@@ -349,7 +349,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         try {
             service.showOptions();
         } catch (Exception e) {
-            //ignore
+            LogUtils.processException(logger, e);
         }
     }
 
