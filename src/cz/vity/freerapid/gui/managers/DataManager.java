@@ -545,4 +545,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         firePropertyChange("dataChanged", this.dataChanged, ++this.dataChanged);
     }
 
+    public ProcessManager getProcessManager() {
+        return processManager;
+    }
 }

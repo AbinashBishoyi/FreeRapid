@@ -34,6 +34,11 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
     private MainApp app;
     private ResourceMap resourceMap;
 
+    private DataManager dataManager;
+    private Image defaultIconImage;
+    private Image downloadingIconImage;
+    private TrayIconSupport trayIconSupport;
+
     /**
      * Konstruktor
      *
@@ -44,7 +49,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
         this.director = director;
         this.context = context;
         resourceMap = context.getResourceMap();
-
+        dataManager = director.getDataManager();
         app = (MainApp) context.getApplication();
     }
 
@@ -56,6 +61,10 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
     public JXStatusBar getStatusBar() {
         if (statusbar == null) {
             statusbar = new JXStatusBar();
+
+            trayIconSupport = app.getTrayIconSupport();
+            defaultIconImage = resourceMap.getImageIcon("trayIconImage").getImage();
+            downloadingIconImage = resourceMap.getImageIcon("downloadingIconImage").getImage();
 
             final Action action = context.getActionMap().get("showStatusBar");
             action.putValue(Action.SELECTED_KEY, true); //defaultni hodnota
@@ -83,8 +92,11 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
             statusbar.add(indicator, JXStatusBar.Constraint.ResizeBehavior.FIXED);
             //statusbar.add(Box.createGlue(), JXStatusBar.Constraint.ResizeBehavior.FILL);
             context.getTaskMonitor().addPropertyChangeListener(this);
-            final DataManager dataManager = director.getDataManager();
+
             dataManager.getDownloadFiles().addListDataListener(this);
+
+            dataManager.getProcessManager().addPropertyChangeListener("downloading", this);
+
             dataManager.addPropertyChangeListener("speed", this);
             dataManager.addPropertyChangeListener("completed", this);
             dataManager.addPropertyChangeListener("state", this);
@@ -92,6 +104,11 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
                 public void preferenceChange(PreferenceChangeEvent evt) {
                     if (UserProp.SHOWINFO_IN_TITLE.equals(evt.getKey())) {
                         updateInfoStatus();
+                    } else if (UserProp.ANIMATE_ICON.equals(evt.getKey())) {
+                        if (!AppPrefs.getProperty(UserProp.ANIMATE_ICON, UserProp.ANIMATE_ICON_DEFAULT))
+                            trayIconSupport.setImage(defaultIconImage);
+                        else
+                            updateIconAnimation();
                     }
                 }
             });
@@ -110,7 +127,9 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
 
     public void propertyChange(PropertyChangeEvent evt) {
         final String propertyName = evt.getPropertyName();
-        if ("started".equals(propertyName) || "done".equals(propertyName) || "message".equals(propertyName)) {
+        if ("speed".equals(propertyName) || "completed".equals(propertyName)) {
+            updateInfoStatus();
+        } else if ("started".equals(propertyName) || "done".equals(propertyName) || "message".equals(propertyName)) {
             if (evt.getSource() instanceof MoveFileTask)
                 updateProgress(evt);
         } else if ("selectedText".equals(propertyName)) {
@@ -119,8 +138,18 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
                 updateInfoStatus();
             } else
                 infoLabel.setText(s);
-        } else if ("completed".equals(propertyName) || "speed".equals(propertyName)) {
-            updateInfoStatus();
+        } else if ("downloading".equals(propertyName)) {
+            if (AppPrefs.getProperty(UserProp.ANIMATE_ICON, UserProp.ANIMATE_ICON_DEFAULT))
+                updateIconAnimation();
+        }
+    }
+
+    private void updateIconAnimation() {
+        final int downloading = dataManager.getDownloading();
+        if (downloading == 0) {
+            trayIconSupport.setImage(defaultIconImage);
+        } else {
+            trayIconSupport.setImage(downloadingIconImage);
         }
     }
 
@@ -147,7 +176,6 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
 
 
     private void updateInfoStatus() {
-        final DataManager dataManager = director.getDataManager();
         final int completed = dataManager.getCompleted();
         final int size = dataManager.getDownloadFiles().size();
         final int speed = dataManager.getCurrentAllSpeed();

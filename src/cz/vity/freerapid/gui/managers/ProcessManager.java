@@ -12,6 +12,7 @@ import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.plugins.webclient.HttpDownloadClient;
 import cz.vity.freerapid.plugins.webclient.ShareDownloadService;
+import cz.vity.freerapid.swing.EDTPropertyChangeSupport;
 import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.TaskEvent;
@@ -19,6 +20,7 @@ import org.jdesktop.application.TaskListener;
 import org.jdesktop.application.TaskService;
 
 import javax.swing.*;
+import java.beans.PropertyChangeListener;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
@@ -31,6 +33,8 @@ public class ProcessManager extends Thread {
     private final static Logger logger = Logger.getLogger(ProcessManager.class.getName());
     private final ApplicationContext context;
     private DataManager dataManager;
+
+    private final EDTPropertyChangeSupport pcs;
 
     private volatile Map<String, DownloadService> services = new Hashtable<String, DownloadService>();
     private volatile Map<DownloadFile, ConnectionSettings> forceDownloadFiles = new Hashtable<DownloadFile, ConnectionSettings>();
@@ -47,15 +51,17 @@ public class ProcessManager extends Thread {
 
 
     public ProcessManager(ManagerDirector director, ApplicationContext context) {
+        super();
         dataManager = director.getDataManager();
         pluginsManager = director.getPluginsManager();
 
+        pcs = new EDTPropertyChangeSupport(this);
         this.context = context;
         taskService = director.getTaskServiceManager().getTaskService(TaskServiceManager.DOWNLOAD_SERVICE);
         clientManager = director.getClientManager();
         availableConnections = clientManager.getAvailableConnections();
 
-        downloading = 0;
+        setDownloading(0);
 
         AppPrefs.getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
             public void preferenceChange(PreferenceChangeEvent evt) {
@@ -96,7 +102,7 @@ public class ProcessManager extends Thread {
     private boolean canCreateAnotherConnection() {
         final int maxDownloads = AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT);
 
-        return maxDownloads > downloading;
+        return maxDownloads > getDownloading();
     }
 
     private LinkedList<DownloadFile> getFilesForForceDownload() {
@@ -160,7 +166,7 @@ public class ProcessManager extends Thread {
 
     private void queueDownload(final DownloadFile downloadFile, final ConnectionSettings settings, DownloadService downloadService, final ShareDownloadService service) {
         final HttpDownloadClient client = clientManager.popWorkingClient();
-        ++downloading;
+        setDownloading(downloading + 1);
         client.initClient(settings);
         downloadService.addDownloadingClient(client);
         downloadFile.setState(DownloadState.GETTING);
@@ -229,7 +235,7 @@ public class ProcessManager extends Thread {
                 throw new IllegalStateException("Download service not found:" + serviceName);
             service.finishedDownloading(client);
             clientManager.pushWorkingClient(client);
-            --downloading;
+            setDownloading(downloading - 1);
             int errorAttemptsCount = file.getErrorAttemptsCount();
             if (file.getState() == DownloadState.ERROR && errorAttemptsCount > 0) {
                 assert task != null;
@@ -307,5 +313,20 @@ public class ProcessManager extends Thread {
 
     public int getDownloading() {
         return downloading;
+    }
+
+    public void setDownloading(int downloading) {
+        int oldValue = this.downloading;
+        this.downloading = downloading;
+        pcs.firePropertyChange("downloading", oldValue, this.downloading);
+    }
+
+
+    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(propertyName, listener);
+    }
+
+    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+        pcs.removePropertyChangeListener(propertyName, listener);
     }
 }

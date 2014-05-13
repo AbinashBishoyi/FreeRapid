@@ -26,11 +26,11 @@ public class DownloadClient implements HttpDownloadClient {
 
     public DownloadClient() {
         this.client = new HttpClient();
-        client.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
     }
 
     public void initClient(final ConnectionSettings settings) {
         this.settings = settings;
+        client.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
         this.client.setHttpConnectionManager(new SimpleHttpConnectionManager(true));
         HttpState initialState = new HttpState();
         if (settings.isProxySet()) {

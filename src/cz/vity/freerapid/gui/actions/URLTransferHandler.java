@@ -133,11 +133,17 @@ public abstract class URLTransferHandler extends TransferHandler {
 //                }
 //            }
             if (urlFlavor != null && transferable.isDataFlavorSupported(urlFlavor)) {
-                final Object transferData = transferable.getTransferData(urlFlavor);
-                if (transferData instanceof URL) {
-                    final URL url = (URL) transferData;
-                    if (pluginsManager.isSupported(url))
-                        urls.add(url);
+                try {
+                    final Object transferData = transferable.getTransferData(urlFlavor);
+                    if (transferData instanceof URL) {
+                        final URL url = (URL) transferData;
+                        if (pluginsManager.isSupported(url))
+                            urls.add(url);
+                    }
+                } catch (UnsupportedFlavorException e) {
+                    //ignore
+                } catch (IOException e) {
+                    //ignore
                 }
             } else if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                 String data = (String) transferable.getTransferData(DataFlavor.stringFlavor);

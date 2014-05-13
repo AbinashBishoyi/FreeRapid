@@ -94,9 +94,9 @@ public class ManagerDirector {
         rootContainer.setLayout(new BorderLayout());
 
 
-        this.inputDataManager.initProcessManager();
-
         this.clipboardMonitorManager = new ClipboardMonitorManager(context, this);
+
+        this.inputDataManager.initProcessManager();
 
         rootContainer.add(getToolbarManager().getComponent(), BorderLayout.NORTH);
         rootContainer.add(getContentManager().getComponent(), BorderLayout.CENTER);

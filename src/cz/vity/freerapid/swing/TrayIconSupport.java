@@ -196,4 +196,9 @@ public class TrayIconSupport implements PropertyChangeListener {
         }
     }
 
+    public void setImage(Image iconImage) {
+        if (isEnabled()) {
+            trayIcon.setImage(iconImage);
+        }
+    }
 }

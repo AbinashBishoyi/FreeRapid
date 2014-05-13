@@ -15,6 +15,7 @@ import cz.vity.freerapid.plugins.webclient.HttpDownloadClient;
 import cz.vity.freerapid.plugins.webclient.HttpFile;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.Browser;
+import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.OSDesktop;
 import org.jdesktop.application.ApplicationActionMap;
 import org.jdesktop.application.ApplicationContext;
@@ -44,12 +45,14 @@ import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 /**
  * @author Vity
  */
 public class ContentPanel extends JPanel implements ListSelectionListener, ListDataListener, PropertyChangeListener, ClipboardOwner {
-    //private static final int COLUMN_ID = 0;
+    private final static Logger logger = Logger.getLogger(ContentPanel.class.getName());
+
     private static final int COLUMN_NAME = 0;
     private static final int COLUMN_PROGRESSBAR = 1;
     private static final int COLUMN_PROGRESS = 2;
@@ -477,6 +480,13 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                 else if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2) {
                     if (ContentPanel.this.isCompleteWithFilesEnabled())
                         openFileAction();
+                    else if (isSelectedEnabled()) {
+                        try {
+                            downloadInformationAction();
+                        } catch (Exception ex) {
+                            LogUtils.processException(logger, ex);
+                        }
+                    }
                 }
             }
         });

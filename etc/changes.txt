@@ -15,6 +15,8 @@ September 2008 - FreeRapid Downloader 0.6 released
   Fixed : partly downloaded files were not deleted at some special cases
   Changed : SwingX library upgraded to version 0.94
   Changed : property "Max downloads at a time" does not require a restart anymore
+  Changed : show/hide toolbar action has assigned new shortcut - F11 
+  Added : animated tray icon in busy state (optionable) 
   Added : clipboard monitoring (optionable)
   Added : frame title information (optionable)
   Added : ESC key cancels current download(s)
