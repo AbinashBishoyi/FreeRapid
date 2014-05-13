@@ -100,7 +100,11 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         final String fileName = downloadFile.getFileName();
         outputFile = downloadFile.getOutputFile();
         //outputFile = new File("d:/vystup.pdf");
-        storeFile = (temporary) ? File.createTempFile(fileName + ".", ".part", downloadFile.getSaveToDirectory()) : outputFile;
+        final File saveToDirectory = downloadFile.getSaveToDirectory();
+        if (!saveToDirectory.exists())
+            saveToDirectory.mkdirs();
+
+        storeFile = (temporary) ? File.createTempFile(fileName + ".", ".part", saveToDirectory) : outputFile;
         final long fileSize = downloadFile.getFileSize();
 
         try {

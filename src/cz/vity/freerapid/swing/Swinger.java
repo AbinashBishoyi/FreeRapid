@@ -1,6 +1,7 @@
 package cz.vity.freerapid.swing;
 
 import cz.vity.freerapid.core.MainApp;
+import cz.vity.freerapid.core.application.SubmitErrorReporter;
 import cz.vity.freerapid.gui.dialogs.ErrorDialog;
 import org.jdesktop.application.ApplicationActionMap;
 import org.jdesktop.application.ApplicationContext;
@@ -241,6 +242,9 @@ public class Swinger {
         final JXErrorPane pane = new JXErrorPane();
 //        pane.setName("ErrorPane");
 //        map.injectComponents(pane);
+        if (showErrorReporter)
+            pane.setErrorReporter(new SubmitErrorReporter());
+
         pane.setErrorInfo(errorInfo);
         JXErrorPane.showDialog(JFrame.getFrames()[0], pane);
     }
