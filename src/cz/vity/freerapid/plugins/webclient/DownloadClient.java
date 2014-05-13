@@ -85,6 +85,7 @@ final public class DownloadClient implements HttpDownloadClient {
 
 
     public InputStream makeFinalRequestForFile(HttpMethod method, HttpFile file) throws IOException {
+        asString = "";
         toString(method);
         client.executeMethod(method);
 
