@@ -39,10 +39,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -108,6 +105,16 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         initComponents();
         setActions();
 
+        final MainApp app = (MainApp) (context.getApplication());
+        app.getMainFrame().addWindowFocusListener(new WindowFocusListener() {
+            public void windowGainedFocus(WindowEvent e) {
+                Swinger.inputFocus(table);
+            }
+
+            public void windowLostFocus(WindowEvent e) {
+
+            }
+        });
 
         manager.getDownloadFiles().addListDataListener(this);
         manager.addPropertyChangeListener(this);

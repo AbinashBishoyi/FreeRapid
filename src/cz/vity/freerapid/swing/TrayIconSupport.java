@@ -119,7 +119,7 @@ public class TrayIconSupport implements PropertyChangeListener {
         }
     }
 
-    private void windowRestore(JFrame frame) {
+    private void windowRestore(final JFrame frame) {
         int state = frame.getExtendedState();
         frame.setExtendedState(state &= ~Frame.ICONIFIED);
         frame.setVisible(true);
@@ -166,7 +166,11 @@ public class TrayIconSupport implements PropertyChangeListener {
 
         restoreItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                windowRestore(app.getMainFrame());
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        windowRestore(app.getMainFrame());
+                    }
+                });
             }
         });
 

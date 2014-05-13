@@ -11,14 +11,14 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
-XXth November 2008 - FreeRapid Downloader 0.71 released
+10th November 2008 - FreeRapid Downloader 0.71 released
   Added : Hungarian translation [thanks to Denisz Kosztyukovics!]
   Added : German translation [thanks to Rabyte!]  
   Added : Spanish translation [thanks to El Lalo!]
   Added : plugins - support for HellShare.com [implemented by Lukiz, thanks!]
           - this server is a bit tricky - the server is buggy :-)
   Added : plugins - support for QuickShare.cz [implemented by Lukiz, thanks!]
-  Added : CAPTCHA recognition for Megaupload, Sexuploader [with Lukiz's help!]
+  Added : CAPTCHA recognition for Megaupload, Sexuploader [with Lukiz's help!] - 90% probability of success recognition
           for Linux systems you have to install GOCR application (http://jocr.sourceforge.net/)
   Changed : plugins - minor changes and fixes in most of plugins
   Changed : rotating of enabled connections (can help to avoid some problems with many proxies)
