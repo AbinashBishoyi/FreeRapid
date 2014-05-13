@@ -2,6 +2,7 @@
 *   History of changes for FreeRapid Downloader         *
 *   WebSite: http://wordrider.net/freerapid             *
 *   Mail: info@wordrider.net                            *
+*   Issue tracker: http://bugtracker.wordrider.net/     *
 *********************************************************
 Thanks to all individuals who reported bugs.
 
