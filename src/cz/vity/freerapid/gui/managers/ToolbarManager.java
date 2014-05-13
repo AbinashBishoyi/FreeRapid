@@ -109,7 +109,9 @@ public class ToolbarManager implements PropertyChangeListener {
         btn.setBackground(null);
         btn.setText(null);
         btn.setBorder(new EmptyBorder(0, 0, 0, 0));
-        toolbar.add(btn);
+        if (AppPrefs.getProperty(UserProp.SHOW_PAYPAL, UserProp.SHOW_PAYPAL_DEFAULT)) {
+            toolbar.add(btn);
+        }
         toolbar.add(Box.createHorizontalStrut(18));
 
         updateButtons(AppPrefs.getProperty(UserProp.SHOW_TEXT_TOOLBAR, UserProp.SHOW_TEXT_TOOLBAR_DEFAULT));

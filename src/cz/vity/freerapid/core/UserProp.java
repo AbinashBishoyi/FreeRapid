@@ -208,4 +208,7 @@ final public class UserProp {
     public static final String SHOW_TEXT_TOOLBAR = "showButtonTextToolbar";
     public static final boolean SHOW_TEXT_TOOLBAR_DEFAULT = true;
 
+    public static final String SHOW_PAYPAL = "showPaypal";
+    public static final boolean SHOW_PAYPAL_DEFAULT = true;
+
 }
