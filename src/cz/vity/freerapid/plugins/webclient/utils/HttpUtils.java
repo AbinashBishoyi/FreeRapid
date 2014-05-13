@@ -30,6 +30,8 @@ final public class HttpUtils {
             int index = lowercased.lastIndexOf(str);
             if (index >= 0) {
                 String s = value.substring(index + str.length());
+                if (s.startsWith("\"") && s.endsWith("\";"))
+                    s = s.substring(1, s.length() - 2);
                 if (s.startsWith("\"") && s.endsWith("\""))
                     s = s.substring(1, s.length() - 1);
                 // napr. pro xtraupload je jeste treba dekodovat
