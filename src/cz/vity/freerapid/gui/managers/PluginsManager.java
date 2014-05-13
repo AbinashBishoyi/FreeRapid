@@ -8,6 +8,7 @@ import org.java.plugin.ObjectFactory;
 import org.java.plugin.PluginManager;
 import org.java.plugin.registry.PluginDescriptor;
 import org.java.plugin.standard.StandardPluginLocation;
+import org.java.plugin.util.ExtendedProperties;
 import org.jdesktop.application.ApplicationContext;
 
 import java.io.File;
@@ -36,10 +37,12 @@ public class PluginsManager {
 
     private void loadPlugins() {
 
-        PluginManager pluginManager = ObjectFactory.newInstance().createManager();
+        logger.info("Init Plugins Manager");
+        final PluginManager pluginManager = ObjectFactory.newInstance(new ExtendedProperties()).createManager();
 
 
-        File pluginsDir = new File(Utils.getAppPath(), "plugins");
+        final File pluginsDir = new File(Utils.getAppPath(), "plugins");
+        logger.info("Plugins dir: " + pluginsDir.getAbsolutePath());
 
         File[] plugins = pluginsDir.listFiles(new FilenameFilter() {
 
