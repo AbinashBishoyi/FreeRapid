@@ -60,7 +60,7 @@ public class MenuManager {
         super();
         this.context = context;
         this.director = director;
-        fileActions = new FileActions();
+        fileActions = new FileActions(context);
         Swinger.initActions(fileActions, context);
         viewActions = new ViewActions();
         Swinger.initActions(viewActions, context);

@@ -98,10 +98,6 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         this.manager = director.getDataManager();
         this.setName("contentPanel");
 
-        for (String arg : MainApp.getArgs()) {
-            logger.severe("arg = " + arg);
-        }
-
         readStates();
 
         Swinger.initActions(this, context);

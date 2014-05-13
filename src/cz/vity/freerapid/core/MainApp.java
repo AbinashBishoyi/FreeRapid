@@ -34,7 +34,6 @@ public class MainApp extends SingleXFrameApplication {
     private AppPrefs appPrefs;
 
     private boolean minimizeOnStart = false;
-    private static String[] args;
 
 //    private static Logger logger = null;
 
@@ -149,7 +148,6 @@ public class MainApp extends SingleXFrameApplication {
      * @param args vstupni parametry pro program
      */
     public static void main(String[] args) {
-        MainApp.args = args;
         //zde prijde overovani vstupnich pridavnych parametru
         Application.launch(MainApp.class, args); //spusteni
     }
@@ -201,7 +199,4 @@ public class MainApp extends SingleXFrameApplication {
         return trayIconSupport;
     }
 
-    public static String[] getArgs() {
-        return args;
-    }
 }
