@@ -9,14 +9,17 @@ import javax.swing.*;
  * @author Vity
  */
 public class UIStringsManager {
-
+    private static boolean loaded = false;
 
     public static void load(ResourceManager manager) {
+        if (loaded)
+            return;
 
         final ResourceMap map = manager.getResourceMap(UIStringsManager.class);
 
         for (String key : map.getBundleNames()) {
             UIManager.put(key, map.getString(key));
         }
+        loaded = true;
     }
 }

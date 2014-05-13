@@ -1,9 +1,11 @@
 package cz.vity.freerapid.gui.dialogs.filechooser;
 
 import cz.vity.freerapid.core.AppPrefs;
+import cz.vity.freerapid.core.UIStringsManager;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.Utils;
+import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.ResourceMap;
 
 import javax.swing.*;
@@ -19,13 +21,13 @@ import java.util.List;
 public class OpenSaveDialogFactory {
     private static OpenSaveDialogFactory instance = null;
 
-    private OpenSaveDialogFactory() {
-
+    private OpenSaveDialogFactory(ApplicationContext context) {
+        UIStringsManager.load(context.getResourceManager());
     }
 
-    public static synchronized OpenSaveDialogFactory getInstance() {
+    public static synchronized OpenSaveDialogFactory getInstance(ApplicationContext context) {
         if (instance == null)
-            return new OpenSaveDialogFactory();
+            return new OpenSaveDialogFactory(context);
         else return instance;
     }
 

@@ -5,7 +5,7 @@ package cz.vity.freerapid.core;
  *
  * @author Vity
  */
-public class FWProp {
+final public class FWProp {
     public static final String MINIMIZE_TO_TRAY = "minimizeToTray";
     public static final String SHOW_TRAY = "showTray";
     public static final String USER_SETTINGS_SELECTED_CARD = "userSettingsSelectedCard";
@@ -34,4 +34,9 @@ public class FWProp {
     public static final String DECORATED_FRAMES = "decoratedFrames";
     public static final String MINIMIZE_ON_CLOSE = "minimizeOnClose";
     public static final boolean MINIMIZE_ON_CLOSE_DEFAULT = false;
+    public static final String SELECTED_LANGUAGE = "selLanguage";
+    public static final String DEFAULT_LANG_CODE = "EN";
+
+    private FWProp() {
+    }
 }

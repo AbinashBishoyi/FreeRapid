@@ -61,6 +61,8 @@ public class Consts {
 
     public static final String WEBURL = "http://wordrider.net/freerapid";
 
+    public static final String DEMO_WEBURL = "http://wordrider.net/freerapid/demo";
+
     // hodnoty pro defaultni hodnoty pripojeni
 
     protected static final String APP_CODE = "frd";

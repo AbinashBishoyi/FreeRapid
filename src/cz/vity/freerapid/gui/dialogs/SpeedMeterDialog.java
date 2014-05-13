@@ -18,7 +18,6 @@ public class SpeedMeterDialog extends AppFrame implements PropertyChangeListener
     private final static Logger logger = Logger.getLogger(SpeedMeterDialog.class.getName());
     private final ManagerDirector director;
     private SpeedMonitor comp;
-    private java.util.Timer timer;
     private TimerTask task;
 
 
@@ -61,7 +60,7 @@ public class SpeedMeterDialog extends AppFrame implements PropertyChangeListener
         this.cancelButton = new JButton();
         setAction(cancelButton, "cancelBtnAction");
         //   director.getDataManager().addPropertyChangeListener("averageSpeed", this);
-        timer = new java.util.Timer();
+        java.util.Timer timer = new java.util.Timer();
         task = new TimerTask() {
             public void run() {
                 comp.setCurrentSpeed(director.getDataManager().getAverageSpeed());

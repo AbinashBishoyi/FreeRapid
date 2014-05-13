@@ -3,11 +3,13 @@ package cz.vity.freerapid.utilities;
 import cz.vity.freerapid.core.tasks.DownloadTask;
 
 import java.io.*;
+import java.util.logging.Logger;
 
 /**
  * @author Ladislav Vitasek
  */
 public class FileUtils {
+    private final static Logger logger = Logger.getLogger(FileUtils.class.getName());
 
     private FileUtils() {
     }
@@ -42,8 +44,9 @@ public class FileUtils {
                 written += toWrite;
             }
         } catch (IOException e) {
-            if (fos != null)
+            if (fos != null) {
                 fos.close();
+            }
             throw e;
         }
 

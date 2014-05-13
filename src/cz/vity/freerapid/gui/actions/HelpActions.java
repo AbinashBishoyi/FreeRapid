@@ -1,6 +1,9 @@
 package cz.vity.freerapid.gui.actions;
 
+import cz.vity.freerapid.core.AppPrefs;
+import cz.vity.freerapid.core.Consts;
 import cz.vity.freerapid.core.MainApp;
+import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.CheckForNewVersionTask;
 import cz.vity.freerapid.gui.dialogs.AboutDialog;
 import cz.vity.freerapid.swing.Swinger;
@@ -26,12 +29,13 @@ public class HelpActions {
 
     @Action
     public void paypalSupportAction() {
-        Browser.openBrowser("https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=donations%40wordrider.net&item_name=FreeRapid&no_shipping=1&cn=Optional+comments&tax=0");
+        final String paypal = "https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=donations%40wordrider.net&item_name=FreeRapid&no_shipping=1&cn=Optional+comments&tax=0";
+        Browser.openBrowser(AppPrefs.getProperty(UserProp.PAYPAL, paypal));
     }
 
     @Action
     public void help() {
-        Swinger.showInformationDialog(Swinger.getResourceMap().getString("notImplementedYet"));
+        Swinger.showInformationDialog(app.getContext().getResourceMap().getString("notImplementedYet"));
     }
 
     @Action
@@ -42,6 +46,11 @@ public class HelpActions {
     @Action
     public void visitHomepage() {
         Browser.showHomepage();
+    }
+
+    @Action
+    public void showDemo() {
+        Browser.openBrowser(AppPrefs.getProperty(UserProp.DEMO_URL, Consts.DEMO_WEBURL));
     }
 
     @Action

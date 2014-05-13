@@ -130,7 +130,7 @@ public final class Utils {
     /**
      * Otestuje zda aplikace bezi na Windows
      *
-     * @return
+     * @return Vraci test, zda je OS windows
      */
     public static boolean isWindows() {
         if (operatingSystem == -1) {

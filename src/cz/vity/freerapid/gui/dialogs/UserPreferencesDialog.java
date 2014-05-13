@@ -15,10 +15,7 @@ import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
 import com.l2fprod.common.swing.JButtonBar;
 import com.l2fprod.common.swing.plaf.blue.BlueishButtonBarUI;
-import cz.vity.freerapid.core.AppPrefs;
-import cz.vity.freerapid.core.FWProp;
-import cz.vity.freerapid.core.MainApp;
-import cz.vity.freerapid.core.UserProp;
+import cz.vity.freerapid.core.*;
 import cz.vity.freerapid.gui.MyPreferencesAdapter;
 import cz.vity.freerapid.gui.MyPresentationModel;
 import cz.vity.freerapid.gui.dialogs.filechooser.OpenSaveDialogFactory;
@@ -26,6 +23,7 @@ import cz.vity.freerapid.swing.LaF;
 import cz.vity.freerapid.swing.LookAndFeels;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.LogUtils;
+import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.swinghelper.buttonpanel.JXButtonPanel;
 
@@ -35,6 +33,7 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
@@ -48,16 +47,19 @@ public class UserPreferencesDialog extends AppDialog {
     private MyPresentationModel model;
     private static final String CARD_PROPERTY = "card";
     private static final String LAF_PROPERTY = "lafFakeProperty";
+    private static final String LNG_PROPERTY = "lngFakeProperty";
     @SuppressWarnings({"FieldAccessedSynchronizedAndUnsynchronized"})
     private ApplyPreferenceChangeListener prefListener = null;
     private ResourceMap bundle;
+    private final ApplicationContext context;
 
     private static enum Card {
         CARD1, CARD2, CARD3, CARD4, CARD5
     }
 
-    public UserPreferencesDialog(Frame owner) throws Exception {
+    public UserPreferencesDialog(Frame owner, ApplicationContext context) throws Exception {
         super(owner, true);
+        this.context = context;
         this.setName("UserPreferencesDialog");
         bundle = getResourceMap();
         try {
@@ -100,7 +102,7 @@ public class UserPreferencesDialog extends AppDialog {
 
     @org.jdesktop.application.Action
     public void btnSelectProxyListAction() {
-        final File[] files = OpenSaveDialogFactory.getInstance().getChooseProxyList();
+        final File[] files = OpenSaveDialogFactory.getInstance(context).getChooseProxyList();
         if (files.length > 0) {
             fieldProxyListPath.setText(files[0].getAbsolutePath());
             Swinger.inputFocus(fieldProxyListPath);
@@ -227,6 +229,10 @@ public class UserPreferencesDialog extends AppDialog {
 
         bind(checkPrepareFile, UserProp.ANTI_FRAGMENT_FILES, UserProp.ANTI_FRAGMENT_FILES_DEFAULT);
 
+        bind(checkCloseToTray, FWProp.MINIMIZE_ON_CLOSE, FWProp.MINIMIZE_ON_CLOSE_DEFAULT);
+
+        bind(checkUseDefaultConnection, UserProp.USE_DEFAULT_CONNECTION, UserProp.USE_DEFAULT_CONNECTION_DEFAULT);
+
         valueModel = bind(checkShowIconInSystemTray, FWProp.SHOW_TRAY, true);
 
         PropertyConnector.connectAndUpdate(valueModel, checkAnimateIcon, "enabled");
@@ -234,6 +240,8 @@ public class UserPreferencesDialog extends AppDialog {
         bind(comboFileExists, UserProp.FILE_ALREADY_EXISTS, UserProp.FILE_ALREADY_EXISTS_DEFAULT, "fileAlreadyExistsOptions");
 
         bindLaFCombobox();
+
+        bindLngCombobox();
     }
 
     private void bindLaFCombobox() {
@@ -242,6 +250,15 @@ public class UserPreferencesDialog extends AppDialog {
         final LookAndFeelAdapter adapter = new LookAndFeelAdapter(LAF_PROPERTY, lafs.getSelectedLaF());
         final SelectionInList<String> inList = new SelectionInList<String>(listModel, model.getBufferedModel(adapter));
         Bindings.bind(comboLaF, inList);
+    }
+
+    private void bindLngCombobox() {
+        final ListModel listModel = new ArrayListModel<SupportedLanguage>(Lng.getSupportedLanguages());
+        final LanguageAdapter adapter = new LanguageAdapter(LNG_PROPERTY, Lng.getSelectedLanguage());
+        final SelectionInList<String> inList = new SelectionInList<String>(listModel, model.getBufferedModel(adapter));
+        Bindings.bind(comboLng, inList);
+
+        comboLng.setRenderer(new LanguageComboCellRenderer(context));
     }
 
 
@@ -297,7 +314,18 @@ public class UserPreferencesDialog extends AppDialog {
             updateLookAndFeel();
         }
 
+        final SupportedLanguage lng = Lng.getSelectedLanguage();
+        if (!lng.equals(comboLng.getSelectedItem())) {
+            updateLng();
+
+        }
+
         doClose();
+    }
+
+    private void updateLng() {
+        AppPrefs.storeProperty(FWProp.SELECTED_LANGUAGE, ((SupportedLanguage) comboLng.getSelectedItem()).getLanguageCode());
+        Swinger.showInformationDialog(getResourceMap().getString("changeLanguageAfterRestart"));
     }
 
     @org.jdesktop.application.Action
@@ -377,15 +405,23 @@ public class UserPreferencesDialog extends AppDialog {
         checkGenerateTXTDescription = new JCheckBox();
         checkGenerateDescIon = new JCheckBox();
         checkGenerateHidden = new JCheckBox();
+        checkCloseToTray = new JCheckBox();
+        checkUseDefaultConnection = new JCheckBox();
         checkGenerateTXTDescription.setName("checkGenerateTXTDescription");
         checkGenerateDescIon.setName("checkGenerateDescIon");
         checkGenerateHidden.setName("checkGenerateHidden");
-
+        checkCloseToTray.setName("checkCloseToTray");
+        checkUseDefaultConnection.setName("checkUseDefaultConnection");
         checkShowHorizontalLinesInTable = new JCheckBox();
         checkShowVerticalLinesInTable = new JCheckBox();
         checkShowHorizontalLinesInTable.setName("checkShowHorizontalLinesInTable");
         checkShowVerticalLinesInTable.setName("checkShowVerticalLinesInTable");
         JLabel labelIfFilenameExists = new JLabel();
+        JLabel labelLanguage = new JLabel();
+        labelLanguage.setName("language");
+        labelLanguage.setLabelFor(comboLng);
+        comboLng = new JComboBox();
+        comboLng.setName("comboLng");
         comboFileExists = new JComboBox();
         JPanel panelSoundSettings = new JPanel();
         JPanel panelMiscSettings = new JPanel();
@@ -397,6 +433,7 @@ public class UserPreferencesDialog extends AppDialog {
         checkPlaySoundWhenComplete = new JCheckBox();
         JPanel panelViews = new JPanel();
         JPanel panelAppearance = new JPanel();
+        JPanel panelSystemTray = new JPanel();
         JLabel labelLaF = new JLabel();
         comboLaF = new JComboBox();
         JLabel labelRequiresRestart2 = new JLabel();
@@ -488,12 +525,17 @@ public class UserPreferencesDialog extends AppDialog {
                                     new ColumnSpec[]{
                                             new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(0), FormSpec.NO_GROW),
                                             FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                            FormFactory.DEFAULT_COLSPEC
+                                            FormFactory.DEFAULT_COLSPEC,
+                                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                            new ColumnSpec("max(default;70dlu)"),
+                                            new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
                                     },
-                                    RowSpec.decodeSpecs("default, default")), panelApplicationSettings);
+                                    RowSpec.decodeSpecs("default, default, default")), panelApplicationSettings);
 
-                            panelApplicationSettingsBuilder.add(checkForNewVersion, cc.xy(3, 1));
-                            panelApplicationSettingsBuilder.add(checkAllowOnlyOneInstance, cc.xy(3, 2));
+                            panelApplicationSettingsBuilder.add(checkForNewVersion, cc.xyw(3, 1, 4));
+                            panelApplicationSettingsBuilder.add(checkAllowOnlyOneInstance, cc.xyw(3, 2, 4));
+                            panelApplicationSettingsBuilder.add(labelLanguage, cc.xyw(3, 3, 1));
+                            panelApplicationSettingsBuilder.add(comboLng, cc.xyw(5, 3, 1));
                         }
 
                         //======== panelDownloadsSettings ========
@@ -661,15 +703,6 @@ public class UserPreferencesDialog extends AppDialog {
                             //---- checkDecoratedFrames ----
                             checkDecoratedFrames.setName("checkDecoratedFrames");
 
-                            //---- checkShowIconInSystemTray ----
-                            checkShowIconInSystemTray.setName("checkShowIconInSystemTray");
-
-                            //---- checkHideWhenMinimized ----
-                            checkHideWhenMinimized.setName("checkHideWhenMinimized");
-
-                            checkAnimateIcon.setName("checkAnimateIcon");
-                            //checkAnimateIcon.setBorder(new EmptyBorder(0, 35, 0, 0));
-
                             checkShowTitle.setName("checkShowTitle");
                             checkProcessFromTop.setName("checkProcessFromTop");
 
@@ -691,34 +724,66 @@ public class UserPreferencesDialog extends AppDialog {
                                             FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.DEFAULT_ROWSPEC,
-                                            FormFactory.DEFAULT_ROWSPEC,
-                                            FormFactory.DEFAULT_ROWSPEC,
-                                            FormFactory.DEFAULT_ROWSPEC,
-                                            FormFactory.DEFAULT_ROWSPEC,
-                                            //FormFactory.RELATED_GAP_ROWSPEC
                                     }), panelAppearance);
 
                             panelAppearanceBuilder.add(labelLaF, cc.xy(3, 1));
                             panelAppearanceBuilder.add(comboLaF, cc.xy(5, 1));
                             panelAppearanceBuilder.add(labelRequiresRestart2, cc.xy(7, 1));//1
                             panelAppearanceBuilder.add(checkDecoratedFrames, cc.xywh(3, 2, 5, 1));
-                            panelAppearanceBuilder.add(checkShowIconInSystemTray, cc.xywh(3, 3, 5, 1));
-                            panelAppearanceBuilder.add(checkAnimateIcon, cc.xywh(3, 5, 5, 1));
-                            panelAppearanceBuilder.add(checkShowHorizontalLinesInTable, cc.xywh(3, 7, 5, 1));
-                            panelAppearanceBuilder.add(checkShowVerticalLinesInTable, cc.xywh(3, 8, 5, 1));
-                            panelAppearanceBuilder.add(checkShowTitle, cc.xywh(3, 9, 5, 1));
-                            panelAppearanceBuilder.add(checkHideWhenMinimized, cc.xywh(3, 10, 5, 1));
+                            panelAppearanceBuilder.add(checkShowHorizontalLinesInTable, cc.xywh(3, 5, 5, 1));
+                            panelAppearanceBuilder.add(checkShowVerticalLinesInTable, cc.xywh(3, 6, 5, 1));
+                            panelAppearanceBuilder.add(checkShowTitle, cc.xywh(3, 7, 5, 1));
                         }
+
+                        //======== panel System tray ========
+                        {
+                            panelSystemTray.setBorder(new CompoundBorder(
+                                    new TitledBorder(null, bundle.getString("panelSystemTray.border"), TitledBorder.LEADING, TitledBorder.TOP),
+                                    Borders.DLU2_BORDER));
+
+                            //---- checkShowIconInSystemTray ----
+                            checkShowIconInSystemTray.setName("checkShowIconInSystemTray");
+
+                            //---- checkHideWhenMinimized ----
+                            checkHideWhenMinimized.setName("checkHideWhenMinimized");
+
+                            checkAnimateIcon.setName("checkAnimateIcon");
+
+                            PanelBuilder panelSystemTrayBuilder = new PanelBuilder(new FormLayout(
+                                    new ColumnSpec[]{
+                                            new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(0), FormSpec.NO_GROW),
+                                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                            FormFactory.DEFAULT_COLSPEC,
+                                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                            FormFactory.PREF_COLSPEC,
+                                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                            new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
+                                    },
+                                    new RowSpec[]{
+                                            FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC,
+
+                                    }), panelSystemTray);
+
+                            panelSystemTrayBuilder.add(checkShowIconInSystemTray, cc.xy(3, 1));
+                            panelSystemTrayBuilder.add(checkAnimateIcon, cc.xy(5, 1));
+                            panelSystemTrayBuilder.add(checkCloseToTray, cc.xy(3, 2));
+                            panelSystemTrayBuilder.add(checkHideWhenMinimized, cc.xy(5, 2));
+                        }
+
 
                         PanelBuilder panelViewsBuilder = new PanelBuilder(new FormLayout(
                                 ColumnSpec.decodeSpecs("default:grow"),
                                 new RowSpec[]{
                                         FormFactory.DEFAULT_ROWSPEC,
                                         FormFactory.RELATED_GAP_ROWSPEC,
+                                        FormFactory.DEFAULT_ROWSPEC,
+                                        FormFactory.RELATED_GAP_ROWSPEC,
                                         new RowSpec(RowSpec.CENTER, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
                                 }), panelViews);
 
                         panelViewsBuilder.add(panelAppearance, cc.xy(1, 1));
+                        panelViewsBuilder.add(panelSystemTray, cc.xy(1, 3));
                     }
                     panelCard.add(panelViews, "CARD4");
 
@@ -742,15 +807,18 @@ public class UserPreferencesDialog extends AppDialog {
                                             FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                                             FormFactory.DEFAULT_COLSPEC,
                                             FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                            new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(0), FormSpec.DEFAULT_GROW),
                                             new ColumnSpec("max(default;30dlu)")
                                     },
                                     new RowSpec[]{
+                                            FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.NARROW_LINE_GAP_ROWSPEC
                                     }), panelConnections1);
 
                             panelConnections1Builder.add(labelMaxConcurrentDownloads, cc.xy(3, 1));
                             panelConnections1Builder.add(spinnerMaxConcurrentDownloads, cc.xy(5, 1));
+                            panelConnections1Builder.add(checkUseDefaultConnection, cc.xyw(3, 2, 4));
                         }
 
                         //======== panelProxySettings ========
@@ -879,6 +947,7 @@ public class UserPreferencesDialog extends AppDialog {
     private JCheckBox checkPlaySoundInCaseOfError;
     private JCheckBox checkPlaySoundWhenComplete;
     private JComboBox comboLaF;
+    private JComboBox comboLng;
     private JCheckBox checkDecoratedFrames;
     private JCheckBox checkAnimateIcon;
     private JCheckBox checkShowIconInSystemTray;
@@ -890,6 +959,8 @@ public class UserPreferencesDialog extends AppDialog {
     private JCheckBox checkShowHorizontalLinesInTable;
     private JCheckBox checkShowVerticalLinesInTable;
     private JCheckBox checkPrepareFile;
+    private JCheckBox checkCloseToTray;
+    private JCheckBox checkUseDefaultConnection;
 
     private JSpinner spinnerMaxConcurrentDownloads;
     private JCheckBox checkUseProxyList;
@@ -903,7 +974,7 @@ public class UserPreferencesDialog extends AppDialog {
     private JButtonBar toolbar;
 
 
-    private class ApplyPreferenceChangeListener implements PreferenceChangeListener {
+    private final class ApplyPreferenceChangeListener implements PreferenceChangeListener {
 
         public void preferenceChange(PreferenceChangeEvent evt) {
             //pozor, interne se vola ve zvlastnim vlakne, nikoli na EDT threadu
@@ -937,4 +1008,30 @@ public class UserPreferencesDialog extends AppDialog {
     }
 
 
+    private final static class LanguageComboCellRenderer extends DefaultListCellRenderer {
+        private String path;
+        private ResourceMap map;
+
+        private LanguageComboCellRenderer(ApplicationContext context) {
+            map = context.getResourceMap();
+            path = map.getResourcesDir() + map.getString("flagsPath");
+        }
+
+        @Override
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            final SupportedLanguage lng = (SupportedLanguage) value;
+
+            assert lng != null;
+
+            String s = lng.getIcon();
+            if (s == null)
+                s = map.getString("blank.gif");
+            final URL resource = map.getClassLoader().getResource(path + s);
+            final Component component = super.getListCellRendererComponent(list, lng.getName(), index, isSelected, cellHasFocus);
+            if (resource != null) {
+                this.setIcon(new ImageIcon(resource));
+            }
+            return component;
+        }
+    }
 }

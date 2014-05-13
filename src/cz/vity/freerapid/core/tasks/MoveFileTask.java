@@ -60,14 +60,14 @@ public class MoveFileTask extends CoreTask<Void, Void> {
         if (from.getParentFile().equals(to.getParentFile())) {
             if (from.renameTo(to)) {
                 saveToHistoryList();
-            } else throw new FileTransferFailedException("Creating output file path failed");
+            } else throw new FileTransferFailedException(getResourceMap().getString("creatingOutputFilePathFailed"));
             saveDescriptionFiles();
             return null;
         }
 
         if (!to.getParentFile().exists()) {
             if (!to.mkdirs())
-                throw new FileTransferFailedException("Creating output path failed");
+                throw new FileTransferFailedException(getResourceMap().getString("creatingOutputFilePathFailed"));
         }
 
         saveDescriptionFiles();

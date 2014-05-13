@@ -70,7 +70,7 @@ public class FileTypeIconProvider {
             if (!s.isEmpty())
                 return s;
         }
-        return url.replaceAll("\\:", "_");
+        return url.replaceAll("\\:", "_").trim();
     }
 
     public Icon getIconImageByFileType(String fileType, boolean bigImage) {

@@ -199,7 +199,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 
                 if (!isTerminated()) {
                     if (counter != fileSize)
-                        throw new IOException("Error during download.\nStream was closed unexpectedly.\nFile is not complete");
+                        throw new IOException("ErrorDuringDownload");
                     setDownloaded(fileSize);//100%
                 } else {
                     logger.info("File downloading was terminated");
@@ -309,7 +309,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         if (cause instanceof NotEnoughSpaceException) {
             Swinger.showErrorMessage(getResourceMap(), "NotEnoughSpaceException", (storeFile != null) ? storeFile : "");
         } else if (cause instanceof UnknownHostException) {
-            downloadFile.setErrorMessage("Unknown host error - connection problem?");
+            downloadFile.setErrorMessage(getResourceMap().getString("UnknownHostError"));
         } else
         if (cause instanceof URLNotAvailableAnymoreException || cause instanceof PluginImplementationException || cause instanceof CaptchaEntryInputMismatchException || cause instanceof NoRouteToHostException) {
             setServiceError(DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR);
@@ -323,11 +323,12 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 
     private void error(Throwable cause) {
         downloadFile.setState(DownloadState.ERROR);
-        downloadFile.setErrorMessage(cause.getMessage());
+        if (getResourceMap().containsKey(cause.getMessage()))
+            downloadFile.setErrorMessage(getResourceMap().getString(cause.getMessage()));
         setServiceError(DownloadTaskError.GENERAL_ERROR);
         if (!(cause instanceof YouHaveToWaitException)) {
             if (AppPrefs.getProperty(UserProp.PLAY_SOUNDS_FAILED, true))
-                Sound.playSound("error.wav");
+                Sound.playSound(getResourceMap().getString("error.wav"));
         }
     }
 
@@ -389,7 +390,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                     if (allComplete) {
                         final boolean sound = AppPrefs.getProperty(UserProp.PLAY_SOUNDS_OK, true);
                         if (sound)
-                            Sound.playSound("done.wav");
+                            Sound.playSound(getResourceMap().getString("done.wav"));
                         if (AppPrefs.getProperty(UserProp.CLOSE_WHEN_COMPLETED, false)) {
                             app.getContext().getTaskService().execute(new CloseInTimeTask(app));
                         }
@@ -409,7 +410,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                 downloadFile.setState(DownloadState.ERROR);
                 //noinspection ThrowableResultOfMethodCallIgnored
                 downloadFile.setErrorMessage(getResourceMap().getString("transferFailed", event.getValue().getMessage()));
-                Sound.playSound("error.wav");
+                Sound.playSound(getResourceMap().getString("error.wav"));
             }
 
             @Override
@@ -462,11 +463,11 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 
     public BufferedImage loadCaptcha(InputStream inputStream) throws FailedToLoadCaptchaPictureException {
         if (inputStream == null)
-            throw new NullPointerException("Input stream for captcha is null");
+            throw new NullPointerException("InputStreamForCaptchaIsNull");
         try {
             return ImageIO.read(inputStream);
         } catch (IOException e) {
-            throw new FailedToLoadCaptchaPictureException("Reading captcha picture failed", e);
+            throw new FailedToLoadCaptchaPictureException("ReadingCaptchaPictureFailed", e);
         }
     }
 
@@ -475,7 +476,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
             public void run() {
                 captchaResult = "";
                 while (captchaResult.isEmpty()) {
-                    captchaResult = (String) JOptionPane.showInputDialog(null, "Insert what you see", "Insert Captcha", JOptionPane.PLAIN_MESSAGE, new ImageIcon(image), null, null);
+                    captchaResult = (String) JOptionPane.showInputDialog(null, getResourceMap().getString("InsertWhaYouSee"), getResourceMap().getString("InsertCaptcha"), JOptionPane.PLAIN_MESSAGE, new ImageIcon(image), null, null);
                     if (captchaResult == null)
                         break;
                 }

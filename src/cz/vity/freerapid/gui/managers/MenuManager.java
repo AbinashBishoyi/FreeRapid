@@ -117,6 +117,7 @@ public class MenuManager {
                 "help",
                 MENU_SEPARATOR,
                 "checkForNewVersion",
+                "showDemo",
                 "visitHomepage",
                 MENU_SEPARATOR,
                 "paypalSupportAction",

@@ -28,7 +28,7 @@ public class ClientManager {
     private int popCount;
 
     public ClientManager() {
-        if (AppPrefs.getProperty(UserProp.USE_DEFAULT_CONNECTION, true))
+        if (AppPrefs.getProperty(UserProp.USE_DEFAULT_CONNECTION, UserProp.USE_DEFAULT_CONNECTION_DEFAULT))
             availableConnections.add(new ConnectionSettings());
         popCount = 0;
         //maxClients = AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, 5);

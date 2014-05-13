@@ -20,6 +20,7 @@ import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.OSDesktop;
 import org.jdesktop.application.ApplicationActionMap;
 import org.jdesktop.application.ApplicationContext;
+import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.Task;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.FilterPipeline;
@@ -89,17 +90,33 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
 
     private JXTable table;
+    private static String[] states;
 
     public ContentPanel(ApplicationContext context, ManagerDirector director) {
         this.context = context;
         this.director = director;
         this.manager = director.getDataManager();
         this.setName("contentPanel");
+
+        readStates();
+
         Swinger.initActions(this, context);
         initComponents();
         setActions();
+
+
         manager.getDownloadFiles().addListDataListener(this);
         manager.addPropertyChangeListener(this);
+
+    }
+
+    private void readStates() {
+        final DownloadState[] downloadStates = DownloadState.values();
+        states = new String[downloadStates.length];
+        int i = 0;
+        for (DownloadState state : downloadStates) {
+            states[i++] = context.getResourceMap().getString(state.name());
+        }
 
     }
 
@@ -502,14 +519,14 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         colName.setCellRenderer(new NameURLCellRenderer(director.getFileTypeIconProvider()));
         colName.setWidth(150);
         colName.setMinWidth(50);
-        tableColumnModel.getColumn(COLUMN_PROGRESSBAR).setCellRenderer(new ProgressBarCellRenderer());
+        tableColumnModel.getColumn(COLUMN_PROGRESSBAR).setCellRenderer(new ProgressBarCellRenderer(context));
         tableColumnModel.getColumn(COLUMN_PROGRESS).setCellRenderer(new ProgressCellRenderer());
-        tableColumnModel.getColumn(COLUMN_STATE).setCellRenderer(new EstTimeCellRenderer());
-        tableColumnModel.getColumn(COLUMN_SIZE).setCellRenderer(new SizeCellRenderer());
+        tableColumnModel.getColumn(COLUMN_STATE).setCellRenderer(new EstTimeCellRenderer(context));
+        tableColumnModel.getColumn(COLUMN_SIZE).setCellRenderer(new SizeCellRenderer(context));
         tableColumnModel.getColumn(COLUMN_SPEED).setCellRenderer(new SpeedCellRenderer());
         tableColumnModel.getColumn(COLUMN_AVERAGE_SPEED).setCellRenderer(new AverageSpeedCellRenderer());
         tableColumnModel.getColumn(COLUMN_SERVICE).setCellRenderer(new ServiceCellRenderer());
-        tableColumnModel.getColumn(COLUMN_PROXY).setCellRenderer(new ConnectionCellRenderer());
+        tableColumnModel.getColumn(COLUMN_PROXY).setCellRenderer(new ConnectionCellRenderer(context));
 
         table.addMouseListener(new MouseAdapter() {
             @Override
@@ -587,8 +604,10 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         popup.add(map.get("removeSelectedAction"));
 //        final JMenu menu = new JMenu("Misc");
 //        popup.add(menu);
-        JMenu forceMenu = new JMenu("Force Download");
-        forceMenu.setMnemonic('F');
+        JMenu forceMenu = new JMenu();
+        forceMenu.setName("forceDownloadMenu");
+        context.getResourceMap().injectComponent(forceMenu);
+
 //      menu.add(forceMenu);
         boolean forceEnabled = isSelectedEnabled() && this.manager.hasDownloadFilesStates(getSelectedRows(), DownloadState.forceEnabledStates);
         forceMenu.setEnabled(forceEnabled);
@@ -777,6 +796,17 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     }
 
     private static class SizeCellRenderer extends DefaultTableCellRenderer {
+        private final String sizeRendererProgress;
+        private final String sizeRendererUnknown;
+        private final String sizeRendererInBytes;
+
+        private SizeCellRenderer(ApplicationContext context) {
+            final ResourceMap map = context.getResourceMap();
+            sizeRendererProgress = map.getString("sizeRendererProgress");
+            sizeRendererUnknown = map.getString("sizeRendererUnknown");
+            sizeRendererInBytes = map.getString("sizeRendererInBytes");
+
+        }
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -784,12 +814,12 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             final long fs = downloadFile.getFileSize();
             if (fs >= 0) {
                 if (downloadFile.getDownloaded() != fs)
-                    value = bytesToAnother(downloadFile.getDownloaded()) + " of " + bytesToAnother(fs);
+                    value = String.format(sizeRendererProgress, bytesToAnother(downloadFile.getDownloaded()), bytesToAnother(fs));
                 else
                     value = bytesToAnother(fs);
-                this.setToolTipText(NumberFormat.getIntegerInstance().format(fs) + " B");
+                this.setToolTipText(String.format(sizeRendererInBytes, NumberFormat.getIntegerInstance().format(fs)));
             } else {
-                value = "unknown";
+                value = sizeRendererUnknown;
                 this.setToolTipText(null);
             }
             return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
@@ -824,10 +854,13 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     }
 
     private static class EstTimeCellRenderer extends DefaultTableCellRenderer {
-        private String tooltip;
+        private final String tooltip;
+        private final String elapsedTime;
 
-        private EstTimeCellRenderer() {
-            tooltip = Swinger.getResourceMap().getString("tooltip");
+        private EstTimeCellRenderer(ApplicationContext context) {
+            final ResourceMap map = context.getResourceMap();
+            tooltip = map.getString("tooltip");
+            elapsedTime = map.getString("elapsedTime");
         }
 
         @Override
@@ -859,8 +892,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             } else if (DownloadState.isProcessState(state)) {
                 Task task = downloadFile.getTask();
                 if (task != null)
-                    this.setToolTipText("Elapsed time: " + secondsToHMin(task.getExecutionDuration(TimeUnit.SECONDS)));
-
+                    this.setToolTipText(String.format(elapsedTime, secondsToHMin(task.getExecutionDuration(TimeUnit.SECONDS))));
             }
 
             return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
@@ -871,9 +903,14 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         private static final Color BG_RED = new Color(0xFFD0D0);
         private static final Color BG_ORANGE = new Color(0xFFEDD0);
         private static final Color BG_GREEN = new Color(0xD0FFE9);
+        private String autoReconnectIn;
+        private String attemptForDownloading;
 
-        public ProgressBarCellRenderer() {
+        public ProgressBarCellRenderer(ApplicationContext context) {
             super(0, 100);
+            final ResourceMap map = context.getResourceMap();
+            autoReconnectIn = map.getString("autoreconnectIn");
+            attemptForDownloading = map.getString("attemptForDownloading");
         }
 
         @Override
@@ -900,7 +937,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                 this.setStringPainted(true);
                 this.setString(toQueued + "/" + max);
                 this.setValue(getProgress(max, toQueued));
-                this.setToolTipText("Autoreconnect in " + toQueued + " seconds");
+                this.setToolTipText(String.format(autoReconnectIn, toQueued));
             } else {
                 final int sleep = downloadFile.getSleep();
                 if (state == DownloadState.WAITING && sleep >= 0) {
@@ -908,7 +945,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                     this.setStringPainted(true);
                     this.setString(sleep + "/" + max);
                     this.setValue(getProgress(max, sleep));
-                    this.setToolTipText("Attempt for downloading in " + sleep + " seconds");
+                    this.setToolTipText(String.format(attemptForDownloading, sleep));
                 } else {
                     this.setToolTipText(null);
                     this.setStringPainted(false);
@@ -925,6 +962,12 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     }
 
     private static class ConnectionCellRenderer extends DefaultTableCellRenderer {
+        private final String defaultConnection;
+
+        private ConnectionCellRenderer(ApplicationContext context) {
+            final ResourceMap map = context.getResourceMap();
+            defaultConnection = map.getString("defaultConnection");
+        }
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -938,7 +981,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                     if (con.getUserName() != null) {
                         value = con.getUserName() + "@" + value;
                     }
-                } else value = "Default";
+                } else value = defaultConnection;
             } else value = "";
             return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         }
@@ -972,7 +1015,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     }
 
     private static String stateToString(DownloadState state) {
-        return state.toString();
+        return states[state.ordinal()];
     }
 
 
