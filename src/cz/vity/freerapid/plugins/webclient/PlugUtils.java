@@ -41,6 +41,8 @@ public final class PlugUtils {
             constant = 1024 * 1024;
         } else if ((index = value.lastIndexOf("GB")) >= 0) {
             constant = 1024 * 1024 * 1024;
+        } else {
+            index = value.lastIndexOf("BYTES");
         }
         if (index > 0) {
             value = value.substring(0, index);
