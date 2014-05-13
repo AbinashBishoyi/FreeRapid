@@ -48,7 +48,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
             PropertyDescriptor[] propertyDescriptors =
                     info.getPropertyDescriptors();
             for (PropertyDescriptor pd : propertyDescriptors) {
-                if ("task".equals(pd.getName()) || "speed".equals(pd.getName()) || "averageSpeed".equals(pd.getName())) {
+                if ("task".equals(pd.getName()) || "speed".equals(pd.getName())) {
                     pd.setValue("transient", Boolean.TRUE);
                 }
             }
