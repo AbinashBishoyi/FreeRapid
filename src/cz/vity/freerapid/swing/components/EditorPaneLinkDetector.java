@@ -8,6 +8,8 @@ import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -160,8 +162,10 @@ public class EditorPaneLinkDetector extends JEditorPane {
             final String e = matcher.group();
             if (!EXAMPLE.equals(e)) {
                 try {
-                    list.add(new URL(e));
+                    list.add(new URI(e).toURL());
                 } catch (MalformedURLException e1) {
+                    //ignore
+                } catch (URISyntaxException e1) {
                     //ignore
                 }
             }
@@ -325,8 +329,10 @@ public class EditorPaneLinkDetector extends JEditorPane {
             final Matcher match = EMAIL_PATTERN.matcher(token);
             if (match.find()) {
                 try {
-                    new URL(match.group());
+                    new URI(match.group()).toURL();
                 } catch (MalformedURLException e) {
+                    return false;
+                } catch (URISyntaxException e) {
                     return false;
                 }
                 return true;
