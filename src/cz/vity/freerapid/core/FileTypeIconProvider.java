@@ -2,13 +2,13 @@ package cz.vity.freerapid.core;
 
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.ResourceMap;
-import sun.awt.shell.ShellFolder;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -152,8 +152,7 @@ public class FileTypeIconProvider {
         try {
             file = File.createTempFile("icon", "." + extension);
 
-            ShellFolder shellFolder = ShellFolder.getShellFolder(file);
-            Image ico = shellFolder.getIcon(true);
+            Image ico = getShellFolderIcon(file);
             if (ico == null) {
                 Icon icon = map.getImageIcon("iconFileTypeBig_UNKNOWN");
                 systemLargeIcons.put(extension, icon);
@@ -168,6 +167,22 @@ public class FileTypeIconProvider {
         } finally {
             if (file != null)
                 file.delete();
+        }
+    }
+
+    private static Image getShellFolderIcon(final File file) {
+//        ShellFolder shellFolder = ShellFolder.getShellFolder(file);
+//        Image ico = shellFolder.getIcon(true);
+
+        try {
+            final Method method = Class.forName("sun.awt.shell.ShellFolder").getMethod("getShellFolder", File.class);
+            final Object sf = method.invoke(null, file);
+            final Method m = sf.getClass().getMethod("getIcon", Boolean.TYPE);
+            m.setAccessible(true);
+            final Object result = m.invoke(sf, true);
+            return (Image) result;
+        } catch (Exception e) {
+            return null;
         }
     }
 
