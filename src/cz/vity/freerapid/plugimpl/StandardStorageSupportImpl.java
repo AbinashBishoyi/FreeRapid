@@ -41,6 +41,9 @@ public class StandardStorageSupportImpl implements ConfigurationStorageSupport {
         try {
             xmlDecoder = new XMLDecoder(context.getLocalStorage().openInputFile(fileName), null, null, type.getClassLoader());
             return (E) xmlDecoder.readObject();
+        } catch (RuntimeException e) {
+            LogUtils.processException(logger, e);
+            throw e;
         } catch (Exception e) {
             LogUtils.processException(logger, e);
             throw e;
