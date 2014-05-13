@@ -50,7 +50,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     private static final int INPUT_BUFFER_SIZE = 50000;
     private static final int OUTPUT_FILE_BUFFER_SIZE = 600000;
     private volatile boolean connectionTimeOut;
-
+    private final static Object captchaLock = new Object();
 
     public DownloadTask(Application application, HttpDownloadClient client, DownloadFile downloadFile, ShareDownloadService service) {
         super(application);
@@ -484,7 +484,9 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                     Swinger.bringToFront(((SingleFrameApplication) getApplication()).getMainFrame());
                 captchaResult = "";
                 while (captchaResult.isEmpty()) {
-                    captchaResult = (String) JOptionPane.showInputDialog(null, getResourceMap().getString("InsertWhaYouSee"), getResourceMap().getString("InsertCaptcha"), JOptionPane.PLAIN_MESSAGE, new ImageIcon(image), null, null);
+                    synchronized (captchaLock) {
+                        captchaResult = (String) JOptionPane.showInputDialog(null, getResourceMap().getString("InsertWhaYouSee"), getResourceMap().getString("InsertCaptcha"), JOptionPane.PLAIN_MESSAGE, new ImageIcon(image), null, null);
+                    }
                     if (captchaResult == null)
                         break;
                 }

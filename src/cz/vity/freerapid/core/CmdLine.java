@@ -3,7 +3,6 @@ package cz.vity.freerapid.core;
 import org.apache.commons.cli2.CommandLine;
 import org.apache.commons.cli2.Group;
 import org.apache.commons.cli2.OptionException;
-import org.apache.commons.cli2.builder.ArgumentBuilder;
 import org.apache.commons.cli2.builder.DefaultOptionBuilder;
 import org.apache.commons.cli2.builder.GroupBuilder;
 import org.apache.commons.cli2.commandline.Parser;
@@ -34,7 +33,7 @@ public class CmdLine {
         if (args.length == 0)
             return new LinkedList();
         final DefaultOptionBuilder obuilder = new DefaultOptionBuilder();
-        final ArgumentBuilder abuilder = new ArgumentBuilder();
+        //new ArgumentBuilder();
         final GroupBuilder gbuilder = new GroupBuilder();
 
         DefaultOption helpOption = obuilder.withShortName("h").withShortName("?").withLongName("help").withDescription("print this message").create();
