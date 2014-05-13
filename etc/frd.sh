@@ -1,7 +1,7 @@
 #!/bin/sh
-# How to configure Fotogrametrie application installed locally in your computer.
+# How to configure FreeRapid application installed locally in your computer.
 
-# The script bellow shows how I am running Fotogrametrie on my Linux (Kubuntu)
+# The script bellow shows how I am running FreeRapid on my Linux (Kubuntu)
 
 #How do I register Java binaries globally on Linux?
 #You must place the correct path to the installed binaries in your /etc/bashrc configuration file.

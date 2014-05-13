@@ -37,6 +37,7 @@ public class UserProp {
 
     public static final String ERROR_ATTEMPTS_COUNT = "errorAttemptsCount";
     public static final int ERROR_ATTEMPTS_COUNT_DEFAULT = 5;
+
     public static int MAX_DOWNLOADS_AT_A_TIME_DEFAULT = 5;
 
     public static final String DOWNLOADED_HISTORY_FILE_NAME = "downloads.txt";
@@ -65,10 +66,10 @@ public class UserProp {
     public static final int ERROR_SLEEP_TIME_DEFAULT = 4;
 
     public static final String START_FROM_FROM_TOP = "startDownloadFromTheTop";
-    public static final boolean START_FROM_FROM_TOP_DEFAULT = false;
+    public static final boolean START_FROM_FROM_TOP_DEFAULT = true;
 
     public static final String SHOWINFO_IN_TITLE = "showInfoInFrameTitle";
-    public static final boolean SHOWINFO_IN_TITLE_DEFAULT = true;
+    public static final boolean SHOWINFO_IN_TITLE_DEFAULT = false;
 
     //ukladani fronty pro pripad padu programu atd.
     public static final String AUTOSAVE_ENABLED = "autosaveEnabled";
@@ -78,18 +79,18 @@ public class UserProp {
     public static final int AUTOSAVE_TIME_DEFAULT = 10;//sekundy
 
     public static final String CLIPBOARD_MONITORING = "clipboardMonitoring";
-    public static final boolean CLIPBOARD_MONITORING_DEFAULT = true;
+    public static final boolean CLIPBOARD_MONITORING_DEFAULT = false;
 
     public static final String ANIMATE_ICON = "animateIcon";
     public static final boolean ANIMATE_ICON_DEFAULT = true;
 
     public static final String GENERATE_DESCRIPT_ION_FILE = "generateDescript-ionFile";
-    public static final boolean GENERATE_DESCRIPT_ION_FILE_DEFAULT = true;
+    public static final boolean GENERATE_DESCRIPT_ION_FILE_DEFAULT = false;
 
     public static final String GENERATE_DESCRIPTION_BY_FILENAME = "generateDescriptionByFileName";
-    public static final boolean GENERATE_DESCRIPTION_BY_FILENAME_DEFAULT = true;
+    public static final boolean GENERATE_DESCRIPTION_BY_FILENAME_DEFAULT = false;
 
     public static final String GENERATE_DESCRIPTION_FILES_HIDDEN = "descriptionFilesHidden";
-    public static final boolean GENERATE_DESCRIPTION_FILES_HIDDEN_DEFAULT = true;
+    public static final boolean GENERATE_DESCRIPTION_FILES_HIDDEN_DEFAULT = false;
 
 }

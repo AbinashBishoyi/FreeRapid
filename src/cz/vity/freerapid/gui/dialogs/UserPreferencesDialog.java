@@ -53,7 +53,7 @@ public class UserPreferencesDialog extends AppDialog {
     private ResourceMap bundle;
 
     private static enum Card {
-        CARD1, CARD2, CARD3, CARD4
+        CARD1, CARD2, CARD3, CARD4, CARD5
     }
 
     public UserPreferencesDialog(Frame owner) throws Exception {
@@ -120,6 +120,7 @@ public class UserPreferencesDialog extends AppDialog {
         addButton(map.get("connectionsBtnAction"), Card.CARD2, group);
         addButton(map.get("soundBtnAction"), Card.CARD3, group);
         addButton(map.get("viewsBtnAction"), Card.CARD4, group);
+        addButton(map.get("miscBtnAction"), Card.CARD5, group);
 
         setAction(btnProxyListPathSelect, "btnSelectProxyListAction");
 
@@ -161,6 +162,9 @@ public class UserPreferencesDialog extends AppDialog {
             case CARD4:
                 actionName = "viewsBtnAction";
                 break;
+            case CARD5:
+                actionName = "miscBtnAction";
+                break;
             default:
                 assert false;
                 return;
@@ -194,7 +198,7 @@ public class UserPreferencesDialog extends AppDialog {
         bind(checkCloseWhenAllComplete, UserProp.CLOSE_WHEN_COMPLETED, false);
 
         bind(spinnerMaxConcurrentDownloads, UserProp.MAX_DOWNLOADS_AT_A_TIME, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT, 1, 9, 1);
-        bind(spinnerErrorAttemptsCount, UserProp.ERROR_ATTEMPTS_COUNT, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT, 0, 20, 1);
+        bind(spinnerErrorAttemptsCount, UserProp.ERROR_ATTEMPTS_COUNT, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT, -1, 999, 1);
         bind(spinnerAutoReconnectTime, UserProp.AUTO_RECONNECT_TIME, UserProp.AUTO_RECONNECT_TIME_DEFAULT, 10, 10000, 10);
 
         bind(checkProcessFromTop, UserProp.START_FROM_FROM_TOP, UserProp.START_FROM_FROM_TOP_DEFAULT);
@@ -213,6 +217,10 @@ public class UserPreferencesDialog extends AppDialog {
 
         bind(checkAnimateIcon, UserProp.ANIMATE_ICON, UserProp.ANIMATE_ICON_DEFAULT);
         bind(checkShowTitle, UserProp.SHOWINFO_IN_TITLE, UserProp.SHOWINFO_IN_TITLE_DEFAULT);
+
+        bind(checkGenerateTXTDescription, UserProp.GENERATE_DESCRIPTION_BY_FILENAME, UserProp.GENERATE_DESCRIPTION_BY_FILENAME_DEFAULT);
+        bind(checkGenerateDescIon, UserProp.GENERATE_DESCRIPT_ION_FILE, UserProp.GENERATE_DESCRIPT_ION_FILE_DEFAULT);
+        bind(checkGenerateHidden, UserProp.GENERATE_DESCRIPTION_FILES_HIDDEN, UserProp.GENERATE_DESCRIPTION_FILES_HIDDEN_DEFAULT);
 
         valueModel = bind(checkShowIconInSystemTray, FWProp.SHOW_TRAY, true);
 
@@ -318,6 +326,11 @@ public class UserPreferencesDialog extends AppDialog {
         showCard(e);
     }
 
+    @org.jdesktop.application.Action
+    public void miscBtnAction(ActionEvent e) {
+        showCard(e);
+    }
+
 
     @Override
     public void doClose() {
@@ -353,9 +366,18 @@ public class UserPreferencesDialog extends AppDialog {
         checkContinueInterrupted = new JCheckBox();
         checkCloseWhenAllComplete = new JCheckBox();
         checkProcessFromTop = new JCheckBox();
+        checkGenerateTXTDescription = new JCheckBox();
+        checkGenerateDescIon = new JCheckBox();
+        checkGenerateHidden = new JCheckBox();
+        checkGenerateTXTDescription.setName("checkGenerateTXTDescription");
+        checkGenerateDescIon.setName("checkGenerateDescIon");
+        checkGenerateHidden.setName("checkGenerateHidden");
+
         JLabel labelIfFilenameExists = new JLabel();
         comboFileExists = new JComboBox();
         JPanel panelSoundSettings = new JPanel();
+        JPanel panelMiscSettings = new JPanel();
+        JPanel panelDescSettings = new JPanel();
         JPanel panelSound = new JPanel();
         checkPlaySoundInCaseOfError = new JCheckBox();
         checkPlaySoundWhenComplete = new JCheckBox();
@@ -390,7 +412,6 @@ public class UserPreferencesDialog extends AppDialog {
         checkShowTitle = new JCheckBox();
 
         //======== this ========
-        setTitle(bundle.getString("this.title"));
         Container contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
 
@@ -549,6 +570,40 @@ public class UserPreferencesDialog extends AppDialog {
                         panelSoundSettingsBuilder.add(panelSound, cc.xy(1, 1));
                     }
                     panelCard.add(panelSoundSettings, "CARD3");
+
+                    //======== panelMiscenallnousSettings ========
+                    {
+                        panelMiscSettings.setBorder(Borders.TABBED_DIALOG_BORDER);
+
+                        //======== panelSound ========
+                        {
+                            panelDescSettings.setBorder(new TitledBorder(null, bundle.getString("panelDesc.border"), TitledBorder.LEADING, TitledBorder.TOP));
+
+
+                            PanelBuilder panelDescBuilder = new PanelBuilder(new FormLayout(
+                                    new ColumnSpec[]{
+                                            new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(0), FormSpec.NO_GROW),
+                                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                            FormFactory.DEFAULT_COLSPEC
+                                    },
+                                    RowSpec.decodeSpecs("default, default, default")), panelDescSettings);
+
+                            panelDescBuilder.add(checkGenerateDescIon, cc.xy(3, 1));
+                            panelDescBuilder.add(checkGenerateTXTDescription, cc.xy(3, 2));
+                            panelDescBuilder.add(checkGenerateHidden, cc.xy(3, 3));
+                        }
+
+                        PanelBuilder panelMiscSettingsBuilder = new PanelBuilder(new FormLayout(
+                                ColumnSpec.decodeSpecs("default:grow"),
+                                new RowSpec[]{
+                                        FormFactory.DEFAULT_ROWSPEC,
+                                        FormFactory.RELATED_GAP_ROWSPEC,
+                                        FormFactory.DEFAULT_ROWSPEC
+                                }), panelMiscSettings);
+
+                        panelMiscSettingsBuilder.add(panelDescSettings, cc.xy(1, 1));
+                    }
+                    panelCard.add(panelMiscSettings, "CARD5");
 
                     //======== panelViews ========
                     {
@@ -787,6 +842,10 @@ public class UserPreferencesDialog extends AppDialog {
     private JCheckBox checkAnimateIcon;
     private JCheckBox checkShowIconInSystemTray;
     private JCheckBox checkHideWhenMinimized;
+    private JCheckBox checkGenerateTXTDescription;
+    private JCheckBox checkGenerateDescIon;
+    private JCheckBox checkGenerateHidden;
+
     private JSpinner spinnerMaxConcurrentDownloads;
     private JCheckBox checkUseProxyList;
     private JCheckBox checkShowTitle;

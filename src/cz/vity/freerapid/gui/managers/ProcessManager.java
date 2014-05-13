@@ -237,13 +237,14 @@ public class ProcessManager extends Thread {
             clientManager.pushWorkingClient(client);
             setDownloading(downloading - 1);
             int errorAttemptsCount = file.getErrorAttemptsCount();
-            if (file.getState() == DownloadState.ERROR && errorAttemptsCount > 0) {
+            if (file.getState() == DownloadState.ERROR && errorAttemptsCount != 0) {
                 assert task != null;
                 final DownloadTaskError error = task.getServiceError();
-                if (error == DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR) {
+                if (error == DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR && errorAttemptsCount != -1) {
                     file.setErrorAttemptsCount(0);
                 } else {
-                    file.setErrorAttemptsCount(--errorAttemptsCount);
+                    if (errorAttemptsCount != -1)
+                        file.setErrorAttemptsCount(errorAttemptsCount - 1);
                     final ConnectionSettings settings = client.getSettings();
                     service.addProblematicConnection(settings);
                     if (error == DownloadTaskError.YOU_HAVE_TO_WAIT_ERROR) {
