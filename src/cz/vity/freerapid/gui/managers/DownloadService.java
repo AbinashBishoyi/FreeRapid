@@ -6,15 +6,17 @@ import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * @author Vity
  */
 class DownloadService {
-    private List<ConnectionSettings> downloading = new Vector<ConnectionSettings>();
-    private List<DownloadFile> testing = new Vector<DownloadFile>();
-    private Set<ConnectionSettings> problems = Collections.synchronizedSet(new HashSet<ConnectionSettings>());
+    private Collection<ConnectionSettings> downloading = new Vector<ConnectionSettings>();
+    private Collection<DownloadFile> testing = new Vector<DownloadFile>();
+    private Collection<ConnectionSettings> problems = new Vector<ConnectionSettings>();
 
     private String serviceName;
     private int maxDownloadsFromOneIP;
