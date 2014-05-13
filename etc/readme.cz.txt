@@ -3,7 +3,7 @@
 *      - Ladislav Vitasek aka Vity (c) 2008                  *
 *   Homepage/Forum/Bugtracker: http://wordrider.net/freerapid*
 *   E-Mail: info@wordrider.net - suggestions                 *
-*   Poslední zmìna: 2008-10-15                               *
+*   Poslední zmìna: 2008-10-25                               *
 **************************************************************
 
 =======================================

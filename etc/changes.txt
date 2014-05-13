@@ -11,7 +11,7 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
-XXth October 2008 - FreeRapid Downloader 0.7 released
+22th October 2008 - FreeRapid Downloader 0.7 released
   Added : plugins - support for shareator.com [implemented by Lukiz, thanks!]
   Added : plugins - support for load.to [implemented by Lukiz, thanks!]
   Added : plugins - support for uloz.to [implemented by Lukiz, thanks!]
