@@ -45,7 +45,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     private DownloadTaskError serviceError;
 
     private int youHaveToSleepSecondsTime = 0;
-    private String captchaResult;
+    private volatile String captchaResult;
     private static final int NO_DATA_TIMEOUT_LIMIT = 75;
     private static final int INPUT_BUFFER_SIZE = 50000;
     private static final int OUTPUT_FILE_BUFFER_SIZE = 600000;
@@ -489,7 +489,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                     captchaResult = "";
 
                     while (captchaResult.isEmpty()) {
-                        captchaResult = (String) JOptionPane.showInputDialog(null, getResourceMap().getString("InsertWhaYouSee"), getResourceMap().getString("InsertCaptcha"), JOptionPane.PLAIN_MESSAGE, new ImageIcon(image), null, null);
+                        captchaResult = (String) JOptionPane.showInputDialog(null, getResourceMap().getString("InsertWhatYouSee"), getResourceMap().getString("InsertCaptcha"), JOptionPane.PLAIN_MESSAGE, new ImageIcon(image), null, null);
                         if (captchaResult == null)
                             break;
                     }
