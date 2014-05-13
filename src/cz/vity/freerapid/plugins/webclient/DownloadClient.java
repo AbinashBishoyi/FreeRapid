@@ -205,13 +205,6 @@ public class DownloadClient implements HttpDownloadClient {
             if (!value.startsWith("application/") && !isImage && !isAudioVideo) {
                 isStream = false;
                 logger.warning("Suspicious Content-Type:" + contentType.getValue());
-            } else {
-                final Header contentLength = method.getResponseHeader("Content-Length");
-                if (contentLength == null) {
-                    isStream = false;
-                    logger.warning("No Content-Length in header");
-                } else
-                    file.setFileSize(Long.valueOf(contentLength.getValue()));
             }
         }
         final String fileName = HttpUtils.getFileName(method);
@@ -228,6 +221,15 @@ public class DownloadClient implements HttpDownloadClient {
                 logger.info("considering as stream '" + ct + "'");
                 isStream = true;
             }
+        }
+
+        if (isStream) {
+            final Header contentLength = method.getResponseHeader("Content-Length");
+            if (contentLength == null) {
+                isStream = false;
+                logger.warning("No Content-Length in header");
+            } else
+                file.setFileSize(Long.valueOf(contentLength.getValue()));
         }
 
         if (isStream) {
