@@ -94,8 +94,10 @@ public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
         LogUtils.processException(logger, cause);
         if (handleRuntimeException(cause))
             return;
-        if (quietMode)
+        if (quietMode) {
+            AppPrefs.storeProperty(UserProp.PLUGIN_LAST_UPDATE_TIMESTAMP_CHECK, -1);
             return;
+        }
         if (cause instanceof UnknownHostException) {
             Swinger.showErrorMessage(getResourceMap(), "errormessage_check_inet_settings");
         } else {

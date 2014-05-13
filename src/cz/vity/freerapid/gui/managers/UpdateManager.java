@@ -68,7 +68,10 @@ public class UpdateManager {
         final Calendar currentDateTime = Calendar.getInstance();
 
         if (lastTimestamp == 0 || currentDateTime.after(instance)) {
-            currentDateTime.add(Calendar.SECOND, 5);
+            currentDateTime.add(Calendar.SECOND, 25);
+            instance = currentDateTime; //calendar switch off
+        } else if (lastTimestamp < 0) {
+            currentDateTime.add(Calendar.SECOND, 5 * 60);
             instance = currentDateTime; //calendar switch off
         }
 

@@ -22,7 +22,7 @@ public class FileTypeIconProvider {
     private ResourceMap map;
     private final static Logger logger = Logger.getLogger(FileTypeIconProvider.class.getName());
     private static Pattern pattern;
-    private static Pattern fileNamePattern = Pattern.compile("(.*?(zip|rar|avi|wmv|mp3))\\.html?", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+    private static Pattern fileNamePattern = Pattern.compile("\\/([^/]*?\\.(zip|rar|avi|wmv|mp3))\\.html?", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
     //    private static final String DEFAULT_EXTENSION = "unknown";
     private final Map<String, Icon> systemLargeIcons = new Hashtable<String, Icon>();
     private final Map<String, Icon> systemSmallIcons = new Hashtable<String, Icon>();
@@ -65,6 +65,10 @@ public class FileTypeIconProvider {
     }
 
     public static String identifyFileName(final String url) {
+        final Matcher matcher = fileNamePattern.matcher(url);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
         final String[] strings = url.split("/");
         for (int i = strings.length - 1; i >= 0; i--) {
             final String s = strings[i].trim();
@@ -74,10 +78,6 @@ public class FileTypeIconProvider {
         String s = url.replaceAll("\\:", "_").trim();
         if (s.startsWith("?"))
             s = s.substring(1);
-        final Matcher matcher = fileNamePattern.matcher(s);
-        if (matcher.find()) {
-            s = matcher.group(1);
-        }
         if (s.isEmpty()) {
             return "?";
         }
@@ -170,4 +170,9 @@ public class FileTypeIconProvider {
                 file.delete();
         }
     }
+
+//    public static void main(String[] args) {
+//        assert identifyFileName("http://netload.in/dateiMTc4MzUxMT/heroes.311.hdtv-lol.avi.htm").equals("heroes.311.hdtv-lol.avi");
+//    }
+
 }

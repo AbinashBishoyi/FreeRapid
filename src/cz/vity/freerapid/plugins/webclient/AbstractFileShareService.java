@@ -83,7 +83,7 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
         if (pluginRunner != null) {
             pluginRunner.init(this, downloader);
             pluginRunner.run(downloader);
-        }
+        } else throw new NullPointerException("getPluginRunnerInstance must no return null");
 
     }
 
@@ -93,7 +93,7 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
         if (pluginRunner != null) {
             pluginRunner.init(this, downloader);
             pluginRunner.runCheck(downloader);
-        }
+        } else throw new NullPointerException("getPluginRunnerInstance must no return null");
     }
 
     public boolean supportsRunCheck() {
@@ -118,7 +118,5 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
         this.pluginContext = pluginContext;
     }
 
-    protected PluginRunner getPluginRunnerInstance() {
-        return null;
-    }
+    protected abstract PluginRunner getPluginRunnerInstance();
 }
