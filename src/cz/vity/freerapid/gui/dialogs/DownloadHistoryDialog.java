@@ -327,6 +327,8 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
 
 
         updateFilters();
+
+        Swinger.inputFocus(table);
     }
 
     @Action

@@ -165,6 +165,10 @@ public class ProcessManager extends Thread {
     }
 
     private void queueDownload(final DownloadFile downloadFile, final ConnectionSettings settings, DownloadService downloadService, final ShareDownloadService service) {
+        if (downloadFile.getState() != DownloadState.QUEUED) {
+            logger.info("QUEUED not found - found " + downloadFile.getState());
+            return;
+        }
         final HttpDownloadClient client = clientManager.popWorkingClient();
         setDownloading(downloading + 1);
         client.initClient(settings);

@@ -585,6 +585,11 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         inputMap.put(KeyStroke.getKeyStroke("ENTER"), "smartEnterAction");
         actionMap.put("smartEnterAction", Swinger.getAction("smartEnterAction"));
 
+        inputMap.put(KeyStroke.getKeyStroke("HOME"), "selectFirstRow");
+        inputMap.put(KeyStroke.getKeyStroke("END"), "selectLastRow");
+        inputMap.put(KeyStroke.getKeyStroke("control HOME"), "selectFirstColumn");
+        inputMap.put(KeyStroke.getKeyStroke("control END"), "selectLastColumn");
+
         //inputMap.remove("find");
         actionMap.remove("find");
 
