@@ -15,10 +15,6 @@ public interface ShareDownloadService {
     boolean supportsRunCheck();
 
     Icon getFaviconImage();
-//
-//    Icon getSmallImage();
-//
-//    Icon getBigImage();
 
     void run(HttpFileDownloader downloader) throws Exception;
 

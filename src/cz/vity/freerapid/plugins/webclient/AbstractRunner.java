@@ -44,13 +44,13 @@ public abstract class AbstractRunner implements PluginRunner {
         initialized = true;
     }
 
-    public void run(HttpFileDownloader downloader) throws Exception {
+    public void run() throws Exception {
         if (!initialized)
             throw new IllegalStateException("Cannot run Run method. Runner was not initialized via init method");
         logger.info("Starting download 'run'" + fileURL);
     }
 
-    public void runCheck(HttpFileDownloader downloader) throws Exception {
+    public void runCheck() throws Exception {
         if (!initialized)
             throw new IllegalStateException("Cannot run runCheck method. Runner was not initialized via init method");
         logger.info("Starting download 'runCheck' " + fileURL);

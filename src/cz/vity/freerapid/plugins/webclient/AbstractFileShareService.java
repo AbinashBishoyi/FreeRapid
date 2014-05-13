@@ -82,7 +82,7 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
         final PluginRunner pluginRunner = getPluginRunnerInstance();
         if (pluginRunner != null) {
             pluginRunner.init(this, downloader);
-            pluginRunner.run(downloader);
+            pluginRunner.run();
         } else throw new NullPointerException("getPluginRunnerInstance must no return null");
 
     }
@@ -92,7 +92,7 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
         final PluginRunner pluginRunner = getPluginRunnerInstance();
         if (pluginRunner != null) {
             pluginRunner.init(this, downloader);
-            pluginRunner.runCheck(downloader);
+            pluginRunner.runCheck();
         } else throw new NullPointerException("getPluginRunnerInstance must no return null");
     }
 
