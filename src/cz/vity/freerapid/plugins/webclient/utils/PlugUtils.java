@@ -135,9 +135,9 @@ public final class PlugUtils {
      */
 
     public static String getParameter(String name, String content) throws PluginImplementationException {
-        final Matcher matcher = Pattern.compile("name=\"" + name + "\"[^>]*value=\"([^\"]*)\"", Pattern.MULTILINE).matcher(content);
+        final Matcher matcher = Pattern.compile("name=(\"|')?" + name + "(\"|'|\\s).*?value=(\"|')?(.*?)(\"|'|>)", Pattern.MULTILINE | Pattern.DOTALL).matcher(content);
         if (matcher.find()) {
-            return matcher.group(1);
+            return matcher.group(4);
         } else
             throw new PluginImplementationException("Parameter " + name + " was not found");
     }
@@ -158,14 +158,14 @@ public final class PlugUtils {
             throw new IllegalArgumentException("You have to provide some parameter names");
         final Set<String> set = new HashSet<String>(parameters.length);
         set.addAll(Arrays.asList(parameters));
-        final Matcher matcher = Pattern.compile("name=\"(.*?)\"[^>]*value=\"([^\"]*)\"", Pattern.MULTILINE).matcher(content);
+        final Matcher matcher = Pattern.compile("name=(\"|')?(.*?)(\"|'|\\s).*?value=(\"|')?(.*?)(\"|'|>)", Pattern.MULTILINE).matcher(content);
         int start = 0;
         String param;
         while (matcher.find(start)) {
-            param = matcher.group(1);
+            param = matcher.group(2);
             if (set.contains(param)) {
                 set.remove(param);
-                postMethod.addParameter(param, matcher.group(2));
+                postMethod.addParameter(param, matcher.group(5));
             }
             if (set.isEmpty())
                 break;
