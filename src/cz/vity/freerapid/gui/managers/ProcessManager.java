@@ -27,6 +27,7 @@ import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.*;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
@@ -46,7 +47,7 @@ public class ProcessManager extends Thread {
     private volatile List<DownloadFile> forceValidateCheck = new Vector<DownloadFile>();
 
     private boolean threadSuspended;
-    //private final Object queueLock;
+    private final Object downloadingLock = new Object();
     private final Object manipulation = new Object();
     private final java.util.Timer errorTimer = new java.util.Timer();
     private PluginsManager pluginsManager;
@@ -65,7 +66,9 @@ public class ProcessManager extends Thread {
         taskService = director.getTaskServiceManager().getTaskService(TaskServiceManager.DOWNLOAD_SERVICE);
         clientManager = director.getClientManager();
 
-        setDownloading(0);
+        synchronized (downloadingLock) {
+            setDownloading(0);
+        }
 
         AppPrefs.getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
             public void preferenceChange(PreferenceChangeEvent evt) {
@@ -130,14 +133,16 @@ public class ProcessManager extends Thread {
     }
 
     private boolean canCreateAnotherConnection(final boolean forceDownload) {
-        final int downloading = getDownloading();
-        if (downloading == ClientManager.MAX_DOWNLOADING) {
-            return false;
-        } else {
-            if (forceDownload)
-                return true;
-            final int maxDownloads = AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT);
-            return maxDownloads > downloading;
+        synchronized (downloadingLock) {
+            final int downloading = getDownloading();
+            if (downloading == ClientManager.MAX_DOWNLOADING) {
+                return false;
+            } else {
+                if (forceDownload)
+                    return true;
+                final int maxDownloads = AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT);
+                return maxDownloads > downloading;
+            }
         }
     }
 
@@ -251,9 +256,12 @@ public class ProcessManager extends Thread {
             logger.info("QUEUED not found - found " + downloadFile.getState());
             return;
         }
-        final HttpDownloadClient client = clientManager.popWorkingClient();
-        setDownloading(downloading + 1);
-        client.initClient(settings);
+        final HttpDownloadClient client;
+        synchronized (downloadingLock) {
+            client = clientManager.popWorkingClient();
+            setDownloading(downloading + 1);
+            client.initClient(settings);
+        }
         if (runCheck) {
             downloadService.addTestingFile(downloadFile);
             downloadFile.setState(TESTING);
@@ -320,7 +328,12 @@ public class ProcessManager extends Thread {
                 }
 
             });
-            taskService.execute(task);
+            try {
+                taskService.execute(task);
+            } catch (RejectedExecutionException e) {
+                logger.severe("downloading = " + downloading);
+                throw e;
+            }
         } catch (NotSupportedDownloadServiceException e) {
             LogUtils.processException(logger, e);
         }
@@ -333,8 +346,10 @@ public class ProcessManager extends Thread {
             } else {
                 downloadService.finishedDownloading(client);
             }
-            clientManager.pushWorkingClient(client);
-            setDownloading(downloading - 1);
+            synchronized (downloadingLock) {
+                clientManager.pushWorkingClient(client);
+                setDownloading(downloading - 1);
+            }
 
             if (task != null) {
                 DownloadTaskError error = task.getServiceError();
@@ -467,6 +482,7 @@ public class ProcessManager extends Thread {
     public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(propertyName, listener);
     }
+
 
     public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(propertyName, listener);
