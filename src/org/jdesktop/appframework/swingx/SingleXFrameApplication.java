@@ -83,10 +83,11 @@ public abstract class SingleXFrameApplication extends SingleFrameApplication {
      *
      * @param root
      */
+
     protected void prepareWindow(Window root) {
         configureWindow(root);
         // If the window's size doesn't appear to have been set, do it
-        if ((root.getWidth() < 10) || (root.getHeight() < 10)) {
+        if ((root.getWidth() < 150) || (root.getHeight() < 20)) {
             root.pack();
             if (!root.isLocationByPlatform()) {
                 Component owner = (root != getMainFrame()) ? getMainFrame()
