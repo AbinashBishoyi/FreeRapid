@@ -147,9 +147,6 @@ public class MenuManager {
         };
 
         final boolean isWindows = Utils.isWindows();
-        if (!isWindows) {
-            shutDownMenu.setEnabled(false);
-        }
 
         MenuSelectionManager.defaultManager().addChangeListener(
                 new ChangeListener() {
