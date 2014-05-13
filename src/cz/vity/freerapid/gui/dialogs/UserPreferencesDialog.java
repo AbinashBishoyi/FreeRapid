@@ -372,7 +372,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
     private void addButton(javax.swing.Action action, final Card card, ButtonGroup group) {
         final JToggleButton button = new JToggleButton(action);
         final Dimension size = button.getPreferredSize();
-        final Dimension dim = new Dimension(68, size.height);
+        final Dimension dim = new Dimension(83, size.height + 8);
         button.setFont(button.getFont().deriveFont((float) 10));
         button.setForeground(Color.BLACK);
         button.setMinimumSize(dim);
