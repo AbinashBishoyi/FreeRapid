@@ -1,6 +1,8 @@
 package cz.vity.freerapid.plugins.webclient.utils;
 
 import cz.vity.freerapid.utilities.Utils;
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.net.BCodec;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpMethod;
 
@@ -40,9 +42,20 @@ final public class HttpUtils {
             final String lowercasedValue = value.toLowerCase(Locale.ENGLISH);
             if (!(lowercasedValue.contains("attachment") || lowercasedValue.contains("inline")))
                 return null;
-            String str = "filename=";
+            String str = "filename==?";
+            int index = lowercasedValue.indexOf(str);
+            if (index >= 0) {
+                final String s = value.substring(index + str.length() - 2);
+                if (!s.isEmpty())
+                    try {
+                        return new BCodec().decode(s);
+                    } catch (DecoderException e) {
+                        logger.warning("BCodec - Unsupported encoding or decoder failed");
+                    }
+            }
+            str = "filename=";
             final String lowercased = value.toLowerCase();
-            int index = lowercased.lastIndexOf(str);
+            index = lowercased.lastIndexOf(str);
             if (index >= 0) {
                 String s = value.substring(index + str.length());
                 final int secondQuoteIndex = s.lastIndexOf('\"');
@@ -68,9 +81,8 @@ final public class HttpUtils {
                         } catch (UnsupportedEncodingException e) {
                             logger.warning("Unsupported encoding");
                         }
-                } else {
+                } else
                     logger.warning("File name was not found in:" + value);
-                }
             }
         }
         return null;

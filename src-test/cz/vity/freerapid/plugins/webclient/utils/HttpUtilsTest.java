@@ -44,6 +44,10 @@ public class HttpUtilsTest {
         s = HttpUtils.getFileName(postMethod);
         Assert.assertEquals("Extracting file name #3", "J1btC65dLS.torrent", s);
 
+        postMethod.responseHeader = new Header("Content-Disposition", "attachment; filename==?UTF-8?B?Sm9yZGkgVmlsbGFsdGEgLSBBbW5lc2lhIFRlcnJhY2UgKE9yaWdpbmFsIG1peCkubXAz?=");
+        s = HttpUtils.getFileName(postMethod);
+        Assert.assertEquals("Extracting file name #4", "Jordi Villalta - Amnesia Terrace (Original mix).mp3", s);
+
     }
 
     private static class TestPostMethod extends PostMethod {
