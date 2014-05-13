@@ -878,14 +878,10 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             this.setToolTipText(null);
             if (state == DownloadState.DOWNLOADING) {
                 long hasToBeDownloaded = downloadFile.getFileSize() - downloadFile.getDownloaded();
-                final float avgSpeed = downloadFile.getAverageSpeed();
-                final float speed = downloadFile.getSpeed();
+                final double avgSpeed = downloadFile.getAverageSpeed();
                 if (hasToBeDownloaded >= 0) {
-                    if (speed > 0) {
-                        value = secondsToHMin(Math.round(hasToBeDownloaded / speed));
-                    } else {
-                        if (avgSpeed > 0)
-                            value = secondsToHMin(Math.round(hasToBeDownloaded / avgSpeed));
+                    if (avgSpeed > 0) {
+                        value = secondsToHMin(Math.round((double) hasToBeDownloaded / avgSpeed));
                     }
                 }
             } else if (state == DownloadState.WAITING) {
