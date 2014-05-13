@@ -158,7 +158,7 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
 
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        Swinger.updateColumn(table, "Selected", COLUMN_SELECTED, 25, 40, null).setMaxWidth(45);
+        Swinger.updateColumn(table, "Selected", COLUMN_SELECTED, 25, 40, null).setMaxWidth(75);
         Swinger.updateColumn(table, "Name", COLUMN_NAME, -1, 70, null);
         Swinger.updateColumn(table, "Version", COLUMN_VERSION, -1, 50, null);
         Swinger.updateColumn(table, "Services", COLUMN_SERVICES, -1, 50, null);

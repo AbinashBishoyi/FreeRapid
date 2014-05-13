@@ -1,9 +1,137 @@
 Yes, it is possible. Look at PluginManager class. Mainly registerPlugins(), activatePlugin() and deactivatePlugin() methods. To unregister plug-in, use PluginRegistry.unregister() method. If you want to "update" or "reload" a plug-in you need to unregister it first and than register again.
 
+New files for translation:
+
+CheckPluginUpdateTask.properties, DownloadNewPluginsTask.properties, AccountDialog.properties, UpdateDialog.properties
+
+
+Here is a complete list of added or changes keys in files.
+
+
 
 MainApp.properties
 ==================================
 
-Changes:
+#Change
 was: tooltipTrayInfo=FreeRapid Downloader\n\nComplete downloads %d of %d\nCurrent speed: %s/s\n
 is:  tooltipTrayInfo=FreeRapid Downloader%n%nComplete downloads %d of %d%nCurrent speed: %s/s%n
+
+Change - added new column
+mainTableColumns=?|Name|Progress|Completion|Est. time|Size|Speed|Average Speed|Service|Connection
+
+
+#New
+DISABLED=DISABLED
+TESTING=TESTING
+
+checkForNewPlugins.Action.text=Check for new &plugins
+notFoundIcon=${iconsPath}not_found.png
+checkedIcon=${iconsPath}checked.png
+unknownIcon=${iconsPath}not_tested.png
+
+checked_fileNotFound=File is not available - it was deleted or invalid URL
+checked_success=File is available on the server
+checked_unknown=File was not checked yet or service problem
+
+#dialog when plugin updates were found
+updatesNotFoundMessage=No plugin updates were found.
+updatesFoundMessage=Good news everyone!\nPlugin updates were detected.\nWhat do you want to do?
+#its buttons:
+updateNowButton=Update now
+updateWithDetails=Show details...
+updateCancel=Cancel
+
+restartApplicationAction.Action.text=&Restart
+
+CaptchaEntryInputMismatch=Server requires correct CAPTCHA input from user
+NotEnoughSpaceException=Not enough space on the disk
+URLNotAvailableAnymore=File is not available anymore
+PluginImplementationException=Problem with a connection to service.\nCannot find requested page content.
+InvalidURLOrServiceProblem=Invalid URL or unindentified service
+FileTransferFailedException=File transfer failed.
+FailedToLoadCaptchaPicture=Failed to load captcha picture
+InvalidUsernameOrPassword=Invalid user name or password
+ServiceConnectionProblemException=Cannot download from service
+NotSupportedDownloadByServiceException=No plugin can be associated with this URL
+PluginIsNotEnabled=Plugin %s is not enabled 
+
+confirmClearHistory=Are you sure you want to clear downloads history?
+
+
+validateLinksAction.Action.text=&Validate links
+validateLinksAction.Action.shortDescription=Validate selected link(s) on the server
+validateLinksAction.Action.smallIcon=${iconsPath}checked.png
+validateLinksAction.Action.accelerator=ctrl W
+
+
+
+
+CoreTask.properties
+==================================
+
+#New
+errormessage_check_inet_settings=Internet connection is not probably available.\nPlease check your proxy settings.
+errormessage=Error during executing task:\n%s
+
+
+
+MoveFileTask.properties
+==================================
+#New
+Moving_file=Moving file
+
+
+UserPreferencesDialog.properties
+==================================
+
+pluginsBtnAction.Action.text=&Plugins
+pluginsBtnAction.Action.largeIcon=${iconsPath}plugin.png
+
+checkDownloadNotExistingPlugins.text=&Download not existing plugins
+check4PluginUpdatesAutomatically.text=Check for p&lugin updates automatically
+checkConfirmUpdating.text=Ask what to do when new &updates are detected
+
+btnPluginOptionsAction.Action.text=Op&tions
+
+btnResetDefaultPluginServerAction.Action.text=Set De&fault
+
+labelUpdateFromServer.text=&Update from server
+labelPluginInfo.text=<html><b>X</b> - plugin is active, <b>U</b> - update plugin
+
+labelAfterDetectUpdate.text=When plugin updates are detected:
+labelCheckForUpdateEvery.text=Check &for updates every
+labelHours.text=hour(s)
+labelManualCheck.text=For manual check use function in menu "Help - Check for new plugins"
+
+comboHowToUpdate_list=Show update dialog first|Update automatic
+
+pluginPanelSettings.tab.title=Settings
+pluginPanelUpdates.tab.title=Updates
+
+pluginTableColumns_list=X|U|Plugin ID|Version|Service|Author|WWW
+
+popmenuButton.text=*
+
+updatesMenu.text=&Updates
+activityMenu.text=&Activity
+copyPluginListAction.Action.text=Copy &plugin list
+copyPluginListWithVersionAction.Action.text=Copy plugin list with &version info
+copySupportedSitesListAction.Action.text=Copy &supported sites list
+
+selectAllUpdatesAction.Action.text=&Enable All
+selectAllUpdatesAction.Action.smallIcon=${iconsPath}checks.png
+deSelectAllUpdatesAction.Action.text=&Disable All
+deSelectAllUpdatesAction.Action.smallIcon=${iconsPath}uncheck.png
+selectAllActivityAction.Action.text=&Enable All
+selectAllActivityAction.Action.smallIcon=${iconsPath}checks.png
+deSelectAllActivityAction.Action.text=&Disable All
+deSelectAllActivityAction.Action.smallIcon=${iconsPath}uncheck.png
+
+
+checkForFileExistenceBeforeDownload.text=Check for file existence on the server before downloading
+checkServiceAsIconOnly.text=Represent download service only by an icon without text in table
+
+checkRecheckFilesOnStart.text=Re-check for file existence on the server when application starts
+invalidURL=Plugin server address is not valid URL:%n%s
+
+

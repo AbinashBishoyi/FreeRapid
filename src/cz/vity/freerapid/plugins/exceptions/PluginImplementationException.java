@@ -7,6 +7,13 @@ package cz.vity.freerapid.plugins.exceptions;
  * @author Vity
  */
 public class PluginImplementationException extends NotRecoverableDownloadException {
+
+    /**
+     * Constructor
+     */
+    public PluginImplementationException() {
+    }
+
     /**
      * @see NotRecoverableDownloadException#NotRecoverableDownloadException(String)
      */
