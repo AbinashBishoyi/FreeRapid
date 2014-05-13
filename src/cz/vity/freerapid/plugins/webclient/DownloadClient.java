@@ -95,6 +95,7 @@ public class DownloadClient implements HttpDownloadClient {
         boolean isStream = true;
         final Header contentType = method.getResponseHeader("Content-Type");
         if (contentType == null) {
+            isStream = false;
             logger.warning("No Content-Type!");
         } else {
             final String value = contentType.getValue();
@@ -108,7 +109,7 @@ public class DownloadClient implements HttpDownloadClient {
                     isStream = false;
                     logger.warning("No Content-Length in header");
                 } else
-                    file.setFileSize(new Long(contentLength.getValue()));
+                    file.setFileSize(Long.valueOf(contentLength.getValue()));
             }
         }
         final String fileName = getFileName(method);
