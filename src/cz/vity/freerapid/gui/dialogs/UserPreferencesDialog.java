@@ -78,9 +78,10 @@ public class UserPreferencesDialog extends AppDialog {
     private static final int COLUMN_ACTIVE = 0;
     private static final int COLUMN_UPDATE = 1;
     private static final int COLUMN_ID = 2;
-    private static final int COLUMN_SERVICES = 3;
-    private static final int COLUMN_AUTHOR = 4;
-    private static final int COLUMN_WWW = 5;
+    private static final int COLUMN_VERSION = 3;
+    private static final int COLUMN_SERVICES = 4;
+    private static final int COLUMN_AUTHOR = 5;
+    private static final int COLUMN_WWW = 6;
 
     public UserPreferencesDialog(Frame owner, ApplicationContext context) throws Exception {
         super(owner, true);
@@ -215,6 +216,7 @@ public class UserPreferencesDialog extends AppDialog {
         tableColumn.setWidth(22);
         tableColumn.setMaxWidth(22);
         Swinger.updateColumn(pluginTable, "ID", COLUMN_ID, -1, 70, null);
+        Swinger.updateColumn(pluginTable, "Version", COLUMN_VERSION, -1, 40, null);
         Swinger.updateColumn(pluginTable, "Services", COLUMN_SERVICES, -1, 100, null);
         Swinger.updateColumn(pluginTable, "Author", COLUMN_AUTHOR, -1, -1, null);
         Swinger.updateColumn(pluginTable, "WWW", COLUMN_WWW, -1, -1, new DownloadHistoryDialog.URLCellRenderer());
@@ -1574,7 +1576,9 @@ public class UserPreferencesDialog extends AppDialog {
                 case COLUMN_UPDATE:
                     return model.get(rowIndex).isUpdatesEnabled();
                 case COLUMN_ID:
-                    return model.get(rowIndex).getId() + " " + model.get(rowIndex).getVersion();
+                    return model.get(rowIndex).getId();
+                case COLUMN_VERSION:
+                    return model.get(rowIndex).getVersion();
                 case COLUMN_SERVICES:
                     return model.get(rowIndex).getServices();
                 case COLUMN_AUTHOR:
