@@ -7,18 +7,23 @@ import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadClient;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.swing.Swinger;
+import cz.vity.freerapid.utilities.LogUtils;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.jdesktop.application.ApplicationContext;
 
 import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.net.UnknownHostException;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * @author Ladislav Vitasek
  */
 public class DownloadNewPluginsTask extends DownloadTask {
+    private final static Logger logger = Logger.getLogger(DownloadNewPluginsTask.class.getName());
+
     private final ManagerDirector director;
     private final List<DownloadFile> fileList;
 
@@ -94,9 +99,16 @@ public class DownloadNewPluginsTask extends DownloadTask {
 
     @Override
     protected void failed(Throwable cause) {
+        LogUtils.processException(logger, cause);
         if (handleRuntimeException(cause))
             return;
         error(cause);
+        if (cause instanceof UnknownHostException) {
+            Swinger.showErrorMessage(this.getResourceMap(), "errormessage_check_inet_settings");
+        } else {
+            Swinger.showErrorMessage(this.getResourceMap(), "errormessage", cause.getMessage());
+        }
+
     }
 
     @Override
