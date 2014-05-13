@@ -52,15 +52,17 @@ public class FileActions extends AbstractBean {
             app.prepareDialog(dialog, true);
             if (dialog.getModalResult() == NewLinksDialog.RESULT_OK) {
                 final List<DownloadFile> files = dialog.getDownloadFiles();
-                dataManager.addToList(files);
-                final boolean notPaused = !dialog.isStartPaused();
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        if (notPaused)
-                            dataManager.addToQueue(files);
-                        managerDirector.getContentManager().getContentPanel().selectAdded(files);
-                    }
-                });
+                if (!files.isEmpty()) {
+                    dataManager.addToList(files);
+                    final boolean notPaused = !dialog.isStartPaused();
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            if (notPaused)
+                                dataManager.addToQueue(files);
+                            managerDirector.getContentManager().getContentPanel().selectAdded(files);
+                        }
+                    });
+                }
             }
             dialog = null;
         }

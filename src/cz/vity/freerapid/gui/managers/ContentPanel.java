@@ -213,10 +213,15 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         final int min = getArrayMin(indexes);
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                final int count = table.getVisibleRowCount();
-                if (count > 0) {
-                    int index = Math.min(count - 1, min);
-                    index = table.convertRowIndexToView(index);
+                int count = table.getFilters().getOutputSize();
+                if (count > 0) {//pokud je neco videt
+                    int index = count - 1; //vypoctem si posledni viditelnou
+                    if (index > min) {
+                        index = table.convertRowIndexToView(min); //pokud neni videt
+                        if (index == -1)
+                            index = count - 1;//nastavime posledni
+                    }
+
                     selectionModel.addSelectionInterval(index, index);
                 }
             }
@@ -608,6 +613,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     }
 
     public void selectAdded(final java.util.List<DownloadFile> files) {
+        assert !files.isEmpty();
         final ListSelectionModel selectionModel = table.getSelectionModel();
         final int index = manager.getDownloadFiles().indexOf(files.get(0));
         final int viewIndex = table.convertRowIndexToView(index);
