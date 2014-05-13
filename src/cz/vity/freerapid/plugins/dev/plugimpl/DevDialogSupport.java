@@ -82,18 +82,17 @@ public class DevDialogSupport implements DialogSupport {
             assert s != null;
             objects[i] = s;
         }
-        final Frame frame = getActiveFrame();
-        return JOptionPane.showOptionDialog(frame, inputObject, title, JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, objects, objects[0]);
+        return JOptionPane.showOptionDialog(null, inputObject, title, JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, objects, objects[0]);
     }
 
-    private static Frame getActiveFrame() {
-        final Frame[] frames = Frame.getFrames();
-        for (Frame frame : frames) {
-            if (frame.isActive())
-                return frame;
-        }
-        return frames[0];
-    }
+//    private static Frame getActiveFrame() {
+//        final Frame[] frames = Frame.getFrames();
+//        for (Frame frame : frames) {
+//            if (frame.isActive())
+//                return frame;
+//        }
+//        return frames[0];
+//    }
 
 
 }
