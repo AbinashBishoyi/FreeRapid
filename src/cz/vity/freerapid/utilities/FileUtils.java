@@ -210,4 +210,16 @@ public class FileUtils {
             }
         }
     }
+
+    public static String getAbsolutPath(String path) {
+        return getAbsolutPath(new File(path));
+    }
+
+    public static String getAbsolutPath(File file) {
+        try {
+            return file.getCanonicalPath();
+        } catch (IOException e) {
+            return file.getAbsolutePath();
+        }
+    }
 }

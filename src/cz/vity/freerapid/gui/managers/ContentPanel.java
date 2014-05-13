@@ -10,10 +10,7 @@ import cz.vity.freerapid.gui.actions.URLTransferHandler;
 import cz.vity.freerapid.gui.dialogs.InformationDialog;
 import cz.vity.freerapid.gui.dialogs.MultipleSettingsDialog;
 import cz.vity.freerapid.model.DownloadFile;
-import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
-import cz.vity.freerapid.plugins.webclient.DownloadState;
-import cz.vity.freerapid.plugins.webclient.HttpDownloadClient;
-import cz.vity.freerapid.plugins.webclient.HttpFile;
+import cz.vity.freerapid.plugins.webclient.*;
 import cz.vity.freerapid.swing.SwingUtils;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.Browser;
@@ -25,7 +22,9 @@ import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.Task;
 import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.FilterPipeline;
+import org.jdesktop.swingx.decorator.HighlightPredicate;
 import org.jdesktop.swingx.decorator.PatternFilter;
 
 import javax.swing.*;
@@ -57,15 +56,16 @@ import java.util.prefs.PreferenceChangeListener;
 public class ContentPanel extends JPanel implements ListSelectionListener, ListDataListener, PropertyChangeListener, ClipboardOwner {
     private final static Logger logger = Logger.getLogger(ContentPanel.class.getName());
 
-    private static final int COLUMN_NAME = 0;
-    private static final int COLUMN_PROGRESSBAR = 1;
-    private static final int COLUMN_PROGRESS = 2;
-    private static final int COLUMN_STATE = 3;
-    private static final int COLUMN_SIZE = 4;
-    private static final int COLUMN_SPEED = 5;
-    private static final int COLUMN_AVERAGE_SPEED = 6;
-    private static final int COLUMN_SERVICE = 7;
-    private static final int COLUMN_PROXY = 8;
+    private static final int COLUMN_CHECKED = 0;
+    private static final int COLUMN_NAME = 1;
+    private static final int COLUMN_PROGRESSBAR = 2;
+    private static final int COLUMN_PROGRESS = 3;
+    private static final int COLUMN_STATE = 4;
+    private static final int COLUMN_SIZE = 5;
+    private static final int COLUMN_SPEED = 6;
+    private static final int COLUMN_AVERAGE_SPEED = 7;
+    private static final int COLUMN_SERVICE = 8;
+    private static final int COLUMN_PROXY = 9;
 
     private final ApplicationContext context;
     private final ManagerDirector director;
@@ -599,7 +599,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         table.setEditable(false);
         table.setColumnControlVisible(true);
         table.setSortable(false);
-        table.setColumnMargin(10);
+        //table.setColumnMargin(10);
 
 
         table.setTransferHandler(new URLTransferHandler(director) {
@@ -612,6 +612,13 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                 });
             }
         });
+
+
+        ColorHighlighter first = new ColorHighlighter(new HighlightPredicate() {
+            public boolean isHighlighted(Component renderer, org.jdesktop.swingx.decorator.ComponentAdapter adapter) {
+                return FileState.FILE_NOT_FOUND.equals(((DownloadFile) adapter.getValue(COLUMN_CHECKED)).getFileState());
+            }
+        }, new Color(0xFFD2D2), null);
 
         table.getSelectionModel().addListSelectionListener(this);
 
@@ -626,6 +633,10 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         colName.setWidth(150);
         colName.setMinWidth(50);
         tableColumnModel.getColumn(COLUMN_PROGRESSBAR).setCellRenderer(new ProgressBarCellRenderer(context));
+        final TableColumn column = tableColumnModel.getColumn(COLUMN_CHECKED);
+        column.setMaxWidth(30);
+        column.setWidth(30);
+        column.setCellRenderer(new CheckedCellRenderer(context));
         tableColumnModel.getColumn(COLUMN_PROGRESS).setCellRenderer(new ProgressCellRenderer());
         tableColumnModel.getColumn(COLUMN_STATE).setCellRenderer(new EstTimeCellRenderer(context));
         tableColumnModel.getColumn(COLUMN_SIZE).setCellRenderer(new SizeCellRenderer(context));
@@ -679,6 +690,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 //        paste();
 
         updateFilters();
+        table.addHighlighter(first);
     }
 
     @org.jdesktop.application.Action
@@ -1223,6 +1235,45 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             } else value = "";
 
             return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        }
+    }
+
+    private static class CheckedCellRenderer extends DefaultTableCellRenderer {
+        private final Icon notFound;
+        private final Icon checked;
+        private final Icon unknown;
+        private final ApplicationContext context;
+
+
+        private CheckedCellRenderer(ApplicationContext context) {
+            this.context = context;
+            final ResourceMap map = context.getResourceMap();
+            this.notFound = map.getIcon("notFoundIcon");
+            this.checked = map.getIcon("checkedIcon");
+            this.unknown = map.getIcon("unknownIcon");
+        }
+
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            final DownloadFile downloadFile = (DownloadFile) value;
+            assert downloadFile != null;
+            this.setIconTextGap(2);
+            this.setHorizontalAlignment(CENTER);
+            final Component rendererComponent = super.getTableCellRendererComponent(table, null, isSelected, hasFocus, row, column);
+            switch (downloadFile.getFileState()) {
+                case FILE_NOT_FOUND:
+                    this.setIcon(notFound);
+                    this.setToolTipText(context.getResourceMap().getString("checked_fileNotFound"));
+                    break;
+                case CHECKED_AND_EXISTING:
+                    this.setIcon(checked);
+                    this.setToolTipText(context.getResourceMap().getString("checked_success"));
+                    break;
+                default:
+                    this.setToolTipText(context.getResourceMap().getString("checked_unknown"));
+                    this.setIcon(unknown);
+                    break;
+            }
+            return rendererComponent;
         }
     }
 }

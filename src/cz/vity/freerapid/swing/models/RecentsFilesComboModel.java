@@ -3,6 +3,7 @@ package cz.vity.freerapid.swing.models;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.Consts;
 import cz.vity.freerapid.gui.FRDUtils;
+import cz.vity.freerapid.utilities.FileUtils;
 import cz.vity.freerapid.utilities.Utils;
 
 import javax.swing.*;
@@ -38,7 +39,7 @@ public final class RecentsFilesComboModel extends DefaultComboBoxModel {
             if (isFiles && !(file.exists()))
                 continue;
             if (value.length() > 0) {
-                stack.add(0, file.getAbsolutePath());
+                stack.add(0, FileUtils.getAbsolutPath(file));
 //                System.out.println("Loading :" + searched);
                 //       AppPrefs.removeProperty(key);
             }

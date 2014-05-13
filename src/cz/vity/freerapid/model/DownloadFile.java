@@ -6,6 +6,7 @@ import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.DownloadTask;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
+import cz.vity.freerapid.plugins.webclient.FileState;
 import cz.vity.freerapid.plugins.webclient.HttpFile;
 import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.application.AbstractBean;
@@ -43,7 +44,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
     private volatile String shareDownloadServiceID;
     private volatile String serviceName = null;
     private volatile ConnectionSettings connectionSettings;
-    private volatile boolean checkedFileName;
+    private volatile FileState fileState = FileState.NOT_CHECKED;
 
 
     static {
@@ -78,7 +79,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
         this.sleep = -1;
         this.averageSpeed = 0;
         this.speed = 0;
-        this.checkedFileName = false;
+        this.fileState = FileState.NOT_CHECKED;
         this.timeToQueued = -1;
         setFileType(FileTypeIconProvider.identifyFileType(fileName));
     }
@@ -253,14 +254,6 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
         return shareDownloadServiceID;
     }
 
-    public boolean isCheckedFileName() {
-        return checkedFileName;
-    }
-
-    public void setCheckedFileName(boolean checkedFileName) {
-        this.checkedFileName = checkedFileName;
-    }
-
     public void setTimeToQueued(int i) {
         int oldValue = this.timeToQueued;
         this.timeToQueued = i;
@@ -317,5 +310,17 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
         ConnectionSettings oldValue = this.connectionSettings;
         this.connectionSettings = connectionSettings;
         firePropertyChange("connectionSettings", oldValue, connectionSettings);
+    }
+
+    public FileState getFileState() {
+        return fileState;
+    }
+
+    public void setFileState(FileState fileState) {
+        if (this.fileState == FileState.NOT_CHECKED || fileState == FileState.NOT_CHECKED) {
+            FileState oldValue = this.fileState;
+            this.fileState = fileState;
+            firePropertyChange("fileState", oldValue, fileState);
+        }
     }
 }

@@ -14,15 +14,15 @@ public interface HttpFile {
 
     void setState(DownloadState state);
 
+    FileState getFileState();
+
+    void setFileState(FileState state);
+
     URL getFileUrl();
 
     String getFileName();
 
     void setFileName(String fileName);
-
-    void setErrorMessage(String errorMessage);
-
-    String getErrorMessage();
 
     void setFileUrl(URL fileUrl);
 

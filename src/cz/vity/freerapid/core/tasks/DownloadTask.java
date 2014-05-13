@@ -6,10 +6,7 @@ import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.gui.managers.TaskServiceManager;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.exceptions.*;
-import cz.vity.freerapid.plugins.webclient.DownloadState;
-import cz.vity.freerapid.plugins.webclient.HttpDownloadClient;
-import cz.vity.freerapid.plugins.webclient.HttpFile;
-import cz.vity.freerapid.plugins.webclient.HttpFileDownloader;
+import cz.vity.freerapid.plugins.webclient.*;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.FileUtils;
@@ -137,7 +134,8 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     }
 
     public void saveToFile(InputStream inputStream) throws Exception {
-        boolean temporary = useTemporaryFiles();
+        downloadFile.setFileState(FileState.CHECKED_AND_EXISTING);
+        final boolean temporary = useTemporaryFiles();
 
         final byte[] buffer = new byte[AppPrefs.getProperty(UserProp.INPUT_BUFFER_SIZE, INPUT_BUFFER_SIZE)];
         final OutputStream[] fileOutputStream = new OutputStream[]{null};
@@ -353,8 +351,18 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
             this.youHaveToSleepSecondsTime = waitException.getHowManySecondsToWait();
             setServiceError(DownloadTaskError.YOU_HAVE_TO_WAIT_ERROR);
         }
+        final boolean connectError = cause instanceof NoRouteToHostException || cause instanceof ConnectException || cause instanceof UnknownHostException;
+
+        if (cause instanceof URLNotAvailableAnymoreException) {
+            downloadFile.setFileState(FileState.FILE_NOT_FOUND);
+        } else {
+            if (!connectError) {
+                downloadFile.setFileState(FileState.ERROR);
+            }
+        }
+
         if (AppPrefs.getProperty(UserProp.DISABLE_CONNECTION_ON_EXCEPTION, UserProp.DISABLE_CONNECTION_ON_EXCEPTION_DEFAULT)) {
-            if (cause instanceof NoRouteToHostException || cause instanceof ConnectException || cause instanceof UnknownHostException) {
+            if (connectError) {
                 setServiceError(DownloadTaskError.NO_ROUTE_TO_HOST);
             }
         }

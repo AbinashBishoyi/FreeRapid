@@ -2,6 +2,7 @@ package cz.vity.freerapid.core.tasks;
 
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
+import cz.vity.freerapid.plugins.webclient.FileState;
 import cz.vity.freerapid.plugins.webclient.HttpDownloadClient;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 import org.jdesktop.application.Application;
@@ -27,8 +28,13 @@ public class RunCheckTask extends DownloadTask {
 
     @Override
     protected void succeeded(Void result) {
-        downloadFile.setCheckedFileName(true);
+        downloadFile.setFileState(FileState.CHECKED_AND_EXISTING);
         downloadFile.setState(DownloadState.QUEUED);
     }
 
+    @Override
+    protected void failed(Throwable cause) {
+        super.failed(cause);
+
+    }
 }

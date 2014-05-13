@@ -11,6 +11,7 @@ import cz.vity.freerapid.model.PluginMetaData;
 import cz.vity.freerapid.plugins.exceptions.NotSupportedDownloadServiceException;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
+import cz.vity.freerapid.plugins.webclient.FileState;
 import cz.vity.freerapid.plugins.webclient.HttpDownloadClient;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 import cz.vity.freerapid.swing.EDTPropertyChangeSupport;
@@ -132,7 +133,7 @@ public class ProcessManager extends Thread {
             final DownloadService downloadService = getDownloadService(service);
 
             final List<ConnectionSettings> connectionSettingses = clientManager.getRotatedEnabledConnections();
-            if (!file.isCheckedFileName() && service.supportsRunCheck() && !connectionSettingses.isEmpty()) {
+            if (file.getFileState() == FileState.NOT_CHECKED && service.supportsRunCheck() && !connectionSettingses.isEmpty()) {
                 //pokud to podporuje plugin a  soucasne nebyl jeste ocheckovan a soucasne je k dispozici vubec nejake spojeni
                 queueDownload(file, connectionSettingses.get(0), downloadService, service, true);
             } else {

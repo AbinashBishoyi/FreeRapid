@@ -1,6 +1,7 @@
 package cz.vity.freerapid.plugins.dev;
 
 import cz.vity.freerapid.plugins.webclient.DownloadState;
+import cz.vity.freerapid.plugins.webclient.FileState;
 import cz.vity.freerapid.plugins.webclient.HttpFile;
 
 import java.io.File;
@@ -22,6 +23,7 @@ class PluginDevHttpFile implements HttpFile {
     private URL fileUrl = null;
     private File saveToDirectory;
     private String description;
+    private FileState fileState;
 
     public long getFileSize() {
         return fileSize;
@@ -109,5 +111,13 @@ class PluginDevHttpFile implements HttpFile {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public FileState getFileState() {
+        return fileState;
+    }
+
+    public void setFileState(FileState state) {
+        this.fileState = state;
     }
 }

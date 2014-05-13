@@ -28,6 +28,7 @@ import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 import cz.vity.freerapid.swing.*;
 import cz.vity.freerapid.swing.components.PopdownButton;
 import cz.vity.freerapid.swing.models.RecentsFilesComboModel;
+import cz.vity.freerapid.utilities.FileUtils;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
 import cz.vity.freerapid.utilities.os.OSCommand;
@@ -491,7 +492,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
         String property = AppPrefs.getProperty(UserProp.PROXY_LIST_PATH, "");
         if (!property.isEmpty()) {
-            property = new File(property).getAbsolutePath();
+            property = FileUtils.getAbsolutPath(property);
         }
         fieldProxyListPath.setText(property);
         fieldProxyListPath.getDocument().addDocumentListener(new DocumentListener() {
