@@ -162,7 +162,7 @@
     <target name="resources" depends="init">
         <mkdir dir="${resources.dir}"/>
         <native2ascii dest="${resources.dir}" reverse="true" src="${src.dir}" includes="**/**/*.properties"
-                      excludes="log*,lookandfeels*"/>
+                      excludes="log*,lookandfeels*" encoding="UTF-8"/>
         <zip zipfile="${dist.dir}/resources.zip">
             <fileset dir="${resources.dir}"/>
         </zip>
