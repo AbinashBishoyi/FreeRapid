@@ -318,7 +318,7 @@ public class ProcessManager extends Thread {
 
             file.setTimeToQueued(--counter); //normalni prubeh, jeden tick
             final long currentTime = System.currentTimeMillis();
-            if (counter <= 0 || (Math.abs(currentTime - lastTime) > 1000 * 60)) { //zarazeni zpatky do fronty
+            if (counter <= 0 || (currentTime - lastTime > 1000 * 60)) { //zarazeni zpatky do fronty
                 file.setTimeToQueued(-1);
                 file.setTimeToQueuedMax(-1);
                 renewProblematicConnection();

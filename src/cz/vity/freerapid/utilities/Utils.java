@@ -251,14 +251,19 @@ public final class Utils {
     }
 
     public static String loadFile(final String fileName) {
-        return loadFile(new File(fileName));
+        return loadFile(new File(fileName), null);
     }
 
     public static String loadFile(File file) {
+        return loadFile(file, null);
+    }
+
+    public static String loadFile(File file, String encoding) {
         final StringBuilder buffer = new StringBuilder(2000);
         BufferedReader stream = null;
         try {
-            stream = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+            final InputStreamReader inputStreamReader = (encoding == null) ? new InputStreamReader(new FileInputStream(file)) : new InputStreamReader(new FileInputStream(file), encoding);
+            stream = new BufferedReader(inputStreamReader);
             final char[] lines = new char[2000];
             int read;
             while ((read = stream.read(lines)) != -1)
