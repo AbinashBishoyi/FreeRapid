@@ -41,6 +41,9 @@ public class StandardStorageSupportImpl implements ConfigurationStorageSupport {
         try {
             xmlDecoder = new XMLDecoder(context.getLocalStorage().openInputFile(fileName), null, null, type.getClassLoader());
             return (E) xmlDecoder.readObject();
+        } catch (Exception e) {
+            LogUtils.processException(logger, e);
+            throw e;
         } finally {
             if (xmlDecoder != null) {
                 try {
@@ -50,7 +53,6 @@ public class StandardStorageSupportImpl implements ConfigurationStorageSupport {
                 }
             }
         }
-
     }
 
     @Override
@@ -63,6 +65,9 @@ public class StandardStorageSupportImpl implements ConfigurationStorageSupport {
             try {
                 xmlEncoder = new XMLEncoder(context.getLocalStorage().openOutputFile(fileName));
                 xmlEncoder.writeObject(object);
+            } catch (Exception e) {
+                LogUtils.processException(logger, e);
+                throw e;
             } finally {
                 if (xmlEncoder != null) {
                     try {
@@ -76,7 +81,6 @@ public class StandardStorageSupportImpl implements ConfigurationStorageSupport {
             if (threadCL != null)
                 Thread.currentThread().setContextClassLoader(threadCL);
         }
-        context.getLocalStorage().save(object, fileName);
     }
 
 }
