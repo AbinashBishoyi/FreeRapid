@@ -136,6 +136,11 @@ public class DownloadClient implements HttpDownloadClient {
     private InputStream makeRequestFile(final HttpMethod method, final HttpFile file, final int deep, boolean allowRedirect) throws IOException {
         asString = "";
         toString(method);
+
+        if (allowRedirect && method instanceof GetMethod) {
+            method.setFollowRedirects(true); //autoredirects for GetMethod, it's not working for PostMethod
+        }
+
         client.executeMethod(method);
 
         final int statuscode = method.getStatusCode();
@@ -264,6 +269,9 @@ public class DownloadClient implements HttpDownloadClient {
     public int makeRequest(HttpMethod method, boolean allowRedirect) throws IOException {
         //toString(method);
         asString = ""; //pro sichr aby tam nebylo nikdy null
+        if (allowRedirect && method instanceof GetMethod) {
+            method.setFollowRedirects(true);
+        }
 
         client.executeMethod(method);
 

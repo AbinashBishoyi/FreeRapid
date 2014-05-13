@@ -341,9 +341,15 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 
     @Override
     protected void failed(Throwable cause) {
-        if (!(cause instanceof ErrorDuringDownloadingException))
+        if (!(cause instanceof ErrorDuringDownloadingException)) {
             super.failed(cause);
+            LogUtils.processException(logger, cause);
+        }
         error(cause);
+        if (cause instanceof PluginImplementationException) {
+            logger.warning("Content from the last request\n" + client.getContentAsString());
+            LogUtils.processException(logger, cause);
+        }
         if (cause instanceof NotEnoughSpaceException) {
             Swinger.showErrorMessage(getResourceMap(), "NotEnoughSpaceException", (storeFile != null) ? storeFile : "");
             setServiceError(DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR);
