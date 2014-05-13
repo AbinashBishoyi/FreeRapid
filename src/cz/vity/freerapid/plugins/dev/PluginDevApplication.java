@@ -44,7 +44,7 @@ public abstract class PluginDevApplication extends Application {
     }
 
     /**
-     * Runs plugin test
+     * Runs plugin test - both runCheck (if it is supported by service) and run() on the service implementation
      *
      * @param service  service that is used for downloading
      * @param file     file that is being downloaded
@@ -54,9 +54,21 @@ public abstract class PluginDevApplication extends Application {
     public void testRun(ShareDownloadService service, HttpFile file, ConnectionSettings settings) throws Exception {
         final PluginContext plugContext = DevPluginContextImpl.create(new DevDialogSupport(this.getContext()), new DevStorageSupport(this.getContext()));
         service.setPluginContext(plugContext);
+        testRunCheck(service, file, settings);
+        service.run(getHttpFileDownloader(file, settings));
+    }
+
+    /**
+     * Runs plugin runCheck test only (if it is supported by service, otherwise does nothing)
+     *
+     * @param service  service that is used for downloading
+     * @param file     file that is being downloaded
+     * @param settings internet connection settings
+     * @throws Exception when anything went wrong
+     */
+    public void testRunCheck(ShareDownloadService service, HttpFile file, ConnectionSettings settings) throws Exception {
         if (service.supportsRunCheck())
             service.runCheck(getHttpFileDownloader(file, settings));
-        service.run(getHttpFileDownloader(file, settings));
     }
 
 

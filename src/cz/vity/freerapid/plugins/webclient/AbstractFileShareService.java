@@ -1,10 +1,9 @@
 package cz.vity.freerapid.plugins.webclient;
 
 import cz.vity.freerapid.plugins.exceptions.NotSupportedDownloadByServiceException;
-import cz.vity.freerapid.plugins.webclient.interfaces.HttpFileDownloadTask;
-import cz.vity.freerapid.plugins.webclient.interfaces.PluginContext;
-import cz.vity.freerapid.plugins.webclient.interfaces.PluginRunner;
-import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
+import cz.vity.freerapid.plugins.webclient.hoster.PremiumAccount;
+import cz.vity.freerapid.plugins.webclient.interfaces.*;
+import cz.vity.freerapid.utilities.LogUtils;
 import org.java.plugin.Plugin;
 import org.java.plugin.PluginClassLoader;
 import org.java.plugin.registry.PluginAttribute;
@@ -157,6 +156,49 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
     public void setPluginContext(PluginContext pluginContext) {
         this.pluginContext = pluginContext;
     }
+
+    /**
+     * Shows standard account dialog with given account
+     *
+     * @param account          account with user name and password
+     * @param dialogTitle      title for dialog
+     * @param pluginConfigFile file name for storing configuration
+     * @return returns account parametr, if user pressed Cancel button, otherwise it returns updated account instance
+     */
+    protected PremiumAccount showAccountDialog(final PremiumAccount account, String dialogTitle, final String pluginConfigFile) {
+        final DialogSupport dialogSupport = getPluginContext().getDialogSupport();
+        try {//saving new username/password
+            final PremiumAccount pa = dialogSupport.showAccountDialog(account, dialogTitle);//vysledek bude Premium ucet - Rapidshare
+            if (pa != null) {
+                getPluginContext().getConfigurationStorageSupport().storeConfigToFile(pa, pluginConfigFile);
+                return pa;//return new username/password
+            }
+        } catch (Exception e) {
+            LogUtils.processException(logger, e);
+        }
+        return account;
+    }
+
+    /**
+     * Loads PremiumAccount information from file.<br>
+     * Returns new PremiumAccount instance if there is no configuration file yet.
+     *
+     * @param pluginConfigFile file name of configuration file
+     * @return instance of PremiumAccount - loaded from file or new instance if there is no configuration on disk yet
+     */
+    protected PremiumAccount getAccountConfigFromFile(final String pluginConfigFile) {
+        if (getPluginContext().getConfigurationStorageSupport().configFileExists(pluginConfigFile)) {
+            try {
+                return getPluginContext().getConfigurationStorageSupport().loadConfigFromFile(pluginConfigFile, PremiumAccount.class);
+            } catch (Exception e) {
+                LogUtils.processException(logger, e);
+                return new PremiumAccount();
+            }
+        } else {
+            return new PremiumAccount();
+        }
+    }
+
 
     /**
      * Returns new instance of "plugin's worker" - its methods are called from this class

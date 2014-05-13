@@ -45,6 +45,33 @@ public class PremiumAccount extends AbstractBean implements Serializable {
     }
 
     /**
+     * Checks whether user name and password is set
+     *
+     * @return true if username and password has been set
+     */
+    public boolean isSet() {
+        return isUserNameSet() && isPasswordSet();
+    }
+
+    /**
+     * Checks whether password is not empty on this object
+     *
+     * @return true, if password has been set
+     */
+    public boolean isPasswordSet() {
+        return this.password != null && !this.password.isEmpty();
+    }
+
+    /**
+     * Checks whether user name is not empty on this object
+     *
+     * @return true, if user name has been set
+     */
+    public boolean isUserNameSet() {
+        return this.username != null && !this.username.isEmpty();
+    }
+
+    /**
      * Getter for property 'password'.
      *
      * @return Value for property 'password'.
