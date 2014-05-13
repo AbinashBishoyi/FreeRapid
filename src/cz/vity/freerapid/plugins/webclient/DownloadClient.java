@@ -6,6 +6,7 @@ import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpClientParams;
+import org.apache.commons.httpclient.params.HttpMethodParams;
 
 import java.io.*;
 import java.net.URLDecoder;
@@ -34,6 +35,8 @@ final public class DownloadClient implements HttpDownloadClient {
         this.settings = settings;
         final HttpClientParams clientParams = client.getParams();
         clientParams.setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+        clientParams.setParameter(HttpMethodParams.SINGLE_COOKIE_HEADER, true);
+
         clientParams.setHttpElementCharset("UTF-8");
         this.client.setHttpConnectionManager(new SimpleHttpConnectionManager(true));
 
