@@ -11,7 +11,9 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 import cz.vity.freerapid.plugins.webclient.hoster.PremiumAccount;
 import cz.vity.freerapid.swing.ComponentFactory;
+import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.LogUtils;
+import cz.vity.freerapid.utilities.Utils;
 import org.jdesktop.application.Action;
 
 import javax.swing.*;
@@ -78,10 +80,26 @@ public class AccountDialog extends AppDialog {
 
     @Action
     public void okBtnAction() {
+        if (!validated())
+            return;
         if (model != null)
             model.triggerCommit();
         setResult(RESULT_OK);
         doClose();
+    }
+
+    private boolean validated() {
+        if (!Utils.hasValue(fieldUserName.getText())) {
+            Swinger.showErrorMessage(getResourceMap(), "message_noUserName");
+            Swinger.inputFocus(fieldUserName);
+            return false;
+        }
+        if (fieldPassword.getPassword().length == 0) {
+            Swinger.showErrorMessage(getResourceMap(), "message_noPassword");
+            Swinger.inputFocus(fieldPassword);
+            return false;
+        }
+        return true;
     }
 
     @Action
