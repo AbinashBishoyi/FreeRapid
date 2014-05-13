@@ -249,8 +249,8 @@ public class ProcessManager extends Thread {
                 final ConnectionSettings settings = client.getSettings();
                 if (error == DownloadTaskError.NO_ROUTE_TO_HOST) {
                     clientManager.setConnectionEnabled(settings, false);
-                    final int problematic = service.getProblematicConnectionsCount();
-                    if (clientManager.getEnabledConnections().size() - problematic >= 1) {
+                    //final int problematic = service.getProblematicConnectionsCount();
+                    if (clientManager.getEnabledConnections().size() > 0) {
                         file.setState(DownloadState.QUEUED);
                     } else error = DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR;
                 }

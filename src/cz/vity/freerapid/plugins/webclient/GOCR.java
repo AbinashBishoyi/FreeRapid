@@ -23,28 +23,24 @@ class GOCR {
     private final String commandLineOptions;
     private final static String PATH = "tools/gocr/gocr046.exe";
 
-    public GOCR(BufferedImage image, String commandLineOptions) {
+    GOCR(BufferedImage image, String commandLineOptions) {
 
         this.image = image;
         this.commandLineOptions = commandLineOptions;
     }
 
 
-    public String recognize() throws IOException {
+    String recognize() throws IOException {
+
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        PNMEncodeParam param = new PNMEncodeParam();
-        //param.setRaw(true);
-
-        //new PPMEnco
-        ImageEncoder encoder = ImageCodec.createImageEncoder("PNM", out, param);
+        final ImageEncoder encoder = ImageCodec.createImageEncoder("PNM", out, new PNMEncodeParam());
 
         encoder.encode(image);
 
         Scanner scanner = null;
         OutputStream processOut = null;
+        final String command = Utils.addFileSeparator(Utils.getAppPath()) + PATH;
         try {
-            final String command = Utils.addFileSeparator(Utils.getAppPath()) + PATH;
             final Process process = Runtime.getRuntime().exec(command + " " + commandLineOptions + " -f ASCII -");
             processOut = process.getOutputStream();
             processOut.write(out.toByteArray());
