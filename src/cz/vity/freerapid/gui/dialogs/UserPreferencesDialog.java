@@ -30,6 +30,7 @@ import org.jdesktop.swinghelper.buttonpanel.JXButtonPanel;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -196,7 +197,9 @@ public class UserPreferencesDialog extends AppDialog {
         bind(spinnerErrorAttemptsCount, UserProp.ERROR_ATTEMPTS_COUNT, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT, 0, 20, 1);
         bind(spinnerAutoReconnectTime, UserProp.AUTO_RECONNECT_TIME, UserProp.AUTO_RECONNECT_TIME_DEFAULT, 10, 10000, 10);
 
-        final ValueModel valueModel = bind(checkUseProxyList, UserProp.USE_PROXY_LIST, false);
+        bind(checkProcessFromTop, UserProp.START_FROM_FROM_TOP, UserProp.START_FROM_FROM_TOP_DEFAULT);
+
+        ValueModel valueModel = bind(checkUseProxyList, UserProp.USE_PROXY_LIST, false);
         PropertyConnector.connectAndUpdate(valueModel, fieldProxyListPath, "enabled");
         PropertyConnector.connectAndUpdate(valueModel, btnProxyListPathSelect, "enabled");
 
@@ -208,7 +211,12 @@ public class UserPreferencesDialog extends AppDialog {
         bind(checkDecoratedFrames, FWProp.DECORATED_FRAMES, false);
         bind(checkHideWhenMinimized, FWProp.MINIMIZE_TO_TRAY, false);
 
-        bind(checkShowIconInSystemTray, FWProp.SHOW_TRAY, true);
+        bind(checkAnimateIcon, UserProp.ANIMATE_ICON, UserProp.ANIMATE_ICON_DEFAULT);
+        bind(checkShowTitle, UserProp.SHOWINFO_IN_TITLE, UserProp.SHOWINFO_IN_TITLE_DEFAULT);
+
+        valueModel = bind(checkShowIconInSystemTray, FWProp.SHOW_TRAY, true);
+
+        PropertyConnector.connectAndUpdate(valueModel, checkAnimateIcon, "enabled");
 
         bind(comboFileExists, UserProp.FILE_ALREADY_EXISTS, UserProp.FILE_ALREADY_EXISTS_DEFAULT, "fileAlreadyExistsOptions");
 
@@ -331,9 +339,6 @@ public class UserPreferencesDialog extends AppDialog {
 
 
     private void initComponents() {
-        // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-        // Generated using JFormDesigner Open Source Project license - unknown
-        //ResourceBundle bundle = ResourceBundle.getBundle("UserPreferencesDialog");
         JPanel dialogPane = new JPanel();
         JPanel contentPanel = new JPanel();
         JXButtonPanel buttonBar = new JXButtonPanel();
@@ -347,6 +352,7 @@ public class UserPreferencesDialog extends AppDialog {
         JPanel panelDownloadsSettings = new JPanel();
         checkContinueInterrupted = new JCheckBox();
         checkCloseWhenAllComplete = new JCheckBox();
+        checkProcessFromTop = new JCheckBox();
         JLabel labelIfFilenameExists = new JLabel();
         comboFileExists = new JComboBox();
         JPanel panelSoundSettings = new JPanel();
@@ -380,6 +386,8 @@ public class UserPreferencesDialog extends AppDialog {
         JLabel labelRequiresRestart = new JLabel();
         toolbar = new JButtonBar();
         CellConstraints cc = new CellConstraints();
+        checkAnimateIcon = new JCheckBox();
+        checkShowTitle = new JCheckBox();
 
         //======== this ========
         setTitle(bundle.getString("this.title"));
@@ -460,6 +468,7 @@ public class UserPreferencesDialog extends AppDialog {
                             //---- checkCloseWhenAllComplete ----
                             checkCloseWhenAllComplete.setName("checkCloseWhenAllComplete");
 
+                            checkProcessFromTop.setName("checkProcessFromTop");
                             //---- labelIfFilenameExists ----
                             labelIfFilenameExists.setName("labelIfFilenameExists");
 
@@ -476,14 +485,16 @@ public class UserPreferencesDialog extends AppDialog {
                                     new RowSpec[]{
                                             FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.LINE_GAP_ROWSPEC,
                                             FormFactory.DEFAULT_ROWSPEC
                                     }), panelDownloadsSettings);
 
                             panelDownloadsSettingsBuilder.add(checkContinueInterrupted, cc.xywh(3, 1, 5, 1));
-                            panelDownloadsSettingsBuilder.add(checkCloseWhenAllComplete, cc.xywh(3, 2, 5, 1));
-                            panelDownloadsSettingsBuilder.add(labelIfFilenameExists, cc.xywh(3, 4, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
-                            panelDownloadsSettingsBuilder.add(comboFileExists, cc.xy(5, 4));
+                            panelDownloadsSettingsBuilder.add(checkProcessFromTop, cc.xywh(3, 2, 5, 1));
+                            panelDownloadsSettingsBuilder.add(checkCloseWhenAllComplete, cc.xywh(3, 3, 5, 1));
+                            panelDownloadsSettingsBuilder.add(labelIfFilenameExists, cc.xywh(3, 5, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
+                            panelDownloadsSettingsBuilder.add(comboFileExists, cc.xy(5, 5));
                         }
 
                         PanelBuilder panelGeneralBuilder = new PanelBuilder(new FormLayout(
@@ -565,6 +576,12 @@ public class UserPreferencesDialog extends AppDialog {
                             //---- checkHideWhenMinimized ----
                             checkHideWhenMinimized.setName("checkHideWhenMinimized");
 
+                            checkAnimateIcon.setName("checkAnimateIcon");
+                            checkAnimateIcon.setBorder(new EmptyBorder(0, 35, 0, 0));
+
+                            checkShowTitle.setName("checkShowTitle");
+                            checkProcessFromTop.setName("checkProcessFromTop");
+
                             PanelBuilder panelAppearanceBuilder = new PanelBuilder(new FormLayout(
                                     new ColumnSpec[]{
                                             new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(0), FormSpec.NO_GROW),
@@ -579,8 +596,12 @@ public class UserPreferencesDialog extends AppDialog {
                                             FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.DEFAULT_ROWSPEC,
-                                            FormFactory.MIN_ROWSPEC,
-                                            FormFactory.RELATED_GAP_ROWSPEC
+                                            FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC,
+                                            //FormFactory.RELATED_GAP_ROWSPEC
                                     }), panelAppearance);
 
                             panelAppearanceBuilder.add(labelLaF, cc.xy(3, 1));
@@ -588,7 +609,9 @@ public class UserPreferencesDialog extends AppDialog {
                             panelAppearanceBuilder.add(labelRequiresRestart2, cc.xy(7, 1));
                             panelAppearanceBuilder.add(checkDecoratedFrames, cc.xywh(3, 2, 5, 1));
                             panelAppearanceBuilder.add(checkShowIconInSystemTray, cc.xywh(3, 3, 5, 1));
-                            panelAppearanceBuilder.add(checkHideWhenMinimized, cc.xywh(3, 4, 5, 1));
+                            panelAppearanceBuilder.add(checkAnimateIcon, cc.xywh(3, 5, 5, 1));
+                            panelAppearanceBuilder.add(checkShowTitle, cc.xywh(3, 6, 5, 1));
+                            panelAppearanceBuilder.add(checkHideWhenMinimized, cc.xywh(3, 7, 5, 1));
                         }
 
                         PanelBuilder panelViewsBuilder = new PanelBuilder(new FormLayout(
@@ -745,7 +768,7 @@ public class UserPreferencesDialog extends AppDialog {
             dialogPane.add(toolbar, BorderLayout.NORTH);
         }
         contentPane.add(dialogPane, BorderLayout.CENTER);
-        // JFormDesigner - End of component initialization  //GEN-END:initComponents
+
     }
 
     private JButton btnOK;
@@ -761,10 +784,14 @@ public class UserPreferencesDialog extends AppDialog {
     private JCheckBox checkPlaySoundWhenComplete;
     private JComboBox comboLaF;
     private JCheckBox checkDecoratedFrames;
+    private JCheckBox checkAnimateIcon;
     private JCheckBox checkShowIconInSystemTray;
     private JCheckBox checkHideWhenMinimized;
     private JSpinner spinnerMaxConcurrentDownloads;
     private JCheckBox checkUseProxyList;
+    private JCheckBox checkShowTitle;
+    private JCheckBox checkProcessFromTop;
+
     private JTextField fieldProxyListPath;
     private JButton btnProxyListPathSelect;
     private JSpinner spinnerErrorAttemptsCount;

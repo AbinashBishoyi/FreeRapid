@@ -8,6 +8,7 @@ import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.DownloadTask;
 import cz.vity.freerapid.gui.actions.URLTransferHandler;
 import cz.vity.freerapid.gui.dialogs.InformationDialog;
+import cz.vity.freerapid.gui.dialogs.MultipleSettingsDialog;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
@@ -141,11 +142,16 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     public void downloadInformationAction() throws Exception {
         final int[] indexes = getSelectedRows();
         final java.util.List<DownloadFile> files = manager.getSelectionToList(indexes);
+        if (files.isEmpty())
+            return;
 
         final MainApp app = (MainApp) context.getApplication();
         final JFrame owner = app.getMainFrame();
-        for (DownloadFile file : files) {
-            final InformationDialog dialog = new InformationDialog(owner, director, file);
+        if (files.size() == 1) {
+            final InformationDialog dialog = new InformationDialog(owner, director, files.get(0));
+            app.show(dialog);
+        } else {
+            final MultipleSettingsDialog dialog = new MultipleSettingsDialog(owner, files);
             app.show(dialog);
         }
     }

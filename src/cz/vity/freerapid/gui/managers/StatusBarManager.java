@@ -39,6 +39,8 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
     private Image downloadingIconImage;
     private TrayIconSupport trayIconSupport;
 
+    private JLabel clipboardMonitoring;
+
     /**
      * Konstruktor
      *
@@ -76,6 +78,12 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
                     }
                 }
             });
+
+            clipboardMonitoring = new JLabel();
+            clipboardMonitoring.setName("labelClipboardMonitoring");
+            resourceMap.injectComponent(clipboardMonitoring);
+
+
             statusbar.setName("statusbarPanel");
             infoLabel = new JLabel();
             progress = new JProgressBar();
@@ -83,11 +91,13 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
             final MemoryIndicator indicator = new MemoryIndicator();
             indicator.setPreferredSize(new Dimension(100, 15));
             infoLabel.setPreferredSize(new Dimension(330, 15));
+            clipboardMonitoring.setPreferredSize(new Dimension(17, 15));
             progress.setPreferredSize(new Dimension(progress.getPreferredSize().width * 2 / 3, 15));
             progress.setVisible(false);
             director.getMenuManager().getMenuBar().addPropertyChangeListener("selectedText", this);
             statusbar.add(infoLabel, JXStatusBar.Constraint.ResizeBehavior.FIXED);
             statusbar.add(progress, JXStatusBar.Constraint.ResizeBehavior.FIXED);
+            statusbar.add(clipboardMonitoring, JXStatusBar.Constraint.ResizeBehavior.FIXED);
             statusbar.add(Box.createGlue(), JXStatusBar.Constraint.ResizeBehavior.FILL);
             statusbar.add(indicator, JXStatusBar.Constraint.ResizeBehavior.FIXED);
             //statusbar.add(Box.createGlue(), JXStatusBar.Constraint.ResizeBehavior.FILL);
@@ -100,22 +110,31 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
             dataManager.addPropertyChangeListener("speed", this);
             dataManager.addPropertyChangeListener("completed", this);
             dataManager.addPropertyChangeListener("state", this);
+
             AppPrefs.getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
                 public void preferenceChange(PreferenceChangeEvent evt) {
-                    if (UserProp.SHOWINFO_IN_TITLE.equals(evt.getKey())) {
+                    final String key = evt.getKey();
+                    if (UserProp.SHOWINFO_IN_TITLE.equals(key)) {
                         updateInfoStatus();
-                    } else if (UserProp.ANIMATE_ICON.equals(evt.getKey())) {
+                    } else if (UserProp.ANIMATE_ICON.equals(key)) {
                         if (!AppPrefs.getProperty(UserProp.ANIMATE_ICON, UserProp.ANIMATE_ICON_DEFAULT))
                             trayIconSupport.setImage(defaultIconImage);
                         else
                             updateIconAnimation();
+                    } else if (UserProp.CLIPBOARD_MONITORING.equals(key)) {
+                        updateClipboardMonitoring();
                     }
                 }
             });
             //final ContentPanel panel = director.getDockingManager().getContentPanel();
             updateInfoStatus();
+            updateClipboardMonitoring();
         }
         return statusbar;
+    }
+
+    private void updateClipboardMonitoring() {
+        clipboardMonitoring.setEnabled(AppPrefs.getProperty(UserProp.CLIPBOARD_MONITORING, UserProp.CLIPBOARD_MONITORING_DEFAULT));
     }
 
 

@@ -65,7 +65,7 @@ public class UserProp {
     public static final int ERROR_SLEEP_TIME_DEFAULT = 4;
 
     public static final String START_FROM_FROM_TOP = "startDownloadFromTheTop";
-    public static final boolean START_FROM_FROM_TOP_DEFAULT = true;
+    public static final boolean START_FROM_FROM_TOP_DEFAULT = false;
 
     public static final String SHOWINFO_IN_TITLE = "showInfoInFrameTitle";
     public static final boolean SHOWINFO_IN_TITLE_DEFAULT = true;
