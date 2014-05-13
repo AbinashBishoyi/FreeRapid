@@ -6,6 +6,7 @@ import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
 
 import java.io.File;
 import java.net.URL;
+import java.util.logging.Logger;
 
 /**
  * Implementation of HttpFile - for developing purposes
@@ -13,6 +14,8 @@ import java.net.URL;
  * @author Vity
  */
 class PluginDevHttpFile implements HttpFile {
+    private final static Logger logger = Logger.getLogger(PluginDevHttpFile.class.getName());
+
     /**
      * Field fileSize
      */
@@ -81,6 +84,7 @@ class PluginDevHttpFile implements HttpFile {
     @Override
     public void setFileSize(long fileSize) {
         this.fileSize = fileSize;
+        logger.info("Setting file size to " + fileSize);
     }
 
     /**
@@ -130,6 +134,7 @@ class PluginDevHttpFile implements HttpFile {
     @Override
     public void setDownloaded(long downloaded) {
         this.downloaded = downloaded;
+        logger.info("Setting downloaded to " + downloaded);
     }
 
     /**
@@ -218,6 +223,7 @@ class PluginDevHttpFile implements HttpFile {
      */
     public void setFileUrl(URL fileUrl) {
         this.fileUrl = fileUrl;
+        logger.info("Setting new fileUrl to " + fileUrl);
     }
 
     /**
@@ -264,6 +270,7 @@ class PluginDevHttpFile implements HttpFile {
      */
     public void setFileState(FileState state) {
         this.fileState = state;
+        logger.info("setting new file state to " + state);
     }
 
     /**
@@ -279,6 +286,7 @@ class PluginDevHttpFile implements HttpFile {
      */
     public void setPluginID(String pluginID) {
         this.serviceID = pluginID;
+        logger.info("setting new serviceID to " + pluginID);
     }
 
     /**

@@ -50,6 +50,7 @@ public interface HttpDownloadClient {
 
     /**
      * Sets referer value for the next HTTP request
+     * This method should be called before getGetMethod or getPostMethod
      *
      * @param referer URI for the next request made by method makeRequest
      */

@@ -1,6 +1,7 @@
 package cz.vity.freerapid.plugins.webclient.utils;
 
 import cz.vity.freerapid.plugins.exceptions.PluginImplementationException;
+import org.apache.commons.httpclient.methods.PostMethod;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -136,6 +137,22 @@ public final class PlugUtils {
             return matcher.group(1);
         } else
             throw new PluginImplementationException("Parameter " + name + " was not found");
+    }
+
+    /**
+     * Parses content and search for parameter's value in tag form.<br />
+     * This parameter and its value are added to POST method
+     *
+     * @param name    name of parameter
+     * @param content <code>String</code> to search in
+     * @return <code>String</code> value of parameter
+     * @throws PluginImplementationException given name not found in given content
+     * @see cz.vity.freerapid.plugins.webclient.utils.PlugUtils#getParameter(String, String)
+     */
+    public static String addParameter(String name, String content, PostMethod postMethod) throws PluginImplementationException {
+        final String result = getParameter(name, content);
+        postMethod.addParameter(name, result);
+        return result;
     }
 
     /**
