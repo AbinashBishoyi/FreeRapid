@@ -877,6 +877,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             forceMenu.add(action);
             action.setEnabled(forceEnabled);
         }
+        forceMenu.setEnabled(!connectionSettingses.isEmpty());
+
         popup.addSeparator();
         popup.add(forceMenu);
         popup.addSeparator();
