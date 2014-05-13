@@ -216,7 +216,7 @@
     </target>
 
 
-    <target name="tests" depends="build">
+    <target name="tests" depends="compile">
         <mkdir dir="${reports.tests}"/>
         <junit printsummary="yes" haltonfailure="yes">
             <classpath>
@@ -229,8 +229,8 @@
             <formatter type="plain"/>
 
             <batchtest fork="yes" todir="${reports.tests}">
-                <fileset dir="${src.tests}">
-                    <include name="**/*Test*.java"/>
+                <fileset dir="${build.tests}">
+                    <include name="**/*Test.class"/>
                 </fileset>
             </batchtest>
         </junit>
