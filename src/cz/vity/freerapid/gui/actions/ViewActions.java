@@ -4,7 +4,7 @@ import cz.vity.freerapid.core.MainApp;
 import org.jdesktop.application.Action;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
 
 public class ViewActions {

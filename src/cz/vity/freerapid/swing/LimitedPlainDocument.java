@@ -3,7 +3,7 @@ package cz.vity.freerapid.swing;
 import java.util.regex.Pattern;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
 public final class LimitedPlainDocument extends javax.swing.text.PlainDocument {
     private final Pattern pattern;

@@ -14,7 +14,7 @@ import java.util.Locale;
 /**
  * Info pro odeslani na server
  *
- * @author Ladislav Vitasek
+ * @author Vity
  */
 public class SubmitErrorInfo extends AbstractBean {
     private String name = "";

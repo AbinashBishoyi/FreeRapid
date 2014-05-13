@@ -10,6 +10,8 @@ import java.awt.event.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,7 +19,7 @@ import java.util.regex.Pattern;
 /**
  * Komponenta, ktera zvyraznuje emaily v textu. Pri drzeni CTRL+click otevira email v klientu.
  *
- * @author Ladislav Vitasek
+ * @author Vity
  */
 public class EditorPaneLinkDetector extends JEditorPane {
     private final static Logger logger = Logger.getLogger(EditorPaneLinkDetector.class.getName());
@@ -88,6 +90,14 @@ public class EditorPaneLinkDetector extends JEditorPane {
         });
     }
 
+    public void setURLList(List<URL> urlList) {
+        List<String> urlStringList = new LinkedList<String>();
+        for (URL url : urlList) {
+            urlStringList.add(url.toExternalForm());
+        }
+        this.setURLs(urlStringList);
+    }
+
     private void insertExampleEmail(StyledDocument doc) {
         SimpleAttributeSet example = new SimpleAttributeSet();
         StyleConstants.setForeground(example, Color.GRAY);
@@ -98,7 +108,10 @@ public class EditorPaneLinkDetector extends JEditorPane {
         }
     }
 
+
     public void setURLs(java.util.List<String> list) {
+        if (list.isEmpty())
+            return;
         final Document document = this.getDocument();
         String s = "";
         try {
@@ -167,7 +180,6 @@ public class EditorPaneLinkDetector extends JEditorPane {
         }
         return list;
     }
-
 
     static class SyntaxDocument extends DefaultStyledDocument {
         private DefaultStyledDocument doc;

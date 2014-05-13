@@ -7,7 +7,10 @@ import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
 import com.l2fprod.common.swing.JDirectoryChooser;
 import cz.vity.freerapid.core.UserProp;
+import cz.vity.freerapid.gui.actions.URLTransferHandler;
 import cz.vity.freerapid.gui.managers.DataManager;
+import cz.vity.freerapid.gui.managers.ManagerDirector;
+import cz.vity.freerapid.gui.managers.PluginsManager;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.swing.ComponentFactory;
 import cz.vity.freerapid.swing.Swinger;
@@ -35,7 +38,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
 public class NewLinksDialog extends AppDialog implements ClipboardOwner {
     private final static Logger logger = Logger.getLogger(NewLinksDialog.class.getName());
@@ -43,10 +46,12 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
     private boolean startPaused = false;
     private final DataManager dataManager;
     private final List<URL> removeList;
+    private PluginsManager pluginsManager;
 
-    public NewLinksDialog(DataManager dataManager, Frame owner) throws HeadlessException {
+    public NewLinksDialog(ManagerDirector director, Frame owner) throws HeadlessException {
         super(owner, true);
-        this.dataManager = dataManager;
+        this.dataManager = director.getDataManager();
+        this.pluginsManager = director.getPluginsManager();
         this.setName("NewLinksDialog");
         try {
             initComponents();
@@ -130,19 +135,18 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
     private void buildGUI() {
         new CompoundUndoManager(urlsArea);
         urlsArea.setPreferredSize(new Dimension(130, 100));
-        //urlsArea.setURLs("http://rapidshare.com/files/132012635/Private_Triple_X_01.pdf");
+        urlsArea.setURLs("http://www.filefactory.com/file/a3f880/n/KOW_-_Monica_divx_002");
         comboPath.setModel(new RecentsFilesComboModel(UserProp.LAST_USED_SAVED_PATH, true));
         AutoCompleteDecorator.decorate(comboPath);
-        //comboPath.addItem("c:\\");
-//        comboPath.setSelectedIndex(0);
+        if (comboPath.getModel().getSize() > 0) {
+            comboPath.setSelectedIndex(0);
+        }
 
-//        urlsArea.getDocument().addUndoableEditListener(
-//        new UndoableEditListener() {
-//          public void undoableEditHappened(UndoableEditEvent e) {
-//            undoManager.addEdit(e.getEdit());
-//          }
-//        });
-
+        this.setTransferHandler(new URLTransferHandler() {
+            protected void doDropAction(List<URL> files) {
+                urlsArea.setURLList(files);
+            }
+        });
     }
 
     @Action
@@ -154,22 +158,53 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
     }
 
     private boolean validateStart() {
-        final List<URL> urlList = urlsArea.getURLs();
+        List<URL> urlList = urlsArea.getURLs();
         if (urlList.isEmpty()) {
             Swinger.showErrorMessage(this.getResourceMap(), "noURLMessage");
             Swinger.inputFocus(this.urlsArea);
             return false;
         }
+        StringBuilder builder = new StringBuilder();
+        final List<String> stringList = urlsArea.getURLsAsStringList();
+        final List<URL> notSupportedList = new ArrayList<URL>();
+
+
         final String dir = (String) comboPath.getEditor().getItem();
         if (dir == null || !new File(dir).isDirectory()) {
             Swinger.showErrorMessage(this.getResourceMap(), "noDirectoryMessage");
             btnSelectPathAction();
             return false;
         }
-        final List<String> stringList = urlsArea.getURLsAsStringList();
+
+        for (URL url : urlList) {
+            final String s = url.toExternalForm();
+            if (!pluginsManager.isSupported(url)) {
+                notSupportedList.add(url);
+                builder.append('\n').append(s);
+            }
+        }
+
+
+        if (!notSupportedList.isEmpty()) {
+            final int result = Swinger.getChoiceYesNo(getResourceMap().getString("notSupportedByPlugins", builder.toString()));
+            if (result == Swinger.RESULT_YES) {
+                urlList.removeAll(notSupportedList);
+                urlsArea.setText("");
+                urlsArea.setURLList(urlList);
+            } else {
+                return false;
+            }
+        }
+
+        if (urlList.isEmpty()) {
+            Swinger.showErrorMessage(this.getResourceMap(), "noURLMessage");
+            Swinger.inputFocus(this.urlsArea);
+            return false;
+        }
+
         final List<String> onTheList = new ArrayList<String>();
         removeList.clear();
-        StringBuilder builder = new StringBuilder();
+        builder = new StringBuilder();
         synchronized (this.dataManager.getLock()) {
             final ArrayListModel<DownloadFile> files = this.dataManager.getDownloadFiles();
             for (DownloadFile file : files) {
@@ -372,5 +407,9 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
 
     public void lostOwnership(Clipboard clipboard, Transferable contents) {
 
+    }
+
+    public void setURLs(List<URL> urlList) {
+        urlsArea.setURLList(urlList);
     }
 }

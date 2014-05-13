@@ -1,6 +1,6 @@
 package cz.vity.freerapid.core.tasks;
 
-import cz.vity.freerapid.core.tasks.exceptions.FileTransferFailedException;
+import cz.vity.freerapid.plugins.exceptions.FileTransferFailedException;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
 import org.jdesktop.application.Application;
@@ -14,7 +14,7 @@ import java.nio.channels.FileChannel;
 import java.util.logging.Logger;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
 public class MoveFileTask extends CoreTask<Void, Void> {
     private final static Logger logger = Logger.getLogger(MoveFileTask.class.getName());

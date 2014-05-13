@@ -19,7 +19,7 @@ import java.text.SimpleDateFormat;
 /**
  * Trida slouzici k instanciovani upravenych zakladnich komponent
  *
- * @author Ladislav Vitasek
+ * @author Vity
  */
 
 public class ComponentFactory {

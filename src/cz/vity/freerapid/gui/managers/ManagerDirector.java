@@ -49,6 +49,10 @@ public class ManagerDirector {
 
     private FileTypeIconProvider fileTypeIconProvider;
 
+    private ClientManager clientManager;
+
+    private PluginsManager pluginsManager;
+
     /**
      * Konstruktor
      *
@@ -66,6 +70,10 @@ public class ManagerDirector {
 
         this.rootContainer = new JPanel();
         this.rootContainer.setPreferredSize(new Dimension(700, 550));
+
+        this.clientManager = new ClientManager();
+
+        this.pluginsManager = new PluginsManager(context);
 
         this.fileTypeIconProvider = new FileTypeIconProvider(context);
 
@@ -135,5 +143,13 @@ public class ManagerDirector {
 
     public FileTypeIconProvider getFileTypeIconProvider() {
         return fileTypeIconProvider;
+    }
+
+    public ClientManager getClientManager() {
+        return clientManager;
+    }
+
+    public PluginsManager getPluginsManager() {
+        return pluginsManager;
     }
 }

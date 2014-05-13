@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
 public class CmdLine {
     private final MainApp app;

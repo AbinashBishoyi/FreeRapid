@@ -1,12 +1,10 @@
 package cz.vity.freerapid.core;
 
-import cz.vity.freerapid.utilities.LogUtils;
+import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.LocalStorage;
+import org.jdesktop.application.ResourceMap;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
@@ -19,15 +17,22 @@ import java.util.prefs.Preferences;
 public final class AppPrefs {
     private final static Logger logger = Logger.getLogger(AppPrefs.class.getName());
 
-    private static volatile Preferences properties = loadProperties();
+    /**
+     * Soubor pod kterym jsou polozky ulozeny
+     */
+    private final String propertiesFileName;
 
-    private final static String COLLECTIONS_FILENAME = "collections.xml";
+    private static volatile Preferences properties;
+    private final ApplicationContext context;
+    private String userNode;
 
-    private static Map<String, List<String>> collections = null;
-
-    // vychozi hodnoty pro uzivatelska nastaveni
-
-    private AppPrefs() {
+    public AppPrefs(ApplicationContext context) {
+        this.context = context;
+        final String id = context.getResourceMap().getString("Application.id");
+        if (id.isEmpty())
+            throw new IllegalStateException("Config property Application.ID is empty!");
+        this.propertiesFileName = id.toLowerCase() + ".xml";
+        properties = loadProperties();
     }
 
 
@@ -39,7 +44,7 @@ public final class AppPrefs {
      * @return hodnota uzivatelskeho nastaveni
      */
     public static int getProperty(final String key, final int defaultValue) {
-        return properties.getInt(key, defaultValue);
+        return getPreferences().getInt(key, defaultValue);
     }
 
     /**
@@ -50,7 +55,7 @@ public final class AppPrefs {
      * @return hodnota uzivatelskeho nastaveni
      */
     public static boolean getProperty(final String key, final boolean defaultValue) {
-        return properties.getBoolean(key, defaultValue);
+        return getPreferences().getBoolean(key, defaultValue);
     }
 
     /**
@@ -60,7 +65,7 @@ public final class AppPrefs {
      * @return hodnota uzivatelskeho nastaveni
      */
     public static String getProperty(final String key) {
-        return properties.get(key, null);
+        return getPreferences().get(key, null);
     }
 
     /**
@@ -70,7 +75,7 @@ public final class AppPrefs {
      * @param value hodnota uzivatelskeho nastaveni
      */
     public static void storeProperty(final String key, final boolean value) {
-        properties.putBoolean(key, value);
+        getPreferences().putBoolean(key, value);
     }
 
 
@@ -81,7 +86,7 @@ public final class AppPrefs {
      * @param value hodnota uzivatelskeho nastaveni
      */
     public static void storeProperty(final String key, final String value) {
-        properties.put(key, value);
+        getPreferences().put(key, value);
     }
 
     /**
@@ -91,7 +96,7 @@ public final class AppPrefs {
      * @param value hodnota uzivatelskeho nastaveni
      */
     public static void storeProperty(final String key, final int value) {
-        properties.putInt(key, value);
+        getPreferences().putInt(key, value);
     }
 
     /**
@@ -101,7 +106,7 @@ public final class AppPrefs {
      * @param defaultValue hodnota uzivatelskeho nastaveni
      */
     public static String getProperty(final String key, final String defaultValue) {
-        return properties.get(key, defaultValue);
+        return getPreferences().get(key, defaultValue);
     }
 
 
@@ -111,29 +116,25 @@ public final class AppPrefs {
      * @param key klic property k odstaneni
      */
     public static void removeProperty(final String key) {
-        properties.remove(key);
+        getPreferences().remove(key);
     }
 
     /**
      * Provede ulozeni properties do souboru definovaneho systemem. Uklada se do XML.
      */
-    public static void store() {
+    public void store() {
         OutputStream outputStream = null;
         try {
-//            final File f = new File(propertiesFile);
-//            if (!f.exists()) {
-//                final File parentFile = f.getParentFile();
-//                if (parentFile != null)
-//                    parentFile.mkdirs();
-//            }
-//
-            final LocalStorage localStorage = MainApp.getAContext().getLocalStorage();
+            if (!getProperty(FWProp.PROXY_SAVEPASSWORD, false))
+                removeProperty(FWProp.PROXY_PASSWORD);
+            final LocalStorage localStorage = context.getLocalStorage();
             final File outDir = localStorage.getDirectory();
             outDir.mkdirs();
             //outputStream = localStorage.openOutputFile(DEFAULT_PROPERTIES);
-            outputStream = new FileOutputStream(new File(outDir, Consts.DEFAULT_PROPERTIES));
-            properties.exportNode(outputStream);
+            outputStream = new FileOutputStream(new File(outDir, propertiesFileName));
+            getPreferences().exportNode(outputStream);
             outputStream.close();
+            logger.config("Preferences were saved successfuly");
         } catch (IOException e) {
             try {
                 if (outputStream != null)
@@ -141,33 +142,44 @@ public final class AppPrefs {
             } catch (IOException ex) {
                 logger.log(Level.SEVERE, e.getMessage(), ex);
             }
-            logger.severe("Couldn't save app properties. This is a fatal error. Please reinstall the application.");
+            logger.severe("Couldn't save app getPreferences(). This is a fatal error. Please reinstall the application.");
         } catch (Exception e) {
-            e.printStackTrace();//bez logovani
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
-        logger.info("Preferences were saved successfuly");
+    }
+
+    private String getUserNode() {
+        if (userNode == null) {
+            final ResourceMap map = context.getResourceMap();
+            final String vendor = map.getString("Application.vendorId");
+            final String applicationID = map.getString("Application.id");
+            if (vendor.isEmpty() || applicationID.isEmpty())
+                logger.warning("AppPrefs - vendor or application ID is empty");
+            userNode = vendor.toLowerCase() + "/" + applicationID.toLowerCase();
+        }
+        return userNode;
     }
 
     /**
-     * Provede nacteni properties ze souboru definovaneho systemem. Pokud nacteni selze, vraci prazdne properties.
+     * Provede nacteni properties ze souboru definovaneho systemem. Pokud nacteni selze, vraci prazdne getPreferences().
      * Properties se nacitaji z XML.
      */
-    public static Preferences loadProperties() {
-        final LocalStorage localStorage = MainApp.getAContext().getLocalStorage();
+    private Preferences loadProperties() {
+        final LocalStorage localStorage = context.getLocalStorage();
         final File storageDir = localStorage.getDirectory();
-        final File userFile = new File(storageDir, Consts.DEFAULT_PROPERTIES);
+        final File userFile = new File(storageDir, propertiesFileName);
         if (!(userFile.exists())) {
-            logger.log(Level.INFO, "File with user settings " + userFile + " was not found. First run. Using default settings");
-            return Preferences.userRoot().node("ftgm");
+            logger.log(Level.CONFIG, "File with user settings " + userFile + " was not found. First run. Using default settings");
+            return Preferences.userRoot().node(getUserNode());
         }
         InputStream inputStream = null;
         try {
-            inputStream = new FileInputStream(new File(storageDir, Consts.DEFAULT_PROPERTIES));
+            inputStream = new FileInputStream(new File(storageDir, propertiesFileName));
             //props.loadFromXML(inputStream);
             Preferences.importPreferences(inputStream);
             inputStream.close();
         } catch (FileNotFoundException e) {
-            logger.log(Level.CONFIG, "User preferences file was not found (first application launch?)");
+            logger.log(Level.CONFIG, "User preferences file was not found (first application start?)");
         } catch (Exception e) {
             try {
                 if (inputStream != null)
@@ -177,22 +189,12 @@ public final class AppPrefs {
             }
             logger.log(Level.WARNING, e.getMessage(), e);
         }
-        return Preferences.userRoot().node("ftg");
-    }
-
-    public static List<String> loadCollection(final String collectionName) {
-        final LocalStorage localStorage = MainApp.getAContext().getLocalStorage();
-        try {
-            if (collections == null)
-                collections = (Map<String, List<String>>) localStorage.load(COLLECTIONS_FILENAME);
-            return collections.get(collectionName);
-        } catch (IOException e) {
-            LogUtils.processException(logger, e);
-            return new ArrayList<String>();
-        }
+        return Preferences.userRoot().node(getUserNode());
     }
 
     public static Preferences getPreferences() {
+        if (properties == null)
+            throw new IllegalStateException("Properties were not initialized yet");
         return properties;
     }
 }

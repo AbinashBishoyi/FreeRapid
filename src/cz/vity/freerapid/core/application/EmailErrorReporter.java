@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 /**
  * Odesle pomoci vestaveneho klienta vyjimku
  *
- * @author Ladislav Vitasek
+ * @author Vity
  */
 class EmailErrorReporter implements ErrorReporter {
     private final static Logger logger = Logger.getLogger(EmailErrorReporter.class.getName());

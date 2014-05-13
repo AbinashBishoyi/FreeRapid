@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
 public class OSDesktop {
     private final static Logger logger = Logger.getLogger(OSDesktop.class.getName());

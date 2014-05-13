@@ -19,7 +19,7 @@ import java.awt.event.*;
 import java.util.logging.Logger;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
 abstract class AppDialog extends JDialog {
     private final static Logger logger = Logger.getLogger(AppDialog.class.getName());

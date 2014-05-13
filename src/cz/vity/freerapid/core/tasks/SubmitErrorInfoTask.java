@@ -16,7 +16,7 @@ import java.net.UnknownHostException;
 import java.util.logging.Logger;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
 public class SubmitErrorInfoTask extends CoreTask<Void, Void> {
     private final static Logger logger = Logger.getLogger(SubmitErrorInfoTask.class.getName());

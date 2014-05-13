@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * Podpora prehravani zvuku. Zvuky se cachuji.
  *
- * @author Ladislav Vitasek
+ * @author Vity
  */
 public class Sound {
 

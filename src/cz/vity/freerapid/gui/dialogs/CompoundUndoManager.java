@@ -13,7 +13,7 @@ import javax.swing.undo.UndoableEdit;
 import java.awt.event.ActionEvent;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
 class CompoundUndoManager extends UndoManager implements UndoableEditListener {
     public CompoundEdit compoundEdit;

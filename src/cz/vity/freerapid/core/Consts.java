@@ -72,12 +72,12 @@ public class Consts {
      * uzivatelske heslo pro pristup do databaze
      */
     public static final String DB_PASSWORD = "";
-    protected static final String APP_CODE = "frp";
+    protected static final String APP_CODE = "frd";
     public static final String AUTHORS = "Authors (c) 2008: Vity";
     /**
      * Soubor pod kterym jsou polozky ulozeny
      */
-    static final String DEFAULT_PROPERTIES = "frp.xml";
+    static final String DEFAULT_PROPERTIES = "frd.xml";
     public static final int MAX_RECENT_PHRASES_COUNT = 5;
 
 

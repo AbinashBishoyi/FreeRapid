@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 /**
  * Pomocne utility pro spravu aplikace Test na system.
  *
- * @author Ladislav Vitasek
+ * @author Vity
  */
 public final class Utils {
     private final static Logger logger = Logger.getLogger(Utils.class.getName());
@@ -178,16 +178,29 @@ public final class Utils {
     }
 
     public static String loadFile(final String fileName) {
-        final StringBuffer buffer = new StringBuffer(2000);
+        return loadFile(new File(fileName));
+    }
+
+    public static String loadFile(File file) {
+        final StringBuilder buffer = new StringBuilder(2000);
+        BufferedReader stream = null;
         try {
-            final BufferedReader stream = new BufferedReader(new InputStreamReader(new FileInputStream(new File(fileName))));
+            stream = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
             final char[] lines = new char[2000];
             int read;
             while ((read = stream.read(lines)) != -1)
                 buffer.append(lines, 0, read);
-            stream.close();
-        } catch (Exception e) {
+
+        } catch (IOException e) {
             LogUtils.processException(logger, e);
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    LogUtils.processException(logger, e);
+                }
+            }
         }
         return buffer.toString();
     }

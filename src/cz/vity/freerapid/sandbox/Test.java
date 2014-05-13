@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
 public class Test {
     private final static Logger logger = Logger.getLogger(Test.class.getName());

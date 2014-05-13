@@ -66,7 +66,7 @@ public class Swinger {
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null, new Object[]{map.getString(MESSAGE_BTN_YES_CODE), map.getString(MESSAGE_BTN_NO_CODE),
-                        map.getString(MESSAGE_BTN_CANCEL_CODE)},
+                map.getString(MESSAGE_BTN_CANCEL_CODE)},
                 null);
     }
 
@@ -257,4 +257,12 @@ public class Swinger {
         return toolBar;
     }
 
+    public static int getChoiceYesNo(final String message) {
+        final ResourceMap map = getResourceMap();
+        return JOptionPane.showOptionDialog(Frame.getFrames()[0], message, map.getString(MESSAGE_CONFIRM_TITLE_CODE),
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null, new Object[]{map.getString(MESSAGE_BTN_YES_CODE), map.getString(MESSAGE_BTN_NO_CODE)},
+                null);
+    }
 }

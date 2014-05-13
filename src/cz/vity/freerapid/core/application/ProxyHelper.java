@@ -9,7 +9,7 @@ import java.net.PasswordAuthentication;
 import java.util.logging.Logger;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
 public class ProxyHelper {
     private final static Logger logger = Logger.getLogger(ProxyHelper.class.getName());

@@ -15,7 +15,7 @@ import java.awt.*;
 import java.util.logging.Logger;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
 public class AboutDialog extends AppDialog {
     private final static Logger logger = Logger.getLogger(AboutDialog.class.getName());

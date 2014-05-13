@@ -3,15 +3,21 @@ package cz.vity.freerapid.core.tasks;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
-import cz.vity.freerapid.core.tasks.exceptions.NotEnoughSpaceException;
 import cz.vity.freerapid.model.DownloadFile;
-import cz.vity.freerapid.model.DownloadState;
+import cz.vity.freerapid.plugins.exceptions.*;
+import cz.vity.freerapid.plugins.webclient.*;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.Sound;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.jdesktop.application.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.UnknownHostException;
 import java.util.TimerTask;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -20,26 +26,49 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
-public abstract class DownloadTask extends CoreTask<Void, Long> {
+public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownloader {
     private final static Logger logger = Logger.getLogger(DownloadTask.class.getName());
-    protected final DownloadClient client;
+    protected final HttpDownloadClient client;
     protected final DownloadFile downloadFile;
+    private ShareDownloadService service;
     private long speedInBytes;
     private long counter;
     private Integer sleep = 0;
     private File outputFile;
     private File storeFile;
     private static final String MOVE_FILE_SERVICE = "moveFile";
+    private static java.util.Timer timer = new java.util.Timer(true);
+    private DownloadTaskError serviceError;
+
+    private int youHaveToSleepSecondsTime = 0;
+    private String captchaResult;
 
 
-    public DownloadTask(Application application, DownloadClient client, DownloadFile downloadFile) {
+    public DownloadTask(Application application, HttpDownloadClient client, DownloadFile downloadFile, ShareDownloadService service) {
         super(application);
         this.client = client;
         this.downloadFile = downloadFile;
+        this.service = service;
+        this.serviceError = DownloadTaskError.NO_ERROR;
         this.setInputBlocker(null);
         this.setUserCanCancel(true);
+        this.youHaveToSleepSecondsTime = 0;
+
+        downloadFile.setState(DownloadState.GETTING);
+    }
+
+    protected Void doInBackground() throws Exception {
+//        final GetMethod getMethod = client.getGetMethod("http://data.idnes.cz/televize/img/1/1466255.jpg");
+//        InputStream stream = client.makeRequestForFile(getMethod);
+//        final BufferedImage image = loadCaptcha(stream);
+//        final String s = askForCaptcha(image);
+//        System.out.println("s = " + s);
+        downloadFile.setDownloaded(0);
+        service.run(this);//run plugin
+        service = null;
+        return null;
     }
 
     protected OutputStream getFileOutputStream(File f, long fileSize) throws NotEnoughSpaceException, FileNotFoundException {
@@ -53,17 +82,25 @@ public abstract class DownloadTask extends CoreTask<Void, Long> {
         //client.initClient();
     }
 
-    protected void saveToFile(InputStream inputStream) throws Exception {
+    public boolean isTerminated() {
+        return this.isCancelled() || Thread.currentThread().isInterrupted();
+    }
+
+    public void saveToFile(InputStream inputStream) throws Exception {
         boolean temporary = AppPrefs.getProperty(UserProp.USE_TEMPORARY_FILES, true);
 
         final byte[] buffer = new byte[100000];
         OutputStream fileOutputStream = null;
-        java.util.Timer speed = null;
         final String fileName = downloadFile.getFileName();
         outputFile = downloadFile.getOutputFile();
         //outputFile = new File("d:/vystup.pdf");
         storeFile = (temporary) ? File.createTempFile(fileName + ".", ".part", downloadFile.getSaveToDirectory()) : outputFile;
         final long fileSize = downloadFile.getFileSize();
+        final HttpConnectionManagerParams params = client.getHTTPClient().getHttpConnectionManager().getParams();
+        final int connectionsPerHost = params.getDefaultMaxConnectionsPerHost();
+        System.out.println("connectionsPerHost = " + connectionsPerHost);
+        final int bufferSize = params.getReceiveBufferSize();
+        System.out.println("bufferSize = " + bufferSize);
         try {
             try {
                 fileOutputStream = getFileOutputStream(storeFile, fileSize);
@@ -72,11 +109,16 @@ public abstract class DownloadTask extends CoreTask<Void, Long> {
                 downloadFile.setState(DownloadState.DOWNLOADING);
                 setSpeed(0);
                 final long time = System.currentTimeMillis();
-                speed = new java.util.Timer();
-                speed.schedule(new TimerTask() {
+
+                timer.schedule(new TimerTask() {
                     private long lastSize;
 
                     public void run() {
+                        if (isTerminated() || downloadFile.getState() != DownloadState.DOWNLOADING) {
+                            this.cancel();
+                            return;
+                        }
+
                         final long speed = counter - lastSize;
                         setSpeed(speed);
                         final long current = System.currentTimeMillis();
@@ -92,15 +134,17 @@ public abstract class DownloadTask extends CoreTask<Void, Long> {
                 while ((len = inputStream.read(buffer)) != -1) {
                     fileOutputStream.write(buffer, 0, len);
                     counter += len;
-                    if (isCancelled()) {
+                    if (isTerminated()) {
                         fileOutputStream.flush();
                         break;
                     }
                 }
-                if (!isCancelled()) {
+                if (!isTerminated()) {
                     if (counter != fileSize)
                         throw new IOException("Error during download. File is not complete");
                     setDownloaded(fileSize);//100%
+                } else {
+                    logger.info("File downloading was terminated");
                 }
             }
             catch (Exception e) {
@@ -109,8 +153,8 @@ public abstract class DownloadTask extends CoreTask<Void, Long> {
                 throw e;
             }
             finally {
-                if (speed != null)
-                    speed.cancel();
+//                if (timer != null)
+//                    timer.cancel();
 //                try {
 //                    if (inputStream != null)
 //                        inputStream.close();
@@ -127,7 +171,7 @@ public abstract class DownloadTask extends CoreTask<Void, Long> {
             }
         }
         finally {
-            if (isCancelled()) {
+            if (isTerminated()) {
                 logger.info("Deleting partial file " + storeFile);
                 final boolean b = storeFile.delete();
                 if (!b)
@@ -176,12 +220,23 @@ public abstract class DownloadTask extends CoreTask<Void, Long> {
         error(cause);
         if (cause instanceof NotEnoughSpaceException) {
             Swinger.showErrorMessage(getResourceMap(), "NotEnoughSpaceException", (storeFile != null) ? storeFile : "");
+        } else if (cause instanceof UnknownHostException) {
+            downloadFile.setErrorMessage("Unknown host error - connection problem?");
+        } else
+        if (cause instanceof URLNotAvailableAnymoreException || cause instanceof PluginImplementationException || cause instanceof CaptchaEntryInputMismatchException) {
+            setServiceError(DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR);
+        } else if (cause instanceof YouHaveToWaitException) {
+            final YouHaveToWaitException waitException = (YouHaveToWaitException) cause;
+            this.youHaveToSleepSecondsTime = waitException.getHowManySecondsToWait();
+            setServiceError(DownloadTaskError.YOU_HAVE_TO_WAIT_ERROR);
         }
+
     }
 
     private void error(Throwable cause) {
         downloadFile.setState(DownloadState.ERROR);
         downloadFile.setErrorMessage(cause.getMessage());
+        setServiceError(DownloadTaskError.GENERAL_ERROR);
         Sound.playSound("error.wav");
     }
 
@@ -267,36 +322,89 @@ public abstract class DownloadTask extends CoreTask<Void, Long> {
             }
         });
         final ApplicationContext context = getApplication().getContext();
-        TaskService service = context.getTaskService(MOVE_FILE_SERVICE);
-        if (service == null) {
-            service = new TaskService(MOVE_FILE_SERVICE, new ThreadPoolExecutor(
-                    1,   // corePool size
-                    1,  // maximumPool size
-                    1L, TimeUnit.SECONDS,  // non-core threads time to live
-                    new LinkedBlockingQueue<Runnable>()));
-            context.addTaskService(service);
+        synchronized (getApplication().getContext()) {
+            TaskService service = context.getTaskService(MOVE_FILE_SERVICE);
+            if (service == null) {
+                service = new TaskService(MOVE_FILE_SERVICE, new ThreadPoolExecutor(
+                        1,   // corePool size
+                        1,  // maximumPool size
+                        1L, TimeUnit.SECONDS,  // non-core threads time to live
+                        new LinkedBlockingQueue<Runnable>()));
+                context.addTaskService(service);
+            }
+            service.execute(moveFileTask);
         }
-        service.execute(moveFileTask);
     }
 
-    protected void sleep(int seconds) throws InterruptedException {
+    public void sleep(int seconds) throws InterruptedException {
         setSleep(0);
         downloadFile.setState(DownloadState.WAITING);
-
+        downloadFile.setTimeToQueuedMax(seconds);
         logger.info("Going to sleep on " + (seconds) + " seconds");
         for (int i = seconds; i > 0; i--) {
-            if (isCancelled())
+            if (isTerminated())
                 break;
             setSleep(i);
             Thread.sleep(1000);
         }
     }
 
-    public DownloadFile getDownloadFile() {
+    public HttpFile getDownloadFile() {
         return downloadFile;
     }
 
-    public DownloadClient getClient() {
+    public HttpDownloadClient getClient() {
         return client;
+    }
+
+    public DownloadTaskError getServiceError() {
+        return serviceError;
+    }
+
+    private void setServiceError(DownloadTaskError serviceError) {
+        this.serviceError = serviceError;
+    }
+
+    public int getYouHaveToSleepSecondsTime() {
+        return youHaveToSleepSecondsTime;
+    }
+
+    public BufferedImage loadCaptcha(InputStream inputStream) throws FailedToLoadCaptchaPictureException {
+        if (inputStream == null)
+            throw new NullPointerException("Input stream for captcha is null");
+        try {
+            return ImageIO.read(inputStream);
+        } catch (IOException e) {
+            throw new FailedToLoadCaptchaPictureException("Reading captcha picture failed", e);
+        }
+    }
+
+    public String askForCaptcha(final BufferedImage image) throws Exception {
+        SwingUtilities.invokeAndWait(new Runnable() {
+            public void run() {
+                captchaResult = "";
+                while (captchaResult.isEmpty()) {
+                    captchaResult = (String) JOptionPane.showInputDialog(Frame.getFrames()[0], "Insert what you see", "Insert Captcha", JOptionPane.PLAIN_MESSAGE, new ImageIcon(image), null, null);
+                    if (captchaResult == null)
+                        break;
+                }
+                image.flush();
+            }
+        });
+        return captchaResult;
+    }
+
+    public String getCaptcha(final String url) throws FailedToLoadCaptchaPictureException {
+        final GetMethod getMethod = client.getGetMethod(url);
+        try {
+            InputStream stream = client.makeRequestForFile(getMethod);
+            if (stream == null)
+                throw new FailedToLoadCaptchaPictureException();
+            return askForCaptcha(loadCaptcha(stream));
+        } catch (FailedToLoadCaptchaPictureException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new FailedToLoadCaptchaPictureException(e);
+        }
     }
 }

@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 /**
  * Pomocna trida pro spousteni weboveho browseru nebo emailoveho klienta
  *
- * @author Ladislav Vitasek
+ * @author Vity
  */
 public class Browser {
     private final static Logger logger = Logger.getLogger(Browser.class.getName());

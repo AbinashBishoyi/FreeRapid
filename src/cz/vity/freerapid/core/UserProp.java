@@ -24,4 +24,13 @@ public class UserProp {
 
     public static final String PLAY_SOUNDS = "playSound";
     public static final String LAST_USED_SAVED_PATH = "lastUsedSavedPaths";
+    public static final String MAX_DOWNLOADS_AT_A_TIME = "maxDownloadsAtATime";
+
+    public static final String AUTO_RECONNECT_TIME = "autoReconnectTime";
+    public static final int AUTO_RECONNECT_TIME_DEFAULT = 120;
+
+    public static final String ERROR_ATTEMPTS_COUNT = "errorAttemptsCount";
+    public static final int ERROR_ATTEMPTS_COUNT_DEFAULT = 5;
+    public static int MAX_DOWNLOADS_AT_A_TIME_DEFAULT = 5;
+    public static final String PROXY_LIST_FILE = "proxyListFile";
 }

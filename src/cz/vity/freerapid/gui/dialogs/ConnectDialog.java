@@ -25,7 +25,7 @@ import java.awt.event.ActionListener;
 import java.util.logging.Logger;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
 public class ConnectDialog extends AppDialog {
     private final static Logger logger = Logger.getLogger(ConnectDialog.class.getName());

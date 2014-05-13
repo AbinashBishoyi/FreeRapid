@@ -9,7 +9,7 @@ import org.jdesktop.application.Action;
 import java.awt.event.ActionEvent;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
 
 public class HelpActions {

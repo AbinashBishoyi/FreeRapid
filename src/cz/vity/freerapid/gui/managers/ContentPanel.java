@@ -2,16 +2,19 @@ package cz.vity.freerapid.gui.managers;
 
 import com.jgoodies.binding.list.ArrayListModel;
 import cz.vity.freerapid.core.FileTypeIconProvider;
-import cz.vity.freerapid.core.tasks.ConnectionSettings;
-import cz.vity.freerapid.core.tasks.DownloadClient;
 import cz.vity.freerapid.core.tasks.DownloadTask;
+import cz.vity.freerapid.gui.actions.URLTransferHandler;
 import cz.vity.freerapid.model.DownloadFile;
-import cz.vity.freerapid.model.DownloadState;
+import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
+import cz.vity.freerapid.plugins.webclient.DownloadState;
+import cz.vity.freerapid.plugins.webclient.HttpDownloadClient;
+import cz.vity.freerapid.plugins.webclient.HttpFile;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.Browser;
 import cz.vity.freerapid.utilities.OSDesktop;
 import org.jdesktop.application.ApplicationActionMap;
 import org.jdesktop.application.ApplicationContext;
+import org.jdesktop.application.Task;
 import org.jdesktop.swingx.JXTable;
 
 import javax.swing.*;
@@ -25,12 +28,16 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.net.URL;
 import java.text.NumberFormat;
 import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Vity
@@ -241,7 +248,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
     public void openInBrowser() {
         final java.util.List<DownloadFile> files = manager.getSelectionToList(table.getSelectedRows());
-        for (DownloadFile file : files) {
+        for (HttpFile file : files) {
             Browser.openBrowser(file.getFileUrl().toExternalForm());
         }
     }
@@ -366,6 +373,17 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         table.setSortable(false);
         table.setColumnMargin(10);
         table.setShowGrid(false, false);
+
+        table.setTransferHandler(new URLTransferHandler() {
+            @Override
+            protected void doDropAction(final List<URL> files) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        Swinger.getAction("addNewLinksAction").actionPerformed(new ActionEvent(files, 0, null));
+                    }
+                });
+            }
+        });
 
         table.getSelectionModel().addListSelectionListener(this);
 
@@ -681,7 +699,13 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                     value = value + " - " + errorMessage.replaceAll("<.*?>", "");
                     this.setToolTipText(String.format(tooltip, errorMessage));
                 }
+            } else if (DownloadState.isProcessState(state)) {
+                Task task = downloadFile.getTask();
+                if (task != null)
+                    this.setToolTipText("Elapsed time: " + secondsToHMin(task.getExecutionDuration(TimeUnit.SECONDS)));
+
             }
+
             return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         }
     }
@@ -701,7 +725,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             final DownloadState state = downloadFile.getState();
             if (state == DownloadState.DOWNLOADING || state == DownloadState.GETTING || state == DownloadState.WAITING) {
                 this.setBackground(BG_GREEN);
-            } else if (state == DownloadState.CANCELLED || state == DownloadState.ERROR || state == DownloadState.DELETED) {
+            } else
+            if (state == DownloadState.CANCELLED || state == DownloadState.ERROR || state == DownloadState.DELETED) {
                 this.setBackground(BG_RED);
             } else if (state == DownloadState.PAUSED) {
                 this.setBackground(Color.BLACK);
@@ -711,9 +736,35 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                 // this.setBackground(Color.GREEN);
             } else
                 this.setBackground(Color.BLACK);
-            this.setValue(getProgress(downloadFile));
+
+            final int toQueued = downloadFile.getTimeToQueued();
+            if (state == DownloadState.ERROR && toQueued >= 0) {
+                final int max = downloadFile.getTimeToQueuedMax();
+                this.setStringPainted(true);
+                this.setString(toQueued + "/" + max);
+                this.setValue(getProgress(max, toQueued));
+                this.setToolTipText("Autoreconnect in " + toQueued + " seconds");
+            } else {
+                final int sleep = downloadFile.getSleep();
+                if (state == DownloadState.WAITING && sleep >= 0) {
+                    final int max = downloadFile.getTimeToQueuedMax();
+                    this.setStringPainted(true);
+                    this.setString(sleep + "/" + max);
+                    this.setValue(getProgress(max, sleep));
+                    this.setToolTipText("Attempt for downloading in " + sleep + " seconds");
+                } else {
+                    this.setToolTipText(null);
+                    this.setStringPainted(false);
+                    this.setValue(getProgress(downloadFile));
+                }
+            }
             return this;
         }
+
+    }
+
+    private static int getProgress(int max, int timeToQueued) {
+        return (int) ((timeToQueued / (float) max) * 100);
     }
 
     private static class ConnectionCellRenderer extends DefaultTableCellRenderer {
@@ -723,7 +774,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             final DownloadFile downloadFile = (DownloadFile) value;
             final DownloadTask task = downloadFile.getTask();
             if (task != null) {
-                final DownloadClient client = task.getClient();
+                final HttpDownloadClient client = task.getClient();
                 final ConnectionSettings con = client.getSettings();
                 if (con.isProxySet()) {
                     value = String.format("%s:%s", con.getProxyURL(), con.getProxyPort());
@@ -737,9 +788,9 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     }
 
 
-    private static String secondsToHMin(int seconds) {
-        int min = seconds / 60;
-        int hours = min / 60;
+    private static String secondsToHMin(long seconds) {
+        long min = seconds / 60;
+        long hours = min / 60;
         min = min - hours * 60;
         seconds = seconds - min * 60 - hours * 3600;
         if (hours > 0) {

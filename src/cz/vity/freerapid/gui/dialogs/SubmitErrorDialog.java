@@ -23,7 +23,7 @@ import java.net.UnknownHostException;
 import java.util.logging.Logger;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
 public class SubmitErrorDialog extends AppDialog {
     private final static Logger logger = Logger.getLogger(SubmitErrorDialog.class.getName());

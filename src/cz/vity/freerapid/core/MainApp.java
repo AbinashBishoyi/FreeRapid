@@ -26,6 +26,7 @@ public class MainApp extends SingleXFrameApplication {
     private ManagerDirector director;
     static boolean debug = false;
     private TrayIconSupport trayIconSupport = null;
+    private AppPrefs appPrefs;
 
 //    private static Logger logger = null;
 
@@ -35,6 +36,7 @@ public class MainApp extends SingleXFrameApplication {
         new CmdLine(this).processCommandLine(args);
 
         LogUtils.initLogging(debug);//logovani nejdrive    
+        this.appPrefs = new AppPrefs(this.getContext());
 
         LookAndFeels.getInstance().loadLookAndFeelSettings();//inicializace LaFu, musi to byt pred vznikem hlavniho panelu
         //Swinger.initLaF(); //inicializace LaFu, musi to byt pred vznikem hlavniho panelu
@@ -135,7 +137,7 @@ public class MainApp extends SingleXFrameApplication {
         }
 
         public void willExit(EventObject event) {
-            AppPrefs.store();
+            appPrefs.store();
         }
     }
 

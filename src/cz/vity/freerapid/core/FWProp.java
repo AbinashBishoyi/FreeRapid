@@ -3,7 +3,7 @@ package cz.vity.freerapid.core;
 /**
  * Application Framework properties
  *
- * @author Ladislav Vitasek
+ * @author Vity
  */
 public class FWProp {
     public static final String MINIMIZE_TO_TRAY = "minimizeToTray";

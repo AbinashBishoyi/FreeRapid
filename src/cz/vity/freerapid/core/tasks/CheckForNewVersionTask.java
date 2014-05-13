@@ -20,7 +20,7 @@ import java.net.UnknownHostException;
 import java.util.logging.Logger;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
 public class CheckForNewVersionTask extends CoreTask<ConnectResult, Void> {
     private final static Logger logger = Logger.getLogger(CheckForNewVersionTask.class.getName());

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <project name="FreeRapid Downloader" default="all" basedir=".">
-    <property name="application" value="FreeRapid Downloader"/>
+    <property name="application" value="FreeRapid"/>
     <property name="version" value="0.5"/>
     <property name="version.name" value="${application}-${version}"/>
     <property name="mainclass" value="cz.vity.freerapid.core.MainApp"/>
@@ -19,8 +19,10 @@
     <property name="doc.dir" value="doc"/>
     <property name="lib.dir" value="lib"/>
     <property name="dev.dir" value="dev"/>
+    <property name="plugins.dir" value="plugins"/>
     <property name="lookandfeel.dir" value="lookandfeel"/>
     <property name="lib-src.dir" value="lib-src"/>
+    <property name="plugins-src.dir" value="plugins-src"/>
 
     <property name="resources" value="cz/vity/freerapid/core/resources/"/>
     <property name="splash" value="${resources}icons/splash.jpg"/>
@@ -40,6 +42,8 @@
         <include name="**/?*.tld"/>
         <include name="**/?*.mid"/>
         <include name="**/?*.wav"/>
+
+        <exclude name="**/plugin.xml"/>
     </patternset>
 
     <path id="cp">
@@ -69,7 +73,7 @@
 
                 <attribute name="SplashScreen-Image" value="${splash}"/>
             </manifest>
-            <fileset dir="${classes.dir}" includes="**/*"/>
+            <fileset dir="${classes.dir}" includes="**/*" excludes="**/services/**,**/dev/**"/>
         </jar>
         <mkdir dir="${build.dir}/${lib.dir}"/>
         <!--<mkdir dir="${build.dir}/help"/>-->
@@ -82,11 +86,23 @@
         <copy todir="${build.dir}/${lib.dir}">
             <fileset dir="${lib.dir}" includes="**/*"/>
         </copy>
+        <copy todir="${build.dir}/${plugins.dir}">
+            <fileset dir="${plugins.dir}" includes="**/*"/>
+        </copy>
+
+        <jar jarfile="${dist.dir}/plugin-api.jar" compress="false">
+            <manifest>
+                <attribute name="Build-Date" value="${TODAY}"/>
+            </manifest>
+            <fileset dir="${classes.dir}" includes="**/plugins/**"/>
+        </jar>
+
     </target>
 
     <target name="compile" depends="clean, init" description="compiling source codes">
         <mkdir dir="${classes.dir}"/>
         <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="cp" optimize="on" target="1.6">
+
         </javac>
         <!-- zkopirovani resourcu -->
 
@@ -133,6 +149,7 @@
                 <include name="${etc.dir}/"/>
                 <include name="${src.dir}/"/>
                 <include name="${dev.dir}/"/>
+                <include name="${plugins.dir}/"/>
                 <include name="${doc.dir}/"/>
                 <include name="build.xml"/>
             </fileset>

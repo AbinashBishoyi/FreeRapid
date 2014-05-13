@@ -8,7 +8,7 @@ import org.jdesktop.swingx.error.ErrorReporter;
 /**
  * Odesle pomoci vestaveneho klienta vyjimku
  *
- * @author Ladislav Vitasek
+ * @author Vity
  */
 public class SubmitErrorReporter implements ErrorReporter {
 

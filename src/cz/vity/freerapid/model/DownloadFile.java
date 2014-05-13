@@ -1,7 +1,11 @@
 package cz.vity.freerapid.model;
 
+import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.FileTypeIconProvider;
+import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.DownloadTask;
+import cz.vity.freerapid.plugins.webclient.DownloadState;
+import cz.vity.freerapid.plugins.webclient.HttpFile;
 import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.application.AbstractBean;
 
@@ -11,9 +15,9 @@ import java.net.URL;
 import java.util.logging.Logger;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
-public class DownloadFile extends AbstractBean implements PropertyChangeListener {
+public class DownloadFile extends AbstractBean implements PropertyChangeListener, HttpFile {
     private final static Logger logger = Logger.getLogger(DownloadFile.class.getName());
 
     private long fileSize;
@@ -29,6 +33,10 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
     private File saveToDirectory;
     private String description;
     private String fileType;
+    private int timeToQueued = -1;
+    private int timeToQueuedMax = -1;
+    private int errorAttemptsCount;
+    private String shareDownloadServiceID;
 
     static {
         try {
@@ -43,7 +51,6 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
         } catch (IntrospectionException e) {
             LogUtils.processException(logger, e);
         }
-
     }
 
     public DownloadFile() {//XMLEncoder
@@ -58,9 +65,11 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
         final String urlStr = fileUrl.toExternalForm();
         this.fileName = FileTypeIconProvider.identifyFileName(urlStr);
         //this.downloaded = 0;
+        resetErrorAttempts();
         this.sleep = -1;
         this.averageSpeed = -1;
         this.speed = 0;
+        this.timeToQueued = -1;
         setFileType(FileTypeIconProvider.identifyFileType(fileName));
     }
 
@@ -219,5 +228,44 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
         //String oldValue = this.fileType;
         this.fileType = fileType;
         //firePropertyChange("fileType", oldValue, this.fileType);
+    }
+
+    public String getShareDownloadServiceID() {
+        return shareDownloadServiceID;
+    }
+
+
+    public void setTimeToQueued(int i) {
+        int oldValue = this.timeToQueued;
+        this.timeToQueued = i;
+        firePropertyChange("timeToQueued", oldValue, this.timeToQueued);
+    }
+
+    public int getTimeToQueued() {
+        return timeToQueued;
+    }
+
+    public void setErrorAttemptsCount(int errorAttemptsCount) {
+        this.errorAttemptsCount = errorAttemptsCount;
+    }
+
+    public int getErrorAttemptsCount() {
+        return errorAttemptsCount;
+    }
+
+    public void resetErrorAttempts() {
+        this.errorAttemptsCount = AppPrefs.getProperty(UserProp.ERROR_ATTEMPTS_COUNT, UserProp.ERROR_ATTEMPTS_COUNT_DEFAULT);
+    }
+
+    public void setShareDownloadServiceID(String shareDownloadServiceID) {
+        this.shareDownloadServiceID = shareDownloadServiceID;
+    }
+
+    public int getTimeToQueuedMax() {
+        return timeToQueuedMax;
+    }
+
+    public void setTimeToQueuedMax(int timeToQueuedMax) {
+        this.timeToQueuedMax = timeToQueuedMax;
     }
 }

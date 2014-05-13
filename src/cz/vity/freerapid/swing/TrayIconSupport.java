@@ -15,7 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
 public class TrayIconSupport implements PropertyChangeListener {
     private final static Logger logger = Logger.getLogger(TrayIconSupport.class.getName());
