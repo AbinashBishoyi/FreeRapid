@@ -67,7 +67,7 @@
         <map from="${lib.prefix}" to="${lib.dir}"/>
     </pathconvert>
 
-    <target name="build" depends="compile" description="building ERModeller">
+    <target name="build" depends="compile" description="building">
         <buildnumber file="build.txt"/>
 
         <jar jarfile="${build.dir}/${mainjar.file}" compress="false">
