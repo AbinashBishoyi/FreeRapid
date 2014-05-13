@@ -5,9 +5,9 @@ import cz.vity.freerapid.plugins.webclient.HttpFileDownloader;
 /**
  * @author Ladislav Vitasek
  */
-public interface PluginRunner<C extends ShareDownloadService> {
+public interface PluginRunner {
 
-    void init(C shareDownloadService, HttpFileDownloader downloader) throws Exception;
+    void init(ShareDownloadService shareDownloadService, HttpFileDownloader downloader) throws Exception;
 
     void run(HttpFileDownloader downloader) throws Exception;
 

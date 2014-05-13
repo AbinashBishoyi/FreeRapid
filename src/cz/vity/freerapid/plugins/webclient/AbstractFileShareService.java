@@ -5,9 +5,14 @@ import cz.vity.freerapid.plugins.webclient.interfaces.PluginContext;
 import cz.vity.freerapid.plugins.webclient.interfaces.PluginRunner;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 import org.java.plugin.Plugin;
+import org.java.plugin.PluginClassLoader;
 import org.java.plugin.registry.PluginAttribute;
 import org.java.plugin.registry.PluginDescriptor;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.io.IOException;
+import java.net.URL;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
@@ -19,6 +24,7 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
 
     private Pattern pattern;
     private PluginContext pluginContext;
+    private Icon image;
 
     public AbstractFileShareService() {
         super();
@@ -28,10 +34,29 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
         final PluginDescriptor desc = this.getDescriptor();
         final PluginAttribute attribute = desc.getAttribute("urlRegex");
         pattern = Pattern.compile(attribute.getValue(), Pattern.CASE_INSENSITIVE);
+        final PluginAttribute attr = desc.getAttribute("faviconImage");
+        if (attr != null) {
+            final PluginClassLoader loader = getManager().getPluginClassLoader(desc);
+            if (loader != null) {
+                final URL resource = loader.getResource(attr.getValue());
+                if (resource == null)
+                    logger.warning("Image was not found");
+                try {
+                    image = new ImageIcon(ImageIO.read(resource));
+                } catch (IOException e) {
+                    logger.warning("Image reading failed");
+                }
+            }
+        }
+
     }
 
     protected void doStop() throws Exception {
 
+    }
+
+    public Icon getFaviconImage() {
+        return image;
     }
 
     public String getId() {
@@ -53,7 +78,7 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
 
     public void run(HttpFileDownloader downloader) throws Exception {
         checkSupportedURL(downloader);
-        final PluginRunner<ShareDownloadService> pluginRunner = getPluginRunnerInstance();
+        final PluginRunner pluginRunner = getPluginRunnerInstance();
         if (pluginRunner != null) {
             pluginRunner.init(this, downloader);
             pluginRunner.run(downloader);
@@ -63,7 +88,7 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
 
     public void runCheck(HttpFileDownloader downloader) throws Exception {
         checkSupportedURL(downloader);
-        final PluginRunner<ShareDownloadService> pluginRunner = getPluginRunnerInstance();
+        final PluginRunner pluginRunner = getPluginRunnerInstance();
         if (pluginRunner != null) {
             pluginRunner.init(this, downloader);
             pluginRunner.runCheck(downloader);
@@ -92,7 +117,7 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
         this.pluginContext = pluginContext;
     }
 
-    protected PluginRunner<ShareDownloadService> getPluginRunnerInstance() {
+    protected PluginRunner getPluginRunnerInstance() {
         return null;
     }
 }

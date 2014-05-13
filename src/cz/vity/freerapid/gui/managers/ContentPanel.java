@@ -10,7 +10,9 @@ import cz.vity.freerapid.gui.actions.URLTransferHandler;
 import cz.vity.freerapid.gui.dialogs.InformationDialog;
 import cz.vity.freerapid.gui.dialogs.MultipleSettingsDialog;
 import cz.vity.freerapid.model.DownloadFile;
+import cz.vity.freerapid.plugins.exceptions.NotSupportedDownloadServiceException;
 import cz.vity.freerapid.plugins.webclient.*;
+import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 import cz.vity.freerapid.swing.SwingUtils;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.Browser;
@@ -642,7 +644,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         tableColumnModel.getColumn(COLUMN_SIZE).setCellRenderer(new SizeCellRenderer(context));
         tableColumnModel.getColumn(COLUMN_SPEED).setCellRenderer(new SpeedCellRenderer());
         tableColumnModel.getColumn(COLUMN_AVERAGE_SPEED).setCellRenderer(new AverageSpeedCellRenderer());
-        tableColumnModel.getColumn(COLUMN_SERVICE).setCellRenderer(new ServiceCellRenderer());
+        tableColumnModel.getColumn(COLUMN_SERVICE).setCellRenderer(new ServiceCellRenderer(director.getPluginsManager()));
         tableColumnModel.getColumn(COLUMN_PROXY).setCellRenderer(new ConnectionCellRenderer(context));
 
         table.addMouseListener(new MouseAdapter() {
@@ -1217,10 +1219,40 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
 
     private static class ServiceCellRenderer extends DefaultTableCellRenderer {
+        private final PluginsManager manager;
+
+        private ServiceCellRenderer(PluginsManager manager) {
+            this.manager = manager;
+        }
+
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             final DownloadFile downloadFile = (DownloadFile) value;
-            value = downloadFile.getServiceName();
-            return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            final String shareDownloadServiceID = downloadFile.getShareDownloadServiceID();
+            boolean hasImage = false;
+            final String serviceName = downloadFile.getServiceName();
+            super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            if (manager.hasPlugin(shareDownloadServiceID) && manager.getPluginMetadata(shareDownloadServiceID).hasFavicon()) {
+                try {
+                    final ShareDownloadService service = manager.getPluginInstance(shareDownloadServiceID);
+                    final Icon faviconImage = service.getFaviconImage();
+                    if (faviconImage != null) {
+                        this.setIcon(faviconImage);
+                        this.setHorizontalAlignment(CENTER);
+                        this.setText(null);
+                        this.setToolTipText(serviceName);
+                        hasImage = true;
+                    }
+                } catch (NotSupportedDownloadServiceException e) {
+                    //do nothing
+                }
+            }
+            if (!hasImage) {
+                this.setIcon(null);
+                this.setHorizontalAlignment(LEFT);
+                this.setToolTipText(null);
+                this.setText(serviceName);
+            }
+            return this;
         }
     }
 

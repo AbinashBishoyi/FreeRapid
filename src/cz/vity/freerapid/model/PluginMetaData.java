@@ -28,6 +28,7 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
     private String services;
     private String www;
     private boolean premium;
+    private boolean favicon;
 
     static {
         try {
@@ -36,7 +37,7 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
                     info.getPropertyDescriptors();
             for (PropertyDescriptor pd : propertyDescriptors) {
                 final Object name = pd.getName();
-                if ("supportedURL".equals(name) || "descriptor".equals(name) || "www".equals(name) || "services".equals(name) || "hasOptions".equals(name) || "premium".equals(name)) {
+                if ("supportedURL".equals(name) || "descriptor".equals(name) || "www".equals(name) || "services".equals(name) || "hasOptions".equals(name) || "premium".equals(name) || "favicon".equals(name)) {
                     pd.setValue("transient", Boolean.TRUE);
                 }
             }
@@ -64,6 +65,7 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
         services = DescriptorUtils.getAttribute("services", getId(), descriptor);
         www = DescriptorUtils.getAttribute("www", Consts.WEBURL, descriptor);
         premium = DescriptorUtils.getAttribute("premium", false, descriptor);
+        favicon = DescriptorUtils.getAttribute("faviconImage", null, descriptor) != null;
     }
 
 
@@ -154,5 +156,9 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
 
     public boolean isPremium() {
         return premium;
+    }
+
+    public boolean hasFavicon() {
+        return favicon;
     }
 }
