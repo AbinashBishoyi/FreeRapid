@@ -9,7 +9,7 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -153,10 +153,10 @@ public final class PlugUtils {
      * @throws PluginImplementationException any of the parameter were not found in given content
      * @see cz.vity.freerapid.plugins.webclient.utils.PlugUtils#getParameter(String, String)
      */
-    public static void addParameters(PostMethod postMethod, String content, String[] parameters) throws PluginImplementationException {
+    public static void addParameters(final PostMethod postMethod, final String content, final String[] parameters) throws PluginImplementationException {
         if (parameters.length == 0)
-            throw new IllegalArgumentException("You have to provide some parameters");
-        final Set<Object> set = Collections.emptySet();
+            throw new IllegalArgumentException("You have to provide some parameter names");
+        final Set<String> set = new HashSet<String>(parameters.length);
         set.addAll(Arrays.asList(parameters));
         final Matcher matcher = Pattern.compile("name=\"(.*?)\"[^>]*value=\"([^\"]*)\"", Pattern.MULTILINE).matcher(content);
         int start = 0;

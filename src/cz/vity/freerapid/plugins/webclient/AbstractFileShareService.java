@@ -91,11 +91,7 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
      * @return boolean true if plugin supports downloading from this URL
      */
     protected boolean supportURL(String url) {
-        if (pattern == null) {
-            logger.warning("Pattern for testing url was not initialized.");
-            return true;
-        }
-        return pattern.matcher(url).matches();
+        return pattern == null || pattern.matcher(url).matches();
     }
 
     @Override

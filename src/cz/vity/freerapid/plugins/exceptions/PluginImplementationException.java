@@ -12,6 +12,7 @@ public class PluginImplementationException extends NotRecoverableDownloadExcepti
      * Constructor
      */
     public PluginImplementationException() {
+        super("PluginImplementationException");
     }
 
     /**
@@ -21,8 +22,4 @@ public class PluginImplementationException extends NotRecoverableDownloadExcepti
         super(message);
     }
 
-    @Override
-    public String getLocalizedMessage() {
-        return "PluginImplementationException";
-    }
 }
