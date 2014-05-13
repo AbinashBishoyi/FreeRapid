@@ -4,6 +4,7 @@ import com.jgoodies.binding.beans.PropertyAdapter;
 import com.jgoodies.binding.list.ArrayListModel;
 import com.jgoodies.binding.value.DelayedReadValueModel;
 import cz.vity.freerapid.core.AppPrefs;
+import cz.vity.freerapid.core.FWProp;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.DownloadTask;
 import cz.vity.freerapid.model.DownloadFile;
@@ -17,6 +18,7 @@ import org.jdesktop.application.*;
 import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -52,6 +54,9 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         pluginsManager = director.getPluginsManager();
         context.getApplication().addExitListener(new Application.ExitListener() {
             public boolean canExit(EventObject event) {
+                if (AppPrefs.getProperty(FWProp.MINIMIZE_ON_CLOSE, FWProp.MINIMIZE_ON_CLOSE_DEFAULT) && event instanceof WindowEvent) {
+                    return true;
+                }
                 if (isDownloading()) {
                     final int result = Swinger.getChoiceOKCancel("downloadInProgress");
                     return (result == Swinger.RESULT_OK);

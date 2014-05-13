@@ -54,7 +54,8 @@ public final class Lng {
                     break;
                 }
             }
-
+            if (!selLanguageCode.equals(localeLanguageCode))
+                Locale.setDefault(new Locale(selLanguageCode, Locale.getDefault().getCountry()));
             //AppPrefs.storeProperty(FWProp.SELECTED_LANGUAGE, Locale.getDefault().getLanguage());
         } else {
             boolean found = false;

@@ -134,15 +134,25 @@ final public class DownloadClient implements HttpDownloadClient {
         final Header disposition = method.getResponseHeader("Content-Disposition");
         if (disposition != null && disposition.getValue().toLowerCase().contains("attachment")) {
             final String value = disposition.getValue();
-            final String str = "filename=";
-            final int index = value.toLowerCase().indexOf(str);
+            String str = "filename=";
+            final String lowercased = value.toLowerCase();
+            int index = lowercased.lastIndexOf(str);
             if (index >= 0) {
                 String s = value.substring(index + str.length());
                 if (s.startsWith("\"") && s.endsWith("\""))
                     s = s.substring(1, s.length() - 1);
                 return s;
             } else {
-                logger.warning("File name was not found in:" + value);
+                //test na buggove Content-Disposition
+                str = "filename\\*=UTF-8''";
+                index = lowercased.lastIndexOf(str);
+                if (index >= 0) {
+                    final String s = value.substring(index + str.length());
+                    if (!s.isEmpty())
+                        return s;
+                } else {
+                    logger.warning("File name was not found in:" + value);
+                }
             }
         }
         return null;
