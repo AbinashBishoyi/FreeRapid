@@ -481,21 +481,22 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     }
 
     public String askForCaptcha(final BufferedImage image) throws Exception {
-        SwingUtilities.invokeAndWait(new Runnable() {
-            public void run() {
-                if (AppPrefs.getProperty(UserProp.ACTIVATE_WHEN_CAPTCHA, UserProp.ACTIVATE_WHEN_CAPTCHA_DEFAULT))
-                    Swinger.bringToFront(((SingleFrameApplication) getApplication()).getMainFrame(), true);
-                captchaResult = "";
-                while (captchaResult.isEmpty()) {
-                    synchronized (captchaLock) {
+        synchronized (captchaLock) {
+            SwingUtilities.invokeAndWait(new Runnable() {
+                public void run() {
+                    if (AppPrefs.getProperty(UserProp.ACTIVATE_WHEN_CAPTCHA, UserProp.ACTIVATE_WHEN_CAPTCHA_DEFAULT))
+                        Swinger.bringToFront(((SingleFrameApplication) getApplication()).getMainFrame(), true);
+                    captchaResult = "";
+
+                    while (captchaResult.isEmpty()) {
                         captchaResult = (String) JOptionPane.showInputDialog(null, getResourceMap().getString("InsertWhaYouSee"), getResourceMap().getString("InsertCaptcha"), JOptionPane.PLAIN_MESSAGE, new ImageIcon(image), null, null);
+                        if (captchaResult == null)
+                            break;
                     }
-                    if (captchaResult == null)
-                        break;
                 }
-                image.flush();
-            }
-        });
+            });
+        }
+        image.flush();
         return captchaResult;
     }
 
