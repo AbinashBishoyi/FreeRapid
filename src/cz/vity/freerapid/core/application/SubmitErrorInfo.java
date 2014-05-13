@@ -77,17 +77,23 @@ public class SubmitErrorInfo extends AbstractBean {
 
 
     public void toURLPostData(PostMethod method) {
-        AppPrefs.storeProperty(FWProp.SUBMIT_ERROR_EMAIL, getEmail());
-        AppPrefs.storeProperty(FWProp.SUBMIT_ERROR_NAME, getName());
+        String email = getEmail();
+        if (email == null)
+            email = "";
+        AppPrefs.storeProperty(FWProp.SUBMIT_ERROR_EMAIL, email);
+        String name = getName();
+        if (name == null)
+            name = "";
+        AppPrefs.storeProperty(FWProp.SUBMIT_ERROR_NAME, name);
 
 
         method.addParameter("product", Consts.PRODUCT);
         method.addParameter("version", Consts.VERSION);
-        method.addParameter("name", getName());
+        method.addParameter("name", name);
         method.addParameter("locale", Locale.getDefault().getLanguage());
         method.addParameter("os", System.getProperty("os.name", "Unknown"));
         method.addParameter("comment", getComment());
-        method.addParameter("email", getEmail());
+        method.addParameter("email", email);
         method.addParameter("userinfo", getUserInfo());
         getErrorInfo().getErrorException().printStackTrace();
         final StringWriter sw = new StringWriter();
