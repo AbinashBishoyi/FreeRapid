@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <project name="FreeRapid Downloader" default="all" basedir=".">
     <property name="application" value="FreeRapid"/>
-    <property name="version" value="0.7"/>
+    <property name="version" value="0.7-devel"/>
     <property name="version.name" value="${application}-${version}"/>
     <property name="mainclass" value="cz.vity.freerapid.core.MainApp"/>
     <property name="mainjar.file" value="frd.jar"/>
@@ -85,7 +85,7 @@
             </mapper>
         </copy>
 
-        <native2ascii src="${classes.dir}" encoding="utf-8" includes="**/?*.stripped" excludes="${ignoreProperties}"
+        <native2ascii src="${classes.dir}" encoding="utf-8" includes="**/?*.stripped"
                       dest="${classes.dir}" ext=".properties"/>
         <delete>
             <fileset dir="${classes.dir}" includes="**/?*.stripped"/>

@@ -130,9 +130,7 @@ public class FileHistoryManager extends AbstractBean implements Application.Exit
         final Object o = localStorage.load(FILES_LIST_XML);
 
         if (o instanceof ArrayListModel) {
-            for (FileHistoryItem file : (ArrayListModel<FileHistoryItem>) o) {
-                list.add(file);
-            }
+            return (List<FileHistoryItem>) o;
         }
         return list;
     }

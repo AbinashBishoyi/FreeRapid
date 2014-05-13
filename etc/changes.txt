@@ -11,10 +11,12 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
-20th October 2008 - FreeRapid Downloader 0.7 released
+XXth October 2008 - FreeRapid Downloader 0.7 released
+  Added : plugins - support for xtraupload.de [implemented by Lukiz] 
   Added : autobackup files (filelist.xml, history.xml)  
   Added : new download state WAIT! to show to user "you have to wait XX minutes"
   Added : table scrolls to new position of selection [requested by Pavel]
+  Added : options to control confirmation dialogs 
   Added : option to disable history
   Added : buttons to create desktop, start menu, quick launch, start up shortcuts;
           Linux users can configure syscmd.properties file

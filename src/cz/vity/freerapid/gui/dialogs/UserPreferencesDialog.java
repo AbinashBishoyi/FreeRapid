@@ -334,8 +334,10 @@ public class UserPreferencesDialog extends AppDialog {
 
         final LaF selLaf = LookAndFeels.getInstance().getSelectedLaF();
         LaF laf = (LaF) comboLaF.getSelectedItem();
-        if (!selLaf.equals(laf)) {
-            updateLookAndFeel();
+        if (laf != null) {
+            if (!selLaf.equals(laf)) {
+                updateLookAndFeel();
+            }
         }
 
         final SupportedLanguage lng = Lng.getSelectedLanguage();

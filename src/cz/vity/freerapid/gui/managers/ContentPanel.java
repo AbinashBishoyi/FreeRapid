@@ -938,8 +938,6 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     private static class ProgressCellRenderer extends DefaultTableCellRenderer {
 
         private ProgressCellRenderer() {
-            final int h = this.getPreferredSize().height;
-            this.setPreferredSize(new Dimension(55, h));
         }
 
         @Override
@@ -1012,6 +1010,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             final ResourceMap map = context.getResourceMap();
             autoReconnectIn = map.getString("autoreconnectIn");
             attemptForDownloading = map.getString("attemptForDownloading");
+            final int h = this.getPreferredSize().height;
+            this.setPreferredSize(new Dimension(55, h));
         }
 
         @Override
