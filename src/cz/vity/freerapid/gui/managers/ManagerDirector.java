@@ -1,5 +1,6 @@
 package cz.vity.freerapid.gui.managers;
 
+import cz.vity.freerapid.core.Consts;
 import cz.vity.freerapid.core.FileTypeIconProvider;
 import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.swing.TextComponentContextMenuListener;
@@ -7,6 +8,7 @@ import org.jdesktop.application.ApplicationContext;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.logging.Logger;
 
 /**
  * Sprava a vytvoreni hlavniho panelu
@@ -14,6 +16,11 @@ import java.awt.*;
  * @author Vity
  */
 public class ManagerDirector {
+    /**
+     * logger instance
+     */
+    private final static Logger logger = Logger.getLogger(ManagerDirector.class.getName());
+
     /**
      * context frameworku
      */
@@ -71,6 +78,7 @@ public class ManagerDirector {
      * Inicializace komponent - manazeru
      */
     public void initComponents() {
+        logger.info("Starting version " + Consts.APPVERSION);
         mainFrame = ((MainApp) context.getApplication()).getMainFrame();
 
         this.rootContainer = new JPanel();
