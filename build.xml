@@ -176,18 +176,18 @@
                 <!--<exclude name="${build.dir}/${mainjar-packed.file}"/>-->
             </fileset>
         </zip>
-        <zip destfile="${dist.dir}/${version.name}-src.zip">
-            <fileset dir=".">
-                <include name="${lib.dir}/"/>
-                <include name="${lib-src.dir}/"/>
-                <include name="${etc.dir}/"/>
-                <include name="${src.dir}/"/>
-                <include name="${dev.dir}/"/>
-                <include name="${plugins.dir}/"/>
-                <include name="${doc.dir}/"/>
-                <include name="build.xml"/>
-            </fileset>
-        </zip>
+        <!--<zip destfile="${dist.dir}/${version.name}-src.zip">-->
+        <!--<fileset dir=".">-->
+        <!--<include name="${lib.dir}/"/>-->
+        <!--<include name="${lib-src.dir}/"/>-->
+        <!--<include name="${etc.dir}/"/>-->
+        <!--<include name="${src.dir}/"/>-->
+        <!--<include name="${dev.dir}/"/>-->
+        <!--<include name="${plugins.dir}/"/>-->
+        <!--<include name="${doc.dir}/"/>-->
+        <!--<include name="build.xml"/>-->
+        <!--</fileset>-->
+        <!--</zip>-->
     </target>
 
 </project>
