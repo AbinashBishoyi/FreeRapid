@@ -6,6 +6,7 @@ import cz.vity.freerapid.gui.managers.DataManager;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
 import cz.vity.freerapid.model.DownloadFile;
 import org.jdesktop.application.Action;
+import org.jdesktop.application.ProxyActions;
 import org.jdesktop.beans.AbstractBean;
 
 import javax.swing.*;
@@ -18,7 +19,7 @@ import java.util.List;
  *
  * @author Vity
  */
-
+@ProxyActions({"select-all", "copy", "cut", "paste"})
 public class FileActions extends AbstractBean {
 
     private MainApp app;
@@ -28,6 +29,7 @@ public class FileActions extends AbstractBean {
         app = MainApp.getInstance(MainApp.class);
     }
 
+    @SuppressWarnings({"unchecked"})
     @Action
     public void addNewLinksAction(ActionEvent event) {
         final ManagerDirector managerDirector = app.getManagerDirector();

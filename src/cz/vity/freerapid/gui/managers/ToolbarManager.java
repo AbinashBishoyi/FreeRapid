@@ -25,7 +25,7 @@ public class ToolbarManager implements PropertyChangeListener {
     /**
      * preferovana velikost buttonu v toolbaru
      */
-    private final static Dimension buttonDimension = new Dimension(69, 68);
+    private final static Dimension buttonDimension = new Dimension(74, 68);
     /**
      * velikost mezery mezi buttony ruzneho typu
      */

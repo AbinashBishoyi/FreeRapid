@@ -48,7 +48,7 @@ public class Consts {
     /**
      * port na kterem bezi aplikace, aby se zamezilo dvojimu spousteni - kvuli konexeni k databazi
      */
-    public static final int ONE_INSTANCE_SERVER_PORT = 28877;
+    public static final int ONE_INSTANCE_SERVER_PORT = 28871;
 
     /**
      * URL adresa, kam se posilaji reporty o chybach
@@ -57,29 +57,20 @@ public class Consts {
 
     public static final int DEFAULT_RECENT_FILES_MAX_COUNT = 7;
 
-    public static final String WEBURL_CHECKNEWVERSION = "http://wordrider.net/checkerm.php";
+    public static final String WEBURL_CHECKNEWVERSION = "http://wordrider.net/checkfrd.php";
 
     public static final String WEBURL = "http://wordrider.net";
 
     // hodnoty pro defaultni hodnoty pripojeni
 
-    /**
-     * uzivatelske jmeno pro pristup do databaze
-     */
-    public static final String DB_USERNAME = "your_user_id";
-
-    /**
-     * uzivatelske heslo pro pristup do databaze
-     */
-    public static final String DB_PASSWORD = "";
     protected static final String APP_CODE = "frd";
     public static final String AUTHORS = "Authors (c) 2008: Vity";
     /**
      * Soubor pod kterym jsou polozky ulozeny
      */
     static final String DEFAULT_PROPERTIES = "frd.xml";
-    public static final int MAX_RECENT_PHRASES_COUNT = 5;
 
+    public static final int MAX_RECENT_PHRASES_COUNT = 5;
 
     /**
      * Od teto tridy se nebudou delat zadne instance

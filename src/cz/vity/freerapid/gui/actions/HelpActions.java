@@ -3,6 +3,7 @@ package cz.vity.freerapid.gui.actions;
 import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.tasks.CheckForNewVersionTask;
 import cz.vity.freerapid.gui.dialogs.AboutDialog;
+import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.Browser;
 import org.jdesktop.application.Action;
 
@@ -25,7 +26,7 @@ public class HelpActions {
 
     @Action
     public void help() {
-
+        Swinger.showInformationDialog(Swinger.getResourceMap().getString("notImplementedYet"));
     }
 
     @Action

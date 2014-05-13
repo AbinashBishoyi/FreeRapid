@@ -156,13 +156,17 @@ public class Swinger {
             objects[i] = s;
         }
         final Frame frame = Frame.getFrames()[0];
+        bringToFront(frame);
+        Toolkit.getDefaultToolkit().beep();
+        return JOptionPane.showOptionDialog(frame, map.getString(messageCode, args), mainMap.getString("errorMessage"), JOptionPane.NO_OPTION, messageType, null, objects, objects[0]);
+    }
+
+    public static void bringToFront(Frame frame) {
         if (frame != null && frame.getExtendedState() == JFrame.ICONIFIED) {
             frame.setExtendedState(JFrame.NORMAL);
             frame.setVisible(true);
             frame.toFront();
         }
-        Toolkit.getDefaultToolkit().beep();
-        return JOptionPane.showOptionDialog(frame, map.getString(messageCode, args), mainMap.getString("errorMessage"), JOptionPane.NO_OPTION, messageType, null, objects, objects[0]);
     }
 
     public static void showMessage(ResourceMap map, final String message, final Object... args) {

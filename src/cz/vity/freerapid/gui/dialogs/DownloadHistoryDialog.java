@@ -23,6 +23,7 @@ import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.OSDesktop;
 import org.jdesktop.application.Action;
 import org.jdesktop.swinghelper.buttonpanel.JXButtonPanel;
+import org.jdesktop.swingx.JXHyperlink;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.FilterPipeline;
 import org.jdesktop.swingx.decorator.PatternFilter;
@@ -36,6 +37,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -70,7 +72,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
 
     private final String exampleSearchString;
 
-    public DownloadHistoryDialog(ManagerDirector director, Frame owner) throws HeadlessException {
+    public DownloadHistoryDialog(Frame owner, ManagerDirector director) throws HeadlessException {
         super(owner);
         this.director = director;
         this.manager = director.getFileHistoryManager();
@@ -88,6 +90,11 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
 
     @Override
     protected AbstractButton getBtnOK() {
+        return okButton;
+    }
+
+    @Override
+    protected AbstractButton getBtnCancel() {
         return okButton;
     }
 
@@ -247,8 +254,6 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         });
 
 
-        fieldFilter.setForeground(Color.GRAY);
-
         fieldFilter.addFocusListener(new FocusListener() {
             public void focusGained(FocusEvent e) {
                 if (exampleSearchString.equals(fieldFilter.getText())) {
@@ -275,6 +280,12 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
                 updateFilters();
             }
         });
+
+        if (!exampleSearchString.equals(fieldFilter.getText())) {
+            fieldFilter.setForeground(Color.BLACK);
+        } else {
+            fieldFilter.setForeground(Color.GRAY);
+        }
 
 
         updateFilters();
@@ -822,10 +833,12 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         }
     }
 
-    private static class URLCellRenderer extends DefaultTableCellRenderer {
+    private static class URLCellRenderer extends JXHyperlink implements TableCellRenderer {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            value = String.format("<html><u><font color=blue>%s</blue></u></html>", value);
-            return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            //value = String.format("<html><u><font color=blue>%s</blue></u></html>", value);
+            this.setRolloverEnabled(true);
+            this.setText(value.toString());
+            return this;
         }
     }
 

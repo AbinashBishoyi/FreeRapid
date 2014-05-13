@@ -4,16 +4,22 @@ import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.gui.dialogs.DownloadHistoryDialog;
+import cz.vity.freerapid.gui.dialogs.SpeedMeterDialog;
+import cz.vity.freerapid.gui.dialogs.UserPreferencesDialog;
 import cz.vity.freerapid.gui.managers.ContentPanel;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
+import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.application.AbstractBean;
 import org.jdesktop.application.Action;
+
+import java.util.logging.Logger;
 
 /**
  * @author Vity
  */
 
 public class ViewActions extends AbstractBean {
+    private final static Logger logger = Logger.getLogger(ViewActions.class.getName());
 
     private MainApp app;
 
@@ -58,10 +64,29 @@ public class ViewActions extends AbstractBean {
     @Action
     public void showDownloadHistoryAction() {
         final ManagerDirector managerDirector = app.getManagerDirector();
-        final DownloadHistoryDialog dialog = new DownloadHistoryDialog(managerDirector, app.getMainFrame());
+        final DownloadHistoryDialog dialog = new DownloadHistoryDialog(app.getMainFrame(), managerDirector);
 //        dialog.setModalExclusionType(Dialog.ModalExclusionType.TOOLKIT_EXCLUDE);
 //        dialog.setModal(false);
         app.show(dialog);
+    }
+
+    @Action
+    public void showSpeedMonitor() {
+        final ManagerDirector managerDirector = app.getManagerDirector();
+        final SpeedMeterDialog dialog = new SpeedMeterDialog(app.getMainFrame(), managerDirector);
+//        dialog.setModalExclusionType(Dialog.ModalExclusionType.TOOLKIT_EXCLUDE);
+//        dialog.setModal(false);
+        app.show(dialog);
+    }
+
+    @Action
+    public void options() {
+        try {
+            final UserPreferencesDialog dialog = new UserPreferencesDialog(app.getMainFrame());
+            app.prepareDialog(dialog, true);
+        } catch (Exception e) {
+            LogUtils.processException(logger, e);
+        }
     }
 
     @Action(selectedProperty = ViewActions.SHOW_COMPLETED_PROPERTY)

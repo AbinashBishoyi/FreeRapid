@@ -3,9 +3,11 @@ package cz.vity.freerapid.gui.managers;
 import com.jgoodies.binding.list.ArrayListModel;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.FileTypeIconProvider;
+import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.DownloadTask;
 import cz.vity.freerapid.gui.actions.URLTransferHandler;
+import cz.vity.freerapid.gui.dialogs.InformationDialog;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
@@ -54,7 +56,9 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     private static final int COLUMN_STATE = 3;
     private static final int COLUMN_SIZE = 4;
     private static final int COLUMN_SPEED = 5;
-    private static final int COLUMN_PROXY = 6;
+    private static final int COLUMN_AVERAGE_SPEED = 6;
+    private static final int COLUMN_SERVICE = 7;
+    private static final int COLUMN_PROXY = 8;
 
     private final ApplicationContext context;
     private final ManagerDirector director;
@@ -126,6 +130,19 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                 file.getOutputFile().delete();
             }
             this.removeSelectedAction();
+        }
+    }
+
+    @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
+    public void downloadInformationAction() {
+        final int[] indexes = getSelectedRows();
+        final java.util.List<DownloadFile> files = manager.getSelectionToList(indexes);
+
+        final MainApp app = (MainApp) context.getApplication();
+        final JFrame owner = app.getMainFrame();
+        for (DownloadFile file : files) {
+            final InformationDialog dialog = new InformationDialog(owner, director, file);
+            app.show(dialog);
         }
     }
 
@@ -405,7 +422,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     private void initTable() {
         table.setName("mainTable");
-        table.setModel(new CustomTableModel(manager.getDownloadFiles(), new String[]{"Name", "Progress", "Completition", "Est. time", "Size", "Speed", "Connection"}));
+        table.setModel(new CustomTableModel(manager.getDownloadFiles(), new String[]{"Name", "Progress", "Completition", "Est. time", "Size", "Speed", "Average Speed", "Service", "Connection"}));
         table.setAutoCreateColumnsFromModel(false);
         table.setEditable(false);
         table.setColumnControlVisible(true);
@@ -441,6 +458,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         tableColumnModel.getColumn(COLUMN_STATE).setCellRenderer(new EstTimeCellRenderer());
         tableColumnModel.getColumn(COLUMN_SIZE).setCellRenderer(new SizeCellRenderer());
         tableColumnModel.getColumn(COLUMN_SPEED).setCellRenderer(new SpeedCellRenderer());
+        tableColumnModel.getColumn(COLUMN_AVERAGE_SPEED).setCellRenderer(new AverageSpeedCellRenderer());
+        tableColumnModel.getColumn(COLUMN_SERVICE).setCellRenderer(new ServiceCellRenderer());
         tableColumnModel.getColumn(COLUMN_PROXY).setCellRenderer(new ConnectionCellRenderer());
 
         table.addMouseListener(new MouseAdapter() {
@@ -476,6 +495,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     private void showPopMenu(MouseEvent e) {
         final JPopupMenu popup = new JPopupMenu();
         final ApplicationActionMap map = this.context.getActionMap();
+        popup.add(map.get("downloadInformationAction"));
+        popup.addSeparator();
         popup.add(map.get("openFileAction"));
         popup.add(map.get("deleteFileAction"));
         popup.add(map.get("openDirectoryAction"));
@@ -629,7 +650,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         }
     }
 
-    private static int getProgress(DownloadFile downloadFile) {
+    public static int getProgress(DownloadFile downloadFile) {
         final long downloaded = downloadFile.getDownloaded();
         final long fileSize = downloadFile.getFileSize();
         if (downloaded == 0 || fileSize == 0)
@@ -706,7 +727,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                 if (downloadFile.getSpeed() >= 0) {
                     value = bytesToAnother(downloadFile.getSpeed()) + "/s";
                 } else value = "0 B/s";
-                this.setToolTipText("Average speed " + bytesToAnother((long) downloadFile.getAverageSpeed()) + "/s");
+                //this.setToolTipText("Average speed " + bytesToAnother((long) downloadFile.getAverageSpeed()) + "/s");
             } else value = "";
             return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         }
@@ -842,7 +863,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     }
 
 
-    private static String secondsToHMin(long seconds) {
+    public static String secondsToHMin(long seconds) {
         long min = seconds / 60;
         long hours = min / 60;
         min = min - hours * 60;
@@ -887,4 +908,25 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     }
 
 
+    private static class ServiceCellRenderer extends DefaultTableCellRenderer {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            final DownloadFile downloadFile = (DownloadFile) value;
+            value = downloadFile.getServiceName();
+            return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        }
+    }
+
+    private class AverageSpeedCellRenderer extends DefaultTableCellRenderer {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            final DownloadFile downloadFile = (DownloadFile) value;
+            final DownloadState state = downloadFile.getState();
+            if (state == DownloadState.DOWNLOADING) {
+                if (downloadFile.getSpeed() >= 0) {
+                    value = bytesToAnother((long) downloadFile.getAverageSpeed()) + "/s";
+                } else value = "0 B/s";
+            } else value = "";
+
+            return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        }
+    }
 }

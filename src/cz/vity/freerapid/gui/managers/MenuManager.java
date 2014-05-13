@@ -3,6 +3,7 @@ package cz.vity.freerapid.gui.managers;
 import cz.vity.freerapid.gui.actions.FileActions;
 import cz.vity.freerapid.gui.actions.HelpActions;
 import cz.vity.freerapid.gui.actions.ViewActions;
+import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.swing.Swinger;
 import org.jdesktop.application.ApplicationContext;
 
@@ -10,6 +11,9 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.ComboPopup;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
 
 
 /**
@@ -23,6 +27,7 @@ public class MenuManager {
      */
     private JMenuBar menuBar;
     private final ApplicationContext context;
+    private final ManagerDirector director;
     /**
      *
      */
@@ -43,9 +48,10 @@ public class MenuManager {
 
 ///    private JMenu autosearchSubmenu = null;
 
-    public MenuManager(final ApplicationContext context) {
+    public MenuManager(final ApplicationContext context, ManagerDirector director) {
         super();
         this.context = context;
+        this.director = director;
         fileActions = new FileActions();
         Swinger.initActions(fileActions, context);
         viewActions = new ViewActions();
@@ -62,6 +68,8 @@ public class MenuManager {
         };
 
         final Object[] downloadActionNames = {
+                "downloadInformationAction",
+                MENU_SEPARATOR,
                 "openFileAction",
                 "deleteFileAction",
                 "openDirectoryAction",
@@ -83,14 +91,22 @@ public class MenuManager {
                 "removeSelectedAction"
         };
 
+        final Object[] optionsMenuActionNames = {
+                createConnectionsMenu(),
+                MENU_SEPARATOR,
+                "options"
+        };
+
         final Object[] viewMenuActionNames = {
                 CHECKED + "showToolbar",
                 CHECKED + "showStatusBar",
                 MENU_SEPARATOR,
                 CHECKED + "showCompletedAction",
                 MENU_SEPARATOR,
-                "showDownloadHistoryAction"
+                "showDownloadHistoryAction",
+                //          "showSpeedMonitor"
         };
+
 
         final Object[] helpMenuActionNames = {
                 "help",
@@ -145,6 +161,7 @@ public class MenuManager {
         );
         menuBar.add(createMenu("fileMenu", fileMenuActionNames));
         menuBar.add(createMenu("downloadsMenu", downloadActionNames));
+        menuBar.add(createMenu("connectionsMenu", optionsMenuActionNames));
         menuBar.add(createMenu("viewMenu", viewMenuActionNames));
         menuBar.add(createMenu("helpMenu", helpMenuActionNames));
         menuBar.putClientProperty(SELECTED_TEXT_PROPERTY, "");
@@ -152,6 +169,25 @@ public class MenuManager {
         context.getActionMap().get("showCompletedAction").putValue(AbstractAction.SELECTED_KEY, viewActions.isShowCompleted());
 //        final MainApp app = (MainApp) context.getApplication();
 
+    }
+
+    private JMenu createConnectionsMenu() {
+        final JMenu useConnections = new JMenu();
+        useConnections.setName("useConnectionsMenu");
+
+        final ClientManager clientManager = director.getClientManager();
+        final List<ConnectionSettings> connectionSettingses = clientManager.getAvailableConnections();
+        for (final ConnectionSettings settings : connectionSettingses) {
+            final JCheckBoxMenuItem item = new JCheckBoxMenuItem(settings.toString());
+            item.setSelected(settings.isEnabled());
+            item.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    settings.setEnabled(!settings.isEnabled());
+                }
+            });
+            useConnections.add(item);
+        }
+        return useConnections;
     }
 
 //    private void setMenuEnabled(boolean enabled) {

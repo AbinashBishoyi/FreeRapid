@@ -73,7 +73,7 @@
 
                 <attribute name="SplashScreen-Image" value="${splash}"/>
             </manifest>
-            <fileset dir="${classes.dir}" includes="**/*" excludes="**/services/**,**/dev/**"/>
+            <fileset dir="${classes.dir}" includes="**/*" excludes="**/services/**,**/dev/**,**/sandbox/**"/>
         </jar>
         <mkdir dir="${build.dir}/${lib.dir}"/>
         <!--<mkdir dir="${build.dir}/help"/>-->

@@ -27,7 +27,6 @@ import java.util.logging.Logger;
 /**
  * @author Vity
  */
-@SuppressWarnings({"InfiniteLoopStatement"})
 public class ProcessManager extends Thread {
     private final static Logger logger = Logger.getLogger(ProcessManager.class.getName());
     private final ApplicationContext context;
@@ -71,11 +70,11 @@ public class ProcessManager extends Thread {
 
     @Override
     public void run() {
-        while (true) {
+        while (!isInterrupted()) {
             synchronized (manipulation) {
-                if (!this.workingClients.isEmpty() && !forceDownloadFiles.isEmpty())
+                if (canCreateAnotherConnection() && !forceDownloadFiles.isEmpty())
                     execute(getFilesForForceDownload(), true);
-                if (!this.workingClients.isEmpty())
+                if (canCreateAnotherConnection())
                     execute(getQueued(), false);
             }
             try {
@@ -90,6 +89,10 @@ public class ProcessManager extends Thread {
                 //ignore
             }
         }
+    }
+
+    private boolean canCreateAnotherConnection() {
+        return !this.workingClients.isEmpty();
     }
 
     private LinkedList<DownloadFile> getFilesForForceDownload() {
@@ -116,6 +119,8 @@ public class ProcessManager extends Thread {
 
             if (!forceDownload) {
                 for (ConnectionSettings settings : availableConnections) {
+                    if (!settings.isEnabled())
+                        continue;
                     if (downloadService.canDownloadWith(settings)) {
                         queueDownload(file, settings, downloadService, service);
                         break;
@@ -129,7 +134,7 @@ public class ProcessManager extends Thread {
                     queueDownload(file, settings, downloadService, service);
                 }
             }
-            if (workingClients.isEmpty())
+            if (!canCreateAnotherConnection())
                 return true;
         }
         return false;
@@ -218,9 +223,9 @@ public class ProcessManager extends Thread {
                     service.addProblematicConnection(settings);
                     if (error == DownloadTaskError.YOU_HAVE_TO_WAIT_ERROR) {
                         int waitTime = task.getYouHaveToSleepSecondsTime();
-                        errorTimer.schedule(new MyTimerTask(service, settings, file, waitTime), 0, 1000);
+                        errorTimer.schedule(new ErrorTimerTask(service, settings, file, waitTime), 0, 1000);
                     } else
-                        errorTimer.schedule(new MyTimerTask(service, settings, file), 0, 1000);
+                        errorTimer.schedule(new ErrorTimerTask(service, settings, file), 0, 1000);
                 }
             }
         }
@@ -238,17 +243,17 @@ public class ProcessManager extends Thread {
         }
     }
 
-    private class MyTimerTask extends TimerTask {
+    private class ErrorTimerTask extends TimerTask {
         private int counter;
         private final DownloadService service;
         private final ConnectionSettings settings;
         private final DownloadFile file;
 
-        public MyTimerTask(DownloadService service, ConnectionSettings settings, DownloadFile file) {
+        public ErrorTimerTask(DownloadService service, ConnectionSettings settings, DownloadFile file) {
             this(service, settings, file, AppPrefs.getProperty(UserProp.AUTO_RECONNECT_TIME, UserProp.AUTO_RECONNECT_TIME_DEFAULT));
         }
 
-        public MyTimerTask(DownloadService service, ConnectionSettings settings, DownloadFile file, int waitTime) {
+        public ErrorTimerTask(DownloadService service, ConnectionSettings settings, DownloadFile file, int waitTime) {
             this.service = service;
             this.settings = settings;
             this.file = file;

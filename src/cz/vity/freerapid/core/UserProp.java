@@ -13,7 +13,7 @@ public class UserProp {
 
     public static final String USE_TEMPORARY_FILES = "useTemporaryFiles";
 
-    public static final String DOWNLOAD_ON_START = "downloadOnStart";
+    public static final String DOWNLOAD_ON_APPLICATION_START = "downloadOnStart";
     public static final String FILE_ALREADY_EXISTS = "whatToDoIfFileAlreadyExists";
 
     public static final int RENAME = 0;
@@ -22,7 +22,7 @@ public class UserProp {
     public static final int ASK = 3;
 
 
-    public static final String PLAY_SOUNDS = "playSound";
+    public static final String PLAY_SOUNDS_OK = "playSoundOK";//OK
     public static final String LAST_USED_SAVED_PATH = "lastUsedSavedPaths";
 
     public static final String LAST_COMBO_PATH = "lastComboPath";
@@ -36,6 +36,7 @@ public class UserProp {
     public static final String ERROR_ATTEMPTS_COUNT = "errorAttemptsCount";
     public static final int ERROR_ATTEMPTS_COUNT_DEFAULT = 5;
     public static int MAX_DOWNLOADS_AT_A_TIME_DEFAULT = 5;
+
     public static final String PROXY_LIST_FILE = "proxyListFile";
     public static final String DOWNLOADED_HISTORY_FILE_NAME = "downloads.txt";
 
@@ -48,4 +49,13 @@ public class UserProp {
     public static final String USE_DEFAULT_CONNECTION = "useDefaultConnection";
 
     public static final String USE_SYSTEM_ICONS = "useSystemIcons";
+
+    public static final String CLOSE_APPLICATION_CONFIRM_WAITTIME = "closeApplicationConfirmTime";
+
+    public static final String CLOSE_WHEN_COMPLETED = "closeWhenCompleted";
+
+    public static final String USE_PROXY_LIST = "useProxyList";
+
+    public static final String PROXY_LIST_PATH = "proxyListPath";
+    public static final String PLAY_SOUNDS_FAILED = "playSoundsFailed";
 }

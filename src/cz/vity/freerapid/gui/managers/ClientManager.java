@@ -25,6 +25,7 @@ public class ClientManager {
     private final List<ConnectionSettings> availableConnections = new ArrayList<ConnectionSettings>(2);
     private final int maxClients;
     private Collection<HttpDownloadClient> clients;
+    private static final String PROXY_LIST_DEFAULT_PATH = new File(Utils.getAppPath(), "proxy.list").getAbsolutePath();
 
 
     public ClientManager() {
@@ -34,10 +35,12 @@ public class ClientManager {
         maxClients = AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, 5);
         //String input = "    vity:heslo@exfort.org:8787 vity2:angor@@exfort2.org:8788  exfort3.org:5478  pavel@exfort.org:564 exfort5.org";
 
-        final String file = AppPrefs.getProperty(UserProp.PROXY_LIST_FILE, new File(Utils.getAppPath(), "proxy.list").getAbsolutePath());
-        final File f = new File(file);
-        if (f.exists() && f.isFile() && f.canRead()) {
-            readProxyList(f);
+        if (AppPrefs.getProperty(UserProp.USE_PROXY_LIST, true)) {
+            final String file = AppPrefs.getProperty(UserProp.PROXY_LIST_FILE, PROXY_LIST_DEFAULT_PATH);
+            final File f = new File(file);
+            if (f.exists() && f.isFile() && f.canRead()) {
+                readProxyList(f);
+            }
         }
     }
 
@@ -88,5 +91,7 @@ public class ClientManager {
         return clients;
     }
 
-
+    public int getMaxClients() {
+        return maxClients;
+    }
 }

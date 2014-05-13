@@ -10,7 +10,6 @@ import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.LogUtils;
-import cz.vity.freerapid.utilities.Sound;
 import org.jdesktop.application.AbstractBean;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.ApplicationContext;
@@ -42,6 +41,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
     private final Object lock = new Object();
     private int completed;
     private PluginsManager pluginsManager;
+    private float averageSpeed;
 
     public DataManager(ManagerDirector director, ApplicationContext context) {
         this.director = director;
@@ -71,10 +71,10 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                 final DownloadTask task = file.getTask();
                 if (task != null && !task.isTerminated()) {
                     task.cancel(true);
-                    if (AppPrefs.getProperty(UserProp.DOWNLOAD_ON_START, false)) {
-                        file.setState(DownloadState.PAUSED);
-                    } else
+                    if (AppPrefs.getProperty(UserProp.DOWNLOAD_ON_APPLICATION_START, false)) {
                         file.setState(DownloadState.QUEUED);
+                    } else
+                        file.setState(DownloadState.PAUSED);
                 }
             }
         }
@@ -169,6 +169,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                         firePropertyChange(s, evt.getOldValue(), evt.getNewValue());
                     } else if ("speed".equals(s)) {
                         firePropertyChange(s, -1, getCurrentAllSpeed());
+                        firePropertyChange("averageSpeed", -1, getAverageSpeed());
                     }
                 }
             });
@@ -337,33 +338,34 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         return lock;
     }
 
-    public void checkComplete() {
-        final boolean sound = AppPrefs.getProperty(UserProp.PLAY_SOUNDS, true);
-        if (sound) {
-            synchronized (lock) {
-                boolean completed = true;
-                for (DownloadFile file : downloadFiles) {
-                    if (DownloadState.isProcessState(file.getState()) || file.getState() == DownloadState.QUEUED) {
-                        completed = false;
-                        break;
-                    }
+    public boolean checkComplete() {
+        synchronized (lock) {
+            for (DownloadFile file : downloadFiles) {
+                final DownloadState state = file.getState();
+                if (DownloadState.isProcessState(state) || state == DownloadState.QUEUED) {
+                    return false;
                 }
-                if (completed)
-                    Sound.playSound("done.wav");
             }
+            return true;
         }
     }
 
     public int getCurrentAllSpeed() {
-        synchronized (lock) {
-            int speed = 0;
-            for (DownloadFile file : downloadFiles) {
-                if (file.getState() == DownloadState.DOWNLOADING) {
-                    speed += file.getSpeed();
-                }
+
+        int speed = 0;
+        averageSpeed = 0;
+        for (DownloadFile file : downloadFiles) {
+            if (file.getState() == DownloadState.DOWNLOADING) {
+                speed += file.getSpeed();
+                averageSpeed += file.getAverageSpeed();
             }
-            return speed;
         }
+        return speed;
+    }
+
+
+    public float getAverageSpeed() {
+        return averageSpeed;
     }
 
     public void moveTop(int[] indexes) {

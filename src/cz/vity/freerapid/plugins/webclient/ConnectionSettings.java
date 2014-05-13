@@ -10,6 +10,7 @@ public class ConnectionSettings {
     private String proxyURL;
     private int proxyPort;
     private boolean proxySet;
+    private boolean enabled = true;
 
     public ConnectionSettings() {
         //setProxy("localhost", 8081);
@@ -106,5 +107,13 @@ public class ConnectionSettings {
         result = 31 * result + proxyPort;
         result = 31 * result + (proxySet ? 1 : 0);
         return result;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }

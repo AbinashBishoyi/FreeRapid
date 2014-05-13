@@ -39,7 +39,7 @@ public class DownloadClient implements HttpDownloadClient {
             client.setHostConfiguration(configuration);
             if (settings.getUserName() != null)
                 initialState.setProxyCredentials(AuthScope.ANY, new NTCredentials(settings.getUserName(), settings.getPassword(), "", ""));
-        }
+        } else client.setHostConfiguration(new HostConfiguration());
 
         // Get initial state object
 

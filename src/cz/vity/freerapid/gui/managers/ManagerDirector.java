@@ -86,7 +86,7 @@ public class ManagerDirector {
         this.dockingManager = new ContentManager(context, this);
         this.dockingManager.getContentPanel();
 
-        this.menuManager = new MenuManager(context);
+        this.menuManager = new MenuManager(context, this);
 
         rootContainer.setLayout(new BorderLayout());
 

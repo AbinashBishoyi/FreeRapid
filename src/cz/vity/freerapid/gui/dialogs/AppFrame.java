@@ -27,6 +27,10 @@ abstract class AppFrame extends JFrame {
     private ActionMap actionMap = null;
     protected final Frame owner;
 
+    public final static int RESULT_OK = 0;
+    final static int RESULT_CANCEL = 1;
+    protected int result = RESULT_CANCEL;
+
 
     public AppFrame(final Frame owner) throws HeadlessException {
         super();
@@ -37,6 +41,11 @@ abstract class AppFrame extends JFrame {
     public void doClose() {
         dispose();
     }
+
+    public final int getModalResult() {
+        return result;
+    }
+
 
     protected AbstractButton getBtnCancel() {
         return null;
@@ -64,6 +73,10 @@ abstract class AppFrame extends JFrame {
 //
 //        okayButton.setAction(action);
 
+    }
+
+    void setResult(int result) {
+        this.result = result;
     }
 
 

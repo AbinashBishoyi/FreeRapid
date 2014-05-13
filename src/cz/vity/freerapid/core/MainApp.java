@@ -38,6 +38,11 @@ public class MainApp extends SingleXFrameApplication {
         LogUtils.initLogging(debug);//logovani nejdrive    
         this.appPrefs = new AppPrefs(this.getContext());
 
+        if (OneInstanceClient.checkInstance(null)) {
+            this.exit();
+            return;
+        }
+
         LookAndFeels.getInstance().loadLookAndFeelSettings();//inicializace LaFu, musi to byt pred vznikem hlavniho panelu
         //Swinger.initLaF(); //inicializace LaFu, musi to byt pred vznikem hlavniho panelu
         super.initialize(args);
@@ -60,6 +65,13 @@ public class MainApp extends SingleXFrameApplication {
 
     private void initMainFrame() {
         final JFrame frame = getMainFrame();
+        if (AppPrefs.getProperty(FWProp.DECORATED_FRAMES, false)) {
+            frame.setUndecorated(true);
+            frame.getRootPane().setWindowDecorationStyle(JRootPane.FRAME);
+            LookAndFeels.updateWindowUI(frame);
+            JDialog.setDefaultLookAndFeelDecorated(true);
+        }
+
         frame.setJMenuBar(director.getMenuManager().getMenuBar());
         frame.setContentPane(director.getComponent());
         frame.pack();

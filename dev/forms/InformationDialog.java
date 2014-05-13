@@ -17,8 +17,8 @@ public class InformationDialog extends JFrame {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
 		// Generated using JFormDesigner Open Source Project license - unknown
 		ResourceBundle bundle = ResourceBundle.getBundle("InformationDialog");
-		dialogPane = new JPanel();
-		contentPanel = new JPanel();
+		JPanel dialogPane = new JPanel();
+		JPanel contentPanel = new JPanel();
 		iconLabel = new JLabel();
 		pathLabel = new JLabel();
 		JLabel labelFrom = new JLabel();
@@ -27,14 +27,16 @@ public class InformationDialog extends JFrame {
 		fieldSize = new JTextField();
 		JLabel labelDescription = new JLabel();
 		JScrollPane scrollPane1 = new JScrollPane();
-		descriptionArea = new JTextArea();
+		descriptionArea = ComponentFactory.getTextArea();
 		JPanel optionsPanel = new JPanel();
 		JLabel saveToLabel = new JLabel();
-		comboBox1 = new JComboBox();
+		comboPath = new JComboBox();
 		btnSelectPath = new JButton();
 		progressBar = new JProgressBar();
 		JLabel labelRemaining = new JLabel();
 		remainingLabel = new JLabel();
+		JLabel labelEstimateTime = new JLabel();
+		estTimeLabel = new JLabel();
 		JLabel labelCurrentSpeed = new JLabel();
 		currentSpeedLabel = new JLabel();
 		JLabel labelAverageSpeed = new JLabel();
@@ -61,6 +63,7 @@ public class InformationDialog extends JFrame {
 
 				//---- pathLabel ----
 				pathLabel.setText(bundle.getString("pathLabel.text"));
+				pathLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
 
 				//---- labelFrom ----
 				labelFrom.setText(bundle.getString("labelFrom.text"));
@@ -90,7 +93,10 @@ public class InformationDialog extends JFrame {
 
 					//---- saveToLabel ----
 					saveToLabel.setText(bundle.getString("saveToLabel.text"));
-					saveToLabel.setLabelFor(comboBox1);
+					saveToLabel.setLabelFor(comboPath);
+
+					//---- comboPath ----
+					comboPath.setEditable(true);
 
 					//---- btnSelectPath ----
 					btnSelectPath.setText(bundle.getString("btnSelectPath.text"));
@@ -106,31 +112,44 @@ public class InformationDialog extends JFrame {
 						RowSpec.decodeSpecs("default")), optionsPanel);
 
 					optionsPanelBuilder.add(saveToLabel,   cc.xy(1, 1));
-					optionsPanelBuilder.add(comboBox1,     cc.xy(3, 1));
+					optionsPanelBuilder.add(comboPath,     cc.xy(3, 1));
 					optionsPanelBuilder.add(btnSelectPath, cc.xy(5, 1));
 				}
+
+				//---- progressBar ----
+				progressBar.setFont(new Font("Tahoma", Font.BOLD, 16));
 
 				//---- labelRemaining ----
 				labelRemaining.setText(bundle.getString("labelRemaining.text"));
 
 				//---- remainingLabel ----
 				remainingLabel.setText(bundle.getString("remainingLabel.text"));
+				remainingLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+
+				//---- labelEstimateTime ----
+				labelEstimateTime.setText(bundle.getString("labelEstimateTime.text"));
+
+				//---- estTimeLabel ----
+				estTimeLabel.setText(bundle.getString("estTimeLabel.text"));
+				estTimeLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
 
 				//---- labelCurrentSpeed ----
 				labelCurrentSpeed.setText(bundle.getString("labelCurrentSpeed.text"));
 
 				//---- currentSpeedLabel ----
 				currentSpeedLabel.setText(bundle.getString("currentSpeedLabel.text"));
+				currentSpeedLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
 
 				//---- labelAverageSpeed ----
 				labelAverageSpeed.setText(bundle.getString("labelAverageSpeed.text"));
 
 				//---- avgSpeedLabel ----
 				avgSpeedLabel.setText(bundle.getString("avgSpeedLabel.text"));
+				avgSpeedLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
 
 				PanelBuilder contentPanelBuilder = new PanelBuilder(new FormLayout(
 					new ColumnSpec[] {
-						new ColumnSpec(Sizes.dluX(54)),
+						new ColumnSpec(Sizes.dluX(49)),
 						FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
 						FormFactory.DEFAULT_COLSPEC,
 						FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
@@ -149,7 +168,7 @@ public class InformationDialog extends JFrame {
 						FormFactory.LINE_GAP_ROWSPEC,
 						FormFactory.DEFAULT_ROWSPEC,
 						FormFactory.LINE_GAP_ROWSPEC,
-						new RowSpec(RowSpec.FILL, Sizes.bounded(Sizes.PREFERRED, Sizes.dluY(40), Sizes.dluY(50)), FormSpec.NO_GROW),
+						new RowSpec(RowSpec.FILL, Sizes.bounded(Sizes.PREFERRED, Sizes.dluY(40), Sizes.dluY(50)), FormSpec.DEFAULT_GROW),
 						FormFactory.LINE_GAP_ROWSPEC,
 						FormFactory.DEFAULT_ROWSPEC,
 						FormFactory.LINE_GAP_ROWSPEC,
@@ -165,15 +184,17 @@ public class InformationDialog extends JFrame {
 				contentPanelBuilder.add(labelFrom,         cc.xy  (3,  3));
 				contentPanelBuilder.add(fieldFrom,         cc.xywh(5,  3, 5, 1));
 				contentPanelBuilder.add(labelSize,         cc.xy  (3,  5));
-				contentPanelBuilder.add(fieldSize,         cc.xy  (5,  5));
+				contentPanelBuilder.add(fieldSize,         cc.xywh(5,  5, 3, 1));
 				contentPanelBuilder.add(labelDescription,  cc.xy  (1,  7));
 				contentPanelBuilder.add(scrollPane1,       cc.xywh(1,  9, 9, 1));
 				contentPanelBuilder.add(optionsPanel,      cc.xywh(1, 11, 9, 1));
 				contentPanelBuilder.add(progressBar,       cc.xywh(1, 13, 9, 1));
 				contentPanelBuilder.add(labelRemaining,    cc.xy  (1, 15));
-				contentPanelBuilder.add(remainingLabel,    cc.xy  (3, 15));
+				contentPanelBuilder.add(remainingLabel,    cc.xywh(3, 15, 3, 1));
+				contentPanelBuilder.add(labelEstimateTime, cc.xy  (7, 15));
+				contentPanelBuilder.add(estTimeLabel,      cc.xy  (9, 15));
 				contentPanelBuilder.add(labelCurrentSpeed, cc.xy  (1, 17));
-				contentPanelBuilder.add(currentSpeedLabel, cc.xy  (3, 17));
+				contentPanelBuilder.add(currentSpeedLabel, cc.xywh(3, 17, 3, 1));
 				contentPanelBuilder.add(labelAverageSpeed, cc.xy  (7, 17));
 				contentPanelBuilder.add(avgSpeedLabel,     cc.xy  (9, 17));
 			}
@@ -193,7 +214,7 @@ public class InformationDialog extends JFrame {
 					new ColumnSpec[] {
 						new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
 						FormFactory.UNRELATED_GAP_COLSPEC,
-						FormFactory.PREF_COLSPEC,
+						new ColumnSpec("max(pref;55dlu)"),
 						FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
 						FormFactory.DEFAULT_COLSPEC
 					},
@@ -213,17 +234,16 @@ public class InformationDialog extends JFrame {
 
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
 	// Generated using JFormDesigner Open Source Project license - unknown
-	private JPanel dialogPane;
-	private JPanel contentPanel;
 	private JLabel iconLabel;
 	private JLabel pathLabel;
 	private JTextField fieldFrom;
 	private JTextField fieldSize;
 	private JTextArea descriptionArea;
-	private JComboBox comboBox1;
+	private JComboBox comboPath;
 	private JButton btnSelectPath;
 	private JProgressBar progressBar;
 	private JLabel remainingLabel;
+	private JLabel estTimeLabel;
 	private JLabel currentSpeedLabel;
 	private JLabel avgSpeedLabel;
 	private JButton okButton;

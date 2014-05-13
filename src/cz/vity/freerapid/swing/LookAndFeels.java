@@ -29,7 +29,7 @@ public final class LookAndFeels {
     /**
      * Trida Kunstoffu
      */
-    private static final String KUNSTSTOFF = "com.incors.plaf.kunststoff.KunststoffLookAndFeel";
+    private static final String KUNSTSTOFF = "org.jvnet.substance.skin.SubstanceMistAquaLookAndFeel";
 
     /**
      * aktualne zvoleny lookandfeel

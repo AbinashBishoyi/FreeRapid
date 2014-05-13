@@ -34,7 +34,7 @@ public class FileTypeIconProvider {
         final String[] strings = (String[]) map.getObject("fileTypes", String[].class);
         supportedTypes = new HashSet<String>(Arrays.asList(strings));
         StringBuilder builder = new StringBuilder();
-        builder.append("\\.(");
+        builder.append("(\\.|_)(");
         for (int i = 0; i < strings.length; i++) {
             String item = strings[i];
             builder.append(item);
@@ -42,7 +42,7 @@ public class FileTypeIconProvider {
                 builder.append("|");
             }
         }
-        builder.append(")(\\.?|$)");
+        builder.append(")(\\.?|_?|$)");
         final String regexp = builder.toString();
         logger.info("Regexp " + regexp);
         pattern = Pattern.compile(regexp);
@@ -58,7 +58,7 @@ public class FileTypeIconProvider {
         final Matcher matcher = pattern.matcher(fileName);
         final String fileType;
         if (matcher.find()) {
-            fileType = matcher.group(1);
+            fileType = matcher.group(2);
         } else {
             fileType = DEFAULT_EXTENSION;
         }

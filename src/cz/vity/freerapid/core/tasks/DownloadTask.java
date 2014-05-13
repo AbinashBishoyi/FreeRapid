@@ -16,6 +16,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.NoRouteToHostException;
 import java.net.UnknownHostException;
 import java.util.TimerTask;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -238,7 +239,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         } else if (cause instanceof UnknownHostException) {
             downloadFile.setErrorMessage("Unknown host error - connection problem?");
         } else
-        if (cause instanceof URLNotAvailableAnymoreException || cause instanceof PluginImplementationException || cause instanceof CaptchaEntryInputMismatchException) {
+        if (cause instanceof URLNotAvailableAnymoreException || cause instanceof PluginImplementationException || cause instanceof CaptchaEntryInputMismatchException || cause instanceof NoRouteToHostException) {
             setServiceError(DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR);
         } else if (cause instanceof YouHaveToWaitException) {
             final YouHaveToWaitException waitException = (YouHaveToWaitException) cause;
@@ -252,7 +253,8 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         downloadFile.setState(DownloadState.ERROR);
         downloadFile.setErrorMessage(cause.getMessage());
         setServiceError(DownloadTaskError.GENERAL_ERROR);
-        Sound.playSound("error.wav");
+        if (AppPrefs.getProperty(UserProp.PLAY_SOUNDS_FAILED, true))
+            Sound.playSound("error.wav");
     }
 
     @Override
@@ -300,15 +302,25 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     }
 
     private void runMoveFileTask(boolean overWriteFile) {
-        final MoveFileTask moveFileTask = new MoveFileTask(getApplication(), storeFile, outputFile, true, overWriteFile, downloadFile);
+        final MoveFileTask moveFileTask = new MoveFileTask(getApplication(), storeFile, downloadFile.getOutputFile(), true, overWriteFile, downloadFile);
         moveFileTask.addTaskListener(new TaskListener.Adapter<Void, Void>() {
             public boolean succeeded = false;
 
             @Override
             public void finished(TaskEvent<Void> event) {
                 super.succeeded(event);
-                if (succeeded)
-                    ((MainApp) getApplication()).getManagerDirector().getDataManager().checkComplete();
+                if (succeeded) {
+                    final Application app = getApplication();
+                    final boolean allComplete = ((MainApp) app).getManagerDirector().getDataManager().checkComplete();
+                    if (allComplete) {
+                        final boolean sound = AppPrefs.getProperty(UserProp.PLAY_SOUNDS_OK, true);
+                        if (sound)
+                            Sound.playSound("done.wav");
+                        if (AppPrefs.getProperty(UserProp.CLOSE_WHEN_COMPLETED, false)) {
+                            app.getContext().getTaskService().execute(new CloseInTimeTask(app));
+                        }
+                    }
+                }
             }
 
 

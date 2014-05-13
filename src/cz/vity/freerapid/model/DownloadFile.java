@@ -39,6 +39,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
     private int timeToQueuedMax = -1;
     private int errorAttemptsCount;
     private String shareDownloadServiceID;
+    private String serviceName = null;
 
     static {
         try {
@@ -56,7 +57,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
     }
 
     public DownloadFile() {//XMLEncoder
-        logger.info("Konstruktor empty");
+        //logger.info("Konstruktor empty");
     }
 
     public DownloadFile(URL fileUrl, File saveToDirectory, String description) {
@@ -196,6 +197,16 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
         return averageSpeed;
     }
 
+    public String getServiceName() {
+        if (serviceName == null) {
+            return "";
+        } else return serviceName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
     public String getErrorMessage() {
         return errorMessage;
     }
@@ -261,6 +272,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
 
     public void setShareDownloadServiceID(String shareDownloadServiceID) {
         this.shareDownloadServiceID = shareDownloadServiceID;
+        this.serviceName = shareDownloadServiceID.toLowerCase();
     }
 
     public int getTimeToQueuedMax() {

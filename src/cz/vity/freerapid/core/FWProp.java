@@ -31,4 +31,5 @@ public class FWProp {
     public static final String ONE_INSTANCE_SERVER_PORT = "oneInstanceServerPort";
     public static final String NEW_VERSION = "checkForNewVersionAuto";
     public static final String WEBURL_SUBMIT_ERROR = "weburlSubmitError";
+    public static final String DECORATED_FRAMES = "decoratedFrames";
 }

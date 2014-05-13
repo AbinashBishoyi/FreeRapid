@@ -137,7 +137,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
         final TrayIconSupport trayIconSupport = app.getTrayIconSupport();
         if (size >= 0) {
             final String speedFormatted = ContentPanel.bytesToAnother(speed);
-            trayIconSupport.setToolTip(String.format("FreeRapid Downloader\n\nComplete downloads %d of %d\nCurrent speed: %s/s</html>", completed, size, speedFormatted));
+            trayIconSupport.setToolTip(String.format("FreeRapid Downloader\n\nComplete downloads %d of %d\nCurrent speed: %s/s\n", completed, size, speedFormatted));
             infoLabel.setText(String.format("Complete downloads %d of %d - Current speed: %s/s", completed, size, speedFormatted));
         } else {
             trayIconSupport.setToolTip(app.getMainFrame().getTitle());

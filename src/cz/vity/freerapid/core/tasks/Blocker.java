@@ -17,6 +17,8 @@ import java.util.logging.Logger;
 class ScreenltInputBlocker extends Task.InputBlocker {
     private static final Logger logger = Logger.getLogger(ScreenltInputBlocker.class.getName());
     private JDialog modalDialog = null;
+    private boolean showWaitCursor = false;
+
 
     ScreenltInputBlocker(Task task, Task.BlockingScope scope, Object target, ApplicationAction action) {
         super(task, scope, target, action);
@@ -120,7 +122,8 @@ class ScreenltInputBlocker extends Task.InputBlocker {
         /* Create the JDialog.  If the task can be canceled, then
          * map closing the dialog window to canceling the task.
          */
-        optionPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        if (showWaitCursor)
+            optionPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         Component dialogOwner = (Component) getTarget();
         String taskTitle = getTask().getTitle();
         String dialogTitle = (taskTitle == null) ? "BlockingDialog" : taskTitle;
@@ -156,17 +159,9 @@ class ScreenltInputBlocker extends Task.InputBlocker {
     private void recreateOptionPaneMessage(JOptionPane optionPane) {
         Object message = optionPane.getMessage();
         if (message instanceof String) {
-            Font font = optionPane.getFont();
-            final JTextArea textArea = new JTextArea((String) message);
-            textArea.setFont(font);
-            int lh = textArea.getFontMetrics(font).getHeight();
-            Insets margin = new Insets(0, 0, lh, 24); // top left bottom right
-            textArea.setMargin(margin);
-            textArea.setEditable(false);
-            textArea.setWrapStyleWord(true);
-            textArea.setBackground(optionPane.getBackground());
+            final JLabel label = new JLabel((String) message);
             JPanel panel = new JPanel(new BorderLayout());
-            panel.add(textArea, BorderLayout.CENTER);
+            panel.add(label, BorderLayout.CENTER);
             final JProgressBar progressBar = new JProgressBar();
             progressBar.setName("BlockingDialog.progressBar");
             progressBar.setIndeterminate(true);
@@ -177,7 +172,7 @@ class ScreenltInputBlocker extends Task.InputBlocker {
                         progressBar.setValue((Integer) e.getNewValue());
                         updateStatusBarString(progressBar);
                     } else if ("message".equals(e.getPropertyName())) {
-                        textArea.setText((String) e.getNewValue());
+                        label.setText((String) e.getNewValue());
                     }
                 }
             };
@@ -290,7 +285,7 @@ class ScreenltInputBlocker extends Task.InputBlocker {
         if ((delay == null) && (taskResourceMap != null)) {
             delay = taskResourceMap.getInteger(key);
         }
-        return (delay == null) ? 0 : delay.intValue();
+        return (delay == null) ? 0 : delay;
     }
 
     private void showBlockingDialog(boolean f) {
@@ -354,5 +349,9 @@ class ScreenltInputBlocker extends Task.InputBlocker {
                 showBlockingDialog(false);
                 break;
         }
+    }
+
+    public void setShowWaitCursor(boolean showWaitCursor) {
+        this.showWaitCursor = showWaitCursor;
     }
 }
