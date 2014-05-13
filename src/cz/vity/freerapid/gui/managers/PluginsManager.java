@@ -158,7 +158,9 @@ public class PluginsManager {
     }
 
     public File getPluginsDir() {
-        final File file = new File(Utils.getAppPath(), "plugins");
+        final File dir = new File(Utils.getAppPath(), "plugins");
+        final String path = System.getProperty("plug-dir", dir.getAbsolutePath());
+        final File file = new File(path);
         if (!file.exists())
             file.mkdirs();
         return file;
