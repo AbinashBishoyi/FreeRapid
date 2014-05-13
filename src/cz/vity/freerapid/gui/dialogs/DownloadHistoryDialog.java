@@ -131,6 +131,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         table.setRowHeight(36);
         table.setShowGrid(true, false);
 
+        table.setColumnSelectionAllowed(false);
 
         table.getSelectionModel().addListSelectionListener(this);
 
@@ -166,7 +167,8 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         final int[] rows = getSelectedRows();
 
         final TableModel tableModel = table.getModel();
-        final int selCol = table.convertColumnIndexToModel(table.getSelectedColumn());
+
+        final int selCol = table.convertColumnIndexToModel(table.getColumnModel().getSelectionModel().getLeadSelectionIndex());
         StringBuilder builder = new StringBuilder();
         String value;
         for (int row : rows) {
