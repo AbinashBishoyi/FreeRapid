@@ -83,9 +83,12 @@ IV.   Known bugs and Limitations
 - Substance look and feel throws org.jvnet.substance.api.UiThreadingViolationException:
                                                               Component creation must be done on Event Dispatch Thread
     X ignore this exception in the app.log
-- autocomplete combobox in AddUrls dialog throws exception
-- This application does not work on MacOS, because Java 6 was not implemented on this platform yet.
-
+- DirectoryChooser throws java.lang.InternalError or freezes on Win Vista (64bit)
+    X ignore this exception in the app.log
+- java.lang.ClassCastException: java.awt.TrayIcon cannot be cast to java.awt.Component
+    X ignore this exception in the app.log    
+- some users reported not showing icon in tray on Linux
+    X the only one known solution for this problem could be an upgrade JRE to version 1.6.0_10-rc or higher
 
 V.   FAQ
 =======================================

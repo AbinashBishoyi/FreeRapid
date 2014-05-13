@@ -66,13 +66,18 @@ public class ClipboardMonitorManager extends Thread implements ClipboardOwner {
                         wait();
                     }
                 }
-                Thread.sleep(600);
+                Thread.sleep(700);
             } catch (InterruptedException e) {
                 //ignore
             }
 
             try {
+                if (clipboard.getAvailableDataFlavors().length < 10) { //dirty hack
+                    continue;
+                }
+
                 final boolean stFlavorAvailable = clipboard.isDataFlavorAvailable(DataFlavor.stringFlavor);
+
                 urlFlavorAvailable = !stFlavorAvailable && clipboard.isDataFlavorAvailable(urlFlavor);
                 if (stFlavorAvailable || urlFlavorAvailable) {
 
@@ -84,8 +89,7 @@ public class ClipboardMonitorManager extends Thread implements ClipboardOwner {
                         if (!currentClipboardData.equals(data)) {
                             currentClipboardData = data;
 
-                            if (!isApplicationActive())
-                                paste();
+                            paste();
 
                         }
                     } catch (UnsupportedFlavorException e) {
@@ -102,9 +106,9 @@ public class ClipboardMonitorManager extends Thread implements ClipboardOwner {
         logger.info("ClipboardMonitorManager was interrupted");
     }
 
-    private static boolean isApplicationActive() {
-        return KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow() != null;
-    }
+//    private static boolean isApplicationActive() {
+//        return KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow() != null;
+//    }
 
     private void init() {
         currentClipboardData = "";
@@ -137,7 +141,8 @@ public class ClipboardMonitorManager extends Thread implements ClipboardOwner {
     }
 
     private boolean isEnabled() {
-        return AppPrefs.getProperty(UserProp.CLIPBOARD_MONITORING, UserProp.CLIPBOARD_MONITORING_DEFAULT) && !isApplicationActive();
+        //return AppPrefs.getProperty(UserProp.CLIPBOARD_MONITORING, UserProp.CLIPBOARD_MONITORING_DEFAULT) && !isApplicationActive();
+        return AppPrefs.getProperty(UserProp.CLIPBOARD_MONITORING, UserProp.CLIPBOARD_MONITORING_DEFAULT);
     }
 
     private void updateThreadSleep() {

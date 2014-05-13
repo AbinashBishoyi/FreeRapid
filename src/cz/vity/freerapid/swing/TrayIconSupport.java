@@ -67,8 +67,13 @@ public class TrayIconSupport implements PropertyChangeListener {
         MouseAdapter mouseListener = new MouseAdapter() {
 
             public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() >= 1 && SwingUtilities.isLeftMouseButton(e)) {
-                    windowPlay(frame);
+                if (SwingUtilities.isLeftMouseButton(e)) {
+                    if (e.getClickCount() == 2) {
+                        windowPlay(frame, true);
+                    } else if (e.getClickCount() == 1) {
+                        windowPlay(frame, false);
+                    }
+                    e.consume();
                 }
             }
         };
@@ -90,18 +95,20 @@ public class TrayIconSupport implements PropertyChangeListener {
         setEnabled(true);
     }
 
-    private void windowPlay(JFrame frame) {
+    private void windowPlay(final JFrame frame, boolean toFront) {
         int state = frame.getExtendedState();
         if ((state & JFrame.ICONIFIED) == 1) {
             frame.setExtendedState(state &= ~Frame.ICONIFIED);
             frame.setVisible(true);
             frame.toFront();
         } else {
-            // Set the iconified bit
-            state |= Frame.ICONIFIED;
+            if (!toFront) {
+                // Set the iconified bit
+                state |= Frame.ICONIFIED;
 
-            // Iconify the frame
-            frame.setExtendedState(state);
+                // Iconify the frame
+                frame.setExtendedState(state);
+            }
         }
     }
 

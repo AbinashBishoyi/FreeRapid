@@ -70,7 +70,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
         //this.downloaded = 0;
         resetErrorAttempts();
         this.sleep = -1;
-        this.averageSpeed = -1;
+        this.averageSpeed = 0;
         this.speed = 0;
         this.timeToQueued = -1;
         setFileType(FileTypeIconProvider.identifyFileType(fileName));

@@ -809,22 +809,23 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             final DownloadFile downloadFile = (DownloadFile) value;
             final DownloadState state = downloadFile.getState();
+            value = stateToString(state);
             this.setHorizontalAlignment(CENTER);
             this.setToolTipText(null);
             if (state == DownloadState.DOWNLOADING) {
                 long hasToBeDownloaded = downloadFile.getFileSize() - downloadFile.getDownloaded();
                 final float speed = downloadFile.getAverageSpeed();
-
+                assert speed > 0;
                 if (Float.compare(0, speed) != 0) {
                     if (hasToBeDownloaded >= 0) {
                         value = secondsToHMin(Math.round(hasToBeDownloaded / speed));
-                    } else value = stateToString(state);
-                } else value = stateToString(state);
+                    }
+                }
             } else if (state == DownloadState.WAITING) {
                 if (downloadFile.getSleep() >= 0)
                     value = String.format("%s (%s)", stateToString(state), secondsToHMin(downloadFile.getSleep()));
                 else value = "";
-            } else value = stateToString(state);
+            }
             if (state == DownloadState.ERROR) {
                 final String errorMessage = downloadFile.getErrorMessage();
                 if (errorMessage != null) {

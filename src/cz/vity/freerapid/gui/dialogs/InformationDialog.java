@@ -33,7 +33,6 @@ import java.util.logging.Logger;
 /**
  * @author Vity
  */
-//TODO Sorry, there are currently no free download slots available on this server.
 public class InformationDialog extends AppFrame implements PropertyChangeListener {
     private final static Logger logger = Logger.getLogger(InformationDialog.class.getName());
 
