@@ -15,6 +15,8 @@ XXX December 2008 - FreeRapid Downloader 0.8 released
   Added : new plugin - flyshare.cz [thanks to me! ;-)]
   Added : new plugin - Upnito.sk [thanks to me! ;-)]
   Added : new plugin - SaveFile.com [thanks to Alex!]
+  Added : new plugin - KewlShare.com [thanks to Alex!]
+  Added : new plugin - EnterUpload.com [thanks to Alex!]
   Added : new plugin - MediaFire.com [thanks to Lukiz!]
   Added : new plugin - edisk.cz [thanks to Lukiz!]
   Added : UI - added action to remove invalid/not existing links [requested by Alex]
@@ -35,6 +37,8 @@ XXX December 2008 - FreeRapid Downloader 0.8 released
           - this feature can be disabled in User Preferences dialog  
   Added : UI - moving lines on right mouse dragged [requested by Tuiz] - http://bugtracker.wordrider.net/task/39?project=4
   Added : UI - clipboard monitoring catches links like http://blabla.com/?url=http:%25%25service.com%25 (decoding URL)
+  Added : UI - About Dialog title shows build number
+  Added : plugins - RapidShare plugin - ability to choose download mirror [thanks to Lukiz!]
   Changed : UI - clipboard monitoring is ON by default
   Changed : plugins are loaded on the fly (not during start) from the system temporary directory
   Changed : plugins - major intern changes and fixes in most of plugins
