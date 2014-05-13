@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.logging.Logger;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
 final class OneInstanceClient {
     private final static Logger logger = Logger.getLogger(OneInstanceClient.class.getName());

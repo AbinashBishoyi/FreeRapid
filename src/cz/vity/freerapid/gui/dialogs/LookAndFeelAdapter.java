@@ -5,7 +5,7 @@ import cz.vity.freerapid.gui.MyPreferencesAdapter;
 import cz.vity.freerapid.swing.LaF;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
 class LookAndFeelAdapter extends MyPreferencesAdapter {
 

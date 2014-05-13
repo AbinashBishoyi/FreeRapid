@@ -32,13 +32,18 @@ public class FileActions extends AbstractBean {
     @SuppressWarnings({"unchecked"})
     @Action
     public void addNewLinksAction(ActionEvent event) {
+        List<URL> urlList = null;
+        if (event.getSource() instanceof List) {
+            urlList = (List<URL>) event.getSource();
+            if (urlList.isEmpty())
+                return;
+        }
         final ManagerDirector managerDirector = app.getManagerDirector();
         final DataManager dataManager = managerDirector.getDataManager();
         final NewLinksDialog dialog = new NewLinksDialog(managerDirector, app.getMainFrame());
-        if (event.getSource() instanceof List) {
-            final List<URL> urlList = (List<URL>) event.getSource();
+        if (urlList != null)
             dialog.setURLs(urlList);
-        }
+
         app.prepareDialog(dialog, true);
         if (dialog.getModalResult() == NewLinksDialog.RESULT_OK) {
             final List<DownloadFile> files = dialog.getDownloadFiles();

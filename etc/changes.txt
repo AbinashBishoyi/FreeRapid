@@ -1,0 +1,26 @@
+*********************************************************
+*   History of changes for FreeRapid Downloader         *
+*   WebSite: http://wordrider.net/freerapid             *
+*   Mail: info@wordrider.net                            *
+*********************************************************
+Thanks to all individuals who reported bugs.
+
+Legend :
+Added - indicates new functionality or new part of distribution
+Changed - indicates a change in using/behavior FreeRapid
+Fixed - indicates a bug fix
+
+September 2008 - FreeRapid Downloader 0.5 released
+
+  Fixed : partly downloaded files were not deleted in some special cases
+  Added : frame title information (optionable)
+  Added : ESC key cancels current download(s)
+  Added : automatic smart saving current queue and downloaded files history
+          (if application/OS crashes it preserves everything)
+  Added : support for depositfiles.com
+  Added : support for megaupload.com
+  Added : support for netload.in
+  Added : this file :-)
+
+9th September 2008 - FreeRapid Downloader 0.5 released
+  - initial release

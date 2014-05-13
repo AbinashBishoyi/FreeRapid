@@ -10,17 +10,18 @@ import java.net.Socket;
 import java.util.logging.Logger;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
 final class OneInstanceServer extends Thread {
     private final static Logger logger = Logger.getLogger(OneInstanceServer.class.getName());
 
     public OneInstanceServer() {
         super();    //call to super
+        this.setName("OneInstanceServer");
         this.setPriority(Thread.MIN_PRIORITY);
     }
 

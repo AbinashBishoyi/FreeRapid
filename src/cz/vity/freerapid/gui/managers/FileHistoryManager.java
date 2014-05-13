@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
 public class FileHistoryManager extends AbstractBean implements Application.ExitListener {
     private final static Logger logger = Logger.getLogger(FileHistoryManager.class.getName());
@@ -64,13 +64,11 @@ public class FileHistoryManager extends AbstractBean implements Application.Exit
     }
 
     private void saveListToFileOnBackground() {
-        synchronized (this) {
-            if (!loaded)
-                return;
-        }
+        //assert loaded;
         final TaskService service = director.getTaskServiceManager().getTaskService(TaskServiceManager.WORK_WITH_FILE_SERVICE);
         service.execute(new Task(context.getApplication()) {
             protected Object doInBackground() throws Exception {
+                Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
                 final ArrayListModel<FileHistoryItem> files;
 
                 files = new ArrayListModel<FileHistoryItem>(getItems());//getItems je synchronizovana

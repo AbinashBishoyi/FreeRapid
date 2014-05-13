@@ -12,7 +12,7 @@ import java.util.TimerTask;
 import java.util.logging.Logger;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
 public class SpeedMeterDialog extends AppFrame implements PropertyChangeListener {
     private final static Logger logger = Logger.getLogger(SpeedMeterDialog.class.getName());

@@ -40,7 +40,7 @@ import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
 public class UserPreferencesDialog extends AppDialog {
     private final static Logger logger = Logger.getLogger(UserPreferencesDialog.class.getName());

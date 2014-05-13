@@ -10,7 +10,7 @@ import org.jdesktop.application.Application;
 import java.util.logging.Logger;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
 public class CloseInTimeTask extends CoreTask<Void, Void> {
     private final static Logger logger = Logger.getLogger(CloseInTimeTask.class.getName());

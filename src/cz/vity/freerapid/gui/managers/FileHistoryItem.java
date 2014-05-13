@@ -6,7 +6,7 @@ import java.io.File;
 import java.net.URL;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
 public class FileHistoryItem {
     private URL url;

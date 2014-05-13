@@ -77,4 +77,6 @@ public class UserProp {
     public static final String AUTOSAVE_TIME = "autosaveTime";
     public static final int AUTOSAVE_TIME_DEFAULT = 10;//sekundy
 
+    public static final String CLIPBOARD_MONITORING = "clipboardMonitoring";
+    public static final boolean CLIPBOARD_MONITORING_DEFAULT = true;
 }

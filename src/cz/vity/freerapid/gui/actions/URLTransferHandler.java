@@ -8,18 +8,21 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Vity
  */
 public abstract class URLTransferHandler extends TransferHandler {
+
+    private final static Pattern REGEXP_URL = Pattern.compile("(http|https)://([a-zA-Z0-9\\.\\-]+(:[a-zA-Z0-9\\.&%\\$\\-]+)*@)?((25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])|([a-zA-Z0-9\\-]+\\.)*[a-zA-Z0-9\\-]+\\.[a-zA-Z]{2,4})(:[0-9]+)?(/[^/][a-zA-Z0-9\\.,\\?'\\\\/\\+&%\\$#=~_\\-@]*)*", Pattern.MULTILINE);
+
     //private final static String URI_LIST_MIME_TYPE = "text/uri-list;class=java.lang.String";
     private final static String URL_LIST_MIME_TYPE = "application/x-java-url; class=java.net.URL";
     private final static Logger logger = Logger.getLogger(URLTransferHandler.class.getName());
@@ -30,24 +33,35 @@ public abstract class URLTransferHandler extends TransferHandler {
 
     private static List<URL> textURIListToFileList(String data) {
         final List<URL> list = new LinkedList<URL>();
-        final String[] strings = data.split("\\p{Space}");
-        logger.info("Dragged string data " + data);
-        for (String s : strings) {
-            s = s.trim();
-            if (!s.isEmpty() && !s.startsWith("#")) {
-                logger.info("Testing for url " + s);
-                try {
-                    list.add(new URI(s).toURL());
-                } catch (URISyntaxException e) {
-                    logger.warning("Invalid URI " + e.getMessage());
-                } catch (IllegalArgumentException e) {
-                    logger.warning("Invalid argument " + e.getMessage());
-                } catch (MalformedURLException e) {
-                    logger.warning("Invalid argument " + e.getMessage());
-                }
+//        final String[] strings = data.split("\\p{Space}");
+//        logger.info("Dragged string data " + data);
+//        for (String s : strings) {
+//            s = s.trim();
+//            if (!s.isEmpty() && !s.startsWith("#")) {
+//                logger.info("Testing for url " + s);
+//                try {
+//                    list.add(new URI(s).toURL());
+//                } catch (URISyntaxException e) {
+//                    logger.warning("Invalid URI " + e.getMessage());
+//                } catch (IllegalArgumentException e) {
+//                    logger.warning("Invalid argument " + e.getMessage());
+//                } catch (MalformedURLException e) {
+//                    logger.warning("Invalid argument " + e.getMessage());
+//                }
+//            }
+//
+//        }
+        final Matcher match = REGEXP_URL.matcher(data);
+        int start = 0;
+        while (match.find(start)) {
+            try {
+                list.add(new URL(match.group()));
+            } catch (MalformedURLException e) {
+                //ignore
             }
-
+            start = match.end();
         }
+
 //        for (StringTokenizer st = new StringTokenizer(data, "\r\n"); st.hasMoreTokens();) {
 //            String s = st.nextToken().trim();
 //            // the line is a comment (as per the RFC 2483)

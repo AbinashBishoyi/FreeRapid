@@ -94,6 +94,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         setActions();
         manager.getDownloadFiles().addListDataListener(this);
         manager.addPropertyChangeListener(this);
+
     }
 
 
@@ -167,7 +168,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     @org.jdesktop.application.Action(enabledProperty = CANCEL_ACTION_ENABLED_PROPERTY)
     public void cancelAction() {
-        manager.cancelSelected(getSelectedRows());
+        if (isCancelActionEnabled())
+            manager.cancelSelected(getSelectedRows());
     }
 
     @org.jdesktop.application.Action(enabledProperty = REMOVECOMPLETED_ACTION_ENABLED_PROPERTY)
@@ -477,7 +479,17 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         table.getInputMap().put(KeyStroke.getKeyStroke("control C"), "copy");
         table.getActionMap().put("copy", Swinger.getAction("copyContent"));
 
+        table.getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "deleteItem");
+        table.getActionMap().put("deleteItem", Swinger.getAction("cancelAction"));
+
+//        paste();
+
         updateFilters();
+    }
+
+    public void paste() {
+        final Action action = table.getActionMap().get("paste");
+        action.actionPerformed(new ActionEvent(table, 0, "paste"));
     }
 
     @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)

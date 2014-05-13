@@ -278,6 +278,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         final TaskService service = director.getTaskServiceManager().getTaskService(TaskServiceManager.WORK_WITH_FILE_SERVICE);
         service.execute(new Task(context.getApplication()) {
             protected Object doInBackground() throws Exception {
+                Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
                 final ArrayListModel<DownloadFile> files;
                 synchronized (lock) {
                     files = new ArrayListModel<DownloadFile>(downloadFiles);

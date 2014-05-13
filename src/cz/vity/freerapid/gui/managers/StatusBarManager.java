@@ -160,7 +160,10 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
             if (downloading == 0) {
                 s = resourceMap.getString("frameTitleInfoNoDownloads", completed, size);
             } else {
-                s = resourceMap.getString("frameTitleInfo", completed, size, speedFormatted);
+                if (speed == 0) {
+                    s = resourceMap.getString("frameTitleInfo0Speed", completed, size, speedFormatted);
+                } else
+                    s = resourceMap.getString("frameTitleInfo", completed, size, speedFormatted);
             }
 
             app.getMainFrame().setTitle(s);

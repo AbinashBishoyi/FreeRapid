@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
 //TODO Sorry, there are currently no free download slots available on this server.
 public class InformationDialog extends AppFrame implements PropertyChangeListener {

@@ -10,7 +10,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author Ladislav Vitasek
+ * @author Vity
  */
 public class TaskServiceManager {
     public static final String DOWNLOAD_SERVICE = "downloadService";
