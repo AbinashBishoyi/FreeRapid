@@ -33,9 +33,12 @@ Misc.:
  - Drag&Drop URLs
 
 Currently supported services are:
- -  Rapidshare.com
+ -  Rapidshare.com (for Premium account see Homepage for more details)
  -  FileFactory.com
  -  Uploaded.to
+ -  MegaUpload.com (=megarotic.com = sexuploader.com)
+ -  DepositFiles.com
+ -  NetLoad.in
  -  ..others are coming
 
 
@@ -83,6 +86,16 @@ All platforms
  Run command java -jar frd.jar
 
 
+additional parameters for launching are:
+
+java -jar frd.jar [-h -v -d]
+
+options
+  -h (--help,-?)    print this message
+  -v (--version)    print the version information and exit
+  -d (--debug)      print debugging information
+
+
 IV.   Known bugs and Limitations
 =======================================
 
@@ -102,7 +115,8 @@ V.   FAQ
 =======================================
 
 Q: Why did you create another "RapidShare Downloader"?
-A: 1) Because I don't want to be addicted on the russian software, which is probably full of malware and spyware.
+A: 1) Because I don't want to be dependant on the russian software, which is probably full of malware and spyware.
    2) Because I can simply fix automatic downloading myself.
-   3) Because I can.
+   3) Because they have unintuitive user interface and missing important features.
+   4) Because I can.
 

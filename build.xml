@@ -21,6 +21,7 @@
     <property name="doc.dir" value="doc"/>
     <property name="lib.dir" value="lib"/>
     <property name="dev.dir" value="dev"/>
+    <property name="resources.dir" value="resources"/>
     <property name="plugins.dir" value="plugins"/>
     <property name="lookandfeel.dir" value="lookandfeel"/>
     <property name="lib-src.dir" value="lib-src"/>
@@ -143,6 +144,7 @@
         <delete dir="${build.dir}"/>
         <delete dir="${classes.dir}"/>
         <delete dir="${dist.dir}"/>
+        <delete dir="${resources.dir}"/>
     </target>
 
     <target name="all" depends="clean,init,compile, build, dist" description="build all"/>
@@ -152,6 +154,19 @@
     <target name="run" depends="build">
         <java fork="true" jar="${build.dir}/${mainjar.file}"/>
     </target>
+
+    <target name="resources-tosrc">
+        <native2ascii dest="${src.dir}" src="${resources.dir}" includes="**/**/*.properties"/>
+    </target>
+
+    <target name="resources">
+        <mkdir dir="${resources.dir}"/>
+        <native2ascii dest="${resources.dir}" reverse="true" src="${src.dir}" includes="**/**/*.properties"/>
+        <zip zipfile="${dist.dir}/resources.zip">
+            <fileset dir="${resources.dir}"/>
+        </zip>
+    </target>
+
 
     <target name="dist" depends="build" description="creating release">
         <zip zipfile="${dist.dir}/${version.name}.zip">

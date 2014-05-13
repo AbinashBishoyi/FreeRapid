@@ -116,9 +116,10 @@ public class MenuManager {
         final Object[] helpMenuActionNames = {
                 "help",
                 MENU_SEPARATOR,
-                "checkForNewVersion",
                 "showDemo",
                 "visitHomepage",
+                MENU_SEPARATOR,
+                "checkForNewVersion",
                 MENU_SEPARATOR,
                 "paypalSupportAction",
                 MENU_SEPARATOR,
