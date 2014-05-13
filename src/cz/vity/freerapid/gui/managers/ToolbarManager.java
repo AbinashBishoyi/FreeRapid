@@ -38,6 +38,8 @@ public class ToolbarManager implements PropertyChangeListener {
     private JToolBar toolbar = new JToolBar("mainToolbar");
     //private JXBusyLabel labelWorkingProgress;
 
+    private float fontSize;
+
     /**
      * Konstruktor - naplni toolbar buttony
      */
@@ -54,6 +56,7 @@ public class ToolbarManager implements PropertyChangeListener {
                 }
             }
         });
+        fontSize = context.getResourceMap().getFloat("buttonBarFontSize");
         createToolbar();
     }
 
@@ -114,18 +117,18 @@ public class ToolbarManager implements PropertyChangeListener {
         return toolbarPanel;
     }
 
-    private static AbstractButton getToggleButton(final Action action) {
+    private AbstractButton getToggleButton(final Action action) {
         final JToggleButton button = new JToggleButton(action);
         return setButtonProperties(button, action);
     }
 
-    private static AbstractButton getButton(final Action action) {
+    private AbstractButton getButton(final Action action) {
         final JButton button = new JButton(action);
         return setButtonProperties(button, action);
     }
 
 
-    private static AbstractButton setButtonProperties(AbstractButton button, Action action) {
+    private AbstractButton setButtonProperties(AbstractButton button, Action action) {
         button.setRolloverEnabled(true);
         button.setIconTextGap(0);
         final Object desc = action.getValue(Action.SHORT_DESCRIPTION);
@@ -134,7 +137,7 @@ public class ToolbarManager implements PropertyChangeListener {
             s = s.substring(0, s.length() - 3);
         button.setText(s);
         final Font font = button.getFont();
-        button.setFont(font.deriveFont(11.0F));
+        button.setFont(font.deriveFont(fontSize));
         button.setVerticalTextPosition(JButton.BOTTOM);
         button.setHorizontalTextPosition(JButton.CENTER);
         button.setMinimumSize(buttonDimension);

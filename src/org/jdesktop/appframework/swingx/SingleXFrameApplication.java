@@ -153,8 +153,14 @@ public abstract class SingleXFrameApplication extends SingleFrameApplication {
             windows.add(getMainFrame().getOwnedWindows()[i]);
         }
         for (Window window : windows) {
-            if (window.isValid())
+            if (window.isShowing() || window.isValid())
                 saveSession(window);
+            else if (window instanceof JFrame) {
+                JFrame f = (JFrame) window;
+                final Object init = f.getRootPane().getClientProperty("initialized");
+                if (Boolean.TRUE.equals(init))
+                    saveSession(window);
+            }
         }
     }
 
@@ -194,7 +200,7 @@ public abstract class SingleXFrameApplication extends SingleFrameApplication {
                 c.setLocationRelativeTo(owner); // center the window
             }
         }
-
+        c.getRootPane().putClientProperty("initialized", Boolean.TRUE);
     }
 
     /**
