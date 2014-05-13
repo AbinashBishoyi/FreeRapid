@@ -1,5 +1,7 @@
 package cz.vity.freerapid.plugins.webclient;
 
+import org.jdesktop.application.Application;
+
 /**
  * @author Vity
  */
@@ -61,7 +63,10 @@ public class ConnectionSettings {
             if (hasUserName()) {
                 return getUserName() + "@" + url;
             } else return url;
-        } else return "Default";
+        } else {
+            return Application.getInstance().getContext().getResourceMap().getString("defaultConnection");
+        }
+
     }
 
 //    @SuppressWarnings({"RedundantIfStatement"})
