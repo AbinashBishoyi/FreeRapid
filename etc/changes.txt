@@ -12,6 +12,7 @@ Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
 XXth October 2008 - FreeRapid Downloader 0.62 released
+  Added : plugins - support for egoshare.com and share-online.biz [implemented by Lukiz]
   Added : plugins - support for megarotic.com and sexuploader.com [FS#24 - requested by Anonymous, implemented by Lukiz]   
   Added : new keystroke for Resume action - SPACE key
   Added : possibility to import (with clipboard monitoring) or paste links without 'http://' at the beginning         
@@ -30,6 +31,8 @@ XXth October 2008 - FreeRapid Downloader 0.62 released
   Changed : small redesign of Appearance panel in User Preferences dialog
   Changed : improved pre-allocation files (less file fragmentation)
   Changed : minor changes in RapidShare, FileFactory, Megaupload, Uploaded.to plugins
+  Changed : plugin extension was renamed from .zip to .frp
+  Changed : default connection timeout is set to 100 seconds 
   Fixed : window size/position was not restored when application crashed
   Fixed : description area was not enabled for selection copy after file completion
   Fixed : removed czech labels from open proxy file dialog 
