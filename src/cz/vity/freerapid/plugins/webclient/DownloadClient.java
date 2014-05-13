@@ -142,6 +142,13 @@ final public class DownloadClient implements HttpDownloadClient {
                 String s = value.substring(index + str.length());
                 if (s.startsWith("\"") && s.endsWith("\""))
                     s = s.substring(1, s.length() - 1);
+                // napr. pro xtraupload je jeste treba dekodovat
+                if (s.matches(".*%[0-9A-Fa-f]+.*"))
+                    try {
+                        s = URLDecoder.decode(s, "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        logger.warning("Unsupported encoding");
+                    }
                 return s;
             } else {
                 //test na buggove Content-Disposition
