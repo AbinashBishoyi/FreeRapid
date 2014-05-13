@@ -89,6 +89,7 @@ public class UserPreferencesDialog extends AppDialog {
 
         setAction(btnOK, "okBtnAction");
         setAction(btnCancel, "cancelBtnAction");
+        setAction(btnSelectConnectionProxy, "btnSelectConnectionProxy");
 
 
         setDefaultValues();
@@ -128,6 +129,14 @@ public class UserPreferencesDialog extends AppDialog {
 
     }
 
+    @org.jdesktop.application.Action
+    public void btnSelectConnectionProxy() {
+        final ConnectDialog connectDialog = new ConnectDialog(this);
+        this.getApp().prepareDialog(connectDialog, true);
+        if (connectDialog.getModalResult() == ConnectDialog.RESULT_OK) {
+            model.setBuffering(true);
+        }
+    }
 
     private void addButton(javax.swing.Action action, final Card card, ButtonGroup group) {
         final JToggleButton button = new JToggleButton(action);
@@ -231,11 +240,15 @@ public class UserPreferencesDialog extends AppDialog {
 
         bind(checkCloseToTray, FWProp.MINIMIZE_ON_CLOSE, FWProp.MINIMIZE_ON_CLOSE_DEFAULT);
 
-        bind(checkUseDefaultConnection, UserProp.USE_DEFAULT_CONNECTION, UserProp.USE_DEFAULT_CONNECTION_DEFAULT);
+        final ValueModel useDefault = bind(checkUseDefaultConnection, UserProp.USE_DEFAULT_CONNECTION, UserProp.USE_DEFAULT_CONNECTION_DEFAULT);
+        PropertyConnector.connectAndUpdate(useDefault, btnSelectConnectionProxy, "enabled");
+
 
         valueModel = bind(checkShowIconInSystemTray, FWProp.SHOW_TRAY, true);
 
         PropertyConnector.connectAndUpdate(valueModel, checkAnimateIcon, "enabled");
+        PropertyConnector.connectAndUpdate(valueModel, checkCloseToTray, "enabled");
+        PropertyConnector.connectAndUpdate(valueModel, checkHideWhenMinimized, "enabled");
 
         bind(comboFileExists, UserProp.FILE_ALREADY_EXISTS, UserProp.FILE_ALREADY_EXISTS_DEFAULT, "fileAlreadyExistsOptions");
 
@@ -391,6 +404,8 @@ public class UserPreferencesDialog extends AppDialog {
         JPanel dialogPane = new JPanel();
         JPanel contentPanel = new JPanel();
         JXButtonPanel buttonBar = new JXButtonPanel();
+        btnSelectConnectionProxy = new JButton();
+        btnSelectConnectionProxy.setName("btnSelectConnectionProxy");
         btnOK = new JButton();
         btnCancel = new JButton();
         panelCard = new JPanel();
@@ -808,6 +823,11 @@ public class UserPreferencesDialog extends AppDialog {
                                             FormFactory.DEFAULT_COLSPEC,
                                             FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                                             new ColumnSpec("max(pref;30dlu)"),
+                                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                            FormFactory.DEFAULT_COLSPEC,
+                                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                            FormFactory.DEFAULT_COLSPEC,
+                                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                                             new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(0), FormSpec.DEFAULT_GROW),
                                     },
                                     new RowSpec[]{
@@ -818,7 +838,8 @@ public class UserPreferencesDialog extends AppDialog {
 
                             panelConnections1Builder.add(labelMaxConcurrentDownloads, cc.xy(3, 1));
                             panelConnections1Builder.add(spinnerMaxConcurrentDownloads, cc.xy(5, 1));
-                            panelConnections1Builder.add(checkUseDefaultConnection, cc.xyw(3, 2, 4));
+                            panelConnections1Builder.add(checkUseDefaultConnection, cc.xyw(3, 2, 5));
+                            panelConnections1Builder.add(btnSelectConnectionProxy, cc.xy(9, 2));
                         }
 
                         //======== panelProxySettings ========
@@ -969,6 +990,7 @@ public class UserPreferencesDialog extends AppDialog {
 
     private JTextField fieldProxyListPath;
     private JButton btnProxyListPathSelect;
+    private JButton btnSelectConnectionProxy;
     private JSpinner spinnerErrorAttemptsCount;
     private JSpinner spinnerAutoReconnectTime;
     private JButtonBar toolbar;

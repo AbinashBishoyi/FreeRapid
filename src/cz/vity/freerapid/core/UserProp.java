@@ -111,4 +111,7 @@ public class UserProp {
 
     public static final String PAYPAL = "paypal";
     public static final String DEMO_URL = "demoURL";
+
+    public static final String BRING_TO_FRONT_WHEN_PASTED = "bringToFrontWhenPasted";
+    public static final boolean BRING_TO_FRONT_WHEN_PASTED_DEFAULT = true;
 }

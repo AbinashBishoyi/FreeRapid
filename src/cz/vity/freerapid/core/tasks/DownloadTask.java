@@ -88,7 +88,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     }
 
     protected OutputStream getFileOutputStream(final File f, final long fileSize) throws NotEnoughSpaceException, IOException {
-        if (f.getParentFile().getFreeSpace() < fileSize) {
+        if (f.getParentFile().getFreeSpace() < fileSize + 10 * 1024 * 1024) { //+ 10MB
             throw new NotEnoughSpaceException();
         }
         final OutputStream fos;
@@ -309,6 +309,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         error(cause);
         if (cause instanceof NotEnoughSpaceException) {
             Swinger.showErrorMessage(getResourceMap(), "NotEnoughSpaceException", (storeFile != null) ? storeFile : "");
+            setServiceError(DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR);
         } else if (cause instanceof UnknownHostException) {
             downloadFile.setErrorMessage(getResourceMap().getString("UnknownHostError"));
         } else
@@ -483,7 +484,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         SwingUtilities.invokeAndWait(new Runnable() {
             public void run() {
                 if (AppPrefs.getProperty(UserProp.ACTIVATE_WHEN_CAPTCHA, UserProp.ACTIVATE_WHEN_CAPTCHA_DEFAULT))
-                    Swinger.bringToFront(((SingleFrameApplication) getApplication()).getMainFrame());
+                    Swinger.bringToFront(((SingleFrameApplication) getApplication()).getMainFrame(), true);
                 captchaResult = "";
                 while (captchaResult.isEmpty()) {
                     synchronized (captchaLock) {

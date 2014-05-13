@@ -1,6 +1,7 @@
 package cz.vity.freerapid.gui.managers;
 
 import cz.vity.freerapid.core.AppPrefs;
+import cz.vity.freerapid.core.FWProp;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadClient;
@@ -28,8 +29,11 @@ public class ClientManager {
     private int popCount;
 
     public ClientManager() {
-        if (AppPrefs.getProperty(UserProp.USE_DEFAULT_CONNECTION, UserProp.USE_DEFAULT_CONNECTION_DEFAULT))
-            availableConnections.add(new ConnectionSettings());
+        if (AppPrefs.getProperty(UserProp.USE_DEFAULT_CONNECTION, UserProp.USE_DEFAULT_CONNECTION_DEFAULT)) {
+            final ConnectionSettings connectionSettings = new ConnectionSettings();
+            initDefaultProxySettings(connectionSettings);
+            availableConnections.add(connectionSettings);
+        }
         popCount = 0;
         //maxClients = AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, 5);
         //String input = "    vity:heslo@exfort.org:8787 vity2:angor@@exfort2.org:8788  exfort3.org:5478  pavel@exfort.org:564 exfort5.org";
@@ -41,6 +45,27 @@ public class ClientManager {
                 readProxyList(f);
             }
         }
+    }
+
+    private void initDefaultProxySettings(ConnectionSettings connectionSettings) {
+        final String proxySetSystemDefault = System.getProperty("proxySet", "false");
+        logger.info("Proxy set system default connection: " + proxySetSystemDefault);
+        if (AppPrefs.getProperty(FWProp.PROXY_USE, Boolean.valueOf(proxySetSystemDefault))) {
+
+            final String url = AppPrefs.getProperty(FWProp.PROXY_URL, System.getProperty("proxyHost", "localhost"));
+            final int port = Integer.valueOf(AppPrefs.getProperty(FWProp.PROXY_PORT, System.getProperty("proxyPort", "8080")));
+
+            if (AppPrefs.getProperty(FWProp.PROXY_LOGIN, false)) {
+                final String userName = AppPrefs.getProperty(FWProp.PROXY_USERNAME, "");
+                final String password = Utils.generateXorString(AppPrefs.getProperty(FWProp.PROXY_PASSWORD, ""));
+                connectionSettings.setProxy(url, port, userName, password);
+            } else
+                connectionSettings.setProxy(url, port);
+            logger.info("Setting proxy configuration ON with configuration: " + connectionSettings.toString());
+        } else {
+            logger.info("Setting proxy configuration OFF for default connection");
+        }
+
     }
 
     private void readProxyList(File f) {

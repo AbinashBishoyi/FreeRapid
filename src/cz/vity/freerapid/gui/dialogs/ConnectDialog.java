@@ -79,6 +79,16 @@ public class ConnectDialog extends AppDialog {
 //        return Swinger.getActionMap(this.getClass(), this);
 //    }
 
+    @Override
+    protected AbstractButton getBtnCancel() {
+        return btnCancel;
+    }
+
+    @Override
+    protected AbstractButton getBtnOK() {
+        return btnOk;
+    }
+
     private void buildModels() {
         model = new MyPresentationModel(null, new Trigger());
         bind(fieldHostName, FWProp.PROXY_URL, "");
@@ -203,7 +213,7 @@ public class ConnectDialog extends AppDialog {
                 labelPortNumber.setName("labelPortNumber");
 
                 //---- fieldPort ----
-                fieldPort.setColumns(4);
+                fieldPort.setColumns(5);
                 fieldPort.setName("fieldPort");
 
                 //---- checkUserProxy ----

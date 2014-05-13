@@ -1,6 +1,8 @@
 package cz.vity.freerapid.gui.actions;
 
+import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.MainApp;
+import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.gui.dialogs.NewLinksDialog;
 import cz.vity.freerapid.gui.managers.DataManager;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
@@ -48,7 +50,7 @@ public class FileActions extends AbstractBean {
             dialog = new NewLinksDialog(managerDirector, app.getMainFrame());
 
         if (urlList != null) {
-            Swinger.bringToFront(app.getMainFrame());
+            Swinger.bringToFront(app.getMainFrame(), AppPrefs.getProperty(UserProp.BRING_TO_FRONT_WHEN_PASTED, UserProp.BRING_TO_FRONT_WHEN_PASTED_DEFAULT));
             final List<URL> urlList1 = urlList;
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {

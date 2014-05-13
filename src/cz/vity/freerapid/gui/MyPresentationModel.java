@@ -1016,7 +1016,7 @@ public class MyPresentationModel<B> extends Model {
      *
      * @param newValue the new buffering state
      */
-    private void setBuffering(boolean newValue) {
+    public void setBuffering(boolean newValue) {
         boolean oldValue = isBuffering();
         buffering = newValue;
         firePropertyChange(PROPERTYNAME_BUFFERING, oldValue, newValue);
@@ -1088,7 +1088,7 @@ public class MyPresentationModel<B> extends Model {
     }
 
 
-    protected void setChanged(boolean newValue) {
+    public void setChanged(boolean newValue) {
         boolean oldValue = isChanged();
         changed = newValue;
         firePropertyChange(PROPERTYNAME_CHANGED, oldValue, newValue);

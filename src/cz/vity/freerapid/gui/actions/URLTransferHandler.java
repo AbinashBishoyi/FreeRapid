@@ -63,7 +63,10 @@ public abstract class URLTransferHandler extends TransferHandler {
         int start = 0;
         while (match.find(start)) {
             try {
-                final URL url = new URL(match.group());
+                String spec = match.group();
+                if (!spec.startsWith("http://"))
+                    spec += "http://";
+                final URL url = new URL(spec);
                 if (pluginsManager.isSupported(url))
                     list.add(url);
             } catch (MalformedURLException e) {
