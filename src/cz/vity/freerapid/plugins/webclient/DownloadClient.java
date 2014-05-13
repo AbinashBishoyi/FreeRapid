@@ -21,7 +21,7 @@ public class DownloadClient implements HttpDownloadClient {
     protected String referer = "";
     protected String asString;
     private int redirect;
-    private ConnectionSettings settings;
+    private volatile ConnectionSettings settings;
 
 
     public DownloadClient() {
@@ -97,13 +97,13 @@ public class DownloadClient implements HttpDownloadClient {
                 file.setFileSize(new Long(contentLength.getValue()));
                 final String value = disposition.getValue();
                 final String str = "filename=";
-                final int index = value.indexOf(str);
+                final int index = value.toLowerCase().indexOf(str);
                 if (index >= 0) {
                     String s = value.substring(index + str.length());
                     if (s.startsWith("\"") && s.endsWith("\""))
                         s = s.substring(1, s.length() - 1);
                     file.setFileName(s);
-                }
+                } else logger.warning("File name was not found in:" + value);
                 return method.getResponseBodyAsStream();
             } else {
                 logger.warning("Loading file failed");
@@ -134,6 +134,15 @@ public class DownloadClient implements HttpDownloadClient {
                 }
             }
 
+            Header hce = method.getResponseHeader("Content-Encoding");
+            if (null != hce) {
+                if ("gzip".equals(hce.getValue())) {
+                    logger.info("Found gzip Stream");
+                    return new GZIPInputStream(method.getResponseBodyAsStream());
+                } else {
+                    //better hope this never happens
+                }
+            }
             return method.getResponseBodyAsStream();
         } else {
             logger.warning("Loading file failed");
