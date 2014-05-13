@@ -28,7 +28,7 @@ import cz.vity.freerapid.model.PluginMetaData;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 import cz.vity.freerapid.swing.*;
 import cz.vity.freerapid.swing.components.PopdownButton;
-import cz.vity.freerapid.swing.models.RecentsFilesComboModel;
+import cz.vity.freerapid.swing.models.SimplePreferencesComboModel;
 import cz.vity.freerapid.utilities.FileUtils;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
@@ -425,7 +425,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
         bindBasicComponents();
 
-        final RecentsFilesComboModel listComboModel = new RecentsFilesComboModel(10, UserProp.PLUGIN_CHECK_URL_LIST, false, false);
+        final SimplePreferencesComboModel listComboModel = new SimplePreferencesComboModel(10, UserProp.PLUGIN_CHECK_URL_LIST, false);
         comboPluginServers.setModel(listComboModel);
 
         comboPluginServers.setSelectedItem(AppPrefs.getProperty(UserProp.PLUGIN_CHECK_URL_SELECTED, Consts.PLUGIN_CHECK_UPDATE_URL));
@@ -675,7 +675,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
         }
 
-        ((RecentsFilesComboModel) comboPluginServers.getModel()).store();
+        ((SimplePreferencesComboModel) comboPluginServers.getModel()).store();
 
         if (updateDefaultConnection && updateProxyConnectionList) {
             clientManager.updateConnectionSettings();
