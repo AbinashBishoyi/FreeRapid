@@ -1,9 +1,11 @@
 package cz.vity.freerapid.core;
 
+import java.text.Collator;
+
 /**
  * @author Vity
  */
-public final class SupportedLanguage {
+public final class SupportedLanguage implements Comparable<SupportedLanguage> {
     private final String languageCode;
     private final String name;
     private final String icon;
@@ -41,6 +43,11 @@ public final class SupportedLanguage {
         result = languageCode.hashCode();
         result = 31 * result + country.hashCode();
         return result;
+    }
+
+
+    public int compareTo(SupportedLanguage o) {
+        return Collator.getInstance().compare(this.getName(), o.getName());
     }
 
     public final String getName() {

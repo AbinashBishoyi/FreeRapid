@@ -11,6 +11,9 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
+XX YYYY 2009 - FreeRapid Downloader 0.81 released
+  Changed : UI - User preferences dialog - languages are sorted based on the current locale
+
 21st December 2008 - FreeRapid Downloader 0.8 released
   Added : new plugin - usercash.com (crypter) [thanks to me! ;-)]
   Added : new plugin - CobraShare.sk [thanks to me! ;-)]
@@ -22,7 +25,7 @@ Fixed - indicates a bug fix
   Added : new plugin - MediaFire.com [thanks to Lukiz!]
   Added : new plugin - edisk.cz [thanks to Lukiz!]
   ###Added : Russian translation [thanks to CasTeT!] next time ;-)
-  Added : Italian translation [thanks to Steffano!]
+  Added : Italian translation [thanks to Stefano!]
   Added : Japanese translation [thanks to Tilt!]
   Added : Danish translation [thanks to Topexso!]
   Added : Ukrainan translation [thanks to Vadim!]

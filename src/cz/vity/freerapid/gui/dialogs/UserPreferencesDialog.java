@@ -591,7 +591,9 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
     }
 
     private void bindLngCombobox() {
-        final ListModel listModel = new ArrayListModel<SupportedLanguage>(Lng.getSupportedLanguages());
+        final java.util.List<SupportedLanguage> languageList = Lng.getSupportedLanguages();
+        Collections.sort(languageList);
+        final ListModel listModel = new ArrayListModel<SupportedLanguage>(languageList);
         final LanguageAdapter adapter = new LanguageAdapter(LNG_PROPERTY, Lng.getSelectedLanguage());
         final SelectionInList<String> inList = new SelectionInList<String>(listModel, model.getBufferedModel(adapter));
         Bindings.bind(comboLng, inList);
