@@ -36,6 +36,10 @@ import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.swinghelper.buttonpanel.JXButtonPanel;
 import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.decorator.ColorHighlighter;
+import org.jdesktop.swingx.decorator.ComponentAdapter;
+import org.jdesktop.swingx.decorator.HighlightPredicate;
+import org.jdesktop.swingx.decorator.HighlighterFactory;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
@@ -43,7 +47,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.*;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import java.awt.*;
@@ -193,6 +196,15 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         pluginTable.setShowGrid(true, true);
         pluginTable.setEditable(true);
 
+
+        ColorHighlighter first = new ColorHighlighter(new HighlightPredicate() {
+            public boolean isHighlighted(Component renderer, ComponentAdapter adapter) {
+                return Boolean.FALSE.equals(adapter.getValue(PluginMetaDataTableModel.COLUMN_ACTIVE));
+            }
+        }, HighlighterFactory.GENERIC_GRAY, null);
+
+        pluginTable.addHighlighter(first);
+
         pluginTable.setColumnSelectionAllowed(false);
 
         pluginTable.createDefaultColumnsFromModel();
@@ -235,11 +247,11 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         tableColumn.setWidth(22);
         tableColumn.setMaxWidth(22);
         pluginTable.setRolloverEnabled(true);
-        //final GrayHighlighter grayHighlighter = new GrayHighlighter();
-        Swinger.updateColumn(pluginTable, "ID", PluginMetaDataTableModel.COLUMN_ID, -1, 70, new GrayHighlighter());
-        Swinger.updateColumn(pluginTable, "Version", PluginMetaDataTableModel.COLUMN_VERSION, -1, 40, new GrayHighlighter());
-        Swinger.updateColumn(pluginTable, "Services", PluginMetaDataTableModel.COLUMN_SERVICES, -1, 100, new GrayHighlighter());
-        Swinger.updateColumn(pluginTable, "Author", PluginMetaDataTableModel.COLUMN_AUTHOR, -1, -1, new GrayHighlighter());
+
+        Swinger.updateColumn(pluginTable, "ID", PluginMetaDataTableModel.COLUMN_ID, -1, 70, null);
+        Swinger.updateColumn(pluginTable, "Version", PluginMetaDataTableModel.COLUMN_VERSION, -1, 40, null);
+        Swinger.updateColumn(pluginTable, "Services", PluginMetaDataTableModel.COLUMN_SERVICES, -1, 100, null);
+        Swinger.updateColumn(pluginTable, "Author", PluginMetaDataTableModel.COLUMN_AUTHOR, -1, -1, null);
         Swinger.updateColumn(pluginTable, "WWW", PluginMetaDataTableModel.COLUMN_WWW, -1, -1, SwingXUtils.getHyperLinkTableCellRenderer());
 
         pluginTable.addMouseListener(new MouseAdapter() {
@@ -294,10 +306,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         final int selCol = pluginTable.convertColumnIndexToModel(pluginTable.getColumnModel().getSelectionModel().getLeadSelectionIndex());
         if (selCol == PluginMetaDataTableModel.COLUMN_ACTIVE || selCol == PluginMetaDataTableModel.COLUMN_UPDATE)
             return;
-        Object value;
-        if (selCol == PluginMetaDataTableModel.COLUMN_WWW)
-            value = tableModel.getObject(rows[0]).getWWW();
-        else value = tableModel.getValueAt(rows[0], selCol);
+        final Object value = tableModel.getValueAt(rows[0], selCol);
 
         if (value != null)
             SwingUtils.copyToClipboard(value.toString(), this);
@@ -471,7 +480,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         bind(spinnerErrorAttemptsCount, UserProp.ERROR_ATTEMPTS_COUNT, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT, -1, 999, 1);
         bind(spinnerAutoReconnectTime, UserProp.AUTO_RECONNECT_TIME, UserProp.AUTO_RECONNECT_TIME_DEFAULT, 1, 10000, 10);
 
-        bind(checkProcessFromTop, UserProp.START_FROM_FROM_TOP, UserProp.START_FROM_FROM_TOP_DEFAULT);
+        bind(checkProcessFromTop, UserProp.START_FROM_TOP, UserProp.START_FROM_TOP_DEFAULT);
 
         ValueModel valueModel = bind(checkUseProxyList, UserProp.USE_PROXY_LIST, false);
         PropertyConnector.connectAndUpdate(valueModel, fieldProxyListPath, "enabled");
@@ -1743,17 +1752,4 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
     }
 
-
-    private static class GrayHighlighter extends DefaultTableCellRenderer {
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            final Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            row = table.convertRowIndexToModel(row);
-            if (Boolean.FALSE.equals(table.getModel().getValueAt(row, PluginMetaDataTableModel.COLUMN_ACTIVE))) {
-                comp.setForeground(Color.GRAY);
-            } else
-                comp.setForeground(Color.BLACK);
-            return comp;
-        }
-    }
 }

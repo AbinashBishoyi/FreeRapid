@@ -14,9 +14,20 @@ import java.awt.event.MouseEvent;
  *
  * @author Vity
  */
-public class SwingUtils {
+final public class SwingUtils {
     private SwingUtils() {
 
+    }
+
+    public static void copyToClipboard(String text, ClipboardOwner owner) {
+        final StringSelection stringSelection = new StringSelection(text);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, owner);
+    }
+
+    public static void showPopMenu(JPopupMenu popupMenu, MouseEvent e, Component source, Component destination) {
+        final MouseEvent event = SwingUtilities.convertMouseEvent(source, e, destination);
+        popupMenu.show(destination, event.getX(), event.getY());
     }
 
 
@@ -399,18 +410,6 @@ public class SwingUtils {
 
     public static KeyStroke getCtrlShiftKeyStroke(final int vkC) {
         return KeyStroke.getKeyStroke(vkC, InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK);
-    }
-
-
-    public static void copyToClipboard(String text, ClipboardOwner owner) {
-        final StringSelection stringSelection = new StringSelection(text);
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clipboard.setContents(stringSelection, owner);
-    }
-
-    public static void showPopMenu(JPopupMenu popupMenu, MouseEvent e, Component source, Component destination) {
-        final MouseEvent event = SwingUtilities.convertMouseEvent(source, e, destination);
-        popupMenu.show(destination, event.getX(), event.getY());
     }
 
 

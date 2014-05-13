@@ -152,7 +152,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
     }
 
     private void addOnList(List<DownloadFile> files) {
-        final boolean startFromTop = AppPrefs.getProperty(UserProp.START_FROM_FROM_TOP, UserProp.START_FROM_FROM_TOP_DEFAULT);
+        final boolean startFromTop = AppPrefs.getProperty(UserProp.START_FROM_TOP, UserProp.START_FROM_TOP_DEFAULT);
         for (DownloadFile file : files) {
             try {
                 file.setShareDownloadServiceID(pluginsManager.getServiceIDForURL(file.getFileUrl()));

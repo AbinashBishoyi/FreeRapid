@@ -57,7 +57,7 @@ class PluginMetaDataTableModel extends AbstractTableModel implements ListDataLis
             return Boolean.class;
         } else if (columnIndex == COLUMN_WWW)
             return LinkModel.class;
-        else return String.class;
+        else return Object.class;
     }
 
     @Override

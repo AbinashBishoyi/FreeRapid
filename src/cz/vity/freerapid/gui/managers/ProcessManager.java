@@ -12,6 +12,7 @@ import cz.vity.freerapid.plugins.exceptions.NotSupportedDownloadServiceException
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.plugins.webclient.HttpDownloadClient;
+import cz.vity.freerapid.plugins.webclient.HttpFile;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 import cz.vity.freerapid.swing.EDTPropertyChangeSupport;
 import cz.vity.freerapid.utilities.LogUtils;
@@ -49,6 +50,7 @@ public class ProcessManager extends Thread {
     private volatile int runChecking;
     private TaskService taskService;
     private ClientManager clientManager;
+    private HttpFile runCheckToken;
 
 
     public ProcessManager(ManagerDirector director, ApplicationContext context) {
@@ -115,6 +117,14 @@ public class ProcessManager extends Thread {
         return new LinkedList<DownloadFile>(forceDownloadFiles.keySet());
     }
 
+    /**
+     * Metoda, ktera se stara o prirazeni vlakna pro stahovani/zjistovani.
+     * Rozhoduje, kdy co a cim spustit.
+     *
+     * @param files
+     * @param forceDownload
+     * @return
+     */
     private boolean execute(Collection<DownloadFile> files, boolean forceDownload) {
         for (DownloadFile file : files) {
             logger.info("Getting downloadFile " + file);
@@ -132,6 +142,7 @@ public class ProcessManager extends Thread {
             if (!forceDownload) {
                 final List<ConnectionSettings> connectionSettingses = clientManager.getRotatedEnabledConnections();
                 if (service.supportsRunCheck() && !file.isCheckedFileName() && !connectionSettingses.isEmpty()) {
+                    //pokud to podporuje plugin a  soucasne nebyl jeste ocheckovan a soucasne je k dispozici vubec nejake spojeni
                     queueDownload(file, connectionSettingses.get(0), downloadService, service, true);
                 } else {
                     for (ConnectionSettings settings : connectionSettingses) {
@@ -198,7 +209,7 @@ public class ProcessManager extends Thread {
         final List<DownloadFile> queued = new LinkedList<DownloadFile>();
 
         final DownloadFile[] f = files.toArray(new DownloadFile[files.size()]);
-        final boolean startFromTop = AppPrefs.getProperty(UserProp.START_FROM_FROM_TOP, UserProp.START_FROM_FROM_TOP_DEFAULT);
+        final boolean startFromTop = AppPrefs.getProperty(UserProp.START_FROM_TOP, UserProp.START_FROM_TOP_DEFAULT);
         if (startFromTop) {
             for (DownloadFile downloadFile : f) {
                 if (downloadFile.getState() == DownloadState.QUEUED) {

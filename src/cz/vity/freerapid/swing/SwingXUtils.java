@@ -43,7 +43,13 @@ public class SwingXUtils {
     }
 
     public static LinkModel createLink(URL urlString) {
-        return new LinkModel(urlString.toExternalForm(), null, urlString);
+        final String s = urlString.toExternalForm();
+        return new LinkModel(s, null, urlString) {
+            @Override
+            public String toString() {
+                return s;
+            }
+        };
     }
 
 
