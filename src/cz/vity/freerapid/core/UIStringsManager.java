@@ -35,7 +35,11 @@ final public class UIStringsManager {
         final List<String> stringList = map.getBundleNames();
         final ResourceBundle bundle = ResourceBundle.getBundle(stringList.get(0));
         for (String key : bundle.keySet()) {
-            UIManager.put(key, bundle.getString(key));
+            final String value = bundle.getString(key);
+            if (value != null && !value.isEmpty() && key.endsWith("Mnemonic")) {
+                UIManager.put(key, (int) value.charAt(0));
+            } else
+                UIManager.put(key, value);
         }
         loaded = true;
     }
