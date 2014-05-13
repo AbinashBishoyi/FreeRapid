@@ -13,6 +13,7 @@ import org.jdesktop.application.ApplicationContext;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Hashtable;
@@ -38,7 +39,8 @@ public class PluginsManager {
     private void loadPlugins() {
 
         logger.info("Init Plugins Manager");
-        final PluginManager pluginManager = ObjectFactory.newInstance(new ExtendedProperties()).createManager();
+        final ExtendedProperties config = new ExtendedProperties(Utils.loadProperties("jpf.properties", true));
+        final PluginManager pluginManager = ObjectFactory.newInstance(config).createManager();
 
 
         final File pluginsDir = new File(Utils.getAppPath(), "plugins");
@@ -57,8 +59,22 @@ public class PluginsManager {
                 throw new IllegalStateException("Plugins directory does not exists");
             final PluginManager.PluginLocation[] loc = new PluginManager.PluginLocation[plugins.length];
 
+
             for (int i = 0; i < plugins.length; i++) {
+
+//                try {
+//                    final String path = fileToUrl(plugins[i]).toExternalForm();
+//                    logger.info("Plugins path:" + path);
+//                    final URL context = new URL("jar:" + path + "!/");
+//                    final URL manifest = new URL("jar:" + path + "!/plugin.xml");
+//
+//                    loc[i] = new StandardPluginLocation(context, manifest);
+//                } catch (MalformedURLException e) {
+//                    LogUtils.processException(logger, e);
+//                }
+
                 loc[i] = StandardPluginLocation.create(plugins[i]);
+                //logger.info("Plugin location: " + loc);
             }
 
             pluginManager.publishPlugins(loc);
@@ -78,6 +94,15 @@ public class PluginsManager {
         }
 //        final FileFactoryShareServiceImpl factoryShareService = new FileFactoryShareServiceImpl();
 //        loadedPlugins.put(factoryShareService.getName(), factoryShareService);
+    }
+
+    private static URL fileToUrl(final File plugin) {
+        try {
+            return plugin.toURI().toURL();
+        } catch (MalformedURLException e) {
+            LogUtils.processException(logger, e);
+            return null;
+        }
     }
 
     public ShareDownloadService getPlugin(String shareDownloadServiceID) throws NotSupportedDownloadServiceException {
