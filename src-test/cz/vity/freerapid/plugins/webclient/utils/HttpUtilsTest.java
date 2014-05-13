@@ -33,12 +33,17 @@ public class HttpUtilsTest {
     @Test
     public void testReplaceInvalidCharsForFileSystem() {
         final TestPostMethod postMethod = new TestPostMethod();
-        postMethod.responseHeader = new Header("Content-Disposition", "Content-Disposition: =?UTF-8?attachment;filename=\"Two Peaks Personal Vehicle Manager 2005 3.2.zip\";?=");
+        postMethod.responseHeader = new Header("Content-Disposition", "=?UTF-8?attachment;filename=\"Two Peaks Personal Vehicle Manager 2005 3.2.zip\";?=");
         String s = HttpUtils.getFileName(postMethod);
         Assert.assertEquals("Extracting file name #1", "Two Peaks Personal Vehicle Manager 2005 3.2.zip", s);
-        postMethod.responseHeader = new Header("Content-Disposition", "Content-Disposition: attachment;filename=Two Peaks Personal Vehicle Manager 2005 3.2.zip");
+        postMethod.responseHeader = new Header("Content-Disposition", "attachment;filename=Two Peaks Personal Vehicle Manager 2005 3.2.zip");
         s = HttpUtils.getFileName(postMethod);
         Assert.assertEquals("Extracting file name #2", "Two Peaks Personal Vehicle Manager 2005 3.2.zip", s);
+
+        postMethod.responseHeader = new Header("Content-Disposition", "inline; filename=J1btC65dLS.torrent");
+        s = HttpUtils.getFileName(postMethod);
+        Assert.assertEquals("Extracting file name #3", "J1btC65dLS.torrent", s);
+
     }
 
     private static class TestPostMethod extends PostMethod {

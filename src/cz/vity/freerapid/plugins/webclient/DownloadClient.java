@@ -212,7 +212,7 @@ public class DownloadClient implements HttpDownloadClient {
             file.setFileName(HttpUtils.replaceInvalidCharsForFileSystem(fileName, "_"));
             if (client.getParams().isParameterTrue("noContentTypeInHeader"))
                 isStream = true;
-        }
+        } else logger.warning("No Content-Disposition (filename) header in file");
 
         //server sends eg. text/plain for binary data
         if (!isStream && contentType != null && client.getParams().isParameterSet("considerAsStream")) {

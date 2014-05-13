@@ -35,8 +35,11 @@ final public class HttpUtils {
     public static String getFileName(final HttpMethod method) {
 
         final Header disposition = method.getResponseHeader("Content-Disposition");
-        if (disposition != null && disposition.getValue().toLowerCase(Locale.ENGLISH).contains("attachment")) {
+        if (disposition != null) {
             final String value = disposition.getValue();
+            final String lowercasedValue = value.toLowerCase(Locale.ENGLISH);
+            if (!(lowercasedValue.contains("attachment") || lowercasedValue.contains("inline")))
+                return null;
             String str = "filename=";
             final String lowercased = value.toLowerCase();
             int index = lowercased.lastIndexOf(str);
