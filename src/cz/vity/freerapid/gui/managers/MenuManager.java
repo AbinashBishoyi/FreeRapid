@@ -84,6 +84,8 @@ public class MenuManager {
                 "selectAllAction",
                 "invertSelectionAction",
                 MENU_SEPARATOR,
+                "sortbyNameAction",
+                MENU_SEPARATOR,
                 "topAction",
                 "upAction",
                 "downAction",

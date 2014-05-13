@@ -206,7 +206,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
 
 
     @SuppressWarnings({"SuspiciousMethodCalls"})
-    private int getIndex(Object file) {
+    private int getIndex(DownloadFile file) {
         return downloadFiles.indexOf(file);
     }
 
@@ -216,7 +216,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 // logger.info("Firing contents changed");
-                downloadFiles.fireContentsChanged(getIndex(evt.getSource()));
+                downloadFiles.fireContentsChanged(getIndex((DownloadFile) evt.getSource()));
                 if ("state".equals(s)) {
                     firePropertyChange(s, evt.getOldValue(), evt.getNewValue());
                     fireDataChanged();
@@ -579,5 +579,48 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
 
     public int getCurrentSpeed() {
         return speed;
+    }
+
+    /**
+     * Bere v uvahu i radky vybrane na preskacku.
+     *
+     * @param indexes
+     * @return Vraci -1 pokud nedoslo ke zmene.
+     */
+    public int sortByName(int[] indexes) {
+        synchronized (lock) {
+            if (indexes.length == 1)
+                return -1;
+            final List<DownloadFile> files = selectionToList(indexes);
+            //        final DownloadFile[] beforeSorting = files.toArray(new DownloadFile[files.size()]);
+            final DownloadFile[] sorted = files.toArray(new DownloadFile[files.size()]);
+            Arrays.sort(sorted, new Comparator<DownloadFile>() {
+                public int compare(DownloadFile o1, DownloadFile o2) {
+                    return o1.getFileName().compareToIgnoreCase(o2.getFileName());
+                }
+            });
+//            boolean sameIndexes = true;
+//            for (int i = 0; i < sorted.length; i++) {
+//                if (getIndex(sorted[i]) != getIndex(beforeSorting[i])) {
+//                    sameIndexes = false;
+//                    break;
+//                }
+//            }
+//
+//            if (sameIndexes) {
+//                return -1;
+//            }
+
+            if (indexes.length > 1)
+                Arrays.sort(indexes);
+            //final int placeIndex = getIndex(sorted[0]);
+            final int placeIndex = indexes[0];
+            final int length = indexes.length;
+            for (int i = length - 1; i >= 0; --i) {
+                downloadFiles.remove(indexes[i]);
+            }
+            downloadFiles.addAll(placeIndex, Arrays.asList(sorted));
+            return placeIndex;
+        }
     }
 }
