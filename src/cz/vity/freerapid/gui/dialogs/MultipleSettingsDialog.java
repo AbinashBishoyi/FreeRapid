@@ -345,7 +345,7 @@ public class MultipleSettingsDialog extends AppFrame implements PropertyChangeLi
         okAction.setEnabled(enabled);
         selectAction.setEnabled(enabled);
         descriptionArea.setEditable(enabled);
-        descriptionArea.setEnabled(enabled);
+        //descriptionArea.setEnabled(enabled);
         comboPath.setEditable(enabled);
         comboPath.setEnabled(enabled);
     }

@@ -406,7 +406,7 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
         okAction.setEnabled(enabled);
         selectAction.setEnabled(enabled);
         descriptionArea.setEditable(enabled);
-        descriptionArea.setEnabled(enabled);
+//        descriptionArea.setEnabled(enabled);
         comboPath.setEditable(enabled);
         comboPath.setEnabled(enabled);
     }

@@ -153,7 +153,8 @@ public abstract class SingleXFrameApplication extends SingleFrameApplication {
             windows.add(getMainFrame().getOwnedWindows()[i]);
         }
         for (Window window : windows) {
-            saveSession(window);
+            if (window.isValid())
+                saveSession(window);
         }
     }
 
@@ -179,6 +180,21 @@ public abstract class SingleXFrameApplication extends SingleFrameApplication {
                 logger.log(Level.WARNING, "couldn't save sesssion", e);
             }
         }
+    }
+
+    @Override
+    public void show(JFrame c) {
+        super.show(c);
+
+        if ((c.getWidth() < 150) || (c.getHeight() < 20)) {
+            c.pack();
+            if (!c.isLocationByPlatform()) {
+                Component owner = (c != getMainFrame()) ? getMainFrame()
+                        : null;
+                c.setLocationRelativeTo(owner); // center the window
+            }
+        }
+
     }
 
     /**
