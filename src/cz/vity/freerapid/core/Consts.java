@@ -80,6 +80,10 @@ public class Consts {
 
     public static final int MAX_RECENT_PHRASES_COUNT = 5;
     public static final String PLUGIN_CHECK_UPDATE_URL = "http://wordrider.net/freerapid/pluginsCheck.php";
+    /**
+     * version of API
+     */
+    public static final String APIVERSION = "0.8";
 
     /**
      * Od teto tridy se nebudou delat zadne instance

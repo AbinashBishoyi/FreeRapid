@@ -36,6 +36,7 @@ public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
     private final boolean quietMode;
     private static final String VERSION__PARAM = "version";
     private static final String PRODUCT_PARAM = "product";
+    private static final String APIVERSION_PARAM = "apiversion";
 
 
     public CheckPluginUpdateTask(ManagerDirector director, ApplicationContext context, boolean quiet) {
@@ -65,6 +66,7 @@ public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
             PostMethod postMethod = client.getPostMethod(url);
             postMethod.addParameter(PRODUCT_PARAM, Consts.PRODUCT);
             postMethod.addParameter(VERSION__PARAM, Consts.VERSION);
+            postMethod.addParameter(APIVERSION_PARAM, Consts.APIVERSION);
             method = postMethod;
         }
         message("message.connecting");
