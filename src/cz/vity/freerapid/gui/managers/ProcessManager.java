@@ -181,6 +181,7 @@ public class ProcessManager extends Thread {
             downloadService = new DownloadService(metaData, service);
             services.put(idServices, downloadService);
         }
+        logger.info("Getting plugin: " + metaData.toString());
         return downloadService;
     }
 

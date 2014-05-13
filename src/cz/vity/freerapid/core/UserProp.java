@@ -191,4 +191,9 @@ final public class UserProp {
     public static final String SHOW_SERVICES_ICONS = "showServicesAsIcons"; //spusti test pred stahovanim
     public static final boolean SHOW_SERVICES_ICONS_DEFAULT = true;
 
+    public static final String PLUGIN_UPDATE_CHECK_INTERVAL = "pluginUpdateCheckInterval";
+    public static final int PLUGIN_UPDATE_CHECK_INTERVAL_DEFAULT = 24;//hours
+
+    public static final String PLUGIN_LAST_UPDATE_TIMESTAMP_CHECK = "pluginLastUpdateDateTime";
+
 }

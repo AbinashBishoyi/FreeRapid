@@ -74,6 +74,17 @@ public final class AppPrefs {
      * @param defaultValue defaultni hodnota, ktera se pouzije pokud neni hodnota nalezena
      * @return hodnota uzivatelskeho nastaveni
      */
+    public static long getProperty(final String key, final long defaultValue) {
+        return getPreferences().getLong(key, defaultValue);
+    }
+
+    /**
+     * Vrati nastaveni z properties fajlu
+     *
+     * @param key          klic property
+     * @param defaultValue defaultni hodnota, ktera se pouzije pokud neni hodnota nalezena
+     * @return hodnota uzivatelskeho nastaveni
+     */
     public static boolean getProperty(final String key, final boolean defaultValue) {
         return getPreferences().getBoolean(key, defaultValue);
     }
@@ -122,6 +133,17 @@ public final class AppPrefs {
     /**
      * Provede ulozeni uzivatelskeho nastaveni do Properties
      *
+     * @param key   hodnota klice
+     * @param value hodnota uzivatelskeho nastaveni
+     */
+    public static void storeProperty(String key, long value) {
+        getPreferences().putLong(key, value);
+    }
+
+
+    /**
+     * Provede ulozeni uzivatelskeho nastaveni do Properties
+     *
      * @param key          hodnota klice
      * @param defaultValue hodnota uzivatelskeho nastaveni
      * @return String value
@@ -129,7 +151,6 @@ public final class AppPrefs {
     public static String getProperty(final String key, final String defaultValue) {
         return getPreferences().get(key, defaultValue);
     }
-
 
     /**
      * Odstraneni klic-hodnota z properties fajlu
@@ -220,6 +241,7 @@ public final class AppPrefs {
         }
         return Preferences.userRoot().node(getUserNode());
     }
+
 
     public static Preferences getPreferences() {
         if (properties == null)

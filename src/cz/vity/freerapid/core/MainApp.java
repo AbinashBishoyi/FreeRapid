@@ -64,7 +64,7 @@ public class MainApp extends SingleXFrameApplication {
 
         System.getProperties().put("arguments", args);
 
-        if (OneInstanceClient.checkInstance(fileList, appPrefs)) {
+        if (OneInstanceClient.checkInstance(fileList, appPrefs, getContext())) {
             this.exit();
             return;
         }

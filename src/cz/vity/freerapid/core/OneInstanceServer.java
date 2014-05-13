@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 final class OneInstanceServer extends Thread {
     private final static Logger logger = Logger.getLogger(OneInstanceServer.class.getName());
     private final AppPrefs prefs;
+    private volatile ServerSocket serverSocket;
 
     public OneInstanceServer(AppPrefs prefs) {
         super();    //call to super
@@ -32,7 +33,7 @@ final class OneInstanceServer extends Thread {
         try {
             logger.info("Creating a local socket server");
             final String portString = AppPrefs.getProperty(FWProp.ONE_INSTANCE_SERVER_PORT, null);
-            ServerSocket serverSocket = null;
+            serverSocket = null;
             if (portString == null) { //first run
                 int checkPort = Consts.ONE_INSTANCE_SERVER_PORT;
                 int attempts = 10;
@@ -85,7 +86,8 @@ final class OneInstanceServer extends Thread {
                     LogUtils.processException(logger, e);
                 }
             }
-            LogUtils.processException(logger, e);
+            if (!serverSocket.isClosed())
+                LogUtils.processException(logger, e);
         }
     }
 
@@ -110,4 +112,7 @@ final class OneInstanceServer extends Thread {
 //        }
 //    }
 
+    public ServerSocket getServerSocket() {
+        return serverSocket;
+    }
 }

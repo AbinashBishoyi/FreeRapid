@@ -89,7 +89,7 @@ public class PluginsManager {
         initPlugins();
     }
 
-    private void initPlugins() {
+    public void initPlugins() {
         final File pluginsDir = getPluginsDir();
         logger.info("Plugins dir: " + pluginsDir.getAbsolutePath());
 

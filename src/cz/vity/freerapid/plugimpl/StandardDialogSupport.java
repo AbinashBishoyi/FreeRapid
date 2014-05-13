@@ -2,6 +2,7 @@ package cz.vity.freerapid.plugimpl;
 
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.UserProp;
+import cz.vity.freerapid.core.tasks.DownloadTask;
 import cz.vity.freerapid.plugins.webclient.hoster.PremiumAccount;
 import cz.vity.freerapid.plugins.webclient.interfaces.DialogSupport;
 import cz.vity.freerapid.swing.Swinger;
@@ -39,7 +40,7 @@ public class StandardDialogSupport implements DialogSupport {
                 public void run() {
                     if (AppPrefs.getProperty(UserProp.ACTIVATE_WHEN_CAPTCHA, UserProp.ACTIVATE_WHEN_CAPTCHA_DEFAULT))
                         Swinger.bringToFront(((SingleFrameApplication) context.getApplication()).getMainFrame(), true);
-                    captchaResult = (String) JOptionPane.showInputDialog(null, context.getResourceMap().getString("InsertWhatYouSee"), context.getResourceMap().getString("InsertCaptcha"), JOptionPane.PLAIN_MESSAGE, new ImageIcon(image), null, null);
+                    captchaResult = (String) JOptionPane.showInputDialog(null, context.getResourceMap(DownloadTask.class).getString("InsertWhatYouSee"), context.getResourceMap(DownloadTask.class).getString("InsertCaptcha"), JOptionPane.PLAIN_MESSAGE, new ImageIcon(image), null, null);
 
                 }
             });

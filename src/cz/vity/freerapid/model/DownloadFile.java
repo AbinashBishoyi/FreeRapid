@@ -152,7 +152,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
     }
 
     public void setDownloaded(long downloaded) {
-        long oldValue = this.downloaded;
+        final long oldValue = this.downloaded;
         this.downloaded = downloaded;
         logger.fine("setting downloaded to " + downloaded);
         firePropertyChange("downloaded", oldValue, this.downloaded);

@@ -6,6 +6,7 @@ import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadClient;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
+import cz.vity.freerapid.swing.Swinger;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.jdesktop.application.ApplicationContext;
 
@@ -25,6 +26,7 @@ public class DownloadNewPluginsTask extends DownloadTask {
         super(context.getApplication());
         this.director = director;
         this.fileList = fileList;
+        this.setInputBlocker(new ScreenInputBlocker(this, BlockingScope.APPLICATION, getMainFrame(), null));
     }
 
 
@@ -33,7 +35,7 @@ public class DownloadNewPluginsTask extends DownloadTask {
         final ClientManager clientManager = director.getClientManager();
         final List<ConnectionSettings> connectionSettingses = clientManager.getEnabledConnections();
         if (connectionSettingses.isEmpty())
-            throw new IllegalStateException("No available connection");
+            return null;
         client = new DownloadClient();
         client.initClient(connectionSettingses.get(0));
         initDownloadThread();
@@ -52,7 +54,7 @@ public class DownloadNewPluginsTask extends DownloadTask {
         return null;
     }
 
-    private void processFile(DownloadFile file) throws Exception {
+    private void processFile(final DownloadFile file) throws Exception {
         final GetMethod getMethod = client.getGetMethod(file.getFileUrl().toExternalForm());
         final InputStream inputStream = client.makeRequestForFile(getMethod);
         if (inputStream != null) {
@@ -98,6 +100,9 @@ public class DownloadNewPluginsTask extends DownloadTask {
 
     @Override
     protected void succeeded(Void result) {
-        super.succeeded(result);
+        final int choiceYesNo = Swinger.getChoiceYesNo("New plugins were installed.\nFor using new plugins you need to restart application.\nDo you want to restart it now?");
+        if (choiceYesNo == Swinger.RESULT_YES) {
+            director.getMenuManager().getFileActions().restartApplication();
+        }
     }
 }

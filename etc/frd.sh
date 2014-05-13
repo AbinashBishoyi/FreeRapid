@@ -10,7 +10,7 @@
 
 #If you need to set a path to JRE uncomment and update these lines:
 # export JRE_PATH=/opt/jre1.6.0_08
-# $JRE_PATH/bin/java -jar fotogrametrie.jar "$@"
+# $JRE_PATH/bin/java -jar frd.jar "$@"
 
 #otherwise...
 java -jar frd.jar "$@"

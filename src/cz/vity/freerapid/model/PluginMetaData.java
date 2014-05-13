@@ -161,4 +161,11 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
     public boolean hasFavicon() {
         return favicon;
     }
+
+
+    public String toString() {
+        return "PluginMetaData{" +
+                "id='" + id + '\'' + " Version=" + getVersion() +
+                '}';
+    }
 }

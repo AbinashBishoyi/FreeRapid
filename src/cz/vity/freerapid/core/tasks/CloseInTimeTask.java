@@ -25,7 +25,7 @@ final public class CloseInTimeTask extends CoreTask<Void, Void> {
         super(application);
         MainApp app = (MainApp) application;
         this.setUserCanCancel(true);
-        this.setInputBlocker(new ScreenltInputBlocker(this, BlockingScope.APPLICATION, app.getMainFrame(), null));
+        this.setInputBlocker(new ScreenInputBlocker(this, BlockingScope.APPLICATION, app.getMainFrame(), null));
         Swinger.bringToFront(app.getMainFrame(), true);
         dataManager = app.getManagerDirector().getDataManager();
     }

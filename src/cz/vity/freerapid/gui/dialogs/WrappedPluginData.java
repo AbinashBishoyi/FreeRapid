@@ -6,7 +6,7 @@ import cz.vity.freerapid.xmlimport.ver1.Plugin;
 /**
  * @author Ladislav Vitasek
  */
-class WrappedPluginData {
+public class WrappedPluginData {
     private boolean selected;
     private String author;
 
@@ -17,7 +17,7 @@ class WrappedPluginData {
     private boolean aNew;
 
 
-    WrappedPluginData(boolean selected, DownloadFile httpFile, Plugin pluginInfo) {
+    public WrappedPluginData(boolean selected, DownloadFile httpFile, Plugin pluginInfo) {
         this.selected = selected;
         this.httpFile = httpFile;
         this.id = pluginInfo.getId();
@@ -26,7 +26,7 @@ class WrappedPluginData {
         services = pluginInfo.getServices();
     }
 
-    public boolean getSelected() {
+    public boolean isSelected() {
         return selected;
     }
 
@@ -65,4 +65,5 @@ class WrappedPluginData {
     public boolean isNew() {
         return aNew;
     }
+
 }

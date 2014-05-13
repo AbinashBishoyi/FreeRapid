@@ -36,6 +36,7 @@ public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
 
 
     protected List<Plugin> doInBackground() throws Exception {
+        AppPrefs.storeProperty(UserProp.PLUGIN_LAST_UPDATE_TIMESTAMP_CHECK, System.currentTimeMillis());
         message("updatesPluginCheck");
         final ClientManager clientManager = director.getClientManager();
         final List<ConnectionSettings> connectionSettingses = clientManager.getEnabledConnections();

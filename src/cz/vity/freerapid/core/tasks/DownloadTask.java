@@ -318,8 +318,9 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         firePropertyChange("sleep", oldValue, newValue);
     }
 
-    protected void setDownloaded(long counter) {
-        firePropertyChange("downloaded", 0, counter);
+    protected void setDownloaded(final long counter) {
+        downloadFile.setDownloaded(counter);
+        //firePropertyChange("downloaded", 0, counter);
     }
 
     protected void setAverageSpeed(float avgSpeed) {
@@ -352,7 +353,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         }
         final boolean connectError = cause instanceof NoRouteToHostException || cause instanceof ConnectException || cause instanceof UnknownHostException;
 
-        if (cause instanceof URLNotAvailableAnymoreException) {
+        if (cause instanceof URLNotAvailableAnymoreException || cause instanceof InvalidURLOrServiceProblemException) {
             downloadFile.setFileState(FileState.FILE_NOT_FOUND);
         } else {
             if (!connectError) {

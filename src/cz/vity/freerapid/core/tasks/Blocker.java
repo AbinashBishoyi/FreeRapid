@@ -14,13 +14,13 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-class ScreenltInputBlocker extends Task.InputBlocker {
-    private static final Logger logger = Logger.getLogger(ScreenltInputBlocker.class.getName());
+class ScreenInputBlocker extends Task.InputBlocker {
+    private static final Logger logger = Logger.getLogger(ScreenInputBlocker.class.getName());
     private JDialog modalDialog = null;
     private boolean showWaitCursor = false;
 
 
-    ScreenltInputBlocker(Task task, Task.BlockingScope scope, Object target, ApplicationAction action) {
+    ScreenInputBlocker(Task task, Task.BlockingScope scope, Object target, ApplicationAction action) {
         super(task, scope, target, action);
     }
 

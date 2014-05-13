@@ -10,10 +10,8 @@ import cz.vity.freerapid.core.Consts;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.gui.content.ContentPanel;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
-import cz.vity.freerapid.gui.managers.PluginsManager;
 import cz.vity.freerapid.gui.managers.UpdateManager;
 import cz.vity.freerapid.model.DownloadFile;
-import cz.vity.freerapid.model.PluginMetaData;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.swing.SwingUtils;
 import cz.vity.freerapid.swing.Swinger;
@@ -21,6 +19,7 @@ import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.xmlimport.ver1.Plugin;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ApplicationContext;
+import org.jdesktop.application.Task;
 import org.jdesktop.swinghelper.buttonpanel.JXButtonPanel;
 import org.jdesktop.swingx.JXTable;
 
@@ -36,7 +35,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.net.MalformedURLException;
+import java.util.LinkedList;
 import java.util.logging.Logger;
 
 /**
@@ -56,7 +55,7 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
     private static final int COLUMN_AUTHOR = 4;
     private static final int COLUMN_PROGRESS = 5;
     private static final int COLUMN_STATUS = 6;
-    private ArrayListModel<WrappedPluginData> listModel;
+    private ArrayListModel<WrappedPluginData> listModel = new ArrayListModel<WrappedPluginData>();
 
 
     public UpdateDialog(Frame owner, ApplicationContext context, ManagerDirector managerDirector, java.util.List<Plugin> list) throws HeadlessException {
@@ -101,7 +100,9 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
 
     @org.jdesktop.application.Action
     public void okBtnAction() {
-        doClose();
+        final UpdateManager updateManager = managerDirector.getUpdateManager();
+        final Task task = updateManager.getDownloadPluginsTask(new LinkedList<WrappedPluginData>(listModel));
+        updateManager.executeUpdateTask(task);
     }
 
 
@@ -125,13 +126,28 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
     }
 
 
-    public void propertyChange(PropertyChangeEvent evt) {
+    public void propertyChange(final PropertyChangeEvent evt) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                // logger.info("Firing contents changed");
+                final DownloadFile downloadFile = (DownloadFile) evt.getSource();
+                listModel.fireContentsChanged(getIndex(downloadFile));
+            }
+        });
+    }
 
+    private int getIndex(DownloadFile downloadFile) {
+        int index = 0;
+        for (WrappedPluginData data : listModel) {
+            if (data.getHttpFile().equals(downloadFile))
+                return index;
+            ++index;
+        }
+        return -1;
     }
 
     private void initTable() {
         table.setName("updatePluginsTable");
-        initData();
         table.setModel(new CustomTableModel(listModel, getList("columns")));
         table.setAutoCreateColumnsFromModel(false);
         table.setEditable(true);
@@ -143,6 +159,9 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
         table.setColumnSelectionAllowed(false);
 
         table.createDefaultColumnsFromModel();
+
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
         Swinger.updateColumn(table, "Selected", COLUMN_SELECTED, 25, 40, null).setWidth(45);
         Swinger.updateColumn(table, "Name", COLUMN_NAME, -1, 70, null);
         Swinger.updateColumn(table, "Version", COLUMN_VERSION, -1, 50, null);
@@ -178,30 +197,25 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
         tableInputMap.put(SwingUtils.getShiftKeyStroke(KeyEvent.VK_END), "selectLastRowExtendSelection");
     }
 
-    private void initData() {
-        listModel = new ArrayListModel<WrappedPluginData>();
-        final PluginsManager pluginsManager = managerDirector.getPluginsManager();
-        final UpdateManager updateManager = managerDirector.getUpdateManager();
-        final boolean downloadNotExisting = AppPrefs.getProperty(UserProp.DOWNLOAD_NOT_EXISTING_PLUGINS, UserProp.DOWNLOAD_NOT_EXISTING_PLUGINS_DEFAULT);
-        for (Plugin plugin : list) {
-            final String id = plugin.getId();
-            final boolean isNew = !pluginsManager.hasPlugin(id);
-            if (!isNew) {
-                final PluginMetaData data = pluginsManager.getPluginMetadata(id);
-                if (!data.isUpdatesEnabled())
-                    continue;
-            }
-            final DownloadFile httpFile;
-            try {
-                httpFile = updateManager.getDownloadFileInstance(plugin);
-                httpFile.addPropertyChangeListener(this);
-                final WrappedPluginData pluginData = new WrappedPluginData(downloadNotExisting || !isNew, httpFile, plugin);
-                pluginData.setNew(isNew);
-                listModel.add(pluginData);
-            } catch (MalformedURLException e) {
-                //ignore this malformed file
-                LogUtils.processException(logger, e);
-            }
+    public void initData(java.util.List<WrappedPluginData> list) {
+        cleanup();
+        listModel.clear();
+        for (WrappedPluginData wrappedPluginData : list) {
+            wrappedPluginData.getHttpFile().addPropertyChangeListener(this);
+            listModel.add(wrappedPluginData);
+        }
+    }
+
+
+    @Override
+    public void doClose() {
+        super.doClose();
+        cleanup();
+    }
+
+    private void cleanup() {
+        for (WrappedPluginData data : listModel) {
+            data.getHttpFile().removePropertyChangeListener(this);
         }
     }
 
@@ -367,7 +381,7 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
             final WrappedPluginData item = model.get(rowIndex);
             switch (columnIndex) {
                 case COLUMN_SELECTED:
-                    return item.getSelected();
+                    return item.isSelected();
                 case COLUMN_NAME:
                     return item.getID();
                 case COLUMN_VERSION:
@@ -398,7 +412,7 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
             } else if (state == DownloadState.ERROR) {
                 return getResourceMap().getString("stateError") + ":" + item.getHttpFile().getErrorMessage();
             } else if (state == DownloadState.COMPLETED) {
-                getResourceMap().getString("stateActualized");
+                return getResourceMap().getString("stateActualized");
             }
             return null;
         }
@@ -447,7 +461,7 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
             } else if (state == DownloadState.SLEEPING) {
                 this.setBackground(BG_BLUE);
             } else if (state == DownloadState.COMPLETED) {
-                this.setBackground(null);
+                //    this.setBackground(null);
                 // this.setBackground(Color.GREEN);
             } else
                 this.setBackground(Color.BLACK);

@@ -1,11 +1,15 @@
 package cz.vity.freerapid.core;
 
 import cz.vity.freerapid.utilities.LogUtils;
+import org.jdesktop.application.Application;
+import org.jdesktop.application.ApplicationContext;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Collection;
+import java.util.EventObject;
 import java.util.logging.Logger;
 
 /**
@@ -17,7 +21,7 @@ final class OneInstanceClient {
     private OneInstanceClient() {
     }
 
-    public static boolean checkInstance(final Collection<String> openFiles, AppPrefs prefs) {
+    public static boolean checkInstance(final Collection<String> openFiles, AppPrefs prefs, ApplicationContext context) {
         if (!AppPrefs.getProperty(FWProp.ONEINSTANCE, FWProp.ONE_INSTANCE_DEFAULT))
             return false;
         Socket clientSocket = null;
@@ -52,11 +56,11 @@ final class OneInstanceClient {
                 return true;
             } else {
                 logger.info("No other instance is running - first start");
-                oneInstanceServerStart(prefs);
+                oneInstanceServerStart(prefs, context);
             }
         } catch (IOException e) {
             logger.info("No other instance is running.");
-            oneInstanceServerStart(prefs);
+            oneInstanceServerStart(prefs, context);
         } finally {
             if (clientSocket != null)
                 try {
@@ -68,9 +72,25 @@ final class OneInstanceClient {
         return false;
     }
 
-    private static void oneInstanceServerStart(AppPrefs prefs) {
+    private static void oneInstanceServerStart(AppPrefs prefs, ApplicationContext context) {
         final OneInstanceServer server = new OneInstanceServer(prefs);
         server.start();
+        context.getApplication().addExitListener(new Application.ExitListener() {
+            public boolean canExit(EventObject event) {
+                return true;
+            }
+
+            public void willExit(EventObject event) {
+                final ServerSocket serverSocket = server.getServerSocket();
+                if (serverSocket != null)
+                    try {
+                        serverSocket.close();
+                    } catch (IOException e) {
+                        //ignore
+                    }
+            }
+        });
+
     }
 
 }
