@@ -1,12 +1,9 @@
-Yes, it is possible. Look at PluginManager class. Mainly registerPlugins(), activatePlugin() and deactivatePlugin() methods. To unregister plug-in, use PluginRegistry.unregister() method. If you want to "update" or "reload" a plug-in you need to unregister it first and than register again.
-
 New files for translation:
 
 CheckPluginUpdateTask.properties, DownloadNewPluginsTask.properties, AccountDialog.properties, UpdateDialog.properties
 
 
-Here is a complete list of added or changes keys in files.
-
+Here is a complete list of added or changes keys in files against 0.71.
 
 
 MainApp.properties
@@ -58,12 +55,10 @@ PluginIsNotEnabled=Plugin %s is not enabled
 confirmClearHistory=Are you sure you want to clear downloads history?
 
 
-validateLinksAction.Action.text=&Validate links
+validateLinksAction.Action.text=&Validate
 validateLinksAction.Action.shortDescription=Validate selected link(s) on the server
 validateLinksAction.Action.smallIcon=${iconsPath}checked.png
 validateLinksAction.Action.accelerator=ctrl W
-
-
 
 
 CoreTask.properties
@@ -89,7 +84,6 @@ pluginsBtnAction.Action.largeIcon=${iconsPath}plugin.png
 
 checkDownloadNotExistingPlugins.text=&Download not existing plugins
 check4PluginUpdatesAutomatically.text=Check for p&lugin updates automatically
-checkConfirmUpdating.text=Ask what to do when new &updates are detected
 
 btnPluginOptionsAction.Action.text=Op&tions
 
@@ -110,7 +104,7 @@ pluginPanelUpdates.tab.title=Updates
 
 pluginTableColumns_list=X|U|Plugin ID|Version|Service|Author|WWW
 
-popmenuButton.text=*
+popmenuButton.icon=${iconsPath}right.gif
 
 updatesMenu.text=&Updates
 activityMenu.text=&Activity

@@ -179,9 +179,6 @@ final public class UserProp {
     public static final String DOWNLOAD_NOT_EXISTING_PLUGINS = "downloadNotExistingPlugins";
     public static final boolean DOWNLOAD_NOT_EXISTING_PLUGINS_DEFAULT = true;
 
-    public static final String CONFIRM_UPDATING_PLUGINS = "confirmUpdatingPlugins";
-    public static final boolean CONFIRM_UPDATING_PLUGINS_DEFAULT = true;
-
     public static final String PLUGIN_CHECK_URL_LIST = "pluginCheckUrlList";
     public static final String PLUGIN_CHECK_URL_SELECTED = "pluginCheckUrlSelected";
 
@@ -200,9 +197,10 @@ final public class UserProp {
     public static final boolean DRAG_ON_RIGHT_MOUSE_DEFAULT = true;
 
     public static final String PLUGIN_UPDATE_METHOD = "pluginUpdateMethod";
-    public static final int PLUGIN_UPDATE_METHOD_DIALOG = 0;
-    public static final int PLUGIN_UPDATE_METHOD_AUTO = 1;
-    public static final int PLUGIN_UPDATE_METHOD_DEFAULT = PLUGIN_UPDATE_METHOD_DIALOG;
+    public static final int PLUGIN_UPDATE_ASK_FOR_METHOD = 0;
+    public static final int PLUGIN_UPDATE_METHOD_DIALOG = 1;
+    public static final int PLUGIN_UPDATE_METHOD_AUTO = 2;
+    public static final int PLUGIN_UPDATE_METHOD_DEFAULT = PLUGIN_UPDATE_ASK_FOR_METHOD;
 
     public static final String RECHECK_FILES_ON_START = "recheckFilesOnStart";
     public static final boolean RECHECK_FILES_ON_START_DEFAULT = false;

@@ -104,7 +104,7 @@ public class UpdateManager {
     }
 
     private void updateDetected(List<Plugin> availablePlugins, boolean quiet) {
-        final int method = AppPrefs.getProperty(UserProp.PLUGIN_UPDATE_METHOD, UserProp.PLUGIN_UPDATE_METHOD_DEFAULT);
+        int method = AppPrefs.getProperty(UserProp.PLUGIN_UPDATE_METHOD, UserProp.PLUGIN_UPDATE_METHOD_DEFAULT);
         final List<WrappedPluginData> datas;
         if (method == UserProp.PLUGIN_UPDATE_METHOD_AUTO)
             datas = generateUpdateData(availablePlugins, false);
@@ -117,11 +117,15 @@ public class UpdateManager {
             return;
         }
 
-        final int result;
-        if (AppPrefs.getProperty(UserProp.CONFIRM_UPDATING_PLUGINS, UserProp.CONFIRM_UPDATING_PLUGINS_DEFAULT)) {
-            result = Swinger.showOptionDialog(context.getResourceMap(), JOptionPane.QUESTION_MESSAGE, "informationMessage", "updatesFoundMessage", new String[]{"updateWithDetails", "updateNowButton", "updateCancel"});
-        } else result = AppPrefs.getProperty(UserProp.PLUGIN_UPDATE_METHOD, UserProp.PLUGIN_UPDATE_METHOD_DEFAULT);
-        switch (result) {
+        if (method == UserProp.PLUGIN_UPDATE_ASK_FOR_METHOD) {
+            final int res = Swinger.showOptionDialog(context.getResourceMap(), JOptionPane.QUESTION_MESSAGE, "informationMessage", "updatesFoundMessage", new String[]{"updateWithDetails", "updateNowButton", "updateCancel"});
+            if (res == 0)
+                method = UserProp.PLUGIN_UPDATE_METHOD_DIALOG;
+            else if (res == 1)
+                method = UserProp.PLUGIN_UPDATE_METHOD_AUTO;
+            else method = -1;
+        }
+        switch (method) {
             case UserProp.PLUGIN_UPDATE_METHOD_DIALOG:
                 showUpdateDialog(datas);
                 break;

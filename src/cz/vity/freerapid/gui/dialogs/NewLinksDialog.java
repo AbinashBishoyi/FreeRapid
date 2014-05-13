@@ -277,6 +277,7 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
     }
 
     public List<DownloadFile> getDownloadFiles() {
+
         final File directory = getDirectory();
         final Collection<URL> urlList = urlsArea.getURLs();
         urlList.removeAll(removeList);
