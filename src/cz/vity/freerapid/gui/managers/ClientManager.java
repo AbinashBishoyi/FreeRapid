@@ -26,6 +26,8 @@ public class ClientManager {
     private final List<ConnectionSettings> availableConnections = new ArrayList<ConnectionSettings>(2);
     private Stack<HttpDownloadClient> workingClientsPool = new Stack<HttpDownloadClient>();
     private static final String PROXY_LIST_DEFAULT_PATH = new File(Utils.getAppPath(), "proxy.list").getAbsolutePath();
+    public static final int MAX_DOWNLOADING = 9;
+
     private int popCount;
 
     public ClientManager() {
@@ -106,7 +108,7 @@ public class ClientManager {
     }
 
     public synchronized HttpDownloadClient popWorkingClient() {
-        if (popCount < getMaxDownloads()) {
+        if (popCount < MAX_DOWNLOADING) {
             ++popCount;
             if (workingClientsPool.isEmpty()) {
                 return new DownloadClient();
@@ -119,8 +121,8 @@ public class ClientManager {
         workingClientsPool.add(client);
     }
 
-    private int getMaxDownloads() {
-        return AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT);
-    }
+//    private int getMaxDownloads() {
+//        return AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT);
+//    }
 
 }

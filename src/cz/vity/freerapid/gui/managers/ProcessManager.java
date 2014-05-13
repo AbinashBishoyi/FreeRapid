@@ -79,9 +79,9 @@ public class ProcessManager extends Thread {
 
         while (!isInterrupted()) {
             synchronized (manipulation) {
-                if (canCreateAnotherConnection() && !forceDownloadFiles.isEmpty())
+                if (canCreateAnotherConnection(true) && !forceDownloadFiles.isEmpty())
                     execute(getFilesForForceDownload(), true);
-                if (canCreateAnotherConnection())
+                if (canCreateAnotherConnection(false))
                     execute(getQueued(), false);
             }
             try {
@@ -99,10 +99,16 @@ public class ProcessManager extends Thread {
         logger.info("Process Manager thread was interrupted succesfuly");
     }
 
-    private boolean canCreateAnotherConnection() {
-        final int maxDownloads = AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT);
-
-        return maxDownloads > getDownloading();
+    private boolean canCreateAnotherConnection(final boolean forceDownload) {
+        final int downloading = getDownloading();
+        if (downloading == ClientManager.MAX_DOWNLOADING) {
+            return false;
+        } else {
+            if (forceDownload)
+                return true;
+            final int maxDownloads = AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT);
+            return maxDownloads > downloading;
+        }
     }
 
     private LinkedList<DownloadFile> getFilesForForceDownload() {
@@ -145,7 +151,7 @@ public class ProcessManager extends Thread {
                     queueDownload(file, settings, downloadService, service);
                 }
             }
-            if (!canCreateAnotherConnection())
+            if (!canCreateAnotherConnection(forceDownload))
                 return true;
         }
         return false;
