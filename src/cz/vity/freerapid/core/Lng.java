@@ -88,7 +88,7 @@ public final class Lng {
         selLanguageCode = result.getLanguageCode();
         selCountryCode = result.getCountry();
 
-        final Locale selLocale = new Locale(selLanguageCode.toLowerCase(), ("".equals(selCountryCode) ? localeCountry : selCountryCode).toLowerCase());
+        final Locale selLocale = new Locale(selLanguageCode.toLowerCase(), ("".equals(selCountryCode) ? localeCountry : selCountryCode).toUpperCase());
         logger.config("Setting locale " + selLocale);
         //logger.config("Taiwan locale " + Locale.TAIWAN);
         Locale.setDefault(selLocale);
