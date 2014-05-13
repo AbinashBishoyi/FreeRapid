@@ -5,9 +5,12 @@ import org.apache.commons.httpclient.HttpMethod;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
+ * Helpful utilities for parsing http headers
+ *
  * @author Ladislav Vitasek
  */
 final public class HttpUtils {
@@ -20,20 +23,27 @@ final public class HttpUtils {
     }
 
 
-    public static String getFileName(HttpMethod method) {
+    /**
+     * Extracts file name from response header Content-Disposition
+     * Eg for <code>//Content-Disposition: =?UTF-8?attachment;filename="Two Peaks Personal Vehicle Manager 2005 3.2.zip";?=</code>
+     * it returns <code>Two Peaks Personal Vehicle Manager 2005 3.2.zip</code>
+     *
+     * @param method executed HttpMethod with Content-Disposition header
+     * @return null if there was now header Content-Disposition or parsed file name
+     */
+    public static String getFileName(final HttpMethod method) {
 
         final Header disposition = method.getResponseHeader("Content-Disposition");
-        if (disposition != null && disposition.getValue().toLowerCase().contains("attachment")) {
+        if (disposition != null && disposition.getValue().toLowerCase(Locale.ENGLISH).contains("attachment")) {
             final String value = disposition.getValue();
             String str = "filename=";
             final String lowercased = value.toLowerCase();
             int index = lowercased.lastIndexOf(str);
             if (index >= 0) {
                 String s = value.substring(index + str.length());
-                if (s.startsWith("\"") && s.endsWith("\";"))
-                    s = s.substring(1, s.length() - 2);
-                if (s.startsWith("\"") && s.endsWith("\""))
-                    s = s.substring(1, s.length() - 1);
+                final int secondQuoteIndex = s.lastIndexOf('\"');
+                if (s.startsWith("\"") && secondQuoteIndex > 0)
+                    s = s.substring(1, secondQuoteIndex);
                 // napr. pro xtraupload je jeste treba dekodovat
                 if (s.matches(".*%[0-9A-Fa-f]+.*"))
                     try {
