@@ -1,5 +1,6 @@
 package cz.vity.freerapid.gui.content;
 
+import cz.vity.freerapid.gui.actions.DownloadsActions;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import org.jdesktop.application.ApplicationContext;
@@ -51,7 +52,7 @@ class EstTimeCellRenderer extends DefaultTableCellRenderer {
                     value = value + " - " + errorMessage.replaceAll("<.*?>", "");
                 this.setToolTipText(String.format(tooltip, errorMessage));
             }
-        } else if (DownloadState.isProcessState(state)) {
+        } else if (DownloadsActions.isProcessState(state)) {
             Task task = downloadFile.getTask();
             if (task != null)
                 this.setToolTipText(String.format(elapsedTime, ContentPanel.secondsToHMin(task.getExecutionDuration(TimeUnit.SECONDS))));

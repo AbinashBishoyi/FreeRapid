@@ -358,13 +358,8 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         }
         final boolean connectError = cause instanceof NoRouteToHostException || cause instanceof ConnectException || cause instanceof UnknownHostException;
 
-        if (cause instanceof URLNotAvailableAnymoreException || cause instanceof InvalidURLOrServiceProblemException) {
-            downloadFile.setFileState(FileState.FILE_NOT_FOUND);
-        } else {
-            if (!connectError) {
-                downloadFile.setFileState(FileState.ERROR);
-            }
-        }
+        if (AppPrefs.getProperty(UserProp.TEST_FILE, UserProp.TEST_FILE_DEFAULT))
+            updateFileState(cause, connectError);
 
         if (AppPrefs.getProperty(UserProp.DISABLE_CONNECTION_ON_EXCEPTION, UserProp.DISABLE_CONNECTION_ON_EXCEPTION_DEFAULT)) {
             if (connectError) {
@@ -380,6 +375,16 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         final Application app = getApplication();
         if (isAllComplete(app)) {
             checkShutDown(app);
+        }
+    }
+
+    protected void updateFileState(Throwable cause, boolean connectError) {
+        if (cause instanceof URLNotAvailableAnymoreException || cause instanceof InvalidURLOrServiceProblemException) {
+            downloadFile.setFileState(FileState.FILE_NOT_FOUND);
+        } else {
+            if (!connectError && (!(cause instanceof CaptchaEntryInputMismatchException)) && (serviceError == DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR)) {
+                downloadFile.setFileState(FileState.ERROR_GETTING_INFO);
+            }
         }
     }
 

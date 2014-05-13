@@ -9,6 +9,7 @@ import com.jgoodies.forms.layout.*;
 import com.l2fprod.common.swing.JDirectoryChooser;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.UserProp;
+import cz.vity.freerapid.gui.actions.DownloadsActions;
 import cz.vity.freerapid.gui.content.ContentPanel;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
 import cz.vity.freerapid.model.DownloadFile;
@@ -469,7 +470,7 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
 
     private void updateDurationTime() {
         String value;
-        if (DownloadState.isProcessState(file.getState())) {
+        if (DownloadsActions.isProcessState(file.getState())) {
             Task task = file.getTask();
             if (task != null)
                 value = ContentPanel.secondsToHMin(task.getExecutionDuration(TimeUnit.SECONDS));

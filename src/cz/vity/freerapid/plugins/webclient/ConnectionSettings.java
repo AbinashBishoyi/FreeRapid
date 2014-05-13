@@ -160,7 +160,7 @@ public class ConnectionSettings {
 
         if (proxyPort != that.proxyPort) return false;
         if (proxySet != that.proxySet) return false;
-        if (!proxyURL.equalsIgnoreCase(that.proxyURL)) return false;
+        if (proxyURL != null ? !proxyURL.equals(that.proxyURL) : that.proxyURL != null) return false;
         if (userName != null ? !userName.equals(that.userName) : that.userName != null) return false;
 
         return true;

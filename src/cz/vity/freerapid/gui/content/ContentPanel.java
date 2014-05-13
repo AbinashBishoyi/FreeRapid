@@ -3,6 +3,7 @@ package cz.vity.freerapid.gui.content;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
+import cz.vity.freerapid.gui.actions.DownloadsActions;
 import cz.vity.freerapid.gui.actions.URLTransferHandler;
 import cz.vity.freerapid.gui.dialogs.InformationDialog;
 import cz.vity.freerapid.gui.dialogs.MultipleSettingsDialog;
@@ -89,6 +90,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     private static final String SELECTED_ACTION_ENABLED_PROPERTY = "selectedEnabled";
     private boolean nonEmptyEnabled = false;
     private static final String NONEMPTY_ACTION_ENABLED_PROPERTY = "nonEmptyEnabled";
+    private boolean validateLinksEnabled = false;
+    private static final String VALIDATELINKS_ACTION_ENABLED_PROPERTY = "validateLinksEnabled";
 
 
     private JXTable table;
@@ -361,6 +364,11 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         return min;
     }
 
+    @org.jdesktop.application.Action(enabledProperty = VALIDATELINKS_ACTION_ENABLED_PROPERTY)
+    public void validateLinksAction() {
+        manager.validateLinks(getSelectedRows());
+    }
+
     @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
     public void sortbyNameAction() {
         final ListSelectionModel selectionModel = table.getSelectionModel();
@@ -509,6 +517,17 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         firePropertyChange(PAUSE_ACTION_ENABLED_PROPERTY, oldValue, pauseActionEnabled);
     }
 
+
+    public boolean isValidateLinksEnabled() {
+        return validateLinksEnabled;
+    }
+
+    public void setValidateLinksEnabled(boolean validateLinksEnabled) {
+        boolean oldValue = this.validateLinksEnabled;
+        this.validateLinksEnabled = validateLinksEnabled;
+        firePropertyChange(VALIDATELINKS_ACTION_ENABLED_PROPERTY, oldValue, validateLinksEnabled);
+    }
+
     public boolean isCancelActionEnabled() {
         return cancelActionEnabled;
     }
@@ -571,12 +590,12 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     private void updateActions() {
         final int[] indexes = getSelectedRows();
-        final boolean enabledCancel = this.manager.hasDownloadFilesStates(indexes, DownloadState.cancelEnabledStates);
+        final boolean enabledCancel = this.manager.hasDownloadFilesStates(indexes, DownloadsActions.cancelEnabledStates);
         setCancelActionEnabled(enabledCancel);
 
         setSelectedEnabled(indexes.length > 0);
 
-        final boolean allCompleted = this.manager.hasDownloadFilesStates(indexes, DownloadState.completedStates);
+        final boolean allCompleted = this.manager.hasDownloadFilesStates(indexes, DownloadsActions.completedStates);
 
         if (allCompleted) {
             boolean valid = true;
@@ -592,12 +611,15 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
             setResumeActionEnabled(false);
             setPauseActionEnabled(false);
+            setValidateLinksEnabled(false);
         } else {
-            final boolean enabledResume = this.manager.hasAnyDownloadFilesStates(indexes, DownloadState.resumeEnabledStates);
+            final boolean enabledResume = this.manager.hasAnyDownloadFilesStates(indexes, DownloadsActions.resumeEnabledStates);
             setResumeActionEnabled(enabledResume);
 
-            final boolean enabledPause = this.manager.hasAnyDownloadFilesStates(indexes, DownloadState.pauseEnabledStates);
+            final boolean enabledPause = this.manager.hasAnyDownloadFilesStates(indexes, DownloadsActions.pauseEnabledStates);
             setPauseActionEnabled(enabledPause);
+
+            setValidateLinksEnabled(this.manager.hasAnyDownloadFilesStates(indexes, DownloadsActions.recheckExistingStates));
 
             setCompletedWithFilesEnabled(false);
         }
@@ -778,6 +800,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         popup.addSeparator();
         popup.add(map.get("removeCompletedAction"));
         popup.addSeparator();
+        popup.add(map.get("validateLinksAction"));
+        popup.addSeparator();
         popup.add(map.get("selectAllAction"));
         popup.add(map.get("invertSelectionAction"));
         popup.addSeparator();
@@ -789,7 +813,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         context.getResourceMap().injectComponent(forceMenu);
 
 //      menu.add(forceMenu);
-        boolean forceEnabled = isSelectedEnabled() && this.manager.hasDownloadFilesStates(selectedRows, DownloadState.forceEnabledStates);
+        boolean forceEnabled = isSelectedEnabled() && this.manager.hasDownloadFilesStates(selectedRows, DownloadsActions.forceEnabledStates);
         forceMenu.setEnabled(forceEnabled);
         final List<ConnectionSettings> connectionSettingses = director.getClientManager().getAvailableConnections();
         for (ConnectionSettings settings : connectionSettingses) {

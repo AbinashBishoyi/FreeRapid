@@ -16,7 +16,13 @@ import java.io.InputStream;
  * @author Ladislav Vitasek
  */
 public class CaptchaSupport {
+    /**
+     * Field client
+     */
     private final HttpDownloadClient client;
+    /**
+     * Field dialogSupport
+     */
     private final DialogSupport dialogSupport;
 
     /**

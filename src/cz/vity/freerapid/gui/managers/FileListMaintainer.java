@@ -3,8 +3,10 @@ package cz.vity.freerapid.gui.managers;
 import com.jgoodies.binding.list.ArrayListModel;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.UserProp;
+import cz.vity.freerapid.gui.actions.DownloadsActions;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
+import cz.vity.freerapid.plugins.webclient.FileState;
 import cz.vity.freerapid.utilities.FileUtils;
 import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.application.ApplicationContext;
@@ -48,15 +50,16 @@ class FileListMaintainer {
         }
         final boolean downloadOnStart = AppPrefs.getProperty(UserProp.DOWNLOAD_ON_APPLICATION_START, UserProp.DOWNLOAD_ON_APPLICATION_START_DEFAULT);
         final boolean removeCompleted = AppPrefs.getProperty(UserProp.REMOVE_COMPLETED_DOWNLOADS, UserProp.REMOVE_COMPLETED_DOWNLOADS_DEFAULT) == UserProp.REMOVE_COMPLETED_DOWNLOADS_AT_STARTUP;
+        final boolean recheckOnStart = AppPrefs.getProperty(UserProp.RECHECK_FILES_ON_START, UserProp.RECHECK_FILES_ON_START_DEFAULT);
         List<DownloadFile> result = null;
         try {
-            result = loadListFromFile(srcFile, downloadOnStart, removeCompleted);
+            result = loadListFromFile(srcFile, downloadOnStart, removeCompleted, recheckOnStart);
         } catch (Exception e) {
             LogUtils.processException(logger, e);
             logger.info("Trying to renew file from backup");
             try {
                 FileUtils.renewBackup(srcFile);
-                result = loadListFromFile(srcFile, downloadOnStart, removeCompleted);
+                result = loadListFromFile(srcFile, downloadOnStart, removeCompleted, recheckOnStart);
             } catch (FileNotFoundException ex) {
                 //ignore            
             } catch (Exception e1) {
@@ -68,7 +71,7 @@ class FileListMaintainer {
     }
 
     @SuppressWarnings({"unchecked"})
-    List<DownloadFile> loadListFromFile(final File srcFile, final boolean downloadOnStart, final boolean removeCompleted) throws IOException {
+    List<DownloadFile> loadListFromFile(final File srcFile, final boolean downloadOnStart, final boolean removeCompleted, boolean recheckOnStart) throws IOException {
         LinkedList<DownloadFile> list = new LinkedList<DownloadFile>();
         final Object o = context.getLocalStorage().load(srcFile.getName());
         if (!(o instanceof ArrayListModel))
@@ -85,6 +88,8 @@ class FileListMaintainer {
             }
             if (state != DownloadState.COMPLETED) {
                 file.setDownloaded(0);
+                if (recheckOnStart)
+                    file.setFileState(FileState.NOT_CHECKED);
             }
             if (state == DownloadState.ERROR || state == DownloadState.SLEEPING) {
                 file.setDownloaded(0);
@@ -94,7 +99,7 @@ class FileListMaintainer {
                     file.setState(DownloadState.QUEUED);
                 }
             }
-            if (DownloadState.isProcessState(state)) {
+            if (DownloadsActions.isProcessState(state)) {
                 if (downloadOnStart) {
                     file.setState(DownloadState.QUEUED);
                 } else

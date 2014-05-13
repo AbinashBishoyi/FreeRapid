@@ -544,6 +544,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         bind(checkForFileExistenceBeforeDownload, UserProp.TEST_FILE, UserProp.TEST_FILE_DEFAULT);
         bind(checkServiceAsIconOnly, UserProp.SHOW_SERVICES_ICONS, UserProp.SHOW_SERVICES_ICONS_DEFAULT);
 
+        bind(checkRecheckFilesOnStart, UserProp.RECHECK_FILES_ON_START, UserProp.RECHECK_FILES_ON_START_DEFAULT);
 
         bind(checkPrepareFile, UserProp.ANTI_FRAGMENT_FILES, UserProp.ANTI_FRAGMENT_FILES_DEFAULT);
 
@@ -894,6 +895,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         JPanel panelShortcutsSettings = new JPanel();
         checkForNewVersion = new JCheckBox();
         checkAllowOnlyOneInstance = new JCheckBox();
+        checkRecheckFilesOnStart = new JCheckBox();
         JPanel panelDownloadsSettings = new JPanel();
         checkContinueInterrupted = new JCheckBox();
 
@@ -1000,6 +1002,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         JPanel panelPlugins = new JPanel();
         JTabbedPane pluginTabbedPane = new JTabbedPane();
         pluginTabbedPane.setName("pluginTabbedPane");
+        checkRecheckFilesOnStart.setName("checkRecheckFilesOnStart");
         JPanel pluginPanelSettings = new JPanel();
         JScrollPane scrollPane1 = new JScrollPane();
         pluginTable = new JXTable();
@@ -1160,6 +1163,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                                             FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.LINE_GAP_ROWSPEC,
                                             FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.LINE_GAP_ROWSPEC,
@@ -1167,12 +1171,14 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
                             panelDownloadsSettingsBuilder.add(checkForFileExistenceBeforeDownload, cc.xywh(3, 1, 7, 1));
                             panelDownloadsSettingsBuilder.add(checkContinueInterrupted, cc.xywh(3, 2, 7, 1));
-                            panelDownloadsSettingsBuilder.add(checkProcessFromTop, cc.xywh(3, 3, 7, 1));
-                            panelDownloadsSettingsBuilder.add(checkAutoShutDownDisabledWhenExecuted, cc.xywh(3, 4, 7, 1));
-                            panelDownloadsSettingsBuilder.add(labelIfFilenameExists, cc.xywh(3, 6, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
-                            panelDownloadsSettingsBuilder.add(comboFileExists, cc.xy(5, 6));
-                            panelDownloadsSettingsBuilder.add(labelRemoveCompleted, cc.xywh(7, 6, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
-                            panelDownloadsSettingsBuilder.add(comboRemoveCompleted, cc.xy(9, 6));
+                            panelDownloadsSettingsBuilder.add(checkRecheckFilesOnStart, cc.xywh(3, 3, 7, 1));
+
+                            panelDownloadsSettingsBuilder.add(checkProcessFromTop, cc.xywh(3, 4, 7, 1));
+                            panelDownloadsSettingsBuilder.add(checkAutoShutDownDisabledWhenExecuted, cc.xywh(3, 5, 7, 1));
+                            panelDownloadsSettingsBuilder.add(labelIfFilenameExists, cc.xywh(3, 7, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
+                            panelDownloadsSettingsBuilder.add(comboFileExists, cc.xy(5, 7));
+                            panelDownloadsSettingsBuilder.add(labelRemoveCompleted, cc.xywh(7, 7, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
+                            panelDownloadsSettingsBuilder.add(comboRemoveCompleted, cc.xy(9, 7));
                         }
 
                         PanelBuilder panelGeneralBuilder = new PanelBuilder(new FormLayout(
@@ -1773,6 +1779,8 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
     private JCheckBox checkProcessFromTop;
     private JCheckBox checkForFileExistenceBeforeDownload;
     private JCheckBox checkServiceAsIconOnly;
+
+    private JCheckBox checkRecheckFilesOnStart;
 
     private JTextField fieldProxyListPath;
     private JButton btnProxyListPathSelect;

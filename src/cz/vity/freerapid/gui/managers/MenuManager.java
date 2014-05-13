@@ -88,6 +88,8 @@ public class MenuManager {
                 MENU_SEPARATOR,
                 "removeCompletedAction",
                 MENU_SEPARATOR,
+                "validateLinksAction",
+                MENU_SEPARATOR,
                 "selectAllAction",
                 "invertSelectionAction",
                 MENU_SEPARATOR,

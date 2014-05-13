@@ -73,7 +73,7 @@ public interface HttpFile {
     /**
      * Sets file name
      *
-     * @param fileName
+     * @param fileName file name
      */
     void setFileName(String fileName);
 

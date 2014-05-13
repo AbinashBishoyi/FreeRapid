@@ -6,11 +6,13 @@ import cz.vity.freerapid.core.application.GlobalEDTExceptionHandler;
 import cz.vity.freerapid.core.tasks.DownloadTask;
 import cz.vity.freerapid.core.tasks.DownloadTaskError;
 import cz.vity.freerapid.core.tasks.RunCheckTask;
+import cz.vity.freerapid.gui.actions.DownloadsActions;
 import cz.vity.freerapid.gui.managers.exceptions.NotSupportedDownloadServiceException;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.model.PluginMetaData;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
+import static cz.vity.freerapid.plugins.webclient.DownloadState.*;
 import cz.vity.freerapid.plugins.webclient.FileState;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
@@ -40,6 +42,7 @@ public class ProcessManager extends Thread {
 
     private volatile Map<String, DownloadService> services = new Hashtable<String, DownloadService>();
     private volatile Map<DownloadFile, ConnectionSettings> forceDownloadFiles = new Hashtable<DownloadFile, ConnectionSettings>();
+    private volatile List<DownloadFile> forceValidateCheck = new Vector<DownloadFile>();
 
     private boolean threadSuspended;
     //private final Object queueLock;
@@ -78,11 +81,15 @@ public class ProcessManager extends Thread {
         this.setUncaughtExceptionHandler(new GlobalEDTExceptionHandler());
 
         while (!isInterrupted()) {
-            synchronized (manipulation) {
-                if (canCreateAnotherConnection(true) && !forceDownloadFiles.isEmpty())
-                    executeForceDownload();
-                if (canCreateAnotherConnection(false))
-                    execute();
+            synchronized (dataManager.getLock()) {
+                synchronized (manipulation) {
+                    if (canCreateAnotherConnection(true) && !forceDownloadFiles.isEmpty())
+                        executeForceDownload();
+                    if (canCreateAnotherConnection(true) && !forceValidateCheck.isEmpty())
+                        executeForceValidateCheck();
+                    if (canCreateAnotherConnection(false))
+                        execute();
+                }
             }
             try {
                 synchronized (this) {
@@ -97,6 +104,28 @@ public class ProcessManager extends Thread {
             }
         }
         logger.info("Process Manager thread was interrupted succesfuly");
+    }
+
+    private void executeForceValidateCheck() {
+        DownloadFile[] array = new DownloadFile[forceValidateCheck.size()];
+        array = forceValidateCheck.toArray(array);
+        for (DownloadFile file : array) {
+            logger.info("Getting file for check " + file);
+
+            final ShareDownloadService service = pluginsManager.getService(file);
+            if (service == null)
+                continue;
+            final DownloadService downloadService = getDownloadService(service);
+
+            final List<ConnectionSettings> connectionSettingses = clientManager.getRotatedEnabledConnections();
+            if (file.getFileState() == FileState.NOT_CHECKED && service.supportsRunCheck() && !connectionSettingses.isEmpty()) {
+                //pokud to podporuje plugin a  soucasne nebyl jeste ocheckovan a soucasne je k dispozici vubec nejake spojeni
+                queueDownload(file, connectionSettingses.get(0), downloadService, service, true);
+            }
+            if (!canCreateAnotherConnection(false))
+                break;
+        }
+        forceValidateCheck.clear();
     }
 
     private boolean canCreateAnotherConnection(final boolean forceDownload) {
@@ -124,7 +153,8 @@ public class ProcessManager extends Thread {
     private boolean execute() {
         final List<DownloadFile> files = new ArrayList<DownloadFile>(dataManager.getDownloadFiles());
 
-        for (DownloadFile file : getQueued(files)) {
+        final List<DownloadFile> queuedFiles = getQueued(files);
+        for (DownloadFile file : queuedFiles) {
             logger.info("Getting downloadFile " + file);
 
             final ShareDownloadService service = pluginsManager.getService(file);
@@ -188,10 +218,23 @@ public class ProcessManager extends Thread {
     public void forceDownload(final ConnectionSettings settings, List<DownloadFile> files) {
         synchronized (manipulation) {
             for (DownloadFile file : files) {
-                if (!DownloadState.isProcessState(file.getState())) {
+                if (!DownloadsActions.isProcessState(file.getState())) {
                     logger.info("Force downloading file " + file + " with settings " + settings);
                     forceDownloadFiles.put(file, settings);
-                    file.setState(DownloadState.QUEUED);
+                    file.setState(QUEUED);
+                }
+            }
+        }
+        queueUpdated();
+    }
+
+    public void forceValidateCheck(List<DownloadFile> files) {
+        synchronized (manipulation) {
+            for (DownloadFile file : files) {
+                if (!DownloadsActions.isProcessState(file.getState())) {
+                    logger.info("Force validate check file " + file);
+                    forceValidateCheck.add(file);
+                    file.setState(QUEUED);
                 }
             }
         }
@@ -199,7 +242,7 @@ public class ProcessManager extends Thread {
     }
 
     private void queueDownload(final DownloadFile downloadFile, final ConnectionSettings settings, DownloadService downloadService, final ShareDownloadService service, final boolean runCheck) {
-        if (downloadFile.getState() != DownloadState.QUEUED) {
+        if (downloadFile.getState() != QUEUED) {
             logger.info("QUEUED not found - found " + downloadFile.getState());
             return;
         }
@@ -207,18 +250,17 @@ public class ProcessManager extends Thread {
         setDownloading(downloading + 1);
         client.initClient(settings);
         if (runCheck) {
-            if (service.supportsRunCheck())
-                downloadService.addTestingFile(downloadFile);
-            downloadFile.setState(DownloadState.TESTING);
+            downloadService.addTestingFile(downloadFile);
+            downloadFile.setState(TESTING);
         } else {
             downloadService.addDownloadingClient(client);
-            downloadFile.setState(DownloadState.GETTING);
+            downloadFile.setState(GETTING);
         }
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 final DownloadState state = downloadFile.getState();
-                if (!(state == DownloadState.GETTING || state == DownloadState.TESTING)) {
+                if (!(state == GETTING || state == TESTING)) {
                     finishedDownloading(downloadFile, client, null, runCheck);
                 } else {
                     startDownload(downloadFile, client, service, runCheck);
@@ -228,26 +270,26 @@ public class ProcessManager extends Thread {
     }
 
     private List<DownloadFile> getQueued(List<DownloadFile> queue) {
-        //synchronized (queueLock) {
+        //synchronized (dataManager.getLock()) {
         final List<DownloadFile> queued = new LinkedList<DownloadFile>();
 
         final boolean startFromTop = isStartFromTop();
         if (startFromTop) {
             for (DownloadFile downloadFile : queue) {
-                if (downloadFile.getState() == DownloadState.QUEUED) {
+                if (downloadFile.getState() == QUEUED) {
                     queued.add(downloadFile);
                 }
             }
         } else {
             for (int i = queue.size() - 1; i >= 0; i--) {
                 final DownloadFile downloadFile = queue.get(i);
-                if (downloadFile.getState() == DownloadState.QUEUED) {
+                if (downloadFile.getState() == QUEUED) {
                     queued.add(downloadFile);
                 }
             }
         }
         return queued;
-        //}
+        //    }
     }
 
     private boolean isStartFromTop() {
@@ -300,13 +342,13 @@ public class ProcessManager extends Thread {
                     clientManager.setConnectionEnabled(settings, false);
                     //final int problematic = service.getProblematicConnectionsCount();
                     if (clientManager.getEnabledConnections().size() > 0) {
-                        file.setState(DownloadState.QUEUED);
+                        file.setState(QUEUED);
                     } else error = DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR;
                 }
 
                 final DownloadState state = file.getState();
                 int errorAttemptsCount = file.getErrorAttemptsCount();
-                if ((state == DownloadState.ERROR && errorAttemptsCount != 0) || (state == DownloadState.SLEEPING)) {
+                if ((state == ERROR && errorAttemptsCount != 0) || (state == SLEEPING)) {
                     if (error == DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR && errorAttemptsCount != -1) {
                         file.setErrorAttemptsCount(0);
                     } else {
@@ -363,9 +405,9 @@ public class ProcessManager extends Thread {
         public void run() {
             final DownloadState state = file.getState();
 
-            if ((state != DownloadState.ERROR && state != DownloadState.SLEEPING)) { //doslo ke zmene stavu z venci
+            if ((state != ERROR && state != SLEEPING)) { //doslo ke zmene stavu z venci
                 this.cancel(); //zrusime timer
-                if (state != DownloadState.WAITING) {
+                if (state != WAITING) {
                     file.setTimeToQueued(-1); //odecitani casu
                     file.setTimeToQueuedMax(-1);
                 }
@@ -381,7 +423,7 @@ public class ProcessManager extends Thread {
                 file.setTimeToQueued(-1);
                 file.setTimeToQueuedMax(-1);
                 renewProblematicConnection();
-                file.setState(DownloadState.QUEUED);
+                file.setState(QUEUED);
                 this.cancel();
                 queueUpdated();
             }

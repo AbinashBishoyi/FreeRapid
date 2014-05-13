@@ -83,7 +83,7 @@ public abstract class AbstractRunner implements PluginRunner {
     public void run() throws Exception {
         if (!initialized)
             throw new IllegalStateException("Cannot run Run method. Runner was not initialized via init method");
-        logger.info("Starting download 'run'" + fileURL);
+        logger.info("Starting download 'run' for file:" + fileURL);
     }
 
     /**

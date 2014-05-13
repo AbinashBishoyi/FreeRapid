@@ -21,5 +21,5 @@ public enum FileState {
     /**
      * error during checking of file
      */
-    ERROR
+    ERROR_GETTING_INFO
 }
