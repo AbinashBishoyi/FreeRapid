@@ -106,7 +106,7 @@ public abstract class AbstractRunner implements PluginRunner {
         return client.getContentAsString();
     }
 
-    protected Matcher matcherRequest(final String regexp) {
+    protected Matcher getMatcherAgainstContent(final String regexp) {
         return PlugUtils.matcher(regexp, client.getContentAsString());
     }
 }
