@@ -35,10 +35,11 @@ public class MainApp extends SingleXFrameApplication {
 
     @Override
     protected void initialize(String[] args) {
-        new CmdLine(this).processCommandLine(args);
+        final CmdLine line = new CmdLine(this);
+        line.processCommandLine(args);
 
         LogUtils.initLogging(debug);//logovani nejdrive    
-        this.appPrefs = new AppPrefs(this.getContext());
+        this.appPrefs = new AppPrefs(this.getContext(), line.getProperties());
 
         if (OneInstanceClient.checkInstance(null, appPrefs)) {
             this.exit();
