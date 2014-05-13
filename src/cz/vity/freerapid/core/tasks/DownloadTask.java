@@ -47,6 +47,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     private static final int NO_DATA_TIMEOUT_LIMIT = 75;
     private static final int INPUT_BUFFER_SIZE = 50000;
     private static final int OUTPUT_FILE_BUFFER_SIZE = 600000;
+    private volatile boolean connectionTimeOut;
 
 
     public DownloadTask(Application application, HttpDownloadClient client, DownloadFile downloadFile, ShareDownloadService service) {
@@ -58,6 +59,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         this.setInputBlocker(null);
         this.setUserCanCancel(true);
         this.youHaveToSleepSecondsTime = 0;
+        this.connectionTimeOut = false;
     }
 
     protected Void doInBackground() throws Exception {
@@ -96,7 +98,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         boolean temporary = AppPrefs.getProperty(UserProp.USE_TEMPORARY_FILES, true);
 
         final byte[] buffer = new byte[INPUT_BUFFER_SIZE];
-        OutputStream fileOutputStream = null;
+        final OutputStream[] fileOutputStream = new OutputStream[]{null};
         final String fileName = downloadFile.getFileName();
         outputFile = downloadFile.getOutputFile();
         //outputFile = new File("d:/vystup.pdf");
@@ -107,9 +109,12 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         storeFile = (temporary) ? File.createTempFile(fileName + ".", ".part", saveToDirectory) : outputFile;
         final long fileSize = downloadFile.getFileSize();
 
+        if (temporary)
+            storeFile.deleteOnExit();
+
         try {
             try {
-                fileOutputStream = getFileOutputStream(storeFile, fileSize);
+                fileOutputStream[0] = getFileOutputStream(storeFile, fileSize);
                 int len;
                 counter = 0;
                 downloadFile.setState(DownloadState.DOWNLOADING);
@@ -121,7 +126,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                     private int noDataTimeOut = 0; //10 seconds to timeout
 
                     public void run() {
-//                        final HttpClient httpClient = client.getHTTPClient();
+
                         if (isTerminated() || downloadFile.getState() != DownloadState.DOWNLOADING) {
                             this.cancel();
                             return;
@@ -134,6 +139,10 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                         if (speed == 0) {
                             if (++noDataTimeOut >= NO_DATA_TIMEOUT_LIMIT) { //X seconds with no data
                                 logger.info("Cancelling download - no downloaded data during " + NO_DATA_TIMEOUT_LIMIT + " seconds");
+                                connectionTimeOut = true;
+//                                closeFileStream(fileOutputStream[0]);
+//                                fileOutputStream[0] = null;
+
                                 this.cancel();//radsi driv
                                 DownloadTask.this.cancel(true);
                                 return;
@@ -152,25 +161,33 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                             setAverageSpeed((float) ((float) counter / l));
                     }
                 }, 0, 1000);
+
+                //data downloading-------------------------------
                 while ((len = inputStream.read(buffer)) != -1) {
-                    fileOutputStream.write(buffer, 0, len);
+                    fileOutputStream[0].write(buffer, 0, len);
                     counter += len;
                     if (isTerminated()) {
-                        fileOutputStream.flush();
+                        fileOutputStream[0].flush();
                         break;
                     }
                 }
+                //-----------------------------------------------
+
                 if (!isTerminated()) {
                     if (counter != fileSize)
-                        throw new IOException("Error during download. File is not complete");
+                        throw new IOException("Error during download.\nStream was closed unexpectedly.\nFile is not complete");
                     setDownloaded(fileSize);//100%
                 } else {
                     logger.info("File downloading was terminated");
                 }
             }
             catch (Exception e) {
-                if (storeFile != null && storeFile.exists())
+                if (storeFile != null && storeFile.exists()) {
+                    closeFileStream(fileOutputStream[0]);
+                    fileOutputStream[0] = null;
+
                     storeFile.delete();
+                }
                 throw e;
             }
             finally {
@@ -182,29 +199,42 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 //                } catch (IOException e) {
 //                    LogUtils.processException(logger, e);
 //                }
-                try {
-                    if (fileOutputStream != null) {
-                        fileOutputStream.close();
-                    }
-                } catch (IOException e) {
-                    logger.log(Level.SEVERE, "Error closing file stream", e);
-                }
+                closeFileStream(fileOutputStream[0]);
+                fileOutputStream[0] = null;
             }
         }
         finally {
-            if (isTerminated()) {
-                logger.info("Deleting partial file " + storeFile);
-                final boolean b = storeFile.delete();
-                if (!b)
-                    logger.info("Deleting partial file failed (" + storeFile + ")");
-            }
+            checkDeleteTempFile();
         }
 
     }
 
+    private void closeFileStream(OutputStream fileOutputStream) {
+        try {
+            if (fileOutputStream != null) {
+                fileOutputStream.close();
+            }
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "Error closing file stream", e);
+        }
+    }
+
+    private void checkDeleteTempFile() {
+        if (isTerminated() && storeFile.exists()) {
+            logger.info("Deleting partial file " + storeFile);
+            final boolean b = storeFile.delete();
+            if (!b)
+                logger.info("Deleting partial file failed (" + storeFile + ")");
+        }
+    }
+
     @Override
     protected void cancelled() {
-        downloadFile.setState(DownloadState.CANCELLED);
+        if (connectionTimeOut) {//no data in many seconds
+            downloadFile.setState(DownloadState.ERROR);
+            this.setServiceError(DownloadTaskError.CONNECTION_TIMEOUT);//we try reconnect
+        } else
+            downloadFile.setState(DownloadState.CANCELLED);
         downloadFile.setDownloaded(0);
     }
 

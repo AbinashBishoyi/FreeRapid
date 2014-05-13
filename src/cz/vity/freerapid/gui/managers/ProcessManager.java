@@ -89,6 +89,7 @@ public class ProcessManager extends Thread {
                 //ignore
             }
         }
+        logger.info("Process Manager thread was interrupted succesfuly");
     }
 
     private boolean canCreateAnotherConnection() {
@@ -131,6 +132,7 @@ public class ProcessManager extends Thread {
                     throw new IllegalStateException("Cannot find forceDownloaded File");
                 } else {
                     final ConnectionSettings settings = forceDownloadFiles.remove(file);
+                    logger.info("Force downloading with settings " + settings);
                     queueDownload(file, settings, downloadService, service);
                 }
             }
@@ -140,12 +142,13 @@ public class ProcessManager extends Thread {
         return false;
     }
 
-    public void forceDownload(ConnectionSettings settings, List<DownloadFile> files) {
+    public void forceDownload(final ConnectionSettings settings, List<DownloadFile> files) {
         synchronized (manipulation) {
             for (DownloadFile file : files) {
                 if (!DownloadState.isProcessState(file.getState())) {
-                    file.setState(DownloadState.QUEUED);
+                    logger.info("Force downloading file " + file + " with settings " + settings);
                     forceDownloadFiles.put(file, settings);
+                    file.setState(DownloadState.QUEUED);
                 }
             }
         }
@@ -156,11 +159,12 @@ public class ProcessManager extends Thread {
         final HttpDownloadClient client = workingClients.pop();
         client.initClient(settings);
         downloadService.addDownloadingClient(client);
+        downloadFile.setState(DownloadState.GETTING);
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                if (downloadFile.getState() != DownloadState.QUEUED)
-                    finishedDownloading(downloadFile, client);
+                if (downloadFile.getState() != DownloadState.GETTING)
+                    finishedDownloading(downloadFile, client, null);
                 else
                     startDownload(downloadFile, client, service);
             }
@@ -193,7 +197,7 @@ public class ProcessManager extends Thread {
 
                 @Override
                 public void finished(TaskEvent<Void> event) {
-                    finishedDownloading(downloadFile, client);
+                    finishedDownloading(downloadFile, client, task);
                     downloadFile.setTask(null);
                 }
             });
@@ -203,7 +207,7 @@ public class ProcessManager extends Thread {
         }
     }
 
-    private void finishedDownloading(final DownloadFile file, final HttpDownloadClient client) {
+    private void finishedDownloading(final DownloadFile file, final HttpDownloadClient client, final DownloadTask task) {
         synchronized (manipulation) {
             final String serviceName = file.getShareDownloadServiceID();
             final DownloadService service = services.get(serviceName);
@@ -213,7 +217,7 @@ public class ProcessManager extends Thread {
             this.workingClients.add(client);
             int errorAttemptsCount = file.getErrorAttemptsCount();
             if (file.getState() == DownloadState.ERROR && errorAttemptsCount > 0) {
-                final DownloadTask task = file.getTask();
+                assert task != null;
                 final DownloadTaskError error = task.getServiceError();
                 if (error == DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR) {
                     file.setErrorAttemptsCount(0);

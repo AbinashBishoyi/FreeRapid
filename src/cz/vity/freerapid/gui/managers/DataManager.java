@@ -57,7 +57,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
             }
 
             public void willExit(EventObject event) {
-                cancelDownloading();
+                exitDownloading();
                 saveListToBeans();
             }
         });
@@ -65,12 +65,15 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         downloadFiles.addListDataListener(this);
     }
 
-    private void cancelDownloading() {
+    private void exitDownloading() {
+        boolean foundRunning = false;
+        processManager.interrupt();
         synchronized (lock) {
             for (DownloadFile file : downloadFiles) {
                 final DownloadTask task = file.getTask();
                 if (task != null && !task.isTerminated()) {
                     task.cancel(true);
+                    foundRunning = true;
                     if (AppPrefs.getProperty(UserProp.DOWNLOAD_ON_APPLICATION_START, true)) {
                         file.setState(DownloadState.QUEUED);
                     } else
@@ -78,7 +81,14 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                 }
             }
         }
-        processManager.queueUpdated();
+        //  processManager.queueUpdated();
+        if (foundRunning) {
+            try {
+                Thread.sleep(500);//time to cancel DownloadTask properly
+            } catch (InterruptedException e) {
+                //ignore
+            }
+        }
     }
 
     private void saveListToBeans() {
