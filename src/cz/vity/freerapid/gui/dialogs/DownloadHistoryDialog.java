@@ -185,6 +185,9 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
 
         table.getParent().setPreferredSize(new Dimension(600, 400));
 
+        tableInputMap.put(SwingUtils.getShiftKeyStroke(KeyEvent.VK_HOME), "selectFirstRowExtendSelection");
+        tableInputMap.put(SwingUtils.getShiftKeyStroke(KeyEvent.VK_END), "selectLastRowExtendSelection");
+
         registerKeyboardAction(focusFilterAction, ctrlF);
 //        this.getRootPane().getInputMap().put(ctrlF, "getFocusFind");
 //        this.getRootPane().getActionMap().put("getFocusFind", focusFilterAction);

@@ -664,6 +664,9 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         inputMap.put(SwingUtils.getCtrlKeyStroke(KeyEvent.VK_HOME), "selectFirstColumn");
         inputMap.put(SwingUtils.getCtrlKeyStroke(KeyEvent.VK_END), "selectLastColumn");
 
+        inputMap.put(SwingUtils.getShiftKeyStroke(KeyEvent.VK_HOME), "selectFirstRowExtendSelection");
+        inputMap.put(SwingUtils.getShiftKeyStroke(KeyEvent.VK_END), "selectLastRowExtendSelection");
+
         //inputMap.remove("find");
         actionMap.remove("find");
 

@@ -1,9 +1,9 @@
-*********************************************************
-*   History of changes for FreeRapid Downloader         *
-*   WebSite: http://wordrider.net/freerapid             *
-*   Mail: info@wordrider.net (use rather issue tracker) *
-*   Issue tracker: http://bugtracker.wordrider.net/     *
-*********************************************************
+***********************************************************
+*   History of changes for FreeRapid Downloader           *
+*   WebSite: http://wordrider.net/freerapid               *
+*   Mail: info@wordrider.net (issue tracker is preffered) *
+*   Issue tracker: http://bugtracker.wordrider.net/       *
+***********************************************************
 Thanks to all individuals who reported bugs.
 
 Legend :
@@ -12,8 +12,11 @@ Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
 XXth October 2008 - FreeRapid Downloader 0.7 released
-  Added : plugins - support for iskladka.cz/sk [implemented by Lukiz]
-  Added : plugins - support for xtraupload.de [implemented by Lukiz]
+  Added : plugins - support for shareator.com [implemented by Lukiz, thanks!]
+  Added : plugins - support for load.to [implemented by Lukiz, thanks!]
+  Added : plugins - support for uloz.to [implemented by Lukiz, thanks!]
+  Added : plugins - support for iskladka.cz/sk [implemented by Lukiz, thanks!]
+  Added : plugins - support for xtraupload.de [implemented by Lukiz, thanks!]
   Added : both traditional and simplified chinese translation [thanks to Jodyp!]
   Added : slovak translation [thanks to dDwarf!]
   Added : confirm cancel if there are completed downloads [requested by Saymon]  
@@ -21,7 +24,7 @@ XXth October 2008 - FreeRapid Downloader 0.7 released
   Added : new download state WAIT! to show to user "you have to wait XX minutes"
   Added : table scrolls to new position of selection [requested by Pavel]
   Added : options to control confirmation dialogs 
-  Added : option to disable history
+  Added : option to disable using history
   Added : buttons to create desktop, start menu, quick launch, start up shortcuts;
           Linux/MacOS users can configure syscmd.properties file
   Added : autoshutdown options - standby, hibernate, reboot, shutdown, quit when all downloads complete; 
@@ -30,6 +33,7 @@ XXth October 2008 - FreeRapid Downloader 0.7 released
   Changed : updating proxy list or proxy settings for default connection does not require a restart anymore  
   Changed : force download passes max current number of connections (9 concurrent downloads is a limit)
   Changed : remapped selection shortcuts - HOME-first row , END-last row, ctrl+HOME-first column, ctrl+END-last column
+            SHIFT + HOME - select to first row, SHIFT + END - select to last row
   Changed : removed heap memory indicator
   Changed : updated czech translation
   Changed : plugin file names renamed - version info removed
