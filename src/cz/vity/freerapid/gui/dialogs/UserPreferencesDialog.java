@@ -36,8 +36,6 @@ import java.io.File;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.PreferenceChangeListener;
 
 /**
  * @author Vity
@@ -49,7 +47,6 @@ public class UserPreferencesDialog extends AppDialog {
     private static final String LAF_PROPERTY = "lafFakeProperty";
     private static final String LNG_PROPERTY = "lngFakeProperty";
     @SuppressWarnings({"FieldAccessedSynchronizedAndUnsynchronized"})
-    private ApplyPreferenceChangeListener prefListener = null;
     private ResourceMap bundle;
     private final ApplicationContext context;
 
@@ -190,8 +187,6 @@ public class UserPreferencesDialog extends AppDialog {
 
         model = new MyPresentationModel(null, new Trigger());
 
-        prefListener = new ApplyPreferenceChangeListener();
-        AppPrefs.getPreferences().addPreferenceChangeListener(prefListener);
         bindBasicComponents();
 
         final ActionMap map = getActionMap();
@@ -386,12 +381,6 @@ public class UserPreferencesDialog extends AppDialog {
         AppPrefs.removeProperty(LAF_PROPERTY);
         logger.log(Level.FINE, "Closing UserPreferenceDialog.");
         try {
-            synchronized (this) {
-                if (prefListener != null) {
-                    AppPrefs.getPreferences().removePreferenceChangeListener(prefListener);
-                    prefListener = null;
-                }
-            }
             if (model != null)
                 model.release();
         } finally {
@@ -994,20 +983,6 @@ public class UserPreferencesDialog extends AppDialog {
     private JSpinner spinnerErrorAttemptsCount;
     private JSpinner spinnerAutoReconnectTime;
     private JButtonBar toolbar;
-
-
-    private final class ApplyPreferenceChangeListener implements PreferenceChangeListener {
-
-        public void preferenceChange(PreferenceChangeEvent evt) {
-            //pozor, interne se vola ve zvlastnim vlakne, nikoli na EDT threadu
-            final MainApp app = MainApp.getInstance(MainApp.class);
-            final String key = evt.getKey();
-            if (FWProp.SHOW_TRAY.equals(key)) {
-                app.getTrayIconSupport().setVisibleByDefault();
-            }
-        }
-
-    }
 
     private void updateLookAndFeel() {
         boolean succesful;

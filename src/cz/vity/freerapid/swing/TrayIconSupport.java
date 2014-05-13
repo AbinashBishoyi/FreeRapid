@@ -29,7 +29,13 @@ public class TrayIconSupport implements PropertyChangeListener {
     private String toolTip;
 
     public TrayIconSupport() {
-
+        AppPrefs.getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
+            public void preferenceChange(PreferenceChangeEvent evt) {
+                if (FWProp.SHOW_TRAY.equals(evt.getKey())) {
+                    setVisibleByDefault();
+                }
+            }
+        });
     }
 
     public synchronized void setVisible(boolean visible) {
