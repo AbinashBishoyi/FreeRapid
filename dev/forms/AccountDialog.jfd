@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?> 
-<java version="1.6.0_10-ea" class="java.beans.XMLDecoder"> 
+<java version="1.6.0_11" class="java.beans.XMLDecoder"> 
  <object class="com.jformdesigner.model.FormModel"> 
   <void method="setProperty"> 
    <string>i18n.autoExternalize</string> 
@@ -46,7 +46,7 @@
            <class>com.jgoodies.forms.layout.FormLayout</class> 
            <void method="setProperty"> 
             <string>$columnSpecs</string> 
-            <string>max(pref;35dlu), labelcompgap, default, labelcompgap, min(pref;40dlu):grow, labelcompgap, default</string> 
+            <string>max(pref;35dlu), labelcompgap, default, labelcompgap, min(pref;40dlu):grow, labelcompgap, relgap</string> 
            </void> 
            <void method="setProperty"> 
             <string>$rowSpecs</string> 
@@ -240,7 +240,7 @@
            <class>com.jgoodies.forms.layout.FormLayout</class> 
            <void method="setProperty"> 
             <string>$columnSpecs</string> 
-            <string>55px, button, relgap, button</string> 
+            <string>55px:grow, button, relgap, button, labelcompgap, relgap</string> 
            </void> 
            <void method="setProperty"> 
             <string>$rowSpecs</string> 
@@ -338,8 +338,8 @@
       <void method="setProperty"> 
        <string>size</string> 
        <object class="java.awt.Dimension"> 
-        <int>245</int> 
-        <int>240</int> 
+        <int>335</int> 
+        <int>205</int> 
        </object> 
       </void> 
      </object> 

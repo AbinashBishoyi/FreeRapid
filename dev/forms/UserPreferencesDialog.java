@@ -64,6 +64,7 @@ public class UserPreferencesDialog extends JDialog {
 		JLabel labelUpdateFromServer = new JLabel();
 		comboPluginServers = new JComboBox();
 		btnResetDefaultPluginServer = new JButton();
+		JLabel labelManualCheck = new JLabel();
 		buttonBar = new JXButtonPanel();
 		btnOK = new JButton();
 		btnCancel = new JButton();
@@ -290,6 +291,9 @@ public class UserPreferencesDialog extends JDialog {
 								//---- btnResetDefaultPluginServer ----
 								btnResetDefaultPluginServer.setText(bundle.getString("btnResetDefaultPluginServer.text"));
 
+								//---- labelManualCheck ----
+								labelManualCheck.setText(bundle.getString("labelManualCheck.text"));
+
 								PanelBuilder pluginPanelUpdatesBuilder = new PanelBuilder(new FormLayout(
 									new ColumnSpec[] {
 										FormFactory.DEFAULT_COLSPEC,
@@ -315,7 +319,9 @@ public class UserPreferencesDialog extends JDialog {
 										FormFactory.UNRELATED_GAP_ROWSPEC,
 										FormFactory.DEFAULT_ROWSPEC,
 										FormFactory.LINE_GAP_ROWSPEC,
-										new RowSpec(RowSpec.CENTER, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
+										FormFactory.UNRELATED_GAP_ROWSPEC,
+										FormFactory.LINE_GAP_ROWSPEC,
+										FormFactory.DEFAULT_ROWSPEC
 									}), pluginPanelUpdates);
 
 								pluginPanelUpdatesBuilder.add(check4PluginUpdatesAutomatically, cc.xywh(1,  1, 5, 1));
@@ -329,6 +335,7 @@ public class UserPreferencesDialog extends JDialog {
 								pluginPanelUpdatesBuilder.add(labelUpdateFromServer,            cc.xywh(1, 11, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
 								pluginPanelUpdatesBuilder.add(comboPluginServers,               cc.xywh(3, 11, 3, 1));
 								pluginPanelUpdatesBuilder.add(btnResetDefaultPluginServer,      cc.xy  (7, 11));
+								pluginPanelUpdatesBuilder.add(labelManualCheck,                 cc.xywh(1, 15, 7, 1));
 							}
 							pluginTabbedPane.addTab(bundle.getString("pluginPanelUpdates.tab.title"), pluginPanelUpdates);
 

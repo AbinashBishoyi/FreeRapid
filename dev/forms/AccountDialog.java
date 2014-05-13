@@ -64,7 +64,7 @@ public class AccountDialog extends JDialog {
 						FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
 						new ColumnSpec("min(pref;40dlu):grow"),
 						FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-						FormFactory.DEFAULT_COLSPEC
+						FormFactory.RELATED_GAP_COLSPEC
 					},
 					new RowSpec[] {
 						FormFactory.DEFAULT_ROWSPEC,
@@ -98,10 +98,12 @@ public class AccountDialog extends JDialog {
 
 				PanelBuilder buttonBarBuilder = new PanelBuilder(new FormLayout(
 					new ColumnSpec[] {
-						new ColumnSpec("55px"),
+						new ColumnSpec("55px:grow"),
 						FormFactory.BUTTON_COLSPEC,
 						FormFactory.RELATED_GAP_COLSPEC,
-						FormFactory.BUTTON_COLSPEC
+						FormFactory.BUTTON_COLSPEC,
+						FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+						FormFactory.RELATED_GAP_COLSPEC
 					},
 					RowSpec.decodeSpecs("default")), buttonBar);
 

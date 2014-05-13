@@ -59,16 +59,18 @@ public interface HttpDownloadClient {
      * Runs HTTP request to get file specified in file parameter.
      * According to HTTP response filename and file size attributes are updated.
      *
-     * @param method a descendant of HttpMethod - PostMethod or GetMethod
-     * @param file   the file that is downloaded
+     * @param method        a descendant of HttpMethod - PostMethod or GetMethod
+     * @param file          the file that is downloaded
+     * @param allowRedirect allow redirect flag
      * @return beginning of the stream for reading or null if there was no file stream in response
      * @throws IOException error I/O
      * @see org.apache.commons.httpclient.HttpClient#executeMethod(org.apache.commons.httpclient.HttpMethod)
      */
-    InputStream makeFinalRequestForFile(HttpMethod method, HttpFile file) throws IOException;
+    InputStream makeFinalRequestForFile(HttpMethod method, HttpFile file, boolean allowRedirect) throws IOException;
 
     /**
-     * Runs simple HTTP request to get a file - eg. CAPTCHA picture
+     * Runs simple direct HTTP request to get a file - eg. CAPTCHA picture<br/>
+     * Redirection is off
      *
      * @param method a descendant of HttpMethod - PostMethod or GetMethod
      * @return beginning of the stream for reading or null if there was no file stream in HTTP response
@@ -81,7 +83,7 @@ public interface HttpDownloadClient {
      * Runs simple HTTP request with optional redirect.
      *
      * @param method        a descendant of HttpMethod - PostMethod or GetMethod
-     * @param allowRedirect allow redirext flag
+     * @param allowRedirect allow redirect flag
      * @return HTTP result code
      * @throws IOException error I/O
      * @see org.apache.commons.httpclient.HttpClient#executeMethod(org.apache.commons.httpclient.HttpMethod)

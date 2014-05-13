@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?> 
-<java version="1.6.0_10-ea" class="java.beans.XMLDecoder"> 
+<java version="1.6.0_11" class="java.beans.XMLDecoder"> 
  <object class="com.jformdesigner.model.FormModel"> 
   <void method="setProperty"> 
    <string>i18n.autoExternalize</string> 
@@ -594,7 +594,7 @@
                    </void> 
                    <void method="setProperty"> 
                     <string>$rowSpecs</string> 
-                    <string>default, linegap, default, linegap, default, linegap, default, linegap, default, unrelgap, default, linegap, default:grow</string> 
+                    <string>default, linegap, default, linegap, default, linegap, default, linegap, default, unrelgap, default, linegap, unrelgap, linegap, default</string> 
                    </void> 
                   </object> 
                   <void method="setProperty"> 
@@ -935,6 +935,38 @@
                     <void method="setProperty"> 
                      <string>gridY</string> 
                      <int>11</int> 
+                    </void> 
+                   </object> 
+                  </void> 
+                  <void method="add"> 
+                   <object class="com.jformdesigner.model.FormComponent"> 
+                    <string>javax.swing.JLabel</string> 
+                    <void method="setProperty"> 
+                     <string>text</string> 
+                     <object class="com.jformdesigner.model.FormMessage"> 
+                      <null/> 
+                      <string>labelManualCheck.text</string> 
+                     </object> 
+                    </void> 
+                    <void property="name"> 
+                     <string>labelManualCheck</string> 
+                    </void> 
+                    <void method="auxiliary"> 
+                     <void method="setProperty"> 
+                      <string>JavaCodeGenerator.variableLocal</string> 
+                      <boolean>true</boolean> 
+                     </void> 
+                    </void> 
+                   </object> 
+                   <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+                    <class>com.jgoodies.forms.layout.CellConstraints</class> 
+                    <void method="setProperty"> 
+                     <string>gridY</string> 
+                     <int>15</int> 
+                    </void> 
+                    <void method="setProperty"> 
+                     <string>gridWidth</string> 
+                     <int>7</int> 
                     </void> 
                    </object> 
                   </void> 

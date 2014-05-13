@@ -130,7 +130,7 @@ public abstract class AbstractRunner implements PluginRunner {
         httpFile.setState(DownloadState.GETTING);
         logger.info("Making final request for file");
         try {
-            final InputStream inputStream = client.makeFinalRequestForFile(method, httpFile);
+            final InputStream inputStream = client.makeFinalRequestForFile(method, httpFile, true);
             if (inputStream != null) {
                 logger.info("Saving to file");
                 downloadTask.saveToFile(inputStream);

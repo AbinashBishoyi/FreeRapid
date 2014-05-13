@@ -14,11 +14,12 @@ public interface ConfigurationStorageSupport {
      * Intern implementation uses XMLEncoder.
      *
      * @param fileName file name for storing data - it's recommended to use 'plugin_id.xml'
+     * @param type     class of the stored object
      * @return returns new instance, null if
      * @throws Exception throwed when reading went wrong
      * @see org.jdesktop.application.LocalStorage#load(String) load method
      */
-    Object loadConfigFromFile(final String fileName) throws Exception;
+    <E> E loadConfigFromFile(final String fileName, Class<E> type) throws Exception;
 
 
     /**
@@ -31,4 +32,12 @@ public interface ConfigurationStorageSupport {
      * @see org.jdesktop.application.LocalStorage#save(Object, String) save method
      */
     void storeConfigToFile(final Object object, final String fileName) throws Exception;
+
+    /**
+     * Checks whether configuration file exists (if any configuration was created before)
+     *
+     * @param fileName file name
+     * @return true - if there is such file in configuration directory, false otherwise
+     */
+    boolean configFileExists(String fileName);
 }

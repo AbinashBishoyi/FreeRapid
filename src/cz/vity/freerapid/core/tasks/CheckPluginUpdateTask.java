@@ -82,6 +82,7 @@ public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
             plugin.setVersion(newVersion.toString());
             if (pluginsManager.hasPlugin(id)) {
                 final Version oldVersion = Version.parse(pluginsManager.getPluginMetadata(id).getVersion());
+                logger.info("id = " + id + "  oldVersion = " + oldVersion + "  newVersion = " + newVersion);
                 if (newVersion.isGreaterThan(oldVersion))
                     newPlugins.add(plugin);
             } else newPlugins.add(plugin);

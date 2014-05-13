@@ -129,7 +129,7 @@
             <fileset dir="${plugins.dir}" includes="**/*"/>
         </copy>
 
-        <jar jarfile="${dist.dir}/plugin-api.jar" compress="false">
+        <jar jarfile="${dist.dir}/plugin-api.jar" compress="true">
             <manifest>
                 <attribute name="Build-Date" value="${TODAY}"/>
             </manifest>
@@ -138,6 +138,13 @@
             <fileset dir="${classes.dir}" includes="**/**/Utils**"/>
             <fileset dir="${classes.dir}" includes="**/**/LogUtils**"/>
         </jar>
+
+        <zip file="${dist.dir}/plugin-api-src.zip" compress="true">
+            <fileset dir="${src.dir}" includes="**/plugins/**"/>
+            <fileset dir="${src.dir}" includes="**/**/EDTPropertyChangeSupport**"/>
+            <fileset dir="${src.dir}" includes="**/**/Utils**"/>
+            <fileset dir="${src.dir}" includes="**/**/LogUtils**"/>
+        </zip>
 
     </target>
 

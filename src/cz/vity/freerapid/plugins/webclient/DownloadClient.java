@@ -125,16 +125,15 @@ public class DownloadClient implements HttpDownloadClient {
 
 
     @Override
-    public InputStream makeFinalRequestForFile(HttpMethod method, HttpFile file) throws IOException {
+    public InputStream makeFinalRequestForFile(HttpMethod method, HttpFile file, boolean allowRedirect) throws IOException {
         if (method == null)
             throw new NullPointerException("HttpMethod cannot be null");
         if (file == null)
             throw new NullPointerException("File cannot be null");
-        return makeRequestFile(method, file, 0);
-
+        return makeRequestFile(method, file, 0, allowRedirect);
     }
 
-    private InputStream makeRequestFile(final HttpMethod method, final HttpFile file, final int deep) throws IOException {
+    private InputStream makeRequestFile(final HttpMethod method, final HttpFile file, final int deep, boolean allowRedirect) throws IOException {
         asString = "";
         toString(method);
         client.executeMethod(method);
@@ -160,7 +159,7 @@ public class DownloadClient implements HttpDownloadClient {
             return null;
         }
 
-        if (isRedirect && deep < 2) {
+        if (allowRedirect && isRedirect && deep < 2) {
             Header header = method.getResponseHeader("location");
             if (header != null) {
                 String newuri = header.getValue();
@@ -174,7 +173,7 @@ public class DownloadClient implements HttpDownloadClient {
                 setReferer(newuri);
                 method.releaseConnection();
                 GetMethod redirect = getGetMethod(newuri);
-                final InputStream inputStream = makeRequestFile(redirect, file, deep + 1);
+                final InputStream inputStream = makeRequestFile(redirect, file, deep + 1, allowRedirect);
                 logger.info("Redirect: " + redirect.getStatusLine().toString());
                 return inputStream;
 // release any connection resources used by the method

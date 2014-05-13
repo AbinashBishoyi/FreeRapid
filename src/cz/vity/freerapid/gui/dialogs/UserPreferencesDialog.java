@@ -1043,6 +1043,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         popmenuButton = ComponentFactory.getPopdownButton();
 
         checkPrepareFile.setName("checkPrepareFile");
+        JLabel labelManualCheck = new JLabel();
 
         //======== this ========
         Container contentPane = getContentPane();
@@ -1440,6 +1441,9 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                                 //---- btnResetDefaultPluginServer ----
                                 btnResetDefaultPluginServer.setName("btnResetDefaultPluginServer");
 
+                                //---- labelManualCheck ----
+                                labelManualCheck.setName("labelManualCheck");
+
                                 PanelBuilder pluginPanelUpdatesBuilder = new PanelBuilder(new FormLayout(
                                         new ColumnSpec[]{
                                                 FormFactory.DEFAULT_COLSPEC,
@@ -1465,7 +1469,9 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                                                 FormFactory.UNRELATED_GAP_ROWSPEC,
                                                 FormFactory.DEFAULT_ROWSPEC,
                                                 FormFactory.LINE_GAP_ROWSPEC,
-                                                new RowSpec(RowSpec.CENTER, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
+                                                FormFactory.UNRELATED_GAP_ROWSPEC,
+                                                FormFactory.LINE_GAP_ROWSPEC,
+                                                FormFactory.DEFAULT_ROWSPEC
                                         }), pluginPanelUpdates);
 
                                 pluginPanelUpdatesBuilder.add(check4PluginUpdatesAutomatically, cc.xywh(1, 1, 5, 1));
@@ -1479,6 +1485,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                                 pluginPanelUpdatesBuilder.add(labelUpdateFromServer, cc.xywh(1, 11, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
                                 pluginPanelUpdatesBuilder.add(comboPluginServers, cc.xywh(3, 11, 3, 1));
                                 pluginPanelUpdatesBuilder.add(btnResetDefaultPluginServer, cc.xy(7, 11));
+                                pluginPanelUpdatesBuilder.add(labelManualCheck, cc.xywh(1, 15, 7, 1));
                             }
                             pluginTabbedPane.addTab(bundle.getString("pluginPanelUpdates.tab.title"), pluginPanelUpdates);
 
