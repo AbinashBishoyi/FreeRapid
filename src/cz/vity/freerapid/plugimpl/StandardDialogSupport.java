@@ -28,35 +28,66 @@ public class StandardDialogSupport implements DialogSupport {
     }
 
     public PremiumAccount showAccountDialog(final PremiumAccount account, final String title) throws Exception {
-        final SingleXFrameApplication app = (SingleXFrameApplication) context.getApplication();
-        final AccountDialog dialog = new AccountDialog(app.getMainFrame(), title, account);
-        app.prepareDialog(dialog, true);
-        return dialog.getAccount();
+        final PremiumAccount[] result = new PremiumAccount[]{null};
+        if (!EventQueue.isDispatchThread()) {
+            SwingUtilities.invokeAndWait(new Runnable() {
+                public void run() {
+                    getAccount(title, account, result);
+                }
+            });
+        } else getAccount(title, account, result);
+
+        return result[0];
     }
 
-    public boolean showOKCancelDialog(final Component container, final String title) {
-        return Swinger.showInputDialog(title, container, true) == Swinger.RESULT_OK;
+    public boolean showOKCancelDialog(final Component container, final String title) throws Exception {
+        final boolean[] dialogResult = new boolean[]{false};
+        if (!EventQueue.isDispatchThread()) {
+            SwingUtilities.invokeAndWait(new Runnable() {
+                public void run() {
+                    dialogResult[0] = Swinger.showInputDialog(title, container, true) == Swinger.RESULT_OK;
+                }
+            });
+        } else dialogResult[0] = Swinger.showInputDialog(title, container, true) == Swinger.RESULT_OK;
+        return dialogResult[0];
     }
 
-    public void showOKDialog(Component container, String title) {
-        Swinger.showInputDialog(title, container, false);
+    public void showOKDialog(final Component container, final String title) throws Exception {
+        if (!EventQueue.isDispatchThread()) {
+            SwingUtilities.invokeAndWait(new Runnable() {
+                public void run() {
+                    Swinger.showInputDialog(title, container, false);
+                }
+            });
+        } else Swinger.showInputDialog(title, container, false);
     }
 
     public String askForCaptcha(final BufferedImage image) throws Exception {
         synchronized (captchaLock) {
             captchaResult = "";
-            SwingUtilities.invokeAndWait(new Runnable() {
-                public void run() {
-                    if (AppPrefs.getProperty(UserProp.ACTIVATE_WHEN_CAPTCHA, UserProp.ACTIVATE_WHEN_CAPTCHA_DEFAULT))
-                        Swinger.bringToFront(((SingleFrameApplication) context.getApplication()).getMainFrame(), true);
-                    captchaResult = (String) JOptionPane.showInputDialog(null, context.getResourceMap(DownloadTask.class).getString("InsertWhatYouSee"), context.getResourceMap(DownloadTask.class).getString("InsertCaptcha"), JOptionPane.PLAIN_MESSAGE, new ImageIcon(image), null, null);
-
-                }
-            });
+            if (!EventQueue.isDispatchThread()) {
+                SwingUtilities.invokeAndWait(new Runnable() {
+                    public void run() {
+                        askCaptcha(image);
+                    }
+                });
+            } else askCaptcha(image);
             image.flush();
             return captchaResult;
         }
     }
 
+    private void askCaptcha(BufferedImage image) {
+        if (AppPrefs.getProperty(UserProp.ACTIVATE_WHEN_CAPTCHA, UserProp.ACTIVATE_WHEN_CAPTCHA_DEFAULT))
+            Swinger.bringToFront(((SingleFrameApplication) context.getApplication()).getMainFrame(), true);
+        captchaResult = (String) JOptionPane.showInputDialog(null, context.getResourceMap(DownloadTask.class).getString("InsertWhatYouSee"), context.getResourceMap(DownloadTask.class).getString("InsertCaptcha"), JOptionPane.PLAIN_MESSAGE, new ImageIcon(image), null, null);
+    }
 
+
+    private void getAccount(String title, PremiumAccount account, PremiumAccount[] result) {
+        final SingleXFrameApplication app = (SingleXFrameApplication) context.getApplication();
+        final AccountDialog dialog = new AccountDialog(app.getMainFrame(), title, account);
+        app.prepareDialog(dialog, true);
+        result[0] = dialog.getAccount();
+    }
 }

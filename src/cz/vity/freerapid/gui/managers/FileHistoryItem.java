@@ -33,7 +33,7 @@ final public class FileHistoryItem {
         this.fileName = file.getFileName();
         this.fileSize = file.getFileSize();
         this.fileType = file.getFileType();
-        this.shareDownloadServiceID = file.getShareDownloadServiceID();
+        this.shareDownloadServiceID = file.getPluginID();
     }
 
     public URL getUrl() {

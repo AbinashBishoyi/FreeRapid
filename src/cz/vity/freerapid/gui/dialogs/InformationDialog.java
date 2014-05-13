@@ -168,6 +168,7 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
     }
 
 
+    @SuppressWarnings({"deprecation"})
     private void initComponents() {
         JPanel dialogPane = new JPanel();
         JPanel contentPanel = new JPanel();

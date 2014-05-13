@@ -1,6 +1,5 @@
 package cz.vity.freerapid.plugins.dev;
 
-import cz.vity.freerapid.plugins.exceptions.FailedToLoadCaptchaPictureException;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadClient;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
@@ -8,7 +7,6 @@ import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpFileDownloader;
 
-import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.util.logging.Logger;
 
@@ -54,20 +52,9 @@ class PluginDevDownloader implements HttpFileDownloader {
 
     }
 
-    public String askForCaptcha(BufferedImage image) throws Exception {
-        return null;
-    }
-
-    public String getCaptcha(String url) throws FailedToLoadCaptchaPictureException {
-        return null;
-    }
-
     public boolean isTerminated() {
         return false;
     }
 
-    public BufferedImage getCaptchaImage(String url) throws FailedToLoadCaptchaPictureException {
-        return null;
-    }
 }
 
