@@ -1,5 +1,6 @@
 package cz.vity.freerapid.gui.managers;
 
+import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.model.PluginMetaData;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.HttpDownloadClient;
@@ -12,13 +13,14 @@ import java.util.*;
  */
 class DownloadService {
     private List<ConnectionSettings> downloading = new Vector<ConnectionSettings>();
+    private List<DownloadFile> testing = new Vector<DownloadFile>();
     private Set<ConnectionSettings> problems = Collections.synchronizedSet(new HashSet<ConnectionSettings>());
 
     private String serviceName;
     private int maxDownloadsFromOneIP;
 
     public DownloadService(PluginMetaData fileService, ShareDownloadService service) {
-        this.serviceName = fileService.getServices();//TODO ne jmena
+        this.serviceName = fileService.getServices();
         this.maxDownloadsFromOneIP = service.getMaxDownloadsFromOneIP();
     }
 
@@ -38,6 +40,34 @@ class DownloadService {
         }
         return true;
     }
+
+    public boolean canDownloadBeforeCheck(DownloadFile testFile, List<DownloadFile> list, boolean startFromTop) {
+        if (testing.isEmpty())
+            return true;
+        final int index = list.indexOf(testFile);
+        for (DownloadFile file : testing) {
+            final int i = list.indexOf(file);
+            if (startFromTop) {
+                if (i < index)
+                    return false;
+            } else {
+                if (i > index)
+                    return false;
+
+            }
+        }
+        return true;
+    }
+
+
+    public void addTestingFile(DownloadFile file) {
+        testing.add(file);
+    }
+
+    public void finishedTestingFile(DownloadFile file) {
+        testing.remove(file);
+    }
+
 
     public void addDownloadingClient(HttpDownloadClient client) {
 //        if (!this.canDownloadWith(client.getSettings()))

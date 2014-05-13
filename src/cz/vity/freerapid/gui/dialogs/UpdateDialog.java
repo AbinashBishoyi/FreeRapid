@@ -194,6 +194,7 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
             final DownloadFile httpFile;
             try {
                 httpFile = updateManager.getDownloadFileInstance(plugin);
+                httpFile.addPropertyChangeListener(this);
                 final WrappedPluginData pluginData = new WrappedPluginData(downloadNotExisting || !isNew, httpFile, plugin);
                 pluginData.setNew(isNew);
                 listModel.add(pluginData);

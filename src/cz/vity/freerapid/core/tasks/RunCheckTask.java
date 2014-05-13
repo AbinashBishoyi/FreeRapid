@@ -11,21 +11,14 @@ import org.jdesktop.application.Application;
  */
 public class RunCheckTask extends DownloadTask {
 
-    private int willSleep;
-
     public RunCheckTask(Application application, HttpDownloadClient client, DownloadFile downloadFile, ShareDownloadService service) {
         super(application, client, downloadFile, service);
-    }
-
-    public void setWillSleep(int willSleep) {
-        this.willSleep = willSleep;
     }
 
     @Override
     protected Void doInBackground() throws Exception {
         initDownloadThread();
-        sleep(willSleep);
-        downloadFile.setState(DownloadState.GETTING);
+        downloadFile.setState(DownloadState.TESTING);
         service.runCheck(this);//run plugin
         service = null;
         return null;

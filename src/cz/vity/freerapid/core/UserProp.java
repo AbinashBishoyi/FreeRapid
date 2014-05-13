@@ -185,4 +185,7 @@ final public class UserProp {
     public static final String PLUGIN_CHECK_URL_LIST = "pluginCheckUrlList";
     public static final String PLUGIN_CHECK_URL_SELECTED = "pluginCheckUrlSelected";
 
+    public static final String TEST_FILE = "testFiles"; //spusti test pred stahovanim
+    public static final boolean TEST_FILE_DEFAULT = true;
+
 }
