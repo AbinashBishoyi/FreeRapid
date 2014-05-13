@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="FreeRapid Downloader" default="all" basedir=".">
+    <property name="application" value="FreeRapid Downloader"/>
+    <property name="version" value="1.0"/>
+    <property name="version.name" value="${application}-${version}"/>
+    <property name="mainclass" value="cz.vity.freerapid.core.MainApp"/>
+    <property name="mainjar.file" value="frd.jar"/>
+
+    <!--<property name="mainjar-packed.file" value="${mainjar.file}.pack.gz"/>-->
+
+    <!-- output data directories -->
+    <property name="build.dir" value="${version.name}"/>
+    <property name="classes.dir" value="_classes"/>
+    <property name="dist.dir" value="dist"/>
+
+    <!-- input data directories -->
+    <property name="src.dir" value="src"/>
+    <property name="etc.dir" value="etc"/>
+    <property name="doc.dir" value="doc"/>
+    <property name="lib.dir" value="lib"/>
+    <property name="dev.dir" value="dev"/>
+    <property name="lookandfeel.dir" value="lookandfeel"/>
+    <property name="lib-src.dir" value="lib-src"/>
+
+
+    <!--
+    <property name="resources" value="cz/cvut/felk/erm/core/resources/"/>
+    <property name="splash" value="${resources}icons/splash.jpg"/>
+    -->
+
+    <fileset id="jars" dir="${lib.dir}" includes="**/*"/>
+
+    <patternset id="compiler.resources">
+        <include name="**/?*.properties"/>
+        <include name="**/?*.xml"/>
+        <include name="**/?*.txt"/>
+        <include name="**/?*.gif"/>
+        <include name="**/?*.png"/>
+        <include name="**/?*.jpeg"/>
+        <include name="**/?*.jpg"/>
+        <include name="**/?*.html"/>
+        <include name="**/?*.dtd"/>
+        <include name="**/?*.tld"/>
+        <include name="**/?*.mid"/>
+        <include name="**/?*.wav"/>
+    </patternset>
+
+    <path id="cp">
+        <fileset refid="jars"/>
+    </path>
+
+    <path id="dist-jars">
+        <fileset dir="${build.dir}/${lib.dir}" includes="**/*.jar"/>
+        <fileset dir="${build.dir}/${lookandfeel.dir}" includes="**/*.jar"/>
+        <fileset dir="${build.dir}" includes="${mainjar.file}"/>
+    </path>
+
+    <pathconvert property="lib.prefix" pathsep=" ">
+        <path location="${lib.dir}"/>
+    </pathconvert>
+
+    <pathconvert property="classpath" refid="jars" pathsep=" " dirsep="/">
+        <map from="${lib.prefix}" to="${lib.dir}"/>
+    </pathconvert>
+
+    <target name="build" depends="compile" description="building ERModeller">
+        <jar jarfile="${build.dir}/${mainjar.file}" compress="false">
+            <manifest>
+                <attribute name="Build-Date" value="${TODAY}"/>
+                <attribute name="Class-Path" value="${classpath}"/>
+                <attribute name="Main-Class" value="${mainclass}"/>
+                <!--
+                <attribute name="SplashScreen-Image" value="${splash}"/> -->
+            </manifest>
+            <fileset dir="${classes.dir}" includes="**/*"/>
+        </jar>
+        <mkdir dir="${build.dir}/${lib.dir}"/>
+        <!--<mkdir dir="${build.dir}/help"/>-->
+        <copy todir="${build.dir}">
+            <fileset dir="${etc.dir}" includes="**/*" excludes="**/jnlp/**"/>
+        </copy>
+        <!--<copy todir="${build.dir}/help">-->
+        <!--<fileset dir="${help}" includes="**/*"></fileset>-->
+        <!--</copy>-->
+        <copy todir="${build.dir}/${lib.dir}">
+            <fileset dir="${lib.dir}" includes="**/*"/>
+        </copy>
+    </target>
+
+    <target name="compile" depends="clean, init" description="compiling source codes">
+        <mkdir dir="${classes.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="cp" optimize="on" target="1.6">
+        </javac>
+        <!-- zkopirovani resourcu -->
+
+        <copy todir="${classes.dir}">
+            <fileset dir="${src.dir}">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="init" description="initialization">
+        <tstamp/>
+        <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+    </target>
+
+    <target name="clean" description="clean up">
+        <delete dir="${build.dir}"/>
+        <delete dir="${classes.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+    <target name="all" depends="clean,init,compile, build, dist" description="build all"/>
+
+    <!-- run -->
+
+    <target name="run" depends="build">
+        <java fork="true" jar="${build.dir}/${mainjar.file}"/>
+    </target>
+
+    <target name="dist" depends="build" description="creating release">
+        <zip zipfile="${dist.dir}/${version.name}.zip">
+            <fileset dir=".">
+                <include name="${build.dir}/"/>
+                <!--<exclude name="${build.dir}/${mainjar-packed.file}"/>-->
+            </fileset>
+        </zip>
+        <zip destfile="${dist.dir}/${version.name}-src.zip">
+            <fileset dir=".">
+                <include name="${lib.dir}/"/>
+                <include name="${lib-src.dir}/"/>
+                <include name="${etc.dir}/"/>
+                <include name="${src.dir}/"/>
+                <include name="${dev.dir}/"/>
+                <include name="${doc.dir}/"/>
+                <include name="build.xml"/>
+            </fileset>
+        </zip>
+    </target>
+
+</project>

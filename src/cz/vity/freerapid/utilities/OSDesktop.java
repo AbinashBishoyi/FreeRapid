@@ -1,0 +1,23 @@
+package cz.vity.freerapid.utilities;
+
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Logger;
+
+/**
+ * @author Ladislav Vitasek
+ */
+public class OSDesktop {
+    private final static Logger logger = Logger.getLogger(OSDesktop.class.getName());
+
+    public static void openFile(File file) {
+        if (Desktop.isDesktopSupported()) {
+            try {
+                Desktop.getDesktop().open(file);
+            } catch (IOException e) {
+                LogUtils.processException(logger, e);
+            }
+        }
+    }
+}
