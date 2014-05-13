@@ -4,8 +4,7 @@
 | |_ | '__/ _ \/ _ \ |_) / _` | '_ \| |/ _` |                *
 |  _|| | |  __/  __/  _ < (_| | |_) | | (_| |                *
 |_|  |_|  \___|\___|_| \_\__,_| .__/|_|\__,_|                *
-                              |_|                            *
- ____                      _                 _               *
+ ____                      _  |_|            _               *
 |  _ \  _____      ___ __ | | ___   __ _  __| | ___ _ __     *
 | | | |/ _ \ \ /\ / / '_ \| |/ _ \ / _` |/ _` |/ _ \ '__|    *
 | |_| | (_) \ V  V /| | | | | (_) | (_| | (_| |  __/ |       *
@@ -51,7 +50,7 @@ Rùzné:
  - Drag&Drop URL adres
 
 V souèasné dobì jsou podporovány následující služby:
- -  Rapidshare.com (chcete-li stahovat pøes premium ùèet, navštivte prosím domovskou stránku pro více informací)
+ -  Rapidshare.com
  -  FileFactory.com
  -  Uploaded.to
  -  MegaUpload.com
@@ -205,8 +204,8 @@ VIII.   Èasto kladené otázky a odpovìdi
 Q: Proè jsi vytvoøil další "RapidShare Downloader"?
 A: 1) Protože nechci používat ruský software, který je pravdìpodobnì plný malwaru a spywaru.
    2) Protože si mùžu sám jednoduše opravit automatické stahování.
-   3) Protože ostatní existující aplikace jsou uživatelsky nepøívìtivé a èasto postrádají dùležite funkce.
-   4) Protože mùžu.
+   3) Protože ostatní existující aplikace jsou uživatelsky nepøívìtivé a èasto postrádají dùležité funkce.
+   4) Protože mùžu. :-)
 
 Q: Jak zapnout podporu pøíkazù pro vypínání na Linuxu a MacOS?
 A: Pro více informací nahlédnìte prosím do konfiguraèního souboru 'syscmd.properties', který naleznete ve složce aplikace.

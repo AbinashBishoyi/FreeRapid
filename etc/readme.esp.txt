@@ -36,7 +36,7 @@ Misc.:
  - Arrastrar y Soltar URLs
 
 Los serivicios soportados actualmente son:
- -  Rapidshare.com (para cuentas premium refierace al sitio)
+ -  Rapidshare.com
  -  FileFactory.com
  -  Uploaded.to
  -  MegaUpload.com

@@ -559,6 +559,9 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
         bind(checkCloseToTray, FWProp.MINIMIZE_ON_CLOSE, FWProp.MINIMIZE_ON_CLOSE_DEFAULT);
 
+        bind(checkShowToolbarText, UserProp.SHOW_TEXT_TOOLBAR, UserProp.SHOW_TEXT_TOOLBAR_DEFAULT);
+
+
         final ValueModel useDefault = bind(checkUseDefaultConnection, UserProp.USE_DEFAULT_CONNECTION, UserProp.USE_DEFAULT_CONNECTION_DEFAULT);
         PropertyConnector.connectAndUpdate(useDefault, btnSelectConnectionProxy, "enabled");
 
@@ -927,6 +930,8 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         checkRecheckFilesOnStart = new JCheckBox();
         JPanel panelDownloadsSettings = new JPanel();
         checkContinueInterrupted = new JCheckBox();
+        checkShowToolbarText = new JCheckBox();
+        checkShowToolbarText.setName("checkShowToolbarText");
 
         checkConfirmExiting = new JCheckBox();
         checkConfirmFileDeletion = new JCheckBox();
@@ -1551,6 +1556,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                                             FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC,
                                     }), panelAppearance);
 
                             panelAppearanceBuilder.add(labelLaF, cc.xy(3, 1));
@@ -1560,7 +1566,8 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                             panelAppearanceBuilder.add(checkShowHorizontalLinesInTable, cc.xywh(3, 5, 5, 1));
                             panelAppearanceBuilder.add(checkShowVerticalLinesInTable, cc.xywh(3, 6, 5, 1));
                             panelAppearanceBuilder.add(checkShowTitle, cc.xywh(3, 7, 5, 1));
-                            panelAppearanceBuilder.add(checkServiceAsIconOnly, cc.xywh(3, 8, 5, 1));
+                            panelAppearanceBuilder.add(checkShowToolbarText, cc.xywh(3, 8, 5, 1));
+                            panelAppearanceBuilder.add(checkServiceAsIconOnly, cc.xywh(3, 9, 5, 1));
                         }
 
                         //======== panel System tray ========
@@ -1797,6 +1804,8 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
     private JCheckBox checkGenerateDescIon;
     private JCheckBox checkGenerateHidden;
     private JCheckBox checkUseHistory;
+
+    private JCheckBox checkShowToolbarText;
 
     private JCheckBox checkConfirmExiting;
     private JCheckBox checkConfirmFileDeletion;

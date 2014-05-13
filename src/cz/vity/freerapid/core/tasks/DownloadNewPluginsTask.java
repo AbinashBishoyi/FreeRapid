@@ -59,6 +59,7 @@ public class DownloadNewPluginsTask extends DownloadTask {
             } catch (Exception e) {
                 file.setState(DownloadState.ERROR);
                 setFileErrorMessage(e);
+                LogUtils.processException(logger, e);
             }
         }
         if (!success)
@@ -114,7 +115,7 @@ public class DownloadNewPluginsTask extends DownloadTask {
         if (cause instanceof UnknownHostException) {
             Swinger.showErrorMessage(this.getResourceMap(), "errormessage_check_inet_settings");
         } else {
-            Swinger.showErrorMessage(this.getResourceMap(), "errormessage", cause.getMessage());
+            Swinger.showErrorMessage(this.getResourceMap(), cause);
         }
 
     }

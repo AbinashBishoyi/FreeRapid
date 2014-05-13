@@ -24,6 +24,7 @@ import org.jdesktop.application.TaskListener;
 import org.jdesktop.application.TaskService;
 
 import javax.swing.*;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.*;
 import java.util.logging.Logger;
@@ -386,12 +387,13 @@ public class ProcessManager extends Thread {
         }
     }
 
-    private class ErrorTimerTask extends TimerTask {
+    private class ErrorTimerTask extends TimerTask implements PropertyChangeListener {
         private int counter;
         private final DownloadService service;
         private final ConnectionSettings settings;
         private final DownloadFile file;
         private long lastTime;
+        private boolean finished;
 
         public ErrorTimerTask(DownloadService service, ConnectionSettings settings, DownloadFile file) {
             this(service, settings, file, AppPrefs.getProperty(UserProp.AUTO_RECONNECT_TIME, UserProp.AUTO_RECONNECT_TIME_DEFAULT));
@@ -404,22 +406,29 @@ public class ProcessManager extends Thread {
             this.counter = waitTime;
             file.setTimeToQueuedMax(waitTime);
             this.lastTime = System.currentTimeMillis();
+            finished = false;
+            file.addPropertyChangeListener("state", this);
         }
 
-        public void run() {
-            final DownloadState state = file.getState();
-
-            if ((state != ERROR && state != SLEEPING)) { //doslo ke zmene stavu z venci
+        public void propertyChange(PropertyChangeEvent evt) {
+            final DownloadState newState = (DownloadState) evt.getNewValue();
+            if ((newState != ERROR && newState != SLEEPING)) { //doslo ke zmene stavu z venci
                 this.cancel(); //zrusime timer
-                if (state != WAITING) {
+                if (newState != WAITING) {
                     file.setTimeToQueued(-1); //odecitani casu
                     file.setTimeToQueuedMax(-1);
                 }
+                finished = true;
+                file.removePropertyChangeListener(this);
                 renewProblematicConnection();
                 file.resetErrorAttempts(); //je nutne vyresetovat pocet error pokusu
                 queueUpdated();
-                return;
             }
+        }
+
+        public void run() {
+            if (finished)
+                return;
 
             file.setTimeToQueued(--counter); //normalni prubeh, jeden tick
             final long currentTime = System.currentTimeMillis();
@@ -429,6 +438,7 @@ public class ProcessManager extends Thread {
                 renewProblematicConnection();
                 file.setState(QUEUED);
                 this.cancel();
+                file.removePropertyChangeListener(this);
                 queueUpdated();
             }
             this.lastTime = currentTime;

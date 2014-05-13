@@ -308,21 +308,28 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     @org.jdesktop.application.Action(enabledProperty = NONEMPTY_ACTION_ENABLED_PROPERTY)
     public void removeInvalidLinksAction() {
-        final int[] ints = getSelectedRows();
+        final int[] rows = getSelectedRows();
         final ListSelectionModel selectionModel = table.getSelectionModel();
         selectionModel.setValueIsAdjusting(true);
         manager.removeInvalidLinks();
-        renewSelection(ints);
+        renewSelection(rows);
         selectionModel.setValueIsAdjusting(false);
     }
 
     private void renewSelection(final int[] rows) {
+        table.clearSelection();
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
+                final int visibleRowCount = getVisibleRowCount();
+                if (visibleRowCount <= 0)
+                    return;
                 for (int row : rows) {
-                    final int i = table.convertRowIndexToView(row);
-                    if (i != -1)
+                    int i = table.convertRowIndexToView(row);
+                    if (i != -1) {
+                        if (i >= visibleRowCount)
+                            i = visibleRowCount - 1;
                         table.getSelectionModel().addSelectionInterval(i, i);
+                    }
                 }
                 selectFirstIfNoSelection();
                 scrollToVisible(true);
@@ -820,6 +827,9 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         final ApplicationActionMap map = this.context.getActionMap();
         final MenuManager mm = director.getMenuManager();
         final JMenu removeMenu = mm.createMenu("removeMenu", map, "removeCompletedAction", "removeInvalidLinksAction", "removeSelectedAction");
+        boolean removeEnabled = map.get("removeCompletedAction").isEnabled() || map.get("removeInvalidLinksAction").isEnabled() || map.get("removeSelectedAction").isEnabled();
+        removeMenu.setEnabled(removeEnabled);
+
         context.getResourceMap().injectComponent(removeMenu);
         popup.add(map.get("downloadInformationAction"));
         popup.addSeparator();

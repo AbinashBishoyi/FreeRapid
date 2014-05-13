@@ -1,6 +1,8 @@
 package cz.vity.freerapid.gui.managers;
 
+import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.MainApp;
+import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.swing.SwingUtils;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.swing.ToolbarSeparator;
@@ -8,10 +10,13 @@ import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.swingx.JXFrame;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 
 /**
  * Sprava toolbaru Vytvari a ovlada cely toolbar
@@ -24,9 +29,13 @@ public class ToolbarManager implements PropertyChangeListener {
      */
     private final JPanel toolbarPanel = new JPanel(new BorderLayout());
     /**
-     * preferovana velikost buttonu v toolbaru
+     * button dimension with text
      */
-    private final static Dimension buttonDimension = new Dimension(74, 68);
+    private final static Dimension buttonDimensionWithText = new Dimension(74, 68);
+    /**
+     * button dimension without text
+     */
+    private final static Dimension buttonWithoutWithoutTextDimension = new Dimension(40, 38);
     /**
      * velikost mezery mezi buttony ruzneho typu
      */
@@ -72,9 +81,14 @@ public class ToolbarManager implements PropertyChangeListener {
 
     private void createToolbar() {
         toolbarPanel.add(toolbar);
-        toolbarPanel.setPreferredSize(new Dimension(400, 50));
         toolbar.setFocusable(false);
         toolbar.setFloatable(false);
+        final Border border = toolbar.getBorder();
+        Border innerBorder = BorderFactory.createEmptyBorder(2, 2, 1, 2);
+        if (border != null)
+            toolbar.setBorder(BorderFactory.createCompoundBorder(border, innerBorder));
+        else
+            toolbar.setBorder(innerBorder);
         toolbar.add(getButton(Swinger.getAction("addNewLinksAction")));
         toolbar.add(new ToolbarSeparator());
         toolbar.add(getButton(Swinger.getAction("resumeAction")));
@@ -89,6 +103,7 @@ public class ToolbarManager implements PropertyChangeListener {
 //        toolbar.add(getButton(Swinger.getAction("quit")));
         toolbar.add(Box.createGlue());
         final AbstractButton btn = getButton(Swinger.getAction("paypalSupportAction"));
+        btn.putClientProperty("noChange", true);
         btn.setOpaque(false);
         btn.setRolloverEnabled(false);
         btn.setBackground(null);
@@ -96,12 +111,64 @@ public class ToolbarManager implements PropertyChangeListener {
         btn.setBorder(new EmptyBorder(0, 0, 0, 0));
         toolbar.add(btn);
         toolbar.add(Box.createHorizontalStrut(18));
+
+        updateButtons(AppPrefs.getProperty(UserProp.SHOW_TEXT_TOOLBAR, UserProp.SHOW_TEXT_TOOLBAR_DEFAULT));
+
+
+        checkPreferences();
+
 //        this.labelWorkingProgress = new JXBusyLabel();
 //        this.labelWorkingProgress.setName("labelWorkingProgress");
 //        labelWorkingProgress.setBorder(BorderFactory.createEmptyBorder(2, 10, 2, 10));
 //        setWorkingProgress(false);
 //        toolbar.add(labelWorkingProgress);
     }
+
+    private void checkPreferences() {
+        AppPrefs.getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
+            public void preferenceChange(final PreferenceChangeEvent evt) {
+                if (UserProp.SHOW_TEXT_TOOLBAR.equals(evt.getKey())) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            updateButtons(Boolean.valueOf(evt.getNewValue()));
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private void updateButtons(boolean withText) {
+        final Component[] components = toolbar.getComponents();
+        Dimension dimension;
+
+        if (withText) {
+            toolbarPanel.setPreferredSize(new Dimension(400, 54));
+            dimension = buttonDimensionWithText;
+        } else {
+            dimension = buttonWithoutWithoutTextDimension;
+            toolbarPanel.setPreferredSize(new Dimension(400, 47));
+        }
+        for (Component c : components) {
+            if (c instanceof AbstractButton) {
+                AbstractButton button = (AbstractButton) c;
+                if (button.getClientProperty("noChange") != null)
+                    continue;
+                button.setMinimumSize(dimension);
+                button.setPreferredSize(dimension);
+                button.setMaximumSize(dimension);
+                if (withText) {
+                    updateButtonText(button, button.getAction());
+                } else {
+                    button.setText(null);
+                }
+
+            }
+        }
+        toolbar.getParent().validate();
+        toolbar.getParent().repaint();
+    }
+
 
     private void setToolBarVisible(boolean visible) {
         toolbarPanel.setVisible(visible);
@@ -133,18 +200,13 @@ public class ToolbarManager implements PropertyChangeListener {
         button.setRolloverEnabled(true);
         button.setIconTextGap(0);
         final Object desc = action.getValue(Action.SHORT_DESCRIPTION);
-        String s = (String) action.getValue(Action.NAME);
-        if (s != null && s.endsWith("..."))
-            s = s.substring(0, s.length() - 3);
-        button.setText(s);
+        //updateButtonText(button, action);
         final Font font = button.getFont();
         button.setFont(font.deriveFont(fontSize));
         button.setVerticalTextPosition(JButton.BOTTOM);
         button.setHorizontalTextPosition(JButton.CENTER);
-        button.setMinimumSize(buttonDimension);
+        button.setText(null);
 
-        button.setPreferredSize(buttonDimension);
-        button.setMaximumSize(buttonDimension);
         final Object keystroke = action.getValue(Action.ACCELERATOR_KEY);
         if (desc != null && keystroke != null) {
             button.setToolTipText(desc.toString() + " (" + SwingUtils.keyStroke2String((KeyStroke) keystroke) + ")");
@@ -153,6 +215,13 @@ public class ToolbarManager implements PropertyChangeListener {
         button.setMnemonic(0);
         button.setFocusable(false);
         return button;
+    }
+
+    private void updateButtonText(AbstractButton button, Action action) {
+        String s = (String) action.getValue(Action.NAME);
+        if (s != null && s.endsWith("..."))
+            s = s.substring(0, s.length() - 3);
+        button.setText(s);
     }
 
 

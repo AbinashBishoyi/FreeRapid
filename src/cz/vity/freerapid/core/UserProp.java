@@ -188,7 +188,7 @@ final public class UserProp {
     public static final String TEST_FILE = "testFiles"; //spusti test pred stahovanim
     public static final boolean TEST_FILE_DEFAULT = true;
 
-    public static final String SHOW_SERVICES_ICONS = "showServicesAsIcons"; //spusti test pred stahovanim
+    public static final String SHOW_SERVICES_ICONS = "showServicesAsIcons";
     public static final boolean SHOW_SERVICES_ICONS_DEFAULT = true;
 
     public static final String PLUGIN_UPDATE_CHECK_INTERVAL = "pluginUpdateCheckInterval";
@@ -206,5 +206,8 @@ final public class UserProp {
 
     public static final String RECHECK_FILES_ON_START = "recheckFilesOnStart";
     public static final boolean RECHECK_FILES_ON_START_DEFAULT = false;
+
+    public static final String SHOW_TEXT_TOOLBAR = "showButtonTextToolbar";
+    public static final boolean SHOW_TEXT_TOOLBAR_DEFAULT = true;
 
 }

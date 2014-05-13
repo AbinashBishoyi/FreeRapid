@@ -12,6 +12,13 @@ Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
 XXX December 2008 - FreeRapid Downloader 0.8 released
+  Added : new plugin - flyshare.cz [thanks to me! ;-)]
+  Added : new plugin - Upnito.sk [thanks to me! ;-)]
+  Added : new plugin - SaveFile.com [thanks to Alex!]
+  Added : new plugin - MediaFire.com [thanks to Lukiz!]
+  Added : new plugin - edisk.cz [thanks to Lukiz!]
+  Added : UI - added action to remove invalid/not existing links [requested by Alex]
+  Added : UI - ability to hide text under toolbar buttons [requested by Alex]
   Added : --portable command line switch for application start [requested by Rusttaf]
           - with this switch, configuration files will be stored in the 'config' folder,
             all file paths will be saved relatively to FRD folder (if possible) - useful for USB FLASH drives
@@ -29,8 +36,10 @@ XXX December 2008 - FreeRapid Downloader 0.8 released
   Added : UI - moving lines on right mouse dragged [requested by Tuiz] - http://bugtracker.wordrider.net/task/39?project=4
   Added : UI - clipboard monitoring catches links like http://blabla.com/?url=http:%25%25service.com%25 (decoding URL)
   Changed : UI - clipboard monitoring is ON by default
-  Changed : plugins are loaded on the fly (not during start) from system temporary directory
+  Changed : plugins are loaded on the fly (not during start) from the system temporary directory
   Changed : plugins - major intern changes and fixes in most of plugins
+  Changed : plugins - completely reworked intern API for plugins - now it's easier and faster to implement any plugin
+  Fixed : UI - unable to set Raven Graphics Glass Look and Feel
   Fixed : UI - clipboard monitoring didn't catch html links like <a href="http://service.com/asdasd/">Part1</a> [reported by Alex]
 
 10th November 2008 - FreeRapid Downloader 0.71 released
