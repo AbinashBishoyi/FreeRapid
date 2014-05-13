@@ -31,6 +31,8 @@ public abstract class AbstractRunner implements PluginRunner {
 
     private CaptchaSupport captchaSupport;
 
+    private boolean initialized = false;
+
     public AbstractRunner() {
 
     }
@@ -41,13 +43,18 @@ public abstract class AbstractRunner implements PluginRunner {
         this.client = downloader.getClient();
         this.httpFile = downloader.getDownloadFile();
         this.fileURL = httpFile.getFileUrl().toString();
+        initialized = true;
     }
 
     public void run(HttpFileDownloader downloader) throws Exception {
+        if (!initialized)
+            throw new IllegalStateException("Cannot run Run method. Runner was not initialized via init method");
         logger.info("Starting download 'run'" + fileURL);
     }
 
     public void runCheck(HttpFileDownloader downloader) throws Exception {
+        if (!initialized)
+            throw new IllegalStateException("Cannot run runCheck method. Runner was not initialized via init method");
         logger.info("Starting download 'runCheck' " + fileURL);
     }
 

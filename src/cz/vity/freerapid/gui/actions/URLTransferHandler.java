@@ -9,8 +9,10 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -59,6 +61,7 @@ public abstract class URLTransferHandler extends TransferHandler {
 //            }
 //
 //        }
+        data = data.replaceAll("=http", " http");
         final Matcher match = REGEXP_URL.matcher(data);
         int start = 0;
         final String http = "http://";
@@ -143,15 +146,34 @@ public abstract class URLTransferHandler extends TransferHandler {
                         final URL url = (URL) transferData;
                         if (pluginsManager.isSupported(url))
                             urls.add(url);
+                        else { //search for our URLs as text
+                            try {
+                                final String s = URLDecoder.decode(url.toExternalForm(), "UTF-8");
+                                urls.addAll(textURIListToFileList(s));
+                            } catch (UnsupportedEncodingException e) {
+                                //ignore
+                            }
+                        }
                     }
                 } catch (UnsupportedFlavorException e) {
                     //ignore
                 } catch (IOException e) {
                     //ignore
                 }
-            } else if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                String data = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-                urls = textURIListToFileList(data);
+            } else {
+                DataFlavor htmlFavor = null;
+                try {
+                    htmlFavor = new DataFlavor("text/html;class=java.lang.String");
+                } catch (ClassNotFoundException e) {
+                    LogUtils.processException(logger, e);
+                }
+                if (htmlFavor != null && transferable.isDataFlavorSupported(htmlFavor)) {
+                    String data = (String) transferable.getTransferData(htmlFavor);
+                    urls = textURIListToFileList(data);
+                } else if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                    String data = (String) transferable.getTransferData(DataFlavor.stringFlavor);
+                    urls = textURIListToFileList(data);
+                }
             }
 
             if (urls.isEmpty()) {
