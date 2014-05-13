@@ -40,7 +40,8 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
     private final Object lock = new Object();
     private int completed;
     private PluginsManager pluginsManager;
-    private float averageSpeed;
+    private float averageSpeed = 0;
+    private int speed = 0;
 
     private int dataChanged = 0;
     private final Object saveFileLock = new Object();
@@ -211,21 +212,32 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
 
     public void propertyChange(final PropertyChangeEvent evt) {
         final String s = evt.getPropertyName();
-        synchronized (this.lock) {
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    // logger.info("Firing contents changed");
-                    downloadFiles.fireContentsChanged(getIndex(evt.getSource()));
-                    if ("state".equals(s)) {
-                        firePropertyChange(s, evt.getOldValue(), evt.getNewValue());
-                        fireDataChanged();
-                    } else if ("speed".equals(s)) {
-                        firePropertyChange(s, -1, getCurrentAllSpeed());
-                        firePropertyChange("averageSpeed", -1, getAverageSpeed());
-                    }
+
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                // logger.info("Firing contents changed");
+                downloadFiles.fireContentsChanged(getIndex(evt.getSource()));
+                if ("state".equals(s)) {
+                    firePropertyChange(s, evt.getOldValue(), evt.getNewValue());
+                    fireDataChanged();
+                } else if ("averageSpeed".equals(s)) {
+                    final float oldValue = averageSpeed;
+                    averageSpeed -= (Float) evt.getOldValue();
+                    averageSpeed += (Float) evt.getNewValue();
+                    firePropertyChange(s, oldValue, averageSpeed);
+                } else if ("speed".equals(s)) {
+                    final int oldValue = speed;
+                    speed -= (Long) evt.getOldValue();
+                    speed += (Long) evt.getNewValue();
+                    firePropertyChange(s, oldValue, speed);
                 }
-            });
-        }
+//                    } else if ("speed".equals(s)) {
+//                        firePropertyChange(s, -1, getCurrentAllSpeed());
+//                        firePropertyChange("averageSpeed", -1, getAverageSpeed());
+//                    }
+            }
+        });
+
     }
 
     public boolean hasDownloadFilesStates(int[] indexes, DownloadState... states) {
@@ -431,18 +443,18 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         }
     }
 
-    public int getCurrentAllSpeed() {
-
-        int speed = 0;
-        averageSpeed = 0;
-        for (DownloadFile file : downloadFiles) {
-            if (file.getState() == DownloadState.DOWNLOADING) {
-                speed += file.getSpeed();
-                averageSpeed += file.getAverageSpeed();
-            }
-        }
-        return speed;
-    }
+//    public int getCurrentAllSpeed() {
+//
+//        int speed = 0;
+//        averageSpeed = 0;
+//        for (DownloadFile file : downloadFiles) {
+//            if (file.getState() == DownloadState.DOWNLOADING) {
+//                speed += file.getSpeed();
+//                averageSpeed += file.getAverageSpeed();
+//            }
+//        }
+//        return speed;
+//    }
 
 
     public float getAverageSpeed() {
@@ -547,5 +559,9 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
 
     public ProcessManager getProcessManager() {
         return processManager;
+    }
+
+    public int getCurrentSpeed() {
+        return speed;
     }
 }

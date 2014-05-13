@@ -15,6 +15,9 @@ import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.prefs.PreferenceChangeEvent;
@@ -80,6 +83,17 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
             });
 
             clipboardMonitoring = new JLabel();
+            clipboardMonitoring.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    final boolean b = AppPrefs.getProperty(UserProp.CLIPBOARD_MONITORING, UserProp.CLIPBOARD_MONITORING_DEFAULT);
+                    final Action action = app.getContext().getActionMap().get("monitorClipboardAction");
+                    action.putValue(Action.SELECTED_KEY, !b);
+                    action.actionPerformed(new ActionEvent(this, 0, ""));
+                }
+            });
+
+
             clipboardMonitoring.setName("labelClipboardMonitoring");
             resourceMap.injectComponent(clipboardMonitoring);
 
@@ -197,7 +211,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
     private void updateInfoStatus() {
         final int completed = dataManager.getCompleted();
         final int size = dataManager.getDownloadFiles().size();
-        final int speed = dataManager.getCurrentAllSpeed();
+        final int speed = dataManager.getCurrentSpeed();
         final TrayIconSupport trayIconSupport = app.getTrayIconSupport();
         final boolean showInFrameTitle = AppPrefs.getProperty(UserProp.SHOWINFO_IN_TITLE, UserProp.SHOWINFO_IN_TITLE_DEFAULT);
         final String speedFormatted = ContentPanel.bytesToAnother(speed);

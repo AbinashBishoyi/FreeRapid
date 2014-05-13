@@ -33,6 +33,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     protected final DownloadFile downloadFile;
     private ShareDownloadService service;
     private long speedInBytes;
+    private float averageSpeed;
     private long counter;
     private Integer sleep = 0;
     private File outputFile;
@@ -58,6 +59,8 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         this.setUserCanCancel(true);
         this.youHaveToSleepSecondsTime = 0;
         this.connectionTimeOut = false;
+        this.speedInBytes = 0;
+        this.averageSpeed = 0;
     }
 
     protected Void doInBackground() throws Exception {
@@ -202,6 +205,8 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
             }
         }
         finally {
+            setSpeed(0);
+            setAverageSpeed(0);
             checkDeleteTempFile();
         }
 
@@ -263,7 +268,13 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     }
 
     protected void setAverageSpeed(float avgSpeed) {
-        firePropertyChange("averageSpeed", 0, avgSpeed);
+        float oldValue, newValue;
+        synchronized (this) {
+            oldValue = this.averageSpeed;
+            this.averageSpeed = avgSpeed;
+            newValue = this.averageSpeed;
+        }
+        firePropertyChange("averageSpeed", oldValue, newValue);
     }
 
     @Override

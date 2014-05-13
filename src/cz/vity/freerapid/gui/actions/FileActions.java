@@ -5,6 +5,7 @@ import cz.vity.freerapid.gui.dialogs.NewLinksDialog;
 import cz.vity.freerapid.gui.managers.DataManager;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
 import cz.vity.freerapid.model.DownloadFile;
+import cz.vity.freerapid.swing.Swinger;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ProxyActions;
 import org.jdesktop.beans.AbstractBean;
@@ -46,8 +47,10 @@ public class FileActions extends AbstractBean {
         if (!showing)
             dialog = new NewLinksDialog(managerDirector, app.getMainFrame());
 
-        if (urlList != null)
+        if (urlList != null) {
+            Swinger.bringToFront(app.getMainFrame());
             dialog.setURLs(urlList);
+        }
         if (!showing) {
             app.prepareDialog(dialog, true);
             if (dialog.getModalResult() == NewLinksDialog.RESULT_OK) {
