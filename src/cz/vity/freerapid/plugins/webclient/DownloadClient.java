@@ -87,16 +87,25 @@ public class DownloadClient implements HttpDownloadClient {
         int statuscode = method.getStatusCode();
 
         if (statuscode == HttpStatus.SC_OK) {
+            boolean isImage = false;
+            final Header contentType = method.getResponseHeader("Content-Type");
+            if (contentType == null) {
+                logger.warning("No Content-Type!");
+            } else {
+                final String value = contentType.getValue();
+                isImage = contentType.getValue().startsWith("image/");
+                if (!value.startsWith("application/") || !isImage) {
+                    logger.warning("Suspicious Content-Type:" + contentType.getValue());
+                } else {
+                    final Header contentLength = method.getResponseHeader("Content-Length");
+                    if (contentLength == null)
+                        logger.warning("No Content-Length in header");
+                    else
+                        file.setFileSize(new Long(contentLength.getValue()));
+                }
+            }
             final Header disposition = method.getResponseHeader("Content-Disposition");
             if (disposition != null && disposition.getValue().toLowerCase().contains("attachment")) {
-                final Header contentType = method.getResponseHeader("Content-Type");
-                if (contentType == null) {
-                    logger.warning("No Content-Type!");
-                } else if (!contentType.getValue().startsWith("application/")) {
-                    logger.warning("Suspicious Content-Type:" + contentType.getValue());
-                }
-                final Header contentLength = method.getResponseHeader("Content-Length");
-                file.setFileSize(new Long(contentLength.getValue()));
                 final String value = disposition.getValue();
                 final String str = "filename=";
                 final int index = value.toLowerCase().indexOf(str);
@@ -106,10 +115,15 @@ public class DownloadClient implements HttpDownloadClient {
                         s = s.substring(1, s.length() - 1);
                     file.setFileName(s);
                 } else logger.warning("File name was not found in:" + value);
+
                 return method.getResponseBodyAsStream();
             } else {
-                logger.warning("Loading file failed");
-                updateAsString(method);
+                if (isImage) {
+                    return method.getResponseBodyAsStream();
+                } else {
+                    logger.warning("Loading file failed");
+                    updateAsString(method);
+                }
             }
         } else {
             logger.warning("Loading file failed");
