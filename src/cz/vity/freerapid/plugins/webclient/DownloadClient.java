@@ -1,5 +1,6 @@
 package cz.vity.freerapid.plugins.webclient;
 
+import cz.vity.freerapid.utilities.LogUtils;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
@@ -136,7 +137,12 @@ public class DownloadClient implements HttpDownloadClient {
                 String s = value.substring(index + str.length());
                 if (s.startsWith("\"") && s.endsWith("\""))
                     s = s.substring(1, s.length() - 1);
-                return s;
+                try {
+                    return new String(s.getBytes(), "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    LogUtils.processException(logger, e);
+                    return s;
+                }
             } else {
                 logger.warning("File name was not found in:" + value);
             }
