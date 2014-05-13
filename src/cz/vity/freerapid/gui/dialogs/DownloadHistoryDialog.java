@@ -62,8 +62,10 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
     private static final int COLUMN_SIZE = 3;
     private static final int COLUMN_URL = 4;
 
-    private boolean selectedEnabled = false;
     private static final String SELECTED_ACTION_ENABLED_PROPERTY = "selectedEnabled";
+    private boolean selectedEnabled;
+    private static final String FILE_EXISTS_ENABLED_PROPERTY = "fileExistsEnabled";
+    private boolean fileExistsEnabled;
     private final ManagerDirector director;
 
     private final String exampleSearchString;
@@ -155,10 +157,10 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
 
     @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
     public void copyContent() {
-        final int[] rows = table.getSelectedRows();
+        final int[] rows = getSelectedRows();
 
         final TableModel tableModel = table.getModel();
-        final int selCol = table.getSelectedColumn();
+        final int selCol = table.convertColumnIndexToModel(table.getSelectedColumn());
         StringBuilder builder = new StringBuilder();
         String value;
         for (int row : rows) {
@@ -176,9 +178,18 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         clipboard.setContents(stringSelection, this);
     }
 
+    private int[] getSelectedRows() {
+        final int[] ints = table.getSelectedRows();
+
+        for (int i = 0; i < ints.length; i++) {
+            ints[i] = table.convertRowIndexToModel(ints[i]);
+        }
+        return ints;
+    }
+
     @Action
     public void copyURL() {
-        final java.util.List<FileHistoryItem> files = manager.getSelectionToList(table.getSelectedRows());
+        final java.util.List<FileHistoryItem> files = manager.getSelectionToList(getSelectedRows());
         StringBuilder builder = new StringBuilder();
         for (FileHistoryItem file : files) {
             builder.append(file.getUrl().toExternalForm()).append('\n');
@@ -188,18 +199,18 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         clipboard.setContents(stringSelection, this);
     }
 
-    @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
+    @org.jdesktop.application.Action(enabledProperty = FILE_EXISTS_ENABLED_PROPERTY)
     public void openFileAction() {
-        final int[] indexes = table.getSelectedRows();
+        final int[] indexes = getSelectedRows();
         final java.util.List<FileHistoryItem> files = manager.getSelectionToList(indexes);
         for (FileHistoryItem file : files) {
             OSDesktop.openFile(file.getOutputFile());
         }
     }
 
-    @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
+    @org.jdesktop.application.Action(enabledProperty = DownloadHistoryDialog.SELECTED_ACTION_ENABLED_PROPERTY)
     public void openInBrowser() {
-        final java.util.List<FileHistoryItem> files = manager.getSelectionToList(table.getSelectedRows());
+        final java.util.List<FileHistoryItem> files = manager.getSelectionToList(getSelectedRows());
         for (FileHistoryItem file : files) {
             Browser.openBrowser(file.getUrl().toExternalForm());
         }
@@ -207,7 +218,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
 
     @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
     public void openDirectoryAction() {
-        final int[] indexes = table.getSelectedRows();
+        final int[] indexes = getSelectedRows();
         final java.util.List<FileHistoryItem> files = manager.getSelectionToList(indexes);
         for (FileHistoryItem file : files) {
             if (file.getOutputFile().exists())
@@ -402,24 +413,42 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
     }
 
     private void updateActions() {
-        final int[] indexes = table.getSelectedRows();
+        final int[] indexes = getSelectedRows();
         setSelectedEnabled(indexes.length > 0);
+        boolean valid = true;
+        final java.util.List<FileHistoryItem> items = this.manager.getSelectionToList(indexes);
+        for (FileHistoryItem item : items) {
+            if (!item.getOutputFile().exists()) {
+                valid = false;
+                break;
+            }
+        }
+        setFileExistsEnabled(valid);
     }
 
     public boolean isSelectedEnabled() {
-        return selectedEnabled;
+        return this.selectedEnabled;
     }
 
-    public void setSelectedEnabled(boolean selectedEnabled) {
+    public void setSelectedEnabled(final boolean selectedEnabled) {
         boolean oldValue = this.selectedEnabled;
         this.selectedEnabled = selectedEnabled;
         firePropertyChange(SELECTED_ACTION_ENABLED_PROPERTY, oldValue, selectedEnabled);
     }
 
+    public boolean isFileExistsEnabled() {
+        return fileExistsEnabled;
+    }
 
-    @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
+    public void setFileExistsEnabled(boolean fileExistsEnabled) {
+        boolean oldValue = this.fileExistsEnabled;
+        this.fileExistsEnabled = fileExistsEnabled;
+        firePropertyChange(FILE_EXISTS_ENABLED_PROPERTY, oldValue, fileExistsEnabled);
+    }
+
+    @org.jdesktop.application.Action(enabledProperty = DownloadHistoryDialog.FILE_EXISTS_ENABLED_PROPERTY)
     public void deleteFileAction() {
-        final int[] indexes = table.getSelectedRows();
+        final int[] indexes = getSelectedRows();
         final java.util.List<FileHistoryItem> files = manager.getSelectionToList(indexes);
         StringBuilder builder = new StringBuilder();
         for (FileHistoryItem file : files) {
@@ -438,7 +467,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
     public void removeSelectedAction() {
         final ListSelectionModel selectionModel = table.getSelectionModel();
         selectionModel.setValueIsAdjusting(true);
-        final int[] indexes = table.getSelectedRows();
+        final int[] indexes = getSelectedRows();
         manager.removeSelected(indexes);
         selectionModel.setValueIsAdjusting(false);
         final int min = getArrayMin(indexes);
@@ -447,6 +476,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
                 final int count = table.getRowCount();
                 if (table.getRowCount() > 0) {
                     int index = Math.min(count - 1, min);
+                    index = table.convertRowIndexToView(index);
                     selectionModel.addSelectionInterval(index, index);
                 }
             }
@@ -530,25 +560,15 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
     private void showPopMenu(MouseEvent e) {
         final JPopupMenu popup = new JPopupMenu();
         final ActionMap map = this.getActionMap();
-        boolean valid = true;
-        final java.util.List<FileHistoryItem> items = this.manager.getSelectionToList(table.getSelectedRows());
-        for (FileHistoryItem item : items) {
-            if (!item.getOutputFile().exists()) {
-                valid = false;
-                break;
-            }
-        }
-
-
         final javax.swing.Action openFileAction = map.get("openFileAction");
-        openFileAction.setEnabled(valid);
+
 
         popup.add(openFileAction);
         final javax.swing.Action deleteFileAction = map.get("deleteFileAction");
-        deleteFileAction.setEnabled(valid);
+
         popup.add(deleteFileAction);
         final javax.swing.Action openDirectoryAction = map.get("openDirectoryAction");
-        openDirectoryAction.setEnabled(valid);
+
         popup.add(openDirectoryAction);
         popup.addSeparator();
         popup.add(map.get("copyContent"));
@@ -637,7 +657,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
 
 
             final Calendar today = Calendar.getInstance();
-            today.set(Calendar.HOUR, 0);
+            today.set(Calendar.HOUR_OF_DAY, 0);
             today.set(Calendar.MINUTE, 0);
             today.set(Calendar.SECOND, 1);
 
@@ -651,10 +671,10 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
                     break;
                 case YESTERDAY:
                     final Calendar yesterday = Calendar.getInstance();
-                    yesterday.set(Calendar.HOUR, 0);
+                    yesterday.add(Calendar.DATE, -1);
+                    yesterday.set(Calendar.HOUR_OF_DAY, 0);
                     yesterday.set(Calendar.MINUTE, 0);
                     yesterday.set(Calendar.SECOND, 1);
-                    yesterday.add(Calendar.DATE, -1);
 
                     if (valueDate.after(yesterday) && valueDate.before(today)) {
                         return true;
@@ -663,7 +683,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
                     break;
                 case LAST_WEEK:
                     final Calendar last7Days = Calendar.getInstance();
-                    last7Days.set(Calendar.HOUR, 0);
+                    last7Days.set(Calendar.HOUR_OF_DAY, 0);
                     last7Days.set(Calendar.MINUTE, 0);
                     last7Days.set(Calendar.SECOND, 1);
                     last7Days.add(Calendar.DATE, -7);
@@ -674,7 +694,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
                     break;
                 case LAST_MONTH:
                     final Calendar last31Days = Calendar.getInstance();
-                    last31Days.set(Calendar.HOUR, 0);
+                    last31Days.set(Calendar.HOUR_OF_DAY, 0);
                     last31Days.set(Calendar.MINUTE, 0);
                     last31Days.set(Calendar.SECOND, 1);
                     last31Days.add(Calendar.DATE, -31);
@@ -684,7 +704,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
                     break;
                 case THIS_CALENDAR_MONTH:
                     today.set(Calendar.DAY_OF_MONTH, 1);
-                    today.set(Calendar.HOUR, 0);
+                    today.set(Calendar.HOUR_OF_DAY, 0);
                     today.set(Calendar.MINUTE, 0);
                     today.set(Calendar.SECOND, 1);
 
@@ -712,14 +732,15 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
             final Calendar valueDate = Calendar.getInstance();
             valueDate.setTimeInMillis(value);
             final Calendar today = Calendar.getInstance();
-            today.set(Calendar.HOUR, 0);
+            today.set(Calendar.HOUR_OF_DAY, 0);
             today.set(Calendar.MINUTE, 0);
-            today.set(Calendar.SECOND, 0);
+            today.set(Calendar.SECOND, 1);
             //long todayStart = today.getTimeInMillis();
             if (valueDate.after(today)) {
                 return String.format("%tH:%tM", value, value);
             }
             today.add(Calendar.DATE, -1);
+            //  System.out.printf("today = %1$tm %1$te,%1$tY %1$tH:%1$tM", today);
             if (valueDate.after(today)) {
                 return "yesterday";
             }

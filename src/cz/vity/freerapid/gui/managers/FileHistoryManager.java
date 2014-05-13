@@ -40,7 +40,9 @@ public class FileHistoryManager implements Application.ExitListener {
         saveList();
     }
 
-    private void saveList() {
+    private synchronized void saveList() {
+        if (!loaded) // pokud to neni loaded, tak to znamena, ze jsem s tim seznamem nemanipuloval
+            return;
         final LocalStorage localStorage = context.getLocalStorage();
         try {
             localStorage.save(getItems(), FILES_LIST_XML);

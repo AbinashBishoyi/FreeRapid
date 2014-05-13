@@ -125,9 +125,9 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                         setSpeed(speed);
 
                         if (speed == 0) {
-                            if (noDataTimeOut >= NO_DATA_TIMEOUT_LIMIT) { //X seconds with no data
+                            if (++noDataTimeOut >= NO_DATA_TIMEOUT_LIMIT) { //X seconds with no data
                                 logger.info("Cancelling download - no downloaded data during " + NO_DATA_TIMEOUT_LIMIT + " seconds");
-                                this.cancel();
+                                this.cancel();//radsi driv
                                 DownloadTask.this.cancel(true);
                                 return;
                             }

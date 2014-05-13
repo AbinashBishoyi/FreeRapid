@@ -95,16 +95,25 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     @org.jdesktop.application.Action(enabledProperty = COMPLETED_OK_ACTION_ENABLED_PROPERTY)
     public void openFileAction() {
-        final int[] indexes = table.getSelectedRows();
+        final int[] indexes = getSelectedRows();
         final java.util.List<DownloadFile> files = manager.getSelectionToList(indexes);
         for (DownloadFile file : files) {
             OSDesktop.openFile(file.getOutputFile());
         }
     }
 
+    private int[] getSelectedRows() {
+        final int[] ints = table.getSelectedRows();
+
+        for (int i = 0; i < ints.length; i++) {
+            ints[i] = table.convertRowIndexToModel(ints[i]);
+        }
+        return ints;
+    }
+
     @org.jdesktop.application.Action(enabledProperty = COMPLETED_OK_ACTION_ENABLED_PROPERTY)
     public void deleteFileAction() {
-        final int[] indexes = table.getSelectedRows();
+        final int[] indexes = getSelectedRows();
         final java.util.List<DownloadFile> files = manager.getSelectionToList(indexes);
         StringBuilder builder = new StringBuilder();
         for (DownloadFile file : files) {
@@ -122,7 +131,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     @org.jdesktop.application.Action(enabledProperty = COMPLETED_OK_ACTION_ENABLED_PROPERTY)
     public void openDirectoryAction() {
-        final int[] indexes = table.getSelectedRows();
+        final int[] indexes = getSelectedRows();
         final java.util.List<DownloadFile> files = manager.getSelectionToList(indexes);
         for (DownloadFile file : files) {
             OSDesktop.openFile(file.getOutputFile().getParentFile());
@@ -131,17 +140,17 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     @org.jdesktop.application.Action(enabledProperty = RESUME_ACTION_ENABLED_PROPERTY)
     public void resumeAction() {
-        manager.resumeSelected(table.getSelectedRows());
+        manager.resumeSelected(getSelectedRows());
     }
 
     @org.jdesktop.application.Action(enabledProperty = PAUSE_ACTION_ENABLED_PROPERTY)
     public void pauseAction() {
-        manager.pauseSelected(table.getSelectedRows());
+        manager.pauseSelected(getSelectedRows());
     }
 
     @org.jdesktop.application.Action(enabledProperty = CANCEL_ACTION_ENABLED_PROPERTY)
     public void cancelAction() {
-        manager.cancelSelected(table.getSelectedRows());
+        manager.cancelSelected(getSelectedRows());
     }
 
     @org.jdesktop.application.Action(enabledProperty = REMOVECOMPLETED_ACTION_ENABLED_PROPERTY)
@@ -159,7 +168,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     @org.jdesktop.application.Action(enabledProperty = NONEMPTY_ACTION_ENABLED_PROPERTY)
     public void invertSelectionAction() {
-        final int[] indexes = table.getSelectedRows();
+        final int[] indexes = getSelectedRows();
         final int count = table.getModel().getRowCount();
         final ListSelectionModel selectionModel = table.getSelectionModel();
         selectionModel.setValueIsAdjusting(true);
@@ -167,8 +176,10 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         if (indexes.length > 1)
             Arrays.sort(indexes);
         for (int i = 0; i < count; i++) {
-            if (Arrays.binarySearch(indexes, i) < 0)
-                selectionModel.addSelectionInterval(i, i);
+            if (Arrays.binarySearch(indexes, i) < 0) {
+                int index = table.convertRowIndexToView(i);
+                selectionModel.addSelectionInterval(index, index);
+            }
         }
         selectionModel.setValueIsAdjusting(false);
     }
@@ -177,7 +188,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     public void removeSelectedAction() {
         final ListSelectionModel selectionModel = table.getSelectionModel();
         selectionModel.setValueIsAdjusting(true);
-        final int[] indexes = table.getSelectedRows();
+        final int[] indexes = getSelectedRows();
         manager.removeSelected(indexes);
         selectionModel.setValueIsAdjusting(false);
         final int min = getArrayMin(indexes);
@@ -186,6 +197,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                 final int count = table.getRowCount();
                 if (table.getRowCount() > 0) {
                     int index = Math.min(count - 1, min);
+                    index = table.convertRowIndexToView(index);
                     selectionModel.addSelectionInterval(index, index);
                 }
             }
@@ -206,7 +218,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     public void topAction() {
         final ListSelectionModel selectionModel = table.getSelectionModel();
         selectionModel.setValueIsAdjusting(true);
-        final int[] indexes = table.getSelectedRows();
+        final int[] indexes = getSelectedRows();
         manager.moveTop(indexes);
         selectionModel.setValueIsAdjusting(false);
         selectionModel.setSelectionInterval(0, indexes.length - 1);
@@ -216,10 +228,11 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     public void upAction() {
         final ListSelectionModel selectionModel = table.getSelectionModel();
         selectionModel.setValueIsAdjusting(true);
-        final int[] indexes = table.getSelectedRows();
+        final int[] indexes = getSelectedRows();
         manager.moveUp(indexes);
         selectionModel.clearSelection();
         for (int index : indexes) {
+            index = table.convertRowIndexToView(index);
             selectionModel.addSelectionInterval(index, index);
         }
         selectionModel.setValueIsAdjusting(false);
@@ -229,10 +242,11 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     public void downAction() {
         final ListSelectionModel selectionModel = table.getSelectionModel();
         selectionModel.setValueIsAdjusting(true);
-        final int[] indexes = table.getSelectedRows();
+        final int[] indexes = getSelectedRows();
         manager.moveDown(indexes);
         selectionModel.clearSelection();
         for (int index : indexes) {
+            index = table.convertRowIndexToView(index);
             selectionModel.addSelectionInterval(index, index);
         }
         selectionModel.setValueIsAdjusting(false);
@@ -242,7 +256,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     public void bottomAction() {
         final ListSelectionModel selectionModel = table.getSelectionModel();
         selectionModel.setValueIsAdjusting(true);
-        final int[] indexes = table.getSelectedRows();
+        final int[] indexes = getSelectedRows();
         manager.moveBottom(indexes);
         selectionModel.setValueIsAdjusting(false);
         final int rowCount = table.getRowCount();
@@ -252,7 +266,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
     public void openInBrowser() {
-        final java.util.List<DownloadFile> files = manager.getSelectionToList(table.getSelectedRows());
+        final java.util.List<DownloadFile> files = manager.getSelectionToList(getSelectedRows());
         for (HttpFile file : files) {
             Browser.openBrowser(file.getFileUrl().toExternalForm());
         }
@@ -354,7 +368,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     }
 
     private void updateActions() {
-        final int[] indexes = table.getSelectedRows();
+        final int[] indexes = getSelectedRows();
         final boolean enabledCancel = this.manager.hasDownloadFilesStates(indexes, DownloadState.COMPLETED, DownloadState.ERROR, DownloadState.DOWNLOADING, DownloadState.GETTING, DownloadState.WAITING, DownloadState.PAUSED);
         setCancelActionEnabled(enabledCancel);
 
@@ -380,7 +394,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             final boolean enabledResume = this.manager.hasDownloadFilesStates(indexes, DownloadState.ERROR, DownloadState.CANCELLED, DownloadState.PAUSED);
             setResumeActionEnabled(enabledResume);
 
-            final boolean enabledPause = this.manager.hasDownloadFilesStates(indexes, DownloadState.ERROR, DownloadState.GETTING, DownloadState.QUEUED, DownloadState.WAITING, DownloadState.DOWNLOADING);
+            final boolean enabledPause = this.manager.hasDownloadFilesStates(indexes, DownloadState.ERROR, DownloadState.GETTING, DownloadState.QUEUED, DownloadState.WAITING);
             setPauseActionEnabled(enabledPause);
 
             setCompletedWithFilesEnabled(false);
@@ -449,7 +463,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
     public void copyContent() {
-        final java.util.List<DownloadFile> files = manager.getSelectionToList(table.getSelectedRows());
+        final java.util.List<DownloadFile> files = manager.getSelectionToList(getSelectedRows());
         StringBuilder builder = new StringBuilder();
         for (DownloadFile file : files) {
             builder.append(file.toString()).append('\n');
@@ -481,7 +495,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         JMenu forceMenu = new JMenu("Force Download");
         forceMenu.setMnemonic('F');
 //      menu.add(forceMenu);
-        boolean forceEnabled = isSelectedEnabled() && this.manager.hasDownloadFilesStates(table.getSelectedRows(), DownloadState.QUEUED, DownloadState.PAUSED, DownloadState.CANCELLED);
+        boolean forceEnabled = isSelectedEnabled() && this.manager.hasDownloadFilesStates(getSelectedRows(), DownloadState.QUEUED, DownloadState.PAUSED, DownloadState.CANCELLED);
         forceMenu.setEnabled(forceEnabled);
         final List<ConnectionSettings> connectionSettingses = director.getClientManager().getAvailableConnections();
         for (ConnectionSettings settings : connectionSettingses) {
@@ -521,11 +535,15 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     public void valueChanged(ListSelectionEvent e) {
         if (e.getValueIsAdjusting())
             return;
-        updateActions();
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                updateActions();
+            }
+        });
     }
 
     public void intervalAdded(ListDataEvent e) {
-        if (isInInterval(table.getSelectedRows(), e.getIndex0(), e.getIndex1())) {
+        if (isInInterval(getSelectedRows(), e.getIndex0(), e.getIndex1())) {
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                     updateActions();
@@ -864,7 +882,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         }
 
         public void actionPerformed(ActionEvent e) {
-            manager.forceDownload(settings, table.getSelectedRows());
+            manager.forceDownload(settings, getSelectedRows());
         }
     }
 
