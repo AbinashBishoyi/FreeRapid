@@ -14,6 +14,23 @@ public class SwingUtils {
 
     }
 
+
+    public static KeyStroke getKeyStroke(final int keyCode) {
+        return KeyStroke.getKeyStroke(keyCode, 0);
+    }
+
+    public static KeyStroke getCtrlKeyStroke(final int keyCode) {
+        return KeyStroke.getKeyStroke(keyCode, InputEvent.CTRL_DOWN_MASK);
+    }
+
+    public static KeyStroke getShiftKeyStroke(final int keyCode) {
+        return KeyStroke.getKeyStroke(keyCode, InputEvent.SHIFT_DOWN_MASK);
+    }
+
+    public static KeyStroke getAltKeyStroke(final int keyCode) {
+        return KeyStroke.getKeyStroke(keyCode, InputEvent.ALT_DOWN_MASK);
+    }
+
     /**
      * Metoda prevede klavesovou zkratku na jeji textovou reprezentaci
      *
@@ -132,7 +149,7 @@ public class SwingUtils {
             case KeyEvent.VK_DOWN:
                 return "DOWN";
 
-            // numpad numeric keys handled below
+                // numpad numeric keys handled below
             case KeyEvent.VK_MULTIPLY:
                 return "MULTIPLY";
             case KeyEvent.VK_ADD:
@@ -371,4 +388,11 @@ public class SwingUtils {
         return "unknown(0x" + Integer.toString(keyCode, 16) + ")";
     }
 
+    public static KeyStroke getCtrlAltKeyStroke(final int vkC) {
+        return KeyStroke.getKeyStroke(vkC, InputEvent.ALT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK);
+    }
+
+    public static KeyStroke getCtrlShiftKeyStroke(final int vkC) {
+        return KeyStroke.getKeyStroke(vkC, InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK);
+    }
 }

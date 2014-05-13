@@ -44,7 +44,7 @@ public class MainApp extends SingleXFrameApplication {
 
         LogUtils.initLogging(debug);//logovani nejdrive    
 
-        this.appPrefs = new AppPrefs(this.getContext(), line.getProperties());
+        this.appPrefs = new AppPrefs(this.getContext(), line.getProperties(), line.isResetOptions());
 
         final String path = Utils.getAppPath();//Utils pouzivaji AppPrefs i logovani
         int index = path.indexOf('+');
@@ -76,6 +76,7 @@ public class MainApp extends SingleXFrameApplication {
 
     @Override
     protected void startup() {
+        super.startup();
         director = new ManagerDirector(getContext());
         director.initComponents();
         initMainFrame();

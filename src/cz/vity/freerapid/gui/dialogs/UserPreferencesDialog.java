@@ -23,6 +23,9 @@ import cz.vity.freerapid.swing.LaF;
 import cz.vity.freerapid.swing.LookAndFeels;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.LogUtils;
+import cz.vity.freerapid.utilities.os.OSCommand;
+import cz.vity.freerapid.utilities.os.SystemCommander;
+import cz.vity.freerapid.utilities.os.SystemCommanderFactory;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.swinghelper.buttonpanel.JXButtonPanel;
@@ -87,6 +90,10 @@ public class UserPreferencesDialog extends AppDialog {
         setAction(btnOK, "okBtnAction");
         setAction(btnCancel, "cancelBtnAction");
         setAction(btnSelectConnectionProxy, "btnSelectConnectionProxy");
+        setAction(btnCreateDesktopShortcut, "createDesktopShortcut");
+        setAction(btnCreateQuickLaunchShortcut, "createQuickLaunchShortcut");
+        setAction(btnCreateStartMenuShortcut, "createStartMenuShortcut");
+        setAction(btnCreateStartupShortcut, "createStartupShortcut");
 
 
         setDefaultValues();
@@ -201,7 +208,8 @@ public class UserPreferencesDialog extends AppDialog {
         bind(checkAllowOnlyOneInstance, FWProp.ONEINSTANCE, FWProp.ONE_INSTANCE_DEFAULT);
         bind(checkForNewVersion, FWProp.NEW_VERSION, true);
         bind(checkContinueInterrupted, UserProp.DOWNLOAD_ON_APPLICATION_START, true);
-        bind(checkCloseWhenAllComplete, UserProp.CLOSE_WHEN_COMPLETED, false);
+        bind(checkUseHistory, UserProp.USE_HISTORY, UserProp.USE_HISTORY_DEFAULT);
+        bind(checkAutoShutDownDisabledWhenExecuted, UserProp.AUTOSHUTDOWN_DISABLED_WHEN_EXECUTED, UserProp.AUTOSHUTDOWN_DISABLED_WHEN_EXECUTED_DEFAULT);
 
         bind(spinnerMaxConcurrentDownloads, UserProp.MAX_DOWNLOADS_AT_A_TIME, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT, 1, 9, 1);
         bind(spinnerErrorAttemptsCount, UserProp.ERROR_ATTEMPTS_COUNT, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT, -1, 999, 1);
@@ -223,6 +231,13 @@ public class UserPreferencesDialog extends AppDialog {
 
         bind(checkAnimateIcon, UserProp.ANIMATE_ICON, UserProp.ANIMATE_ICON_DEFAULT);
         bind(checkShowTitle, UserProp.SHOWINFO_IN_TITLE, UserProp.SHOWINFO_IN_TITLE_DEFAULT);
+
+        bind(checkConfirmExiting, UserProp.CONFIRM_EXITING, UserProp.CONFIRM_EXITING_DEFAULT);
+        bind(checkConfirmFileDeletion, UserProp.CONFIRM_FILE_DELETE, UserProp.CONFIRM_FILE_DELETE_DEFAULT);
+        final ValueModel confirmRemove = bind(checkConfirmFileRemove, UserProp.CONFIRM_REMOVE, UserProp.CONFIRM_REMOVE_DEFAULT);
+        bind(checkConfirmDownloadingRemoveOnly, UserProp.CONFIRM_DOWNLOADING_REMOVE, UserProp.CONFIRM_DOWNLOADING_REMOVE_DEFAULT);
+
+        PropertyConnector.connectAndUpdate(confirmRemove, checkConfirmDownloadingRemoveOnly, "enabled");
 
         bind(checkShowHorizontalLinesInTable, UserProp.SHOW_GRID_HORIZONTAL, UserProp.SHOW_GRID_HORIZONTAL_DEFAULT);
         bind(checkShowVerticalLinesInTable, UserProp.SHOW_GRID_VERTICAL, UserProp.SHOW_GRID_VERTICAL_DEFAULT);
@@ -389,6 +404,36 @@ public class UserPreferencesDialog extends AppDialog {
         }
     }
 
+    @org.jdesktop.application.Action
+    public void createDesktopShortcut() {
+        createShortcut(OSCommand.CREATE_DESKTOP_SHORTCUT);
+    }
+
+    @org.jdesktop.application.Action
+    public void createStartMenuShortcut() {
+        createShortcut(OSCommand.CREATE_STARTMENU_SHORTCUT);
+    }
+
+    @org.jdesktop.application.Action
+    public void createStartupShortcut() {
+        createShortcut(OSCommand.CREATE_STARTUP_SHORTCUT);
+    }
+
+    @org.jdesktop.application.Action
+    public void createQuickLaunchShortcut() {
+        createShortcut(OSCommand.CREATE_QUICKLAUNCH_SHORTCUT);
+    }
+
+    private void createShortcut(final OSCommand command) {
+        final SystemCommander utils = SystemCommanderFactory.getInstance().getSystemCommanderInstance(context);
+        if (utils.isSupported(command)) {
+            final boolean result = utils.createShortCut(command);
+            if (!result)
+                Swinger.showErrorMessage(getResourceMap(), "createShortCutFailed");
+        } else
+            Swinger.showErrorMessage(context.getResourceMap(), "systemCommandNotSupported", command.toString().toLowerCase());
+    }
+
 
     private void initComponents() {
         JPanel dialogPane = new JPanel();
@@ -398,19 +443,36 @@ public class UserPreferencesDialog extends AppDialog {
         btnSelectConnectionProxy.setName("btnSelectConnectionProxy");
         btnOK = new JButton();
         btnCancel = new JButton();
+        btnCreateDesktopShortcut = new JButton();
+        btnCreateStartMenuShortcut = new JButton();
+        btnCreateQuickLaunchShortcut = new JButton();
+        btnCreateStartupShortcut = new JButton();
         panelCard = new JPanel();
         JPanel panelGeneral = new JPanel();
         JPanel panelApplicationSettings = new JPanel();
+        JPanel panelShortcutsSettings = new JPanel();
         checkForNewVersion = new JCheckBox();
         checkAllowOnlyOneInstance = new JCheckBox();
         JPanel panelDownloadsSettings = new JPanel();
         checkContinueInterrupted = new JCheckBox();
-        checkCloseWhenAllComplete = new JCheckBox();
+
+        checkConfirmExiting = new JCheckBox();
+        checkConfirmFileDeletion = new JCheckBox();
+        checkConfirmFileRemove = new JCheckBox();
+        checkConfirmDownloadingRemoveOnly = new JCheckBox();
+
+        checkConfirmExiting.setName("checkConfirmExiting");
+        checkConfirmFileDeletion.setName("checkConfirmFileDeletion");
+        checkConfirmFileRemove.setName("checkConfirmFileRemove");
+        checkConfirmDownloadingRemoveOnly.setName("checkConfirmDownloadingRemoveOnly");
+
+        checkAutoShutDownDisabledWhenExecuted = new JCheckBox();
         checkProcessFromTop = new JCheckBox();
         checkGenerateTXTDescription = new JCheckBox();
         checkGenerateDescIon = new JCheckBox();
         checkGenerateHidden = new JCheckBox();
         checkCloseToTray = new JCheckBox();
+        checkUseHistory = new JCheckBox();
         checkUseDefaultConnection = new JCheckBox();
         checkGenerateTXTDescription.setName("checkGenerateTXTDescription");
         checkGenerateDescIon.setName("checkGenerateDescIon");
@@ -421,6 +483,7 @@ public class UserPreferencesDialog extends AppDialog {
         checkShowVerticalLinesInTable = new JCheckBox();
         checkShowHorizontalLinesInTable.setName("checkShowHorizontalLinesInTable");
         checkShowVerticalLinesInTable.setName("checkShowVerticalLinesInTable");
+        checkUseHistory.setName("checkUseHistory");
         JLabel labelIfFilenameExists = new JLabel();
         JLabel labelLanguage = new JLabel();
 
@@ -436,7 +499,7 @@ public class UserPreferencesDialog extends AppDialog {
         labelRemoveCompleted.setLabelFor(comboRemoveCompleted);
         labelRemoveCompleted.setName("labelRemoveCompleted");
 
-        JPanel panelSoundSettings = new JPanel();
+        JPanel panelAlertSettings = new JPanel();
         JPanel panelMiscSettings = new JPanel();
         JPanel panelDescSettings = new JPanel();
         JPanel panelAdvancedSettings = new JPanel();
@@ -447,6 +510,7 @@ public class UserPreferencesDialog extends AppDialog {
         JPanel panelViews = new JPanel();
         JPanel panelAppearance = new JPanel();
         JPanel panelSystemTray = new JPanel();
+        JPanel panelConfirmation = new JPanel();
         JLabel labelLaF = new JLabel();
         comboLaF = new JComboBox();
         JLabel labelRequiresRestart2 = new JLabel();
@@ -543,12 +607,50 @@ public class UserPreferencesDialog extends AppDialog {
                                             new ColumnSpec("max(default;70dlu)"),
                                             new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
                                     },
-                                    RowSpec.decodeSpecs("default, default, default")), panelApplicationSettings);
+                                    new RowSpec[]{
+                                            FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.LINE_GAP_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.LINE_GAP_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.LINE_GAP_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC
+                                    }), panelApplicationSettings);
 
                             panelApplicationSettingsBuilder.add(checkForNewVersion, cc.xyw(3, 1, 4));
-                            panelApplicationSettingsBuilder.add(checkAllowOnlyOneInstance, cc.xyw(3, 2, 4));
-                            panelApplicationSettingsBuilder.add(labelLanguage, cc.xyw(3, 3, 1));
-                            panelApplicationSettingsBuilder.add(comboLng, cc.xyw(5, 3, 1));
+                            panelApplicationSettingsBuilder.add(checkAllowOnlyOneInstance, cc.xyw(3, 3, 4));
+                            panelApplicationSettingsBuilder.add(checkUseHistory, cc.xyw(3, 5, 4));
+
+                            panelApplicationSettingsBuilder.add(labelLanguage, cc.xyw(3, 7, 1));
+                            panelApplicationSettingsBuilder.add(comboLng, cc.xyw(5, 7, 1));
+                        }
+
+                        //======== panelShortcutsSettings ========
+                        {
+                            panelShortcutsSettings.setBorder(new TitledBorder(null, bundle.getString("panelShortcutsSettings.border"), TitledBorder.LEADING, TitledBorder.TOP));
+
+                            PanelBuilder panelApplicationSettingsBuilder = new PanelBuilder(new FormLayout(
+                                    new ColumnSpec[]{
+                                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                            new ColumnSpec("max(pref;30dlu)"),
+//                                            FormFactory.GLUE_COLSPEC,
+                                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                    },
+                                    new RowSpec[]{
+                                            FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.LINE_GAP_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.LINE_GAP_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.LINE_GAP_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.LINE_GAP_ROWSPEC,
+                                    }), panelShortcutsSettings);
+
+                            panelApplicationSettingsBuilder.add(btnCreateDesktopShortcut, cc.xy(2, 1));
+                            panelApplicationSettingsBuilder.add(btnCreateStartMenuShortcut, cc.xy(2, 3));
+                            panelApplicationSettingsBuilder.add(btnCreateQuickLaunchShortcut, cc.xy(2, 5));
+                            panelApplicationSettingsBuilder.add(btnCreateStartupShortcut, cc.xy(2, 7));
                         }
 
                         //======== panelDownloadsSettings ========
@@ -559,7 +661,7 @@ public class UserPreferencesDialog extends AppDialog {
                             checkContinueInterrupted.setName("checkContinueInterrupted");
 
                             //---- checkCloseWhenAllComplete ----
-                            checkCloseWhenAllComplete.setName("checkCloseWhenAllComplete");
+                            checkAutoShutDownDisabledWhenExecuted.setName("checkAutoShutDownDisabledWhenExecuted");
 
                             checkProcessFromTop.setName("checkProcessFromTop");
                             //---- labelIfFilenameExists ----
@@ -582,12 +684,13 @@ public class UserPreferencesDialog extends AppDialog {
                                             FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.LINE_GAP_ROWSPEC,
-                                            FormFactory.DEFAULT_ROWSPEC
+                                            FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.LINE_GAP_ROWSPEC,
                                     }), panelDownloadsSettings);
 
                             panelDownloadsSettingsBuilder.add(checkContinueInterrupted, cc.xywh(3, 1, 7, 1));
                             panelDownloadsSettingsBuilder.add(checkProcessFromTop, cc.xywh(3, 2, 7, 1));
-                            panelDownloadsSettingsBuilder.add(checkCloseWhenAllComplete, cc.xywh(3, 3, 7, 1));
+                            panelDownloadsSettingsBuilder.add(checkAutoShutDownDisabledWhenExecuted, cc.xywh(3, 3, 7, 1));
                             panelDownloadsSettingsBuilder.add(labelIfFilenameExists, cc.xywh(3, 5, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
                             panelDownloadsSettingsBuilder.add(comboFileExists, cc.xy(5, 5));
                             panelDownloadsSettingsBuilder.add(labelRemoveCompleted, cc.xywh(7, 5, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
@@ -595,7 +698,11 @@ public class UserPreferencesDialog extends AppDialog {
                         }
 
                         PanelBuilder panelGeneralBuilder = new PanelBuilder(new FormLayout(
-                                ColumnSpec.decodeSpecs("default:grow"),
+                                new ColumnSpec[]{
+                                        new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
+                                        FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                        FormFactory.DEFAULT_COLSPEC,
+                                },
                                 new RowSpec[]{
                                         new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.NO_GROW),
                                         FormFactory.RELATED_GAP_ROWSPEC,
@@ -605,17 +712,20 @@ public class UserPreferencesDialog extends AppDialog {
                                 }), panelGeneral);
 
                         panelGeneralBuilder.add(panelApplicationSettings, cc.xy(1, 1));
-                        panelGeneralBuilder.add(panelDownloadsSettings, cc.xy(1, 3));
+                        panelGeneralBuilder.add(panelShortcutsSettings, cc.xy(3, 1));
+                        panelGeneralBuilder.add(panelDownloadsSettings, cc.xyw(1, 3, 3));
                     }
                     panelCard.add(panelGeneral, "CARD1");
 
-                    //======== panelSoundSettings ========
+                    //======== panelAlertSettings ========
                     {
-                        panelSoundSettings.setBorder(Borders.TABBED_DIALOG_BORDER);
+                        panelAlertSettings.setBorder(Borders.TABBED_DIALOG_BORDER);
 
                         //======== panelSound ========
                         {
-                            panelSound.setBorder(new TitledBorder(null, bundle.getString("panelSound.border"), TitledBorder.LEADING, TitledBorder.TOP));
+                            panelSound.setBorder(new CompoundBorder(
+                                    new TitledBorder(null, bundle.getString("panelSound.border"), TitledBorder.LEADING, TitledBorder.TOP),
+                                    Borders.DLU2_BORDER));
 
                             //---- checkPlaySoundInCaseOfError ----
                             checkPlaySoundInCaseOfError.setName("checkPlaySoundInCaseOfError");
@@ -640,12 +750,43 @@ public class UserPreferencesDialog extends AppDialog {
                                 new RowSpec[]{
                                         FormFactory.DEFAULT_ROWSPEC,
                                         FormFactory.RELATED_GAP_ROWSPEC,
+                                        FormFactory.DEFAULT_ROWSPEC,
+                                        FormFactory.RELATED_GAP_ROWSPEC,
                                         FormFactory.DEFAULT_ROWSPEC
-                                }), panelSoundSettings);
+                                }), panelAlertSettings);
 
+                        //======== panelConfirmation ========
+                        {
+                            panelConfirmation.setBorder(new CompoundBorder(
+                                    new TitledBorder(null, bundle.getString("panelConfirmation.border"), TitledBorder.LEADING, TitledBorder.TOP),
+                                    Borders.DLU2_BORDER));
+
+                            PanelBuilder panelConfirmBuilder = new PanelBuilder(new FormLayout(
+                                    new ColumnSpec[]{
+                                            new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(0), FormSpec.NO_GROW),
+                                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                            FormFactory.DEFAULT_COLSPEC,
+                                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                            FormFactory.DEFAULT_COLSPEC,
+                                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                            new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
+                                    },
+                                    new RowSpec[]{
+                                            FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC,
+
+                                    }), panelConfirmation);
+
+                            panelConfirmBuilder.add(checkConfirmExiting, cc.xy(3, 1));
+                            panelConfirmBuilder.add(checkConfirmFileDeletion, cc.xy(5, 1));
+                            panelConfirmBuilder.add(checkConfirmFileRemove, cc.xy(3, 2));
+                            panelConfirmBuilder.add(checkConfirmDownloadingRemoveOnly, cc.xy(5, 2));
+                        }
                         panelSoundSettingsBuilder.add(panelSound, cc.xy(1, 1));
+                        panelSoundSettingsBuilder.add(panelConfirmation, cc.xy(1, 3));
                     }
-                    panelCard.add(panelSoundSettings, "CARD3");
+
+                    panelCard.add(panelAlertSettings, "CARD3");
 
                     //======== panelMiscenallnousSettings ========
                     {
@@ -960,12 +1101,17 @@ public class UserPreferencesDialog extends AppDialog {
 
     private JButton btnOK;
     private JButton btnCancel;
+    private JButton btnCreateDesktopShortcut;
+    private JButton btnCreateStartMenuShortcut;
+    private JButton btnCreateQuickLaunchShortcut;
+    private JButton btnCreateStartupShortcut;
+
     private JPanel panelCard;
 
     private JCheckBox checkForNewVersion;
     private JCheckBox checkAllowOnlyOneInstance;
     private JCheckBox checkContinueInterrupted;
-    private JCheckBox checkCloseWhenAllComplete;
+    private JCheckBox checkAutoShutDownDisabledWhenExecuted;
     private JComboBox comboFileExists;
     private JComboBox comboRemoveCompleted;
     private JCheckBox checkPlaySoundInCaseOfError;
@@ -979,6 +1125,12 @@ public class UserPreferencesDialog extends AppDialog {
     private JCheckBox checkGenerateTXTDescription;
     private JCheckBox checkGenerateDescIon;
     private JCheckBox checkGenerateHidden;
+    private JCheckBox checkUseHistory;
+
+    private JCheckBox checkConfirmExiting;
+    private JCheckBox checkConfirmFileDeletion;
+    private JCheckBox checkConfirmFileRemove;
+    private JCheckBox checkConfirmDownloadingRemoveOnly;
 
     private JCheckBox checkShowHorizontalLinesInTable;
     private JCheckBox checkShowVerticalLinesInTable;

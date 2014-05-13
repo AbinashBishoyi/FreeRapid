@@ -99,8 +99,11 @@ options
   -h (--help,-?)      print this message
   -v (--version)      print the version information and exit
   -d (--debug)        print debugging information
+  -r (--reset)        reset user properties to default values  
   -Dproperty=value    Passes properties and values to the application (mostly for debug or testing purposes)
-   
+
+If value of option -D is set 'default' (without ') default value will be used.
+
 Example - running application in debug mode:
   Windows OS: frd.exe --debug
   Linux/MacOS: java -jar frd.jar --debug
@@ -180,3 +183,5 @@ A: 1) Because I don't want to be dependant on the russian software, which is pro
    3) Because they have unintuitive user interface and missing important features.
    4) Because I can.
 
+Q: How to enable a support for shutdown commands on Linux and MacOS?
+A: Please see 'syscmd.properties' configuration file in application directory for more details.

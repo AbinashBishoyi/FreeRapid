@@ -6,7 +6,9 @@ import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.gui.managers.DataManager;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.LogUtils;
-import cz.vity.freerapid.utilities.NirCmdUtils;
+import cz.vity.freerapid.utilities.os.OSCommand;
+import cz.vity.freerapid.utilities.os.SystemCommander;
+import cz.vity.freerapid.utilities.os.SystemCommanderFactory;
 import org.jdesktop.application.Application;
 
 import java.util.logging.Logger;
@@ -52,7 +54,7 @@ final public class CloseInTimeTask extends CoreTask<Void, Void> {
             return;
         } else if (property == UserProp.AUTOSHUTDOWN_DISABLED)
             return;
-        final NirCmdUtils utils = new NirCmdUtils();
+        final SystemCommander utils = SystemCommanderFactory.getInstance().getSystemCommanderInstance(getContext());
         final boolean force = AppPrefs.getProperty(UserProp.AUTOSHUTDOWN_FORCE, UserProp.AUTOSHUTDOWN_FORCE_DEFAULT);
         final boolean renew = AppPrefs.getProperty(UserProp.AUTOSHUTDOWN_DISABLED_WHEN_EXECUTED, UserProp.AUTOSHUTDOWN_DISABLED_WHEN_EXECUTED_DEFAULT);
         if (renew) {
@@ -61,16 +63,16 @@ final public class CloseInTimeTask extends CoreTask<Void, Void> {
         boolean result = true;
         switch (property) {
             case UserProp.AUTOSHUTDOWN_HIBERNATE:
-                result = utils.shutDown(NirCmdUtils.ShutdownType.AUTOSHUTDOWN_HIBERNATE, force);
+                result = utils.shutDown(OSCommand.HIBERNATE, force);
                 break;
             case UserProp.AUTOSHUTDOWN_REBOOT:
-                result = utils.shutDown(NirCmdUtils.ShutdownType.AUTOSHUTDOWN_REBOOT, force);
+                result = utils.shutDown(OSCommand.REBOOT, force);
                 break;
             case UserProp.AUTOSHUTDOWN_SHUTDOWN:
-                result = utils.shutDown(NirCmdUtils.ShutdownType.AUTOSHUTDOWN_SHUTDOWN, force);
+                result = utils.shutDown(OSCommand.SHUTDOWN, force);
                 break;
             case UserProp.AUTOSHUTDOWN_STANDBY:
-                result = utils.shutDown(NirCmdUtils.ShutdownType.AUTOSHUTDOWN_STANDBY, force);
+                result = utils.shutDown(OSCommand.STANDBY, force);
                 break;
             default:
                 break;

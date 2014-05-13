@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 
 public abstract class SingleXFrameApplication extends SingleFrameApplication {
     private static final Logger logger = Logger.getLogger(SingleXFrameApplication.class.getName());
+    private boolean started = false;
 
     /**
      * {@inheritDoc} <p>
@@ -64,6 +65,12 @@ public abstract class SingleXFrameApplication extends SingleFrameApplication {
             rootPane.putClientProperty(k, Boolean.TRUE);
         }
         return prepared;
+    }
+
+
+    @Override
+    protected void startup() {
+        this.started = true;
     }
 
 
@@ -137,10 +144,15 @@ public abstract class SingleXFrameApplication extends SingleFrameApplication {
      */
     @Override
     protected void shutdown() {
+        if (!started)
+            return;
         List<Window> windows = new ArrayList<Window>();
-        windows.add(getMainFrame());
-        for (int i = 0; i < getMainFrame().getOwnedWindows().length; i++) {
-            windows.add(getMainFrame().getOwnedWindows()[i]);
+        final JFrame mainFrame = getMainFrame();
+        if (mainFrame instanceof JXFrame) {
+            windows.add(mainFrame);
+            for (int i = 0; i < getMainFrame().getOwnedWindows().length; i++) {
+                windows.add(getMainFrame().getOwnedWindows()[i]);
+            }
         }
         for (Window window : windows) {
             if (window.isShowing() || window.isValid())

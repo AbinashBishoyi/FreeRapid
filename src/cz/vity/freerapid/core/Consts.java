@@ -65,8 +65,14 @@ public class Consts {
 
     // hodnoty pro defaultni hodnoty pripojeni
 
-    protected static final String APP_CODE = "frd";
-    public static final String AUTHORS = "Authors (c) 2008: Vity";
+    public static final String APP_CODE = "frd";
+    public static final String AUTHORS = "Authors (c) 2008 Vity";
+
+    public static final String LINUX_SHELL_SCRIPT = APP_CODE + ".sh";
+    public static final String LINUX_ICON_NAME = APP_CODE + ".png";
+    public static final String WINDOWS_ICON_NAME = APP_CODE + ".ico";
+    public static final String WINDOWS_EXE_NAME = APP_CODE + ".exe";
+
     /**
      * Soubor pod kterym jsou polozky ulozeny
      */

@@ -137,7 +137,7 @@ public class FileHistoryManager extends AbstractBean implements Application.Exit
 
                     }
                 });
-            } catch (IOException e) {
+            } catch (Exception e) {
                 LogUtils.processException(logger, e);
             }
         }
@@ -152,7 +152,8 @@ public class FileHistoryManager extends AbstractBean implements Application.Exit
     }
 
     public synchronized void addHistoryItem(DownloadFile file, File savedAs) {
-        getItems().add(new FileHistoryItem(file, savedAs));
+        if (AppPrefs.getProperty(UserProp.USE_HISTORY, UserProp.USE_HISTORY_DEFAULT))
+            getItems().add(new FileHistoryItem(file, savedAs));
     }
 
     public synchronized void clearHistory() {

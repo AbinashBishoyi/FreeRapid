@@ -1,5 +1,6 @@
 package cz.vity.freerapid.core;
 
+import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.LocalStorage;
 import org.jdesktop.application.ResourceMap;
@@ -8,6 +9,7 @@ import java.io.*;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /**
@@ -27,13 +29,20 @@ public final class AppPrefs {
     private final ApplicationContext context;
     private String userNode;
 
-    AppPrefs(ApplicationContext context, Map<String, String> properties) {
+    AppPrefs(ApplicationContext context, Map<String, String> properties, boolean resetOptions) {
         this.context = context;
         final String id = context.getResourceMap().getString("Application.id");
         if (id == null || id.isEmpty())
             throw new IllegalStateException("Config property Application.ID is empty!");
         this.propertiesFileName = id.toLowerCase() + ".xml";
         AppPrefs.properties = loadProperties();
+        if (resetOptions) {
+            try {
+                AppPrefs.properties.clear();
+            } catch (BackingStoreException e) {
+                LogUtils.processException(logger, e);
+            }
+        }
         if (!properties.isEmpty()) {
             for (Map.Entry<String, String> entry : properties.entrySet()) {
                 final String value = entry.getValue();

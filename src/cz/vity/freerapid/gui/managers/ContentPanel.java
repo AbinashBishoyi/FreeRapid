@@ -14,6 +14,7 @@ import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.plugins.webclient.HttpDownloadClient;
 import cz.vity.freerapid.plugins.webclient.HttpFile;
+import cz.vity.freerapid.swing.SwingUtils;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.Browser;
 import cz.vity.freerapid.utilities.LogUtils;
@@ -38,6 +39,7 @@ import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
@@ -149,16 +151,23 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
         final String s = builder.toString();
         final int result;
-        if (s.isEmpty()) {
+        final boolean confirm = AppPrefs.getProperty(UserProp.CONFIRM_FILE_DELETE, UserProp.CONFIRM_FILE_DELETE_DEFAULT);
+        final boolean showedDialog;
+        if (s.isEmpty() || (!confirm)) {
+            showedDialog = false;
             result = Swinger.RESULT_OK;
-        } else result = Swinger.getChoiceOKCancel("message.areyousuredelete", s);
+        } else {
+            result = Swinger.getChoiceOKCancel("message.areyousuredelete", s);
+            showedDialog = true;
+        }
+
         if (result == Swinger.RESULT_OK) {
             for (DownloadFile file : files) {
                 final File outputFile = file.getOutputFile();
                 if (outputFile != null)
                     outputFile.delete();
             }
-            this.removeSelectedAction();
+            removeSelected(files, indexes, showedDialog);
             selectFirstIfNoSelection();
         }
     }
@@ -250,10 +259,40 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
     public void removeSelectedAction() {
+        final int[] indexes = getSelectedRows();
+        final List<DownloadFile> files = manager.getSelectionToList(indexes);
+        removeSelected(files, indexes, false);
+    }
+
+    private void removeSelected(List<DownloadFile> files, int[] indexes, boolean quiet) {
         final ListSelectionModel selectionModel = table.getSelectionModel();
         selectionModel.setValueIsAdjusting(true);
-        final int[] indexes = getSelectedRows();
-        manager.removeSelected(indexes);
+
+        if (!quiet) {
+            final boolean confirmRemove = AppPrefs.getProperty(UserProp.CONFIRM_REMOVE, UserProp.CONFIRM_REMOVE_DEFAULT);
+
+            if (confirmRemove) {
+                final boolean confirmDownloadingOnly = AppPrefs.getProperty(UserProp.CONFIRM_DOWNLOADING_REMOVE, UserProp.CONFIRM_DOWNLOADING_REMOVE_DEFAULT);
+                boolean showDialog = false;
+                if (confirmDownloadingOnly) {
+
+                    for (DownloadFile file : files) {
+                        if (DownloadState.DOWNLOADING == file.getState()) {
+                            showDialog = true;
+                            break;
+                        }
+                    }
+                } else showDialog = true;
+
+                if (showDialog) {
+                    final int result = Swinger.getChoiceOKCancel("areYouSureYouWantToRemove");
+                    if (result != Swinger.RESULT_OK)
+                        return;
+                }
+            }
+        }
+
+        manager.removeSelected(files);
         selectionModel.setValueIsAdjusting(false);
         final int min = getArrayMin(indexes);
         SwingUtilities.invokeLater(new Runnable() {
@@ -577,27 +616,27 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         final InputMap inputMap = table.getInputMap();
         final ActionMap actionMap = table.getActionMap();
 
-        inputMap.put(KeyStroke.getKeyStroke("control C"), "copy");
-        inputMap.put(KeyStroke.getKeyStroke("control alt C"), "copy");
+        inputMap.put(SwingUtils.getCtrlKeyStroke(KeyEvent.VK_C), "copy");
+        inputMap.put(SwingUtils.getCtrlAltKeyStroke(KeyEvent.VK_C), "copy");
 
         actionMap.put("copy", Swinger.getAction("copyContent"));
 
-        inputMap.put(KeyStroke.getKeyStroke("ESCAPE"), "deleteItem");
+        inputMap.put(SwingUtils.getKeyStroke(KeyEvent.VK_ESCAPE), "deleteItem");
         actionMap.put("deleteItem", Swinger.getAction("cancelAction"));
 
-        inputMap.put(KeyStroke.getKeyStroke("shift DELETE"), "deleteFileAction");
+        inputMap.put(SwingUtils.getShiftKeyStroke(KeyEvent.VK_DELETE), "deleteFileAction");
         actionMap.put("deleteFileAction", Swinger.getAction("deleteFileAction"));
 
-        inputMap.put(KeyStroke.getKeyStroke("SPACE"), "resumeAction");
+        inputMap.put(SwingUtils.getKeyStroke(KeyEvent.VK_SPACE), "resumeAction");
         actionMap.put("resumeAction", Swinger.getAction("resumeAction"));
 
-        inputMap.put(KeyStroke.getKeyStroke("ENTER"), "smartEnterAction");
+        inputMap.put(SwingUtils.getKeyStroke(KeyEvent.VK_ENTER), "smartEnterAction");
         actionMap.put("smartEnterAction", Swinger.getAction("smartEnterAction"));
 
-        inputMap.put(KeyStroke.getKeyStroke("HOME"), "selectFirstRow");
-        inputMap.put(KeyStroke.getKeyStroke("END"), "selectLastRow");
-        inputMap.put(KeyStroke.getKeyStroke("control HOME"), "selectFirstColumn");
-        inputMap.put(KeyStroke.getKeyStroke("control END"), "selectLastColumn");
+        inputMap.put(SwingUtils.getKeyStroke(KeyEvent.VK_HOME), "selectFirstRow");
+        inputMap.put(SwingUtils.getKeyStroke(KeyEvent.VK_END), "selectLastRow");
+        inputMap.put(SwingUtils.getCtrlKeyStroke(KeyEvent.VK_HOME), "selectFirstColumn");
+        inputMap.put(SwingUtils.getCtrlKeyStroke(KeyEvent.VK_END), "selectLastColumn");
 
         //inputMap.remove("find");
         actionMap.remove("find");

@@ -1,5 +1,7 @@
 package cz.vity.freerapid.gui.dialogs;
 
+import cz.vity.freerapid.swing.SwingUtils;
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.UndoableEditEvent;
@@ -11,6 +13,7 @@ import javax.swing.undo.CompoundEdit;
 import javax.swing.undo.UndoManager;
 import javax.swing.undo.UndoableEdit;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 /**
  * @author Vity
@@ -35,8 +38,8 @@ class CompoundUndoManager extends UndoManager implements UndoableEditListener {
                     CompoundUndoManager.this.redo();
             }
         });
-        editor.getInputMap().put(KeyStroke.getKeyStroke("control Z"), "undo");
-        editor.getInputMap().put(KeyStroke.getKeyStroke("control shift Z"), "redo");
+        editor.getInputMap().put(SwingUtils.getCtrlKeyStroke(KeyEvent.VK_Z), "undo");
+        editor.getInputMap().put(SwingUtils.getCtrlShiftKeyStroke(KeyEvent.VK_Z), "redo");
 
     }
 

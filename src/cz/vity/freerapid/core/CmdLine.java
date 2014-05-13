@@ -19,9 +19,11 @@ import java.util.*;
 final class CmdLine {
     private final MainApp app;
     private Map<String, String> properties = new HashMap<String, String>(2);
+    private boolean resetOptions;
 
     CmdLine(MainApp app) {
         this.app = app;
+        resetOptions = false;
     }
 
     private void showVersion() {
@@ -43,6 +45,7 @@ final class CmdLine {
         final DefaultOption helpOption = obuilder.withShortName("h").withShortName("?").withLongName("help").withDescription("print this message").create();
         final DefaultOption versionOption = obuilder.withShortName("v").withLongName("version").withDescription("print the version information and exit").create();
         final DefaultOption debugOption = obuilder.withShortName("d").withLongName("debug").withDescription("print debugging information").create();
+        final DefaultOption resetOption = obuilder.withShortName("r").withLongName("reset").withDescription("reset user properties to default values").create();
 
         final PropertyOption propertyOption = new PropertyOption();
 
@@ -68,6 +71,7 @@ final class CmdLine {
                 .withOption(helpOption)
                 .withOption(versionOption)
                 .withOption(debugOption)
+                .withOption(resetOption)
                 .withOption(propertyOption)
                 .create();
         Parser parser = new Parser();
@@ -82,7 +86,9 @@ final class CmdLine {
             } else if (cmd.hasOption(debugOption)) {
                 MainApp.debug = true;
             }
-
+            if (cmd.hasOption(resetOption)) {
+                this.resetOptions = true;
+            }
             final Set<String> set = (Set<String>) cmd.getProperties(propertyOption);
 
             for (String o : set) {
@@ -123,5 +129,9 @@ final class CmdLine {
 
     public Map<String, String> getProperties() {
         return properties;
+    }
+
+    public boolean isResetOptions() {
+        return resetOptions;
     }
 }

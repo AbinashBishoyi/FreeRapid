@@ -17,6 +17,7 @@ import cz.vity.freerapid.gui.managers.ContentPanel;
 import cz.vity.freerapid.gui.managers.FileHistoryItem;
 import cz.vity.freerapid.gui.managers.FileHistoryManager;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
+import cz.vity.freerapid.swing.SwingUtils;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.Browser;
 import cz.vity.freerapid.utilities.LogUtils;
@@ -159,22 +160,33 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
             }
         });
 
-        table.getInputMap().put(KeyStroke.getKeyStroke("control C"), "copy");
-        table.getActionMap().put("copy", getActionMap().get("copyContent"));
+        final InputMap tableInputMap = table.getInputMap();
+        final ActionMap tableActionMap = table.getActionMap();
+        final ActionMap actionMap = getActionMap();
 
-        final KeyStroke ctrlF = KeyStroke.getKeyStroke("control F");
-        table.getInputMap().put(ctrlF, "getFocusFind");
+        tableInputMap.put(SwingUtils.getCtrlKeyStroke(KeyEvent.VK_C), "copy");
+        tableActionMap.put("copy", actionMap.get("copyContent"));
+
+        tableInputMap.put(SwingUtils.getShiftKeyStroke(KeyEvent.VK_DELETE), "deleteFileAction");
+        tableActionMap.put("deleteFileAction", actionMap.get("deleteFileAction"));
+
+        tableInputMap.put(SwingUtils.getCtrlKeyStroke(KeyEvent.VK_ENTER), "openDirectoryAction");
+        tableActionMap.put("openDirectoryAction", actionMap.get("openDirectoryAction"));
+
+        final KeyStroke ctrlF = SwingUtils.getCtrlKeyStroke(KeyEvent.VK_F);
+        tableInputMap.put(ctrlF, "getFocusFind");
         final AbstractAction focusFilterAction = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
                 Swinger.inputFocus(fieldFilter);
             }
         };
-        table.getActionMap().put("getFocusFind", focusFilterAction);
+        tableActionMap.put("getFocusFind", focusFilterAction);
 
         table.getParent().setPreferredSize(new Dimension(600, 400));
 
-        this.getRootPane().getInputMap().put(ctrlF, "getFocusFind");
-        this.getRootPane().getActionMap().put("getFocusFind", focusFilterAction);
+        registerKeyboardAction(focusFilterAction, ctrlF);
+//        this.getRootPane().getInputMap().put(ctrlF, "getFocusFind");
+//        this.getRootPane().getActionMap().put("getFocusFind", focusFilterAction);
     }
 
     @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
@@ -500,28 +512,50 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         firePropertyChange(FILE_EXISTS_ENABLED_PROPERTY, oldValue, fileExistsEnabled);
     }
 
-    @org.jdesktop.application.Action(enabledProperty = DownloadHistoryDialog.FILE_EXISTS_ENABLED_PROPERTY)
+    @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
     public void deleteFileAction() {
         final int[] indexes = getSelectedRows();
         final java.util.List<FileHistoryItem> files = manager.getSelectionToList(indexes);
         StringBuilder builder = new StringBuilder();
         for (FileHistoryItem file : files) {
-            builder.append('\n').append(file.getFileName());
+            if (file.getOutputFile() != null && file.getOutputFile().exists())
+                builder.append('\n').append(file.getFileName());
         }
-        final int result = Swinger.getChoiceOKCancel("message.areyousuredelete", builder.toString());
+        final String s = builder.toString();
+        final int result;
+        final boolean confirm = AppPrefs.getProperty(UserProp.CONFIRM_FILE_DELETE, UserProp.CONFIRM_FILE_DELETE_DEFAULT);
+
+        final boolean showedDialog;
+        if (s.isEmpty() || (!confirm)) {
+            showedDialog = false;
+            result = Swinger.RESULT_OK;
+        } else {
+            showedDialog = true;
+            result = Swinger.getChoiceOKCancel("message.areyousuredelete", s);
+        }
         if (result == Swinger.RESULT_OK) {
             for (FileHistoryItem file : files) {
                 file.getOutputFile().delete();
             }
-            this.removeSelectedAction();
+            this.removeSelected(indexes, showedDialog);
+            selectFirstIfNoSelection();
         }
     }
 
-    @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
-    public void removeSelectedAction() {
+    private void removeSelected(final int[] indexes, final boolean quiet) {
+        if (!quiet) {
+            final boolean confirmRemove = AppPrefs.getProperty(UserProp.CONFIRM_REMOVE, UserProp.CONFIRM_REMOVE_DEFAULT);
+
+            if (confirmRemove) {
+                final int result = Swinger.getChoiceOKCancel("areYouSureYouWantToRemove");
+                if (result != Swinger.RESULT_OK)
+                    return;
+            }
+        }
+
+
         final ListSelectionModel selectionModel = table.getSelectionModel();
         selectionModel.setValueIsAdjusting(true);
-        final int[] indexes = getSelectedRows();
         manager.removeSelected(indexes);
         selectionModel.setValueIsAdjusting(false);
         final int min = getArrayMin(indexes);
@@ -532,9 +566,38 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
                     int index = Math.min(count - 1, min);
                     index = table.convertRowIndexToView(index);
                     selectionModel.addSelectionInterval(index, index);
+                    scrollToVisible(true);
                 }
             }
         });
+
+    }
+
+    private void scrollToVisible(final boolean up) {
+        final int[] rows = table.getSelectedRows();
+        final int length = rows.length;
+        if (length > 0)
+            table.scrollRowToVisible((up) ? rows[0] : rows[length - 1]);
+    }
+
+
+    @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
+    public void removeSelectedAction() {
+        final int[] indexes = getSelectedRows();
+        this.removeSelected(indexes, false);
+    }
+
+    private void selectFirstIfNoSelection() {
+        final int[] rows = getSelectedRows();
+        if (rows.length == 0) {
+            if (getVisibleRowCount() > 0)
+                table.getSelectionModel().setSelectionInterval(0, 0);
+        }
+    }
+
+
+    private int getVisibleRowCount() {
+        return table.getFilters().getOutputSize();
     }
 
     private int getArrayMin(int[] indexes) {

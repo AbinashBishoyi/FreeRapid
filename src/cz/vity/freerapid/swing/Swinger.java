@@ -317,7 +317,7 @@ public class Swinger {
 //        final JDialog dialog = pane.createDialog(parentComponent, title);
 //
 //
-////        pane.getRootPane().getInputMap().put(KeyStroke.getKeyStroke("ENTER"), "smartEnterAction");
+////        pane.getRootPane().getInputMap().put(SwingUtils.getKeyStroke(KeyEvent.VK_ENTER"), "smartEnterAction");
 ////        pane.getRootPane().getActionMap().put("smartEnterAction", new AbstractAction() {
 ////            public void actionPerformed(ActionEvent e) {
 ////                final Component focusOwner = dialog.getFocusOwner();

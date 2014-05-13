@@ -33,7 +33,7 @@
     <fileset id="jars" dir="${lib.dir}" includes="**/*"/>
 
     <patternset id="compiler.resources">
-        <include name="**/?*.properties"/>
+        <!--<include name="**/?*.properties"/>-->
         <include name="**/?*.xml"/>
         <include name="**/?*.txt"/>
         <include name="**/?*.gif"/>
@@ -69,6 +69,19 @@
 
     <target name="build" depends="compile" description="building">
         <buildnumber file="build.txt"/>
+
+        <!--copying properties files-->
+        <copy todir="${classes.dir}" overwrite="true" encoding="utf-8">
+            <filterchain>
+                <ignoreblank byline="true"/>
+                <striplinecomments>
+                    <comment value="#"/>
+                </striplinecomments>
+            </filterchain>
+            <fileset dir="${src.dir}" includes="**/?*.properties"/>
+            <!--<mapper type="glob" from="*.properties" to="*.stripped">-->
+            <!--</mapper>-->
+        </copy>
 
         <jar jarfile="${build.dir}/${mainjar.file}" compress="false">
             <manifest>

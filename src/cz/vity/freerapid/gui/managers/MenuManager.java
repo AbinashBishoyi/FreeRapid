@@ -6,6 +6,7 @@ import cz.vity.freerapid.gui.actions.FileActions;
 import cz.vity.freerapid.gui.actions.HelpActions;
 import cz.vity.freerapid.gui.actions.ViewActions;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
+import cz.vity.freerapid.swing.SwingUtils;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.Utils;
 import org.jdesktop.application.ApplicationActionMap;
@@ -17,6 +18,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.ComboPopup;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.List;
 
 
@@ -131,20 +133,11 @@ public class MenuManager {
         };
 
 
-        final Object[] shortcutActionNames = {
-                "createDesktopShortcut",
-                "createStartMenuShortcut",
-                "createStartupShortcut",
-        };
-        JMenu shortCutMenu = createMenu("shortcutMenu", shortcutActionNames);
-
         final Object[] helpMenuActionNames = {
                 "help",
                 MENU_SEPARATOR,
                 "showDemo",
                 "visitHomepage",
-                MENU_SEPARATOR,
-                shortCutMenu,
                 MENU_SEPARATOR,
                 "checkForNewVersion",
                 MENU_SEPARATOR,
@@ -155,7 +148,6 @@ public class MenuManager {
 
         final boolean isWindows = Utils.isWindows();
         if (!isWindows) {
-            shortCutMenu.setEnabled(false);
             shutDownMenu.setEnabled(false);
         }
 
@@ -214,7 +206,7 @@ public class MenuManager {
         map.get("monitorClipboardAction").putValue(AbstractAction.SELECTED_KEY, viewActions.isClipboardMonitoringSelected());
 
         final JRootPane rootPane = director.getMainFrame().getRootPane();
-        rootPane.registerKeyboardAction(Swinger.getAction("showDownloadHistoryAction"), KeyStroke.getKeyStroke("control H"), JComponent.WHEN_IN_FOCUSED_WINDOW);
+        rootPane.registerKeyboardAction(Swinger.getAction("showDownloadHistoryAction"), SwingUtils.getCtrlKeyStroke(KeyEvent.VK_H), JComponent.WHEN_IN_FOCUSED_WINDOW);
 
         if (isWindows)
             selectAutoShutDownMenu(map);

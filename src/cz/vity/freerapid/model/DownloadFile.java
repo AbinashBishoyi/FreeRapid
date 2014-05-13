@@ -35,10 +35,10 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
     private File saveToDirectory;
     private String description;
     private String fileType;
-    private int timeToQueued = -1;
-    private int timeToQueuedMax = -1;
+    private volatile int timeToQueued = -1;
+    private volatile int timeToQueuedMax = -1;
     private long completeTaskDuration = -1;
-    private int errorAttemptsCount;
+    private volatile int errorAttemptsCount;
     private String shareDownloadServiceID;
     private String serviceName = null;
 

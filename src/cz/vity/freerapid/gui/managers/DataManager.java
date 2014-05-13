@@ -57,7 +57,8 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                 if (AppPrefs.getProperty(FWProp.MINIMIZE_ON_CLOSE, FWProp.MINIMIZE_ON_CLOSE_DEFAULT) && event instanceof WindowEvent) {
                     return true;
                 }
-                if (isDownloading()) {
+                final boolean confirmExiting = AppPrefs.getProperty(UserProp.CONFIRM_EXITING, UserProp.CONFIRM_EXITING_DEFAULT);
+                if (confirmExiting && isDownloading()) {
                     final int result = Swinger.getChoiceOKCancel("downloadInProgress");
                     return (result == Swinger.RESULT_OK);
                 }
@@ -297,11 +298,10 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         }
     }
 
-    public void removeSelected(final int[] indexes) {
+    public void removeSelected(final List<DownloadFile> fileList) {
         synchronized (this.lock) {
             final List<DownloadFile> toRemoveList = new ArrayList<DownloadFile>();
-            for (int index : indexes) {
-                final DownloadFile downloadFile = downloadFiles.get(index);
+            for (DownloadFile downloadFile : fileList) {
                 downloadFile.setState(DownloadState.DELETED);
                 toRemoveList.add(downloadFile);
             }

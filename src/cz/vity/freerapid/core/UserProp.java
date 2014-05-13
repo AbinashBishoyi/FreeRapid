@@ -59,8 +59,6 @@ final public class UserProp {
 
     public static final String CLOSE_APPLICATION_CONFIRM_WAITTIME = "closeApplicationConfirmTime";
 
-    public static final String CLOSE_WHEN_COMPLETED = "closeWhenCompleted";
-
     public static final String USE_PROXY_LIST = "useProxyList";
 
     public static final String PROXY_LIST_PATH = "proxyListPath";
@@ -149,5 +147,20 @@ final public class UserProp {
 
     public static final String AUTOSHUTDOWN_FORCE = "autoshutdownForce";
     public static final boolean AUTOSHUTDOWN_FORCE_DEFAULT = true;
+
+    public static final String USE_HISTORY = "useHistory";
+    public static final boolean USE_HISTORY_DEFAULT = true;
+
+    public static final String CONFIRM_EXITING = "confirmExit";
+    public static final boolean CONFIRM_EXITING_DEFAULT = true;
+
+    public static final String CONFIRM_FILE_DELETE = "confirmFileDelete";
+    public static final boolean CONFIRM_FILE_DELETE_DEFAULT = true;
+
+    public static final String CONFIRM_REMOVE = "confirmRemove";
+    public static final boolean CONFIRM_REMOVE_DEFAULT = true;
+
+    public static final String CONFIRM_DOWNLOADING_REMOVE = "confirmDownloadingRemove";
+    public static final boolean CONFIRM_DOWNLOADING_REMOVE_DEFAULT = false;
 
 }

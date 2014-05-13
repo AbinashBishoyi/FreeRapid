@@ -8,7 +8,11 @@ import cz.vity.freerapid.gui.dialogs.SpeedMeterDialog;
 import cz.vity.freerapid.gui.dialogs.UserPreferencesDialog;
 import cz.vity.freerapid.gui.managers.ContentPanel;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
+import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.LogUtils;
+import cz.vity.freerapid.utilities.os.OSCommand;
+import cz.vity.freerapid.utilities.os.SystemCommander;
+import cz.vity.freerapid.utilities.os.SystemCommanderFactory;
 import org.jdesktop.application.AbstractBean;
 import org.jdesktop.application.Action;
 
@@ -148,37 +152,45 @@ public class ViewActions extends AbstractBean {
 
     @Action
     public void shutdownDisabledAction() {
-        shutdown(UserProp.AUTOSHUTDOWN_DISABLED);
+        setShutdownProperty(UserProp.AUTOSHUTDOWN_DISABLED);
     }
 
-    private void shutdown(final int autoshutdownType) {
+    private void setShutdownProperty(final int autoshutdownType) {
         AppPrefs.storeProperty(UserProp.AUTOSHUTDOWN, autoshutdownType);
     }
 
     @Action
     public void shutdownQuitAction() {
-        shutdown(UserProp.AUTOSHUTDOWN_CLOSE);
+        setShutdownProperty(UserProp.AUTOSHUTDOWN_CLOSE);
     }
 
     @Action
     public void shutdownHibernateAction() {
-        shutdown(UserProp.AUTOSHUTDOWN_HIBERNATE);
+        updateShutdown(OSCommand.HIBERNATE, UserProp.AUTOSHUTDOWN_HIBERNATE);
     }
 
     @Action
     public void shutdownShutdownAction() {
-        shutdown(UserProp.AUTOSHUTDOWN_SHUTDOWN);
+        updateShutdown(OSCommand.SHUTDOWN, UserProp.AUTOSHUTDOWN_SHUTDOWN);
     }
 
     @Action
     public void shutdownStandByAction() {
-        shutdown(UserProp.AUTOSHUTDOWN_STANDBY);
+        updateShutdown(OSCommand.STANDBY, UserProp.AUTOSHUTDOWN_STANDBY);
     }
 
     @Action
     public void shutdownRebootAction() {
-        shutdown(UserProp.AUTOSHUTDOWN_REBOOT);
+        updateShutdown(OSCommand.REBOOT, UserProp.AUTOSHUTDOWN_REBOOT);
     }
 
+    private void updateShutdown(OSCommand command, int propertyShutdownType) {
+        final SystemCommander utils = SystemCommanderFactory.getInstance().getSystemCommanderInstance(app.getContext());
+        if (!utils.isSupported(command)) {
+            setShutdownProperty(UserProp.AUTOSHUTDOWN_DISABLED);
+            Swinger.showErrorMessage(app.getContext().getResourceMap(), "systemCommandNotSupported", command.toString().toLowerCase());
+        } else
+            setShutdownProperty(propertyShutdownType);
+    }
 
 }

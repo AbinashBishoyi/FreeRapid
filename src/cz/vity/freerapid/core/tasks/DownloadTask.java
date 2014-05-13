@@ -333,8 +333,11 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
             this.youHaveToSleepSecondsTime = waitException.getHowManySecondsToWait();
             setServiceError(DownloadTaskError.YOU_HAVE_TO_WAIT_ERROR);
         }
-        if (getServiceError() == DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR)
+        if (getServiceError() == DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR) {
             downloadFile.setErrorAttemptsCount(0);
+            downloadFile.setTimeToQueued(-1);
+            downloadFile.setTimeToQueuedMax(-1);
+        }
         final Application app = getApplication();
         if (isAllComplete(app)) {
             checkShutDown(app);
