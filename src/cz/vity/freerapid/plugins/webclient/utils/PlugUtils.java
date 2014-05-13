@@ -123,7 +123,7 @@ public final class PlugUtils {
     /**
      * <p>Find and return value of given parameter in html tag (eg. input).</p>
      * <p/>
-     * <p>For example, the for content "input type="hidden" name="par" value="val>"
+     * <p>For example, the for content <code>"input type="hidden" name="par" value="val>"</code>
      * and parameter "par" returns "val"</p>
      * <p/>
      *

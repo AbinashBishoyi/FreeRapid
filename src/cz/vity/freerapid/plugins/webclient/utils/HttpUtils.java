@@ -1,5 +1,6 @@
 package cz.vity.freerapid.plugins.webclient.utils;
 
+import cz.vity.freerapid.utilities.Utils;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpMethod;
 
@@ -25,7 +26,7 @@ final public class HttpUtils {
 
     /**
      * Extracts file name from response header Content-Disposition
-     * Eg for <code>//Content-Disposition: =?UTF-8?attachment;filename="Two Peaks Personal Vehicle Manager 2005 3.2.zip";?=</code>
+     * Eg for <code>Content-Disposition: =?UTF-8?attachment;filename="Two Peaks Personal Vehicle Manager 2005 3.2.zip";?=</code>
      * it returns <code>Two Peaks Personal Vehicle Manager 2005 3.2.zip</code>
      *
      * @param method executed HttpMethod with Content-Disposition header
@@ -70,5 +71,26 @@ final public class HttpUtils {
             }
         }
         return null;
+    }
+
+    /**
+     * Replace invalid characters for file name on current file system with given one. <br/>
+     * Usual use: <br >
+     * <code>replaceInvalidCharsForFileSystem("diskFileName:", "_")</code> returns <code>diskFileName_</code> on Windows file system <br />
+     * For more information about illegal characters on file systems see: <a href="http://www.xvsxp.com/files/forbidden.php">Forbidden Characters in Filenames</a>
+     *
+     * @param fileName      given file name
+     * @param replaceString usually a character that should be used for invalid characters
+     * @return string with replaced invalid characters
+     */
+    public static String replaceInvalidCharsForFileSystem(final String fileName, final String replaceString) {
+        if (Utils.isWindows()) {
+            String result = fileName.replaceAll("(\\\\|\\||:|\\*|\\?|<|>|\")", replaceString);
+            if (result.startsWith("."))
+                result = result.substring(1);
+            return result;
+        } else {
+            return fileName;
+        }
     }
 }

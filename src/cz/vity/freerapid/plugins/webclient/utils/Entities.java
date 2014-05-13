@@ -61,12 +61,12 @@ final class Entities {
             {"brvbar", "166"}, // broken bar = broken vertical bar
             {"sect", "167"}, // section sign
             {"uml", "168"}, // diaeresis = spacing diaeresis
-            {"copy", "169"}, // © - copyright sign
+            {"copy", "169"}, //  - copyright sign
             {"ordf", "170"}, // feminine ordinal indicator
             {"laquo", "171"}, // left-pointing double angle quotation mark = left pointing guillemet
             {"not", "172"}, // not sign
             {"shy", "173"}, // soft hyphen = discretionary hyphen
-            {"reg", "174"}, // ® - registered trademark sign
+            {"reg", "174"}, //  - registered trademark sign
             {"macr", "175"}, // macron = spacing macron = overline = APL overbar
             {"deg", "176"}, // degree sign
             {"plusmn", "177"}, // plus-minus sign = plus-or-minus sign
@@ -88,10 +88,10 @@ final class Entities {
             {"Aacute", "193"}, // ?- uppercase A, acute accent
             {"Acirc", "194"}, //  - uppercase A, circumflex accent
             {"Atilde", "195"}, // `- uppercase A, tilde
-            {"Auml", "196"}, //  - uppercase A, umlaut
+            {"Auml", "196"}, // - uppercase A, umlaut
             {"Aring", "197"}, // ?- uppercase A, ring
             {"AElig", "198"}, // ?- uppercase AE
-            {"Ccedil", "199"}, // Š- uppercase C, cedilla
+            {"Ccedil", "199"}, // - uppercase C, cedilla
             {"Egrave", "200"}, // ?- uppercase E, grave accent
             {"Eacute", "201"}, // ?- uppercase E, acute accent
             {"Ecirc", "202"}, // ?- uppercase E, circumflex accent
