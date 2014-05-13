@@ -99,11 +99,12 @@
             <manifest>
                 <attribute name="Build-Date" value="${TODAY}"/>
                 <attribute name="Build" value="${build.number}"/>
-                <attribute name="Class-Path" value="${classpath}"/>
+                <attribute name="Class-Path" value="${lib.dir}/languages.jar ${classpath}"/>
                 <attribute name="Main-Class" value="${mainclass}"/>
                 <attribute name="SplashScreen-Image" value="${splash}"/>
             </manifest>
-            <fileset dir="${classes.dir}" includes="**/*" excludes="**/services/**,**/dev/**,**/sandbox/**"/>
+            <fileset dir="${classes.dir}" includes="**/*"
+                     excludes="**/services/**,**/dev/**,**/sandbox/**, **/**/?*.properties"/>
         </jar>
         <mkdir dir="${build.dir}/${lib.dir}"/>
         <!--<mkdir dir="${build.dir}/help"/>-->
@@ -116,6 +117,13 @@
         <copy todir="${build.dir}/${lib.dir}">
             <fileset dir="${lib.dir}" includes="**/*"/>
         </copy>
+        <jar jarfile="${build.dir}/${lib.dir}/languages.jar" compress="false">
+            <manifest>
+                <attribute name="Build-Date" value="${TODAY}"/>
+            </manifest>
+            <fileset dir="${classes.dir}" includes="**/**/?*.properties"/>
+        </jar>
+
         <copy todir="${build.dir}/${plugins.dir}">
             <fileset dir="${plugins.dir}" includes="**/*"/>
         </copy>
