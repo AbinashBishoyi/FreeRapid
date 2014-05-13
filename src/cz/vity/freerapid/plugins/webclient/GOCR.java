@@ -33,29 +33,23 @@ class GOCR {
 
     String recognize() throws IOException {
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final ImageEncoder encoder = ImageCodec.createImageEncoder("PNM", out, new PNMEncodeParam());
-
-        encoder.encode(image);
-
-        Scanner scanner = null;
-        OutputStream processOut = null;
         final String command;
         if (Utils.isWindows()) {
             command = Utils.addFileSeparator(Utils.getAppPath()) + PATH_WINDOWS;
         } else {
             command = PATH_LINUX;
-            try {
-                final Process process = Runtime.getRuntime().exec(command);
-                process.waitFor();
-                if (process.exitValue() != 0)
-                    return null;
-            } catch (Exception e) {
-                return null;
-            }
         }
 
+
+        Scanner scanner = null;
+        OutputStream processOut = null;
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
+            final ImageEncoder encoder = ImageCodec.createImageEncoder("PNM", out, new PNMEncodeParam());
+            assert encoder != null;
+            encoder.encode(image);
+
+
             final Process process = Runtime.getRuntime().exec(command + " " + commandLineOptions + " -f ASCII -");
             processOut = process.getOutputStream();
             processOut.write(out.toByteArray());
