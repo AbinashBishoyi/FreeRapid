@@ -127,6 +127,8 @@ public class FileTypeIconProvider {
         try {
 //Create a temporary file with the specified extension
             file = File.createTempFile("icon", "." + extension);
+            if (file == null)
+                throw new IOException("Creation TMP file failed");
             FileSystemView view = FileSystemView.getFileSystemView();
             Icon icon = view.getSystemIcon(file);
             if (icon == null) {
