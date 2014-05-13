@@ -10,6 +10,7 @@ import cz.vity.freerapid.gui.managers.PluginsManager;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadClient;
 import cz.vity.freerapid.swing.Swinger;
+import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.xmlimport.XMLBind;
 import cz.vity.freerapid.xmlimport.ver1.Plugin;
 import cz.vity.freerapid.xmlimport.ver1.Plugins;
@@ -87,6 +88,7 @@ public class CheckPluginUpdateTask extends CoreTask<ConnectResult, Void> {
 
     @Override
     protected void failed(Throwable cause) {
+        LogUtils.processException(logger, cause);
         if (handleRuntimeException(cause))
             return;
         if (quietMode)
