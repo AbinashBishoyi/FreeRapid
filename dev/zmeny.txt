@@ -1,0 +1,9 @@
+
+
+MainApp.properties
+==================================
+
+Changes:
+was: tooltipTrayInfo=FreeRapid Downloader\n\nComplete downloads %d of %d\nCurrent speed: %s/s\n
+is:  tooltipTrayInfo=FreeRapid Downloader%n%nComplete downloads %d of %d%nCurrent speed: %s/s%n
+
