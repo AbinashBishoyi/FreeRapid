@@ -65,7 +65,7 @@ public class FileTypeIconProvider {
 
     public static String identifyFileName(final String url) {
         final String[] strings = url.split("/");
-        for (int i = strings.length; i >= 0; i--) {
+        for (int i = strings.length - 1; i >= 0; i--) {
             final String s = strings[i].trim();
             if (!s.isEmpty())
                 return s;
