@@ -6,7 +6,6 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.LogUtils;
-import cz.vity.freerapid.utilities.Sound;
 import org.jdesktop.application.Action;
 
 import javax.swing.*;
@@ -55,11 +54,11 @@ public class AboutDialog extends AppDialog {
         pack();
         setResizable(false);
         locateOnOpticalScreenCenter(this);
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                audioClip = Sound.playSound("laugh.wav");
-            }
-        });
+//        SwingUtilities.invokeLater(new Runnable() {
+//            public void run() {
+//                audioClip = Sound.playSound("boss.mid");
+//            }
+//        });
 
 
     }

@@ -6,6 +6,7 @@ import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.MoveFileTask;
 import cz.vity.freerapid.swing.TrayIconSupport;
 import cz.vity.freerapid.swing.components.MemoryIndicator;
+import cz.vity.freerapid.utilities.Utils;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.Task;
@@ -65,7 +66,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
             statusbar = new JXStatusBar();
 
             trayIconSupport = app.getTrayIconSupport();
-            defaultIconImage = resourceMap.getImageIcon("trayIconImage").getImage();
+            defaultIconImage = (Utils.isWindows()) ? resourceMap.getImageIcon("trayIconImageWin").getImage() : resourceMap.getImageIcon("trayIconImage").getImage();
             downloadingIconImage = resourceMap.getImageIcon("downloadingIconImage").getImage();
 
             final Action action = context.getActionMap().get("showStatusBar");

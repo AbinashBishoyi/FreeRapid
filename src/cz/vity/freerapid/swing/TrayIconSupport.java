@@ -4,6 +4,7 @@ import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.FWProp;
 import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
+import cz.vity.freerapid.utilities.Utils;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.ResourceMap;
 
@@ -68,7 +69,7 @@ public class TrayIconSupport implements PropertyChangeListener {
         };
         frame.addWindowListener(windowAdapter);
 
-        Image image = frame.getIconImage();
+        Image image = (Utils.isWindows()) ? Swinger.getResourceMap().getImageIcon("trayIconImageWin").getImage() : frame.getIconImage();
         frame.addPropertyChangeListener(TITLE_PROPERTY, this);
         MouseAdapter mouseListener = new MouseAdapter() {
 

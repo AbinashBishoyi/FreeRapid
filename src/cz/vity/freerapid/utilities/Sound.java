@@ -12,6 +12,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Podpora prehravani zvuku. Zvuky se cachuji.
@@ -19,6 +20,7 @@ import java.util.Map;
  * @author Vity
  */
 public class Sound {
+    private final static Logger logger = Logger.getLogger(Sound.class.getName());
 
     private Sound() {
     }
@@ -51,6 +53,8 @@ public class Sound {
 
     public static AudioClip playSound(final String clip) {
         final AudioClip audioClip = getCachedAudioClip(clip);
+        if (audioClip == null)
+            logger.warning("Audioclip " + clip + " was not found probably.");
         playSound(audioClip);
         return audioClip;
     }

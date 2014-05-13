@@ -12,10 +12,11 @@ Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
 XXth October 2008 - FreeRapid Downloader 0.7 released
+  Added : plugins - support for iskladka.cz/sk [implemented by Lukiz]
   Added : plugins - support for xtraupload.de [implemented by Lukiz]
   Added : both traditional and simplified chinese translation [thanks to Jodyp!]
-  Added : confirm cancel if there are completed downloads [requested by Saymon] 
-  Added : slovak translation [thanks to dDwarf!] 
+  Added : slovak translation [thanks to dDwarf!]
+  Added : confirm cancel if there are completed downloads [requested by Saymon]  
   Added : autobackup files (filelist.xml, history.xml)  
   Added : new download state WAIT! to show to user "you have to wait XX minutes"
   Added : table scrolls to new position of selection [requested by Pavel]
@@ -26,10 +27,12 @@ XXth October 2008 - FreeRapid Downloader 0.7 released
   Added : autoshutdown options - standby, hibernate, reboot, shutdown, quit when all downloads complete; 
           Linux/MacOS users can configure syscmd.properties file
   Added : command line option to reset application properties (--reset)
+  Changed : force download passes max current number of connections (9 concurrent downloads is a limit)
   Changed : remapped selection shortcuts - HOME-first row , END-last row, ctrl+HOME-first column, ctrl+END-last column
   Changed : removed heap memory indicator
   Changed : updated czech translation
   Changed : plugin file names renamed - version info removed
+  Changed : new tray icons and splash screen [thanks to Axis!]
   Fixed : NewLinks dialog - pressed key ENTER caused calling insert action twice  
   Fixed : fixed renaming file with many dots in its name
   Fixed : exception when target disk space has not enough space 

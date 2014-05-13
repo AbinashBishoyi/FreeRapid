@@ -886,7 +886,6 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
         private NameURLCellRenderer(FileTypeIconProvider iconProvider) {
             this.iconProvider = iconProvider;
-
         }
 
         @Override

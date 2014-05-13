@@ -3,7 +3,7 @@
 *      by Ladislav Vitasek aka Vity                          *
 *   Website/Forum/Bugtracker: http://wordrider.net/freerapid *
 *   Mail: info@wordrider.net - suggestions                   *
-*   Last change: 10th October 2008                           *
+*   Last change: 15th October 2008                           *
 **************************************************************
 
 =======================================
@@ -48,6 +48,9 @@ Currently supported services are:
  -  Egoshare.com
  -  Easy-share.com
  -  Letibit.net
+ -  XtraUpload.de
+ -  Iskladka.cz
+
 
 
  II.    System requirements
@@ -180,7 +183,7 @@ VIII.   FAQ
 Q: Why did you create another "RapidShare Downloader"?
 A: 1) Because I don't want to be dependant on the russian software, which is probably full of malware and spyware.
    2) Because I can simply fix automatic downloading myself.
-   3) Because they have unintuitive user interface and missing important features.
+   3) Because other existing downloaders have unintuitive user interface and missing important features.
    4) Because I can.
 
 Q: How to enable a support for shutdown commands on Linux and MacOS?
