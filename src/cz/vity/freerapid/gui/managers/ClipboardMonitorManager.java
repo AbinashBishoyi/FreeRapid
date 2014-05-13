@@ -72,6 +72,9 @@ public class ClipboardMonitorManager extends Thread implements ClipboardOwner {
             } catch (InterruptedException e) {
                 //ignore
             }
+
+//            final Window window = KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow();
+//            System.out.println("activeWindow = " + window);
             try {
                 final boolean stFlavorAvailable = clipboard.isDataFlavorAvailable(DataFlavor.stringFlavor);
                 urlFlavorAvailable = !stFlavorAvailable && clipboard.isDataFlavorAvailable(urlFlavor);

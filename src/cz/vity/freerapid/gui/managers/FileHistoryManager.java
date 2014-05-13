@@ -6,7 +6,6 @@ import com.jgoodies.binding.value.DelayedReadValueModel;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.model.DownloadFile;
-import cz.vity.freerapid.model.FileHistoryItem;
 import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.application.*;
 
