@@ -5,12 +5,15 @@ import org.java.plugin.Plugin;
 import org.java.plugin.registry.PluginAttribute;
 import org.java.plugin.registry.PluginDescriptor;
 
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
  * @author Vity
  */
 public abstract class AbstractFileShareService extends Plugin implements ShareDownloadService {
+    private final static Logger logger = Logger.getLogger(AbstractFileShareService.class.getName());
+
     private Pattern pattern;
 
 
@@ -34,6 +37,10 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
     }
 
     protected boolean supportURL(String url) {
+        if (pattern == null) {
+            logger.warning("Pattern for testing url was not initialized.");
+            return true;
+        }
         return pattern.matcher(url).matches();
     }
 
