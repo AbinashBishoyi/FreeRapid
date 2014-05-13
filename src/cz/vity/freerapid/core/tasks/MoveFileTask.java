@@ -135,10 +135,13 @@ public class MoveFileTask extends CoreTask<Void, Void> {
     }
 
     private void saveDescriptionFiles() {
-        final String desc = downloadFile.getDescription();
+        String desc = downloadFile.getDescription();
         if (desc == null || desc.isEmpty())
             return;
         final boolean descIon = AppPrefs.getProperty(UserProp.GENERATE_DESCRIPT_ION_FILE, UserProp.GENERATE_DESCRIPT_ION_FILE_DEFAULT);
+        final boolean trim = AppPrefs.getProperty(UserProp.TRIM_DESCRIPTION_FOR_FILES, UserProp.TRIM_DESCRIPTION_FOR_FILES_DEFAULT);
+        if (trim)
+            desc = desc.trim();
 
         if (descIon) {
             final File descriptIonFile = new File(to.getParentFile(), getNameForFile("descript.ion"));
@@ -147,7 +150,7 @@ public class MoveFileTask extends CoreTask<Void, Void> {
                 writer = new FileWriter(descriptIonFile, true);
                 if (descriptIonFile.length() > 0)
                     writer.write(Utils.getSystemLineSeparator());
-                writer.write(to.getName() + " " + desc);
+                writer.write(to.getName() + " " + desc.trim());
             } catch (IOException e) {
                 LogUtils.processException(logger, e);
             } finally {

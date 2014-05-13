@@ -215,4 +215,8 @@ final public class UserProp {
     public static final String USE_SYSTEM_PROXIES = "useSystemProxies";
     public static final boolean USE_SYSTEM_PROXIES_DEFAULT = false;
 
+    public static final String TRIM_DESCRIPTION_FOR_FILES = "trimDescription";
+    public static final boolean TRIM_DESCRIPTION_FOR_FILES_DEFAULT = true;
+
+
 }
