@@ -38,7 +38,7 @@ public class AccountDialog extends AppDialog {
             LogUtils.processException(logger, e);
         }
         if (title != null)
-            this.setTitle(this.getTitle() + '-' + title);
+            this.setTitle(this.getTitle() + " - " + title);
     }
 
 
@@ -60,7 +60,6 @@ public class AccountDialog extends AppDialog {
         setAction(btnCancel, "cancelBtnAction");
 
         pack();
-        setResizable(false);
         locateOnOpticalScreenCenter(this);
 
     }
@@ -97,9 +96,7 @@ public class AccountDialog extends AppDialog {
 
     @SuppressWarnings({"deprecation"})
     private void initComponents() {
-        // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-        // Generated using JFormDesigner Open Source Project license - unknown
-        //ResourceBundle bundle = ResourceBundle.getBundle("AccountDialog");
+
         JPanel dialogPane = new JPanel();
         JPanel contentPanel = new JPanel();
         JLabel labelIcon = new JLabel();
@@ -116,6 +113,7 @@ public class AccountDialog extends AppDialog {
         //======== this ========
         Container contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
+        contentPane.add(dialogPane, BorderLayout.CENTER);
 
         //======== dialogPane ========
         {
@@ -175,7 +173,7 @@ public class AccountDialog extends AppDialog {
 
                 PanelBuilder buttonBarBuilder = new PanelBuilder(new FormLayout(
                         new ColumnSpec[]{
-                                new ColumnSpec("55px"),
+                                new ColumnSpec("55px:grow"),
                                 ComponentFactory.BUTTON_COLSPEC,
                                 FormFactory.RELATED_GAP_COLSPEC,
                                 ComponentFactory.BUTTON_COLSPEC
@@ -187,16 +185,13 @@ public class AccountDialog extends AppDialog {
             }
             dialogPane.add(buttonBar, BorderLayout.SOUTH);
         }
-        // JFormDesigner - End of component initialization  //GEN-END:initComponents
+
     }
 
-    // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-    // Generated using JFormDesigner Open Source Project license - unknown
     private JTextField fieldUserName;
     private JPasswordField fieldPassword;
     private JButton btnOK;
     private JButton btnCancel;
-    // JFormDesigner - End of variables declaration  //GEN-END:variables
 
 
 }
