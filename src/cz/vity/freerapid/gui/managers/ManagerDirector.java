@@ -1,5 +1,6 @@
 package cz.vity.freerapid.gui.managers;
 
+import cz.vity.freerapid.core.FileTypeIconProvider;
 import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.swing.TextComponentContextMenuListener;
 import org.jdesktop.application.ApplicationContext;
@@ -46,6 +47,7 @@ public class ManagerDirector {
      */
     private DataManager inputDataManager;
 
+    private FileTypeIconProvider fileTypeIconProvider;
 
     /**
      * Konstruktor
@@ -64,6 +66,8 @@ public class ManagerDirector {
 
         this.rootContainer = new JPanel();
         this.rootContainer.setPreferredSize(new Dimension(700, 550));
+
+        this.fileTypeIconProvider = new FileTypeIconProvider(context);
 
         this.inputDataManager = new DataManager(this, context);
 
@@ -127,5 +131,9 @@ public class ManagerDirector {
 
     public DataManager getDataManager() {
         return inputDataManager;
+    }
+
+    public FileTypeIconProvider getFileTypeIconProvider() {
+        return fileTypeIconProvider;
     }
 }

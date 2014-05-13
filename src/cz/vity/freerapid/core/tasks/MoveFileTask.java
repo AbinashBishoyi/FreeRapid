@@ -37,6 +37,12 @@ public class MoveFileTask extends CoreTask<Void, Void> {
         FileChannel ic = null;
         FileChannel oc = null;
 
+//        SwingUtilities.invokeAndWait(new Runnable() {
+//            public void run() {
+//                Swinger.showInformationDialog("Finished downloading");
+//            }
+//        });
+
         if (!from.exists())
             return null;
 

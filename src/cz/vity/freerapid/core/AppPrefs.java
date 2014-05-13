@@ -1,8 +1,12 @@
 package cz.vity.freerapid.core;
 
+import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.application.LocalStorage;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
@@ -15,12 +19,11 @@ import java.util.prefs.Preferences;
 public final class AppPrefs {
     private final static Logger logger = Logger.getLogger(AppPrefs.class.getName());
 
-    /**
-     * Soubor pod kterym jsou polozky ulozeny
-     */
-    private static final String DEFAULT_PROPERTIES = "fotogrammetrie.xml";
-
     private static volatile Preferences properties = loadProperties();
+
+    private final static String COLLECTIONS_FILENAME = "collections.xml";
+
+    private static Map<String, List<String>> collections = null;
 
     // vychozi hodnoty pro uzivatelska nastaveni
 
@@ -128,7 +131,7 @@ public final class AppPrefs {
             final File outDir = localStorage.getDirectory();
             outDir.mkdirs();
             //outputStream = localStorage.openOutputFile(DEFAULT_PROPERTIES);
-            outputStream = new FileOutputStream(new File(outDir, DEFAULT_PROPERTIES));
+            outputStream = new FileOutputStream(new File(outDir, Consts.DEFAULT_PROPERTIES));
             properties.exportNode(outputStream);
             outputStream.close();
         } catch (IOException e) {
@@ -152,14 +155,14 @@ public final class AppPrefs {
     public static Preferences loadProperties() {
         final LocalStorage localStorage = MainApp.getAContext().getLocalStorage();
         final File storageDir = localStorage.getDirectory();
-        final File userFile = new File(storageDir, DEFAULT_PROPERTIES);
+        final File userFile = new File(storageDir, Consts.DEFAULT_PROPERTIES);
         if (!(userFile.exists())) {
             logger.log(Level.INFO, "File with user settings " + userFile + " was not found. First run. Using default settings");
             return Preferences.userRoot().node("ftgm");
         }
         InputStream inputStream = null;
         try {
-            inputStream = new FileInputStream(new File(storageDir, DEFAULT_PROPERTIES));
+            inputStream = new FileInputStream(new File(storageDir, Consts.DEFAULT_PROPERTIES));
             //props.loadFromXML(inputStream);
             Preferences.importPreferences(inputStream);
             inputStream.close();
@@ -175,6 +178,18 @@ public final class AppPrefs {
             logger.log(Level.WARNING, e.getMessage(), e);
         }
         return Preferences.userRoot().node("ftg");
+    }
+
+    public static List<String> loadCollection(final String collectionName) {
+        final LocalStorage localStorage = MainApp.getAContext().getLocalStorage();
+        try {
+            if (collections == null)
+                collections = (Map<String, List<String>>) localStorage.load(COLLECTIONS_FILENAME);
+            return collections.get(collectionName);
+        } catch (IOException e) {
+            LogUtils.processException(logger, e);
+            return new ArrayList<String>();
+        }
     }
 
     public static Preferences getPreferences() {

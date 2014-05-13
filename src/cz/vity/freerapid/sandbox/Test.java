@@ -1,3 +1,5 @@
+package cz.vity.freerapid.sandbox;
+
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.GetMethod;

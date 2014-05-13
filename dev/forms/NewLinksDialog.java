@@ -31,6 +31,9 @@ public class NewLinksDialog extends JDialog {
 		JLabel labelSaveTo = new JLabel();
 		comboPath = new JComboBox();
 		btnSelectPath = new JButton();
+		JLabel labelDescription = new JLabel();
+		JScrollPane scrollPane2 = new JScrollPane();
+		descriptionArea = ComponentFactory.getTextArea();
 		JXButtonPanel buttonBar = new JXButtonPanel();
 		btnPasteFromClipboard = new JButton();
 		okButton = new JButton();
@@ -69,6 +72,15 @@ public class NewLinksDialog extends JDialog {
 				//---- btnSelectPath ----
 				btnSelectPath.setText(bundle.getString("btnSelectPath.text"));
 
+				//---- labelDescription ----
+				labelDescription.setText(bundle.getString("labelDescription.text"));
+				labelDescription.setLabelFor(descriptionArea);
+
+				//======== scrollPane2 ========
+				{
+					scrollPane2.setViewportView(descriptionArea);
+				}
+
 				PanelBuilder contentPanelBuilder = new PanelBuilder(new FormLayout(
 					new ColumnSpec[] {
 						FormFactory.DEFAULT_COLSPEC,
@@ -82,14 +94,18 @@ public class NewLinksDialog extends JDialog {
 						FormFactory.LINE_GAP_ROWSPEC,
 						new RowSpec(RowSpec.FILL, Sizes.PREFERRED, FormSpec.DEFAULT_GROW),
 						FormFactory.LINE_GAP_ROWSPEC,
-						FormFactory.DEFAULT_ROWSPEC
+						FormFactory.DEFAULT_ROWSPEC,
+						FormFactory.LINE_GAP_ROWSPEC,
+						new RowSpec(RowSpec.FILL, Sizes.bounded(Sizes.PREFERRED, Sizes.dluY(40), Sizes.dluY(55)), FormSpec.DEFAULT_GROW)
 					}), contentPanel);
 
-				contentPanelBuilder.add(labelLinks,    cc.xy  (1, 1));
-				contentPanelBuilder.add(scrollPane1,   cc.xywh(1, 3, 5, 1));
-				contentPanelBuilder.add(labelSaveTo,   cc.xy  (1, 5));
-				contentPanelBuilder.add(comboPath,     cc.xy  (3, 5));
-				contentPanelBuilder.add(btnSelectPath, cc.xy  (5, 5));
+				contentPanelBuilder.add(labelLinks,       cc.xy  (1, 1));
+				contentPanelBuilder.add(scrollPane1,      cc.xywh(1, 3, 5, 1));
+				contentPanelBuilder.add(labelSaveTo,      cc.xy  (1, 5));
+				contentPanelBuilder.add(comboPath,        cc.xy  (3, 5));
+				contentPanelBuilder.add(btnSelectPath,    cc.xy  (5, 5));
+				contentPanelBuilder.add(labelDescription, cc.xy  (1, 7));
+				contentPanelBuilder.add(scrollPane2,      cc.xywh(3, 7, 3, 1));
 			}
 			dialogPane.add(contentPanel, BorderLayout.CENTER);
 
@@ -141,6 +157,7 @@ public class NewLinksDialog extends JDialog {
 	// Generated using JFormDesigner Open Source Project license - unknown
 	private JComboBox comboPath;
 	private JButton btnSelectPath;
+	private JTextArea descriptionArea;
 	private JButton btnPasteFromClipboard;
 	private JButton okButton;
 	private JButton btnStartPaused;

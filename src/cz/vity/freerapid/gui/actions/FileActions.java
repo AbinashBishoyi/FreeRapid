@@ -28,11 +28,11 @@ public class FileActions extends AbstractBean {
 
     @Action
     public void addNewLinksAction() {
-        final NewLinksDialog dialog = new NewLinksDialog(app.getMainFrame());
+        final ManagerDirector managerDirector = app.getManagerDirector();
+        final DataManager dataManager = managerDirector.getDataManager();
+        final NewLinksDialog dialog = new NewLinksDialog(dataManager, app.getMainFrame());
         app.prepareDialog(dialog, true);
         if (dialog.getModalResult() == NewLinksDialog.RESULT_OK) {
-            final ManagerDirector managerDirector = app.getManagerDirector();
-            final DataManager dataManager = managerDirector.getDataManager();
             final List<DownloadFile> files = dialog.getDownloadFiles();
             dataManager.addToList(files);
             SwingUtilities.invokeLater(new Runnable() {

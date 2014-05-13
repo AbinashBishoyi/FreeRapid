@@ -46,6 +46,9 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         this.director = director;
         this.context = context;
         availableConnections.add(new ConnectionSettings());
+        final ConnectionSettings connectionSettings = new ConnectionSettings();
+        connectionSettings.setProxy("exfort.org", 8118);
+        availableConnections.add(connectionSettings);
         context.getApplication().addExitListener(new Application.ExitListener() {
             public boolean canExit(EventObject event) {
                 return true;
@@ -131,6 +134,8 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
 
     public Collection<DownloadClient> getClients() {
         Collection<DownloadClient> result = new LinkedList<DownloadClient>();
+        //TODO ((.*?):(.*?)@)?(.*?):(.*)
+
         for (ConnectionSettings availableConnection : availableConnections) {
             result.add(new DownloadClient(availableConnection));
         }
@@ -182,6 +187,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         synchronized (this.lock) {
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
+                    logger.info("Firing contents changed");
                     downloadFiles.fireContentsChanged(getIndex(evt.getSource()));
                     if ("state".equals(s)) {
                         firePropertyChange(s, evt.getOldValue(), evt.getNewValue());
@@ -220,7 +226,6 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
             for (int index : indexes) {
                 final DownloadFile downloadFile = downloadFiles.get(index);
                 downloadFile.setState(DownloadState.DELETED);
-                downloadFile.removePropertyChangeListener(this);
                 toRemoveList.add(downloadFile);
             }
             for (DownloadFile file : toRemoveList) {
@@ -232,6 +237,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                 if (task != null && !task.isCancelled()) {
                     task.cancel(true);
                 }
+                file.removePropertyChangeListener(this);
             }
             processManager.removeFromQueue(toRemoveList);
         }
@@ -300,11 +306,22 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
     }
 
     public void intervalAdded(ListDataEvent e) {
+        contentsChanged(e);
+
+    }
+
+    public void intervalRemoved(ListDataEvent e) {
+        contentsChanged(e);
+    }
+
+    public void contentsChanged(ListDataEvent e) {
         updateCompleted();
     }
 
     private void updateCompleted() {
+//        logger.info("updateCompleted");
         synchronized (lock) {
+            //          logger.info("updateCompleted2");
             int counter = 0;
             for (DownloadFile file : downloadFiles) {
                 if (file.getState() == DownloadState.COMPLETED) {
@@ -313,14 +330,6 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
             }
             setCompleted(counter);
         }
-    }
-
-    public void intervalRemoved(ListDataEvent e) {
-        updateCompleted();
-    }
-
-    public void contentsChanged(ListDataEvent e) {
-        updateCompleted();
     }
 
 

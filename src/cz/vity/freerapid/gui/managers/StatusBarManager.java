@@ -73,6 +73,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
             context.getTaskMonitor().addPropertyChangeListener(this);
             director.getDataManager().getDownloadFiles().addListDataListener(this);
             director.getDataManager().addPropertyChangeListener("speed", this);
+            director.getDataManager().addPropertyChangeListener("completed", this);
             //final ContentPanel panel = director.getDockingManager().getContentPanel();
             updateInfoStatus();
         }

@@ -34,9 +34,19 @@ public class RapidShareDownloadFileTask extends DownloadTask {
         final GetMethod getMethod = client.getGetMethod(downloadFile.getFileUrl().toString());
         if (client.makeRequest(getMethod) == HttpStatus.SC_OK) {
             Matcher matcher = Pattern.compile("form id=\"ff\" action=\"([^\"]*)\"", Pattern.MULTILINE).matcher(client.asString);
-            if (!matcher.find())
+            if (!matcher.find()) {
+                matcher = Pattern.compile("class=\"klappbox\">((\\s|.)*?)</div>", Pattern.MULTILINE).matcher(client.asString);
+                if (matcher.find()) {
+                    throw new InvalidURLOrServiceProblemException("<b>RapidShare error:</b><br>" + matcher.group(1));
+                }
                 throw new InvalidURLOrServiceProblemException("Invalid URL or unindentified service");
+            }
             String s = matcher.group(1);
+            //| 5277 KB</font>
+            matcher = Pattern.compile("\\| (.*?) KB</font>", Pattern.MULTILINE).matcher(client.asString);
+            if (matcher.find())
+                downloadFile.setFileSize(new Integer(matcher.group(1).replaceAll(" ", "")) * 1024);
+
             logger.info("Found File URL - " + s);
             client.setReferer(downloadFile.getFileUrl().toString());
             final PostMethod postMethod = client.getPostMethod(s);
@@ -66,8 +76,16 @@ public class RapidShareDownloadFileTask extends DownloadTask {
                     } finally {
                         method.releaseConnection();
                     }
-                } else
+                } else {
+                    //Your IP address 195.70.135.222 is already downloading a file.  Please wait until the download is completed.
+                    matcher = Pattern.compile("Your IP address (.*?) is already", Pattern.MULTILINE).matcher(client.asString);
+                    if (matcher.find()) {
+                        final String ip = matcher.group(1);
+                        throw new ServiceConnectionProblemException(String.format("<b>RapidShare error:</b><br>Your IP address %s is already downloading a file. <br>Please wait until the download is completed.", ip));
+                    }
+
                     throw new PluginImplementationException("Problem with a connection to service.\nCannot find requested page content");
+                }
             }
         } else
             throw new PluginImplementationException("Problem with a connection to service.\nCannot find requested page content");

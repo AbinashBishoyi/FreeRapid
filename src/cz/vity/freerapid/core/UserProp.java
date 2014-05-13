@@ -23,4 +23,5 @@ public class UserProp {
 
 
     public static final String PLAY_SOUNDS = "playSound";
+    public static final String LAST_USED_SAVED_PATH = "lastUsedSavedPaths";
 }

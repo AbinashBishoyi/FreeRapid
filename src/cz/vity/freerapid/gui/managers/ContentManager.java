@@ -19,7 +19,7 @@ public class ContentManager {
 
     public ContentPanel getContentPanel() {
         if (this.contentPanel == null)
-            return this.contentPanel = new ContentPanel(context, managerDirector.getDataManager());
+            return this.contentPanel = new ContentPanel(context, managerDirector);
         else return this.contentPanel;
     }
 

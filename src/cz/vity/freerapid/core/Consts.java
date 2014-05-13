@@ -73,7 +73,12 @@ public class Consts {
      */
     public static final String DB_PASSWORD = "";
     protected static final String APP_CODE = "frp";
-    public static final String AUTHORS = "Authors (c) 2008: Ladislav Vitasek";
+    public static final String AUTHORS = "Authors (c) 2008: Vity";
+    /**
+     * Soubor pod kterym jsou polozky ulozeny
+     */
+    static final String DEFAULT_PROPERTIES = "frp.xml";
+    public static final int MAX_RECENT_PHRASES_COUNT = 5;
 
 
     /**

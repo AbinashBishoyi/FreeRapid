@@ -1,12 +1,14 @@
 package cz.vity.freerapid.gui.managers;
 
 import com.jgoodies.binding.list.ArrayListModel;
+import cz.vity.freerapid.core.FileTypeIconProvider;
 import cz.vity.freerapid.core.tasks.ConnectionSettings;
 import cz.vity.freerapid.core.tasks.DownloadClient;
 import cz.vity.freerapid.core.tasks.DownloadTask;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.model.DownloadState;
 import cz.vity.freerapid.swing.Swinger;
+import cz.vity.freerapid.utilities.Browser;
 import cz.vity.freerapid.utilities.OSDesktop;
 import org.jdesktop.application.ApplicationActionMap;
 import org.jdesktop.application.ApplicationContext;
@@ -19,6 +21,10 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.*;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
@@ -29,7 +35,7 @@ import java.util.Arrays;
 /**
  * @author Vity
  */
-public class ContentPanel extends JPanel implements ListSelectionListener, ListDataListener, PropertyChangeListener {
+public class ContentPanel extends JPanel implements ListSelectionListener, ListDataListener, PropertyChangeListener, ClipboardOwner {
     private static final int COLUMN_ID = 0;
     private static final int COLUMN_NAME = 1;
     private static final int COLUMN_PROGRESSBAR = 2;
@@ -40,6 +46,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     private static final int COLUMN_PROXY = 7;
 
     private final ApplicationContext context;
+    private final ManagerDirector director;
 
     private final DataManager manager;
 
@@ -56,13 +63,16 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     private static final String COMPLETED_OK_ACTION_ENABLED_PROPERTY = "completeWithFilesEnabled";
     private boolean selectedEnabled = false;
     private static final String SELECTED_ACTION_ENABLED_PROPERTY = "selectedEnabled";
+    private boolean nonEmptyEnabled = false;
+    private static final String NONEMPTY_ACTION_ENABLED_PROPERTY = "nonEmptyEnabled";
 
 
     private JXTable table;
 
-    public ContentPanel(ApplicationContext context, DataManager manager) {
+    public ContentPanel(ApplicationContext context, ManagerDirector director) {
         this.context = context;
-        this.manager = manager;
+        this.director = director;
+        this.manager = director.getDataManager();
         this.setName("contentPanel");
         Swinger.initActions(this, context);
         initComponents();
@@ -130,12 +140,12 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         selectionModel.setValueIsAdjusting(false);
     }
 
-    @org.jdesktop.application.Action
+    @org.jdesktop.application.Action(enabledProperty = NONEMPTY_ACTION_ENABLED_PROPERTY)
     public void selectAllAction() {
         table.selectAll();
     }
 
-    @org.jdesktop.application.Action
+    @org.jdesktop.application.Action(enabledProperty = NONEMPTY_ACTION_ENABLED_PROPERTY)
     public void invertSelectionAction() {
         final int[] indexes = table.getSelectedRows();
         final int count = table.getModel().getRowCount();
@@ -228,6 +238,14 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     }
 
 
+    @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
+    public void openInBrowser() {
+        final java.util.List<DownloadFile> files = manager.getSelectionToList(table.getSelectedRows());
+        for (DownloadFile file : files) {
+            Browser.openBrowser(file.getFileUrl().toExternalForm());
+        }
+    }
+
     private void setActions() {
         initTable();
     }
@@ -293,6 +311,16 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         firePropertyChange(SELECTED_ACTION_ENABLED_PROPERTY, oldValue, selectedEnabled);
     }
 
+    public boolean isNonEmptyEnabled() {
+        return nonEmptyEnabled;
+    }
+
+    public void setNonEmptyEnabled(boolean nonEmptyEnabled) {
+        boolean oldValue = this.nonEmptyEnabled;
+        this.nonEmptyEnabled = nonEmptyEnabled;
+        firePropertyChange(NONEMPTY_ACTION_ENABLED_PROPERTY, oldValue, nonEmptyEnabled);
+    }
+
     private void updateActions() {
         final int[] indexes = table.getSelectedRows();
         final boolean enabledCancel = this.manager.hasDownloadFilesStates(indexes, DownloadState.COMPLETED, DownloadState.ERROR, DownloadState.DOWNLOADING, DownloadState.GETTING, DownloadState.WAITING, DownloadState.PAUSED);
@@ -325,6 +353,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
             setCompletedWithFilesEnabled(false);
         }
+        setNonEmptyEnabled(table.getModel().getRowCount() > 0);
     }
 
 
@@ -347,7 +376,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         columnID.setMaxWidth(30);
         columnID.setWidth(30);
         final TableColumn colName = tableColumnModel.getColumn(COLUMN_NAME);
-        colName.setCellRenderer(new NameURLCellRenderer());
+        colName.setCellRenderer(new NameURLCellRenderer(director.getFileTypeIconProvider()));
         colName.setWidth(150);
         colName.setMinWidth(50);
         tableColumnModel.getColumn(COLUMN_PROGRESSBAR).setCellRenderer(new ProgressBarCellRenderer());
@@ -369,6 +398,20 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             }
         });
 
+        table.getInputMap().put(KeyStroke.getKeyStroke("control C"), "copy");
+        table.getActionMap().put("copy", Swinger.getAction("copyContent"));
+    }
+
+    @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
+    public void copyContent() {
+        final java.util.List<DownloadFile> files = manager.getSelectionToList(table.getSelectedRows());
+        StringBuilder builder = new StringBuilder();
+        for (DownloadFile file : files) {
+            builder.append(file.toString()).append('\n');
+        }
+        final StringSelection stringSelection = new StringSelection(builder.toString().trim());
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, this);
     }
 
     private void showPopMenu(MouseEvent e) {
@@ -393,6 +436,11 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         popup.add(map.get("bottomAction"));
         popup.addSeparator();
         popup.add(map.get("removeSelectedAction"));
+        final JMenu menu = new JMenu("Misc");
+        menu.add(map.get("copyContent"));
+        menu.add(map.get("openInBrowser"));
+        popup.add(menu);
+
         popup.show(this, e.getX(), e.getY());
     }
 
@@ -455,6 +503,10 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     public void selectAdded(java.util.List<DownloadFile> files) {
         table.getSelectionModel().setSelectionInterval(0, files.size() - 1);
+    }
+
+    public void lostOwnership(Clipboard clipboard, Transferable contents) {
+
     }
 
     private static class CustomTableModel extends AbstractTableModel implements ListDataListener {
@@ -524,14 +576,30 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     private static class NameURLCellRenderer extends DefaultTableCellRenderer {
 
+        private final FileTypeIconProvider iconProvider;
+
+        private NameURLCellRenderer(FileTypeIconProvider iconProvider) {
+            this.iconProvider = iconProvider;
+
+        }
+
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             final DownloadFile downloadFile = (DownloadFile) value;
-            value = downloadFile.getFileUrl();
+            final String fn = downloadFile.getFileName();
+            final String url = downloadFile.getFileUrl().toString();
+            if (fn != null && !fn.isEmpty()) {
+                value = fn;
+            } else {
+                value = url;
+            }
+
             super.getTableCellRendererComponent(table, " " + value, isSelected, hasFocus, row, column);
             this.setForeground(Color.BLUE);
-            if (value != null)
-                this.setToolTipText(value.toString());
+            if (value != null) {
+                this.setToolTipText(url);
+                this.setIcon(iconProvider.getIconImageByFileType(downloadFile.getFileType(), false));
+            }
             return this;
         }
 
@@ -585,12 +653,18 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     }
 
     private static class EstTimeCellRenderer extends DefaultTableCellRenderer {
+        private String tooltip;
+
+        private EstTimeCellRenderer() {
+            tooltip = Swinger.getResourceMap().getString("tooltip");
+        }
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             final DownloadFile downloadFile = (DownloadFile) value;
             final DownloadState state = downloadFile.getState();
             this.setHorizontalAlignment(CENTER);
+            this.setToolTipText(null);
             if (state == DownloadState.DOWNLOADING) {
                 long hasToBeDownloaded = downloadFile.getFileSize() - downloadFile.getDownloaded();
                 final float speed = downloadFile.getAverageSpeed();
@@ -602,7 +676,11 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                 value = String.format("%s (%s)", stateToString(state), secondsToHMin(downloadFile.getSleep()));
             } else value = stateToString(state);
             if (state == DownloadState.ERROR) {
-                this.setToolTipText(downloadFile.getErrorMessage());
+                final String errorMessage = downloadFile.getErrorMessage();
+                if (errorMessage != null) {
+                    value = value + " - " + errorMessage.replaceAll("<.*?>", "");
+                    this.setToolTipText(String.format(tooltip, errorMessage));
+                }
             }
             return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         }

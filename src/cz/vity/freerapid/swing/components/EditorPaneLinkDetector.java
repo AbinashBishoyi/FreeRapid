@@ -100,7 +100,16 @@ public class EditorPaneLinkDetector extends JEditorPane {
 
     public void setURLs(java.util.List<String> list) {
         final Document document = this.getDocument();
+        String s = "";
+        try {
+            s = document.getText(0, document.getLength());
+        } catch (BadLocationException e) {
+            //ignore
+        }
         final StringBuilder builder = new StringBuilder();
+        if (!s.endsWith("\n") && s.length() > 0) {
+            builder.append('\n');
+        }
         for (String item : list) {
             builder.append(item).append('\n');
         }
@@ -140,6 +149,20 @@ public class EditorPaneLinkDetector extends JEditorPane {
                 } catch (MalformedURLException e1) {
                     //ignore
                 }
+            }
+        }
+        return list;
+    }
+
+    public java.util.List<String> getURLsAsStringList() {
+        final String s = this.getText();
+        final Pattern pattern = REGEXP_URL;
+        final Matcher matcher = pattern.matcher(s);
+        final java.util.List<String> list = new ArrayList<String>();
+        while (matcher.find()) {
+            final String e = matcher.group();
+            if (!EXAMPLE.equals(e)) {
+                list.add(e);
             }
         }
         return list;

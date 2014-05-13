@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <project name="FreeRapid Downloader" default="all" basedir=".">
     <property name="application" value="FreeRapid Downloader"/>
-    <property name="version" value="1.0"/>
+    <property name="version" value="0.5"/>
     <property name="version.name" value="${application}-${version}"/>
     <property name="mainclass" value="cz.vity.freerapid.core.MainApp"/>
     <property name="mainjar.file" value="frd.jar"/>
@@ -22,11 +22,8 @@
     <property name="lookandfeel.dir" value="lookandfeel"/>
     <property name="lib-src.dir" value="lib-src"/>
 
-
-    <!--
-    <property name="resources" value="cz/cvut/felk/erm/core/resources/"/>
+    <property name="resources" value="cz/vity/freerapid/core/resources/"/>
     <property name="splash" value="${resources}icons/splash.jpg"/>
-    -->
 
     <fileset id="jars" dir="${lib.dir}" includes="**/*"/>
 
@@ -69,8 +66,8 @@
                 <attribute name="Build-Date" value="${TODAY}"/>
                 <attribute name="Class-Path" value="${classpath}"/>
                 <attribute name="Main-Class" value="${mainclass}"/>
-                <!--
-                <attribute name="SplashScreen-Image" value="${splash}"/> -->
+
+                <attribute name="SplashScreen-Image" value="${splash}"/>
             </manifest>
             <fileset dir="${classes.dir}" includes="**/*"/>
         </jar>

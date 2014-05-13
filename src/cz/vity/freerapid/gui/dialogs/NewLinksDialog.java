@@ -1,14 +1,18 @@
 package cz.vity.freerapid.gui.dialogs;
 
+import com.jgoodies.binding.list.ArrayListModel;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
 import com.l2fprod.common.swing.JDirectoryChooser;
+import cz.vity.freerapid.core.UserProp;
+import cz.vity.freerapid.gui.managers.DataManager;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.swing.ComponentFactory;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.swing.components.EditorPaneLinkDetector;
+import cz.vity.freerapid.swing.models.RecentsFilesComboModel;
 import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.application.Action;
 import org.jdesktop.swinghelper.buttonpanel.JXButtonPanel;
@@ -17,7 +21,12 @@ import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,13 +37,16 @@ import java.util.logging.Logger;
 /**
  * @author Ladislav Vitasek
  */
-public class NewLinksDialog extends AppDialog {
+public class NewLinksDialog extends AppDialog implements ClipboardOwner {
     private final static Logger logger = Logger.getLogger(NewLinksDialog.class.getName());
     private EditorPaneLinkDetector urlsArea;
     private boolean startPaused = false;
+    private final DataManager dataManager;
+    private final List<URL> removeList;
 
-    public NewLinksDialog(Frame owner) throws HeadlessException {
+    public NewLinksDialog(DataManager dataManager, Frame owner) throws HeadlessException {
         super(owner, true);
+        this.dataManager = dataManager;
         this.setName("NewLinksDialog");
         try {
             initComponents();
@@ -42,6 +54,7 @@ public class NewLinksDialog extends AppDialog {
         } catch (Exception e) {
             LogUtils.processException(logger, e);
         }
+        removeList = new ArrayList<URL>();
     }
 
 
@@ -72,7 +85,15 @@ public class NewLinksDialog extends AppDialog {
 
     @Action
     public void btnPasteFromClipboardAction() {
-
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        if (clipboard.isDataFlavorAvailable(DataFlavor.stringFlavor)) {
+            try {
+                final String data = (String) clipboard.getData(DataFlavor.stringFlavor);
+                urlsArea.setURLs(data);
+            } catch (Exception e) {
+                //ignore
+            }
+        }
     }
 
     @Action
@@ -98,13 +119,22 @@ public class NewLinksDialog extends AppDialog {
         doClose();
     }
 
+    @Override
+    public void doClose() {
+        super.doClose();
+        if (getModalResult() == RESULT_OK) {
+            comboPath.addItem(comboPath.getSelectedItem());
+        }
+    }
+
     private void buildGUI() {
-        AutoCompleteDecorator.decorate(comboPath);
-        CompoundUndoManager undoManager = new CompoundUndoManager(urlsArea);
+        new CompoundUndoManager(urlsArea);
         urlsArea.setPreferredSize(new Dimension(130, 100));
-        urlsArea.setURLs("http://rapidshare.com/files/132012635/Private_Triple_X_01.pdf");
-        comboPath.addItem("c:\\");
-        comboPath.setSelectedIndex(0);
+        //urlsArea.setURLs("http://rapidshare.com/files/132012635/Private_Triple_X_01.pdf");
+        comboPath.setModel(new RecentsFilesComboModel(UserProp.LAST_USED_SAVED_PATH, true));
+        AutoCompleteDecorator.decorate(comboPath);
+        //comboPath.addItem("c:\\");
+//        comboPath.setSelectedIndex(0);
 
 //        urlsArea.getDocument().addUndoableEditListener(
 //        new UndoableEditListener() {
@@ -124,7 +154,8 @@ public class NewLinksDialog extends AppDialog {
     }
 
     private boolean validateStart() {
-        if (urlsArea.getURLs().isEmpty()) {
+        final List<URL> urlList = urlsArea.getURLs();
+        if (urlList.isEmpty()) {
             Swinger.showErrorMessage(this.getResourceMap(), "noURLMessage");
             Swinger.inputFocus(this.urlsArea);
             return false;
@@ -135,19 +166,56 @@ public class NewLinksDialog extends AppDialog {
             btnSelectPathAction();
             return false;
         }
+        final List<String> stringList = urlsArea.getURLsAsStringList();
+        final List<String> onTheList = new ArrayList<String>();
+        removeList.clear();
+        StringBuilder builder = new StringBuilder();
+        synchronized (this.dataManager.getLock()) {
+            final ArrayListModel<DownloadFile> files = this.dataManager.getDownloadFiles();
+            for (DownloadFile file : files) {
+                final URL urlAddress = file.getFileUrl();
+                final String url = urlAddress.toString();
+                onTheList.add(url);
+            }
+        }
+        try {
+            for (String s : stringList) {
+                if (onTheList.contains(s)) {
+                    removeList.add(new URL(s));
+                    builder.append('\n').append(s);
+                }
+            }
+        } catch (MalformedURLException e) {
+            LogUtils.processException(logger, e);
+        }
+
+        if (!removeList.isEmpty()) {
+            final int result = Swinger.getChoiceYesNoCancel(getResourceMap().getString("alreadyContainsMessage", builder.toString()));
+            switch (result) {
+                case Swinger.RESULT_NO:
+                    return true;
+                case Swinger.RESULT_YES:
+                    removeList.clear();
+                    return true;
+                default:
+                    removeList.clear();
+                    return false;
+            }
+        }
         return true;
     }
 
     public List<DownloadFile> getDownloadFiles() {
         final File directory = getDirectory();
         final Collection<URL> urlList = urlsArea.getURLs();
+        urlList.removeAll(removeList);
         final LinkedHashSet<URL> urlLinkedHashSet = new LinkedHashSet<URL>(urlList);
         List<DownloadFile> result = new ArrayList<DownloadFile>();
+        final String description = this.descriptionArea.getText();
         for (URL url : urlLinkedHashSet) {
-            result.add(new DownloadFile(url, directory));
+            result.add(new DownloadFile(url, directory, description));
         }
         return result;
-        //final URL[] urls = urlLinkedHashSet.toArray(new URL[urlLinkedHashSet.size()]);
     }
 
     private File getDirectory() {
@@ -156,6 +224,9 @@ public class NewLinksDialog extends AppDialog {
 
 
     private void initComponents() {
+        // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
+        // Generated using JFormDesigner Open Source Project license - unknown
+        //ResourceBundle bundle = ResourceBundle.getBundle("NewLinksDialog");
         JPanel dialogPane = new JPanel();
         JPanel contentPanel = new JPanel();
         JLabel labelLinks = new JLabel();
@@ -164,6 +235,9 @@ public class NewLinksDialog extends AppDialog {
         JLabel labelSaveTo = new JLabel();
         comboPath = new JComboBox();
         btnSelectPath = new JButton();
+        JLabel labelDescription = new JLabel();
+        JScrollPane scrollPane2 = new JScrollPane();
+        descriptionArea = ComponentFactory.getTextArea();
         JXButtonPanel buttonBar = new JXButtonPanel();
         btnPasteFromClipboard = new JButton();
         okButton = new JButton();
@@ -202,6 +276,15 @@ public class NewLinksDialog extends AppDialog {
                 //---- btnSelectPath ----
                 btnSelectPath.setName("btnSelectPath");
 
+                //---- labelDescription ----
+                labelDescription.setName("labelDescription");
+                labelDescription.setLabelFor(descriptionArea);
+
+                //======== scrollPane2 ========
+                {
+                    scrollPane2.setViewportView(descriptionArea);
+                }
+
                 PanelBuilder contentPanelBuilder = new PanelBuilder(new FormLayout(
                         new ColumnSpec[]{
                                 FormFactory.DEFAULT_COLSPEC,
@@ -215,7 +298,9 @@ public class NewLinksDialog extends AppDialog {
                                 FormFactory.LINE_GAP_ROWSPEC,
                                 new RowSpec(RowSpec.FILL, Sizes.PREFERRED, FormSpec.DEFAULT_GROW),
                                 FormFactory.LINE_GAP_ROWSPEC,
-                                FormFactory.DEFAULT_ROWSPEC
+                                FormFactory.DEFAULT_ROWSPEC,
+                                FormFactory.LINE_GAP_ROWSPEC,
+                                new RowSpec(RowSpec.FILL, Sizes.bounded(Sizes.PREFERRED, Sizes.dluY(40), Sizes.dluY(55)), FormSpec.DEFAULT_GROW)
                         }), contentPanel);
 
                 contentPanelBuilder.add(labelLinks, cc.xy(1, 1));
@@ -223,6 +308,8 @@ public class NewLinksDialog extends AppDialog {
                 contentPanelBuilder.add(labelSaveTo, cc.xy(1, 5));
                 contentPanelBuilder.add(comboPath, cc.xy(3, 5));
                 contentPanelBuilder.add(btnSelectPath, cc.xy(5, 5));
+                contentPanelBuilder.add(labelDescription, cc.xy(1, 7));
+                contentPanelBuilder.add(scrollPane2, cc.xywh(3, 7, 3, 1));
             }
             dialogPane.add(contentPanel, BorderLayout.CENTER);
 
@@ -248,9 +335,9 @@ public class NewLinksDialog extends AppDialog {
                                 FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                                 new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
                                 FormFactory.UNRELATED_GAP_COLSPEC,
-                                new ColumnSpec("max(pref;60px)"),
+                                FormFactory.PREF_COLSPEC,
                                 FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                new ColumnSpec("max(pref;60px)"),
+                                FormFactory.PREF_COLSPEC,
                                 FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                                 FormFactory.DEFAULT_COLSPEC
                         },
@@ -265,8 +352,11 @@ public class NewLinksDialog extends AppDialog {
             dialogPane.add(buttonBar, BorderLayout.SOUTH);
         }
         contentPane.add(dialogPane, BorderLayout.CENTER);
-
+        pack();
+        setLocationRelativeTo(getOwner());
+        // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
+
 
     public boolean isStartPaused() {
         return startPaused;
@@ -278,4 +368,9 @@ public class NewLinksDialog extends AppDialog {
     private JButton okButton;
     private JButton btnStartPaused;
     private JButton cancelButton;
+    private JTextArea descriptionArea;
+
+    public void lostOwnership(Clipboard clipboard, Transferable contents) {
+
+    }
 }

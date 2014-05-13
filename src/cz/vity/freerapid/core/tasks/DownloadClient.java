@@ -2,6 +2,7 @@ package cz.vity.freerapid.core.tasks;
 
 import cz.vity.freerapid.model.DownloadFile;
 import org.apache.commons.httpclient.*;
+import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -30,18 +31,24 @@ public class DownloadClient {
 
     public void initClient() {
         this.client = new HttpClient();
+        HttpState initialState = new HttpState();
         if (settings.isProxySet()) {
             HostConfiguration configuration = new HostConfiguration();
             configuration.setProxy(settings.getProxyURL(), settings.getProxyPort());
             client.setHostConfiguration(configuration);
+            if (settings.getUserName() != null)
+                initialState.setProxyCredentials(AuthScope.ANY, new NTCredentials(settings.getUserName(), settings.getPassword(), "", ""));
         }
 
         client.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
         // Get initial state object
 
-        HttpState initialState = new HttpState();
         initialState.purgeExpiredCookies();
         client.setState(initialState);
+    }
+
+    private boolean hasAuthentification() {
+        return settings.isProxySet() && settings.getUserName() != null;
     }
 
     protected void setDefaultsForMethod(HttpMethod method) {
@@ -59,6 +66,7 @@ public class DownloadClient {
     public PostMethod getPostMethod(final String uri) {
         final PostMethod m = new PostMethod(uri);
         setDefaultsForMethod(m);
+        m.setDoAuthentication(hasAuthentification());
         return m;
     }
 
@@ -161,6 +169,7 @@ public class DownloadClient {
     public GetMethod getGetMethod(final String uri) {
         final GetMethod m = new GetMethod(uri);
         setDefaultsForMethod(m);
+        m.setDoAuthentication(hasAuthentification());
         return m;
     }
 

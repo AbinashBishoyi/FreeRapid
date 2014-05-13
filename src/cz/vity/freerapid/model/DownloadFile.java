@@ -1,5 +1,6 @@
 package cz.vity.freerapid.model;
 
+import cz.vity.freerapid.core.FileTypeIconProvider;
 import cz.vity.freerapid.core.tasks.DownloadTask;
 import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.application.AbstractBean;
@@ -26,7 +27,8 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
     private String errorMessage;
     private URL fileUrl = null;
     private File saveToDirectory;
-
+    private String description;
+    private String fileType;
 
     static {
         try {
@@ -48,15 +50,18 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
         logger.info("Konstruktor empty");
     }
 
-    public DownloadFile(URL fileUrl, File saveToDirectory) {
+    public DownloadFile(URL fileUrl, File saveToDirectory, String description) {
         this.fileUrl = fileUrl;
         this.saveToDirectory = saveToDirectory;
+        this.description = description;
         this.fileSize = -1;
-        this.fileName = "";
+        final String urlStr = fileUrl.toExternalForm();
+        this.fileName = FileTypeIconProvider.identifyFileName(urlStr);
         //this.downloaded = 0;
         this.sleep = -1;
         this.averageSpeed = -1;
         this.speed = 0;
+        setFileType(FileTypeIconProvider.identifyFileType(fileName));
     }
 
     public File getSaveToDirectory() {
@@ -111,7 +116,10 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
     }
 
     public void setFileName(String fileName) {
+        String oldValue = this.fileName;
         this.fileName = fileName;
+        setFileType(FileTypeIconProvider.identifyFileType(this.fileName));
+        firePropertyChange("fileName", oldValue, this.fileName);
     }
 
     @Override
@@ -191,5 +199,25 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
 
     public void setSaveToDirectory(File saveToDirectory) {
         this.saveToDirectory = saveToDirectory;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        String oldValue = this.description;
+        this.description = description;
+        firePropertyChange("description", oldValue, this.description);
+    }
+
+    public String getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(String fileType) {
+        //String oldValue = this.fileType;
+        this.fileType = fileType;
+        //firePropertyChange("fileType", oldValue, this.fileType);
     }
 }
