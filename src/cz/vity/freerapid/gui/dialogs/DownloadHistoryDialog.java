@@ -372,6 +372,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
     }
 
 
+    @SuppressWarnings({"deprecation"})
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         // Generated using JFormDesigner Open Source Project license - unknown
@@ -951,7 +952,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         }
     }
 
-    private static class URLCellRenderer extends DefaultTableCellRenderer {
+    static class URLCellRenderer extends DefaultTableCellRenderer {
         private static final Color LINK_COLOR = Color.BLUE.brighter();
 
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {

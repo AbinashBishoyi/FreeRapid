@@ -2,7 +2,7 @@
 <project>
   <entry key="classpath1" value="../lib/buttonpanel.jar" />
   <entry key="classpath2" value="../lib/l2fprod-common-buttonbar.jar" />
-  <entry key="classpath3" value="../lib/swingx-2008_08_24.jar" />
+  <entry key="classpath3" value="../lib/swingx-0.9.4.jar" />
   <entry key="sourcefolders1" value="src" />
 </project>
 

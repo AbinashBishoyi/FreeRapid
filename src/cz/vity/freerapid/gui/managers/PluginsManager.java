@@ -1,5 +1,6 @@
 package cz.vity.freerapid.gui.managers;
 
+import cz.vity.freerapid.model.PluginMetaData;
 import cz.vity.freerapid.plugins.exceptions.NotSupportedDownloadServiceException;
 import cz.vity.freerapid.plugins.webclient.ShareDownloadService;
 import cz.vity.freerapid.utilities.LogUtils;
@@ -7,7 +8,6 @@ import cz.vity.freerapid.utilities.Utils;
 import org.java.plugin.ObjectFactory;
 import org.java.plugin.Plugin;
 import org.java.plugin.PluginManager;
-import org.java.plugin.registry.PluginAttribute;
 import org.java.plugin.registry.PluginDescriptor;
 import org.java.plugin.standard.StandardPluginLocation;
 import org.jdesktop.application.ApplicationContext;
@@ -16,12 +16,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 /**
  * @author Vity
@@ -30,13 +26,14 @@ public class PluginsManager {
     private final static Logger logger = Logger.getLogger(PluginsManager.class.getName());
 
     //private Map<String, ShareDownloadService> loadedPlugins = new Hashtable<String, ShareDownloadService>();
-    private Map<String, Pattern> supportedURLs = new HashMap<String, Pattern>();
+    //  private Map<String, Pattern> supportedURLs = new HashMap<String, Pattern>();
+
+    private Map<String, PluginMetaData> supportedPlugins = new HashMap<String, PluginMetaData>();
 
     private final Object lock = new Object();
 
     private final ApplicationContext context;
     private PluginManager pluginManager;
-    private static final String URL_REGEX_ATTRIBUTE = "urlRegex";
 
 
     public PluginsManager(ApplicationContext context) {
@@ -92,13 +89,11 @@ public class PluginsManager {
             for (PluginDescriptor pluginDescriptor : pluginDescriptorCollection) {
                 final String id = pluginDescriptor.getId();
                 logger.info("Loading plugin with ID=" + id);
-                final PluginAttribute attribute = pluginDescriptor.getAttribute(URL_REGEX_ATTRIBUTE);
-                if (attribute != null) {
-                    final String value = attribute.getValue();
-                    supportedURLs.put(id, Pattern.compile(value, Pattern.CASE_INSENSITIVE));
-                    logger.info("Loaded url support for service " + id + " with supported URL: " + value);
-                } else
-                    logger.warning(URL_REGEX_ATTRIBUTE + " attribute was not found in plugin manifest for plugin " + id);
+                if (supportedPlugins.containsKey(id)) {
+                    supportedPlugins.get(id).setPluginDescriptor(pluginDescriptor);
+                } else {
+                    supportedPlugins.put(id, new PluginMetaData(pluginDescriptor));
+                }
             }
 
         } catch (Exception e) {
@@ -120,8 +115,9 @@ public class PluginsManager {
      * @return vraci v pripade, ze nejaky plugin podporuje dane URL, jinak false
      */
     public boolean isSupported(final URL url) {
-        for (Pattern pattern : supportedURLs.values()) {
-            if (pattern.matcher(url.toExternalForm()).matches())
+        final String s = url.toExternalForm();
+        for (PluginMetaData pluginMetaData : supportedPlugins.values()) {
+            if (pluginMetaData.isSupported(s))
                 return true;
         }
         return false;
@@ -136,9 +132,10 @@ public class PluginsManager {
      *
      */
     public String getServiceIDForURL(URL url) throws NotSupportedDownloadServiceException {
-        final Set<Map.Entry<String, Pattern>> entries = this.supportedURLs.entrySet();
-        for (Map.Entry<String, Pattern> entry : entries) {
-            if (entry.getValue().matcher(url.toExternalForm()).matches())
+        final Set<Map.Entry<String, PluginMetaData>> entries = this.supportedPlugins.entrySet();
+        final String s = url.toExternalForm();
+        for (Map.Entry<String, PluginMetaData> entry : entries) {
+            if (entry.getValue().isSupported(s))
                 return entry.getKey();
         }
         throw new NotSupportedDownloadServiceException();
@@ -153,7 +150,7 @@ public class PluginsManager {
      * @throws NotSupportedDownloadServiceException
      *          pokud doslo k chybe pri ziskani pluginu podle daneho ID
      */
-    public ShareDownloadService getPlugin(final String shareDownloadServiceID) throws NotSupportedDownloadServiceException {
+    public ShareDownloadService getPluginInstance(final String shareDownloadServiceID) throws NotSupportedDownloadServiceException {
 
         synchronized (lock) {
             Plugin plugin;
@@ -167,5 +164,9 @@ public class PluginsManager {
                 throw new NotSupportedDownloadServiceException(shareDownloadServiceID);
             else return (ShareDownloadService) plugin;
         }
+    }
+
+    public List<PluginMetaData> getSupportedPlugins() {
+        return new ArrayList<PluginMetaData>(this.supportedPlugins.values());
     }
 }

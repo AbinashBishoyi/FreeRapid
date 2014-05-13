@@ -119,7 +119,7 @@ public class ProcessManager extends Thread {
             final String serviceID = file.getShareDownloadServiceID();
             final ShareDownloadService service;
             try {
-                service = pluginsManager.getPlugin(serviceID);
+                service = pluginsManager.getPluginInstance(serviceID);
             } catch (NotSupportedDownloadServiceException e) {
                 file.setState(DownloadState.ERROR);
                 file.setErrorMessage("Not supported service - " + serviceID);
