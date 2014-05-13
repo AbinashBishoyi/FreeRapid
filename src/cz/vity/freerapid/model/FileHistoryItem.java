@@ -1,6 +1,4 @@
-package cz.vity.freerapid.gui.managers;
-
-import cz.vity.freerapid.model.DownloadFile;
+package cz.vity.freerapid.model;
 
 import java.io.File;
 import java.net.URL;
