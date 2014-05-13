@@ -4,7 +4,6 @@ import com.sun.media.jai.codec.ImageCodec;
 import com.sun.media.jai.codec.ImageEncoder;
 import com.sun.media.jai.codec.PNMEncodeParam;
 import cz.vity.freerapid.utilities.LogUtils;
-import cz.vity.freerapid.utilities.Utils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.RenderedImage;
@@ -39,7 +38,7 @@ public class PPMPlay {
         encoder.encode(image);
 
         try {
-            final String command = Utils.addFileSeparator(Utils.getAppPath()) + PATH;
+            //final String command = Utils.addFileSeparator(Utils.getAppPath()) + PATH;
             final Process process = Runtime.getRuntime().exec("d:\\Downloads\\gocr046.exe -f ASCII -");
             final OutputStream processOut = process.getOutputStream();
             processOut.write(out.toByteArray());
@@ -49,7 +48,7 @@ public class PPMPlay {
             if (scanner.hasNext())
                 System.out.println("has next");
             final String s = scanner.next();
-            scanner.close();
+            //scanner.close();
             System.out.println("s = " + s);
             process.waitFor();
             final int i = process.exitValue();
