@@ -13,6 +13,7 @@ import org.jdesktop.application.ProxyActions;
 import org.jdesktop.beans.AbstractBean;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.net.URL;
 import java.util.List;
@@ -50,8 +51,15 @@ public class FileActions extends AbstractBean {
             dialog = new NewLinksDialog(managerDirector, app.getMainFrame());
 
         if (urlList != null) {
-            if (!showing)
-                Swinger.bringToFront(app.getMainFrame(), AppPrefs.getProperty(UserProp.BRING_TO_FRONT_WHEN_PASTED, UserProp.BRING_TO_FRONT_WHEN_PASTED_DEFAULT));
+
+            final boolean activate = AppPrefs.getProperty(UserProp.BRING_TO_FRONT_WHEN_PASTED, UserProp.BRING_TO_FRONT_WHEN_PASTED_DEFAULT);
+            if (activate) {
+                Swinger.bringToFront(app.getMainFrame(), activate);
+            } else {
+                if (!showing)
+                    Swinger.bringToFront(app.getMainFrame(), activate);
+                else Toolkit.getDefaultToolkit().beep();
+            }
             final List<URL> urlList1 = urlList;
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
