@@ -53,9 +53,10 @@ public class FileActions extends AbstractBean {
             if (dialog.getModalResult() == NewLinksDialog.RESULT_OK) {
                 final List<DownloadFile> files = dialog.getDownloadFiles();
                 dataManager.addToList(files);
+                final boolean notPaused = !dialog.isStartPaused();
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
-                        if (!dialog.isStartPaused())
+                        if (notPaused)
                             dataManager.addToQueue(files);
                         managerDirector.getContentManager().getContentPanel().selectAdded(files);
                     }
