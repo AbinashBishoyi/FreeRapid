@@ -57,7 +57,7 @@ public class PlugUtilsTest {
     public void testGetParameter() throws PluginImplementationException {
         try {
             assertEquals(PlugUtils.getParameter("par", "\"input type=\"hidden\" name=\"par\" value=val"), "val");
-            fail("Should throw exception - missing quotes");
+            fail("Should throw exception - not ending tag");
         } catch (PluginImplementationException e) {
 
         }
@@ -67,17 +67,19 @@ public class PlugUtilsTest {
         assertEquals(PlugUtils.getParameter("par", "\"input type=\"hidden\" name=par value=val>"), "val");
         assertEquals(PlugUtils.getParameter("par", "\"input type=\"hidden\" name=par value='val'"), "val");
         assertEquals(PlugUtils.getParameter("par", "\"input type=\"hidden\" name=par value=val>"), "val");
+        assertEquals(PlugUtils.getParameter("par", "\"input type=\"hidden\" name=par value=val  >"), "val");
+        assertEquals(PlugUtils.getParameter("par", "\"input type=\"hidden\" name=\"PAR\" value=val  >"), "val");
     }
 
     @Test
     public void testAddParameters() throws PluginImplementationException {
         PostMethod postMethod = new PostMethod("http://localhost");
-//        try {
-//            PlugUtils.addParameters(postMethod, "\"input type=\"hidden\" name=\"par\" value=\"val", new String[]{"par"});
-//            fail("Should throw exception");
-//        } catch (PluginImplementationException e) {
-//
-//        }
+        try {
+            PlugUtils.addParameters(postMethod, "\"input type=\"hidden\" name=\"PARY\" value=\"val", new String[]{"par"});
+            fail("Should throw exception - invalid parameter name");
+        } catch (PluginImplementationException e) {
+
+        }
         postMethod.removeParameter("par");
         PlugUtils.addParameters(postMethod, "\"input type=\"hidden\" name=\"par\" value=\"val\">", new String[]{"par"});
         assertEquals(postMethod.getParameter("par").getValue(), "val");
@@ -92,6 +94,10 @@ public class PlugUtilsTest {
 
         postMethod.removeParameter("par");
         PlugUtils.addParameters(postMethod, "\"input type=\"hidden\" name=\"par\" value='val'>", new String[]{"par"});
+        assertEquals(postMethod.getParameter("par").getValue(), "val");
+
+        postMethod.removeParameter("par");
+        PlugUtils.addParameters(postMethod, "\"input type=\"hidden\" name=\"par\" value=val   >", new String[]{"par"});
         assertEquals(postMethod.getParameter("par").getValue(), "val");
     }
 
