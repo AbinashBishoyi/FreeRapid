@@ -234,8 +234,8 @@ public class UserPreferencesDialog extends AppDialog {
         final ActionMap tableActionMap = pluginTable.getActionMap();
         final ActionMap actionMap = getActionMap();
 
-        tableInputMap.put(SwingUtils.getCtrlKeyStroke(KeyEvent.VK_C), "copy");
-        tableActionMap.put("copy", actionMap.get("copyContent"));
+//        tableInputMap.put(SwingUtils.getCtrlKeyStroke(KeyEvent.VK_C), "copy");
+//        tableActionMap.put("copy", actionMap.get("copyContent"));
 
 //        final KeyStroke ctrlF = SwingUtils.getCtrlKeyStroke(KeyEvent.VK_F);
 //        tableInputMap.put(ctrlF, "getFocusFind");
@@ -246,7 +246,7 @@ public class UserPreferencesDialog extends AppDialog {
 //        };
 //        tableActionMap.put("getFocusFind", focusFilterAction);
 
-        pluginTable.getParent().setPreferredSize(new Dimension(350, 250));
+        pluginTable.getParent().setPreferredSize(new Dimension(230, 230));
 
         tableInputMap.put(SwingUtils.getShiftKeyStroke(KeyEvent.VK_HOME), "selectFirstRowExtendSelection");
         tableInputMap.put(SwingUtils.getShiftKeyStroke(KeyEvent.VK_END), "selectLastRowExtendSelection");
