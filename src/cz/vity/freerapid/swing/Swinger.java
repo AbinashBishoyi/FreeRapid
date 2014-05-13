@@ -64,12 +64,12 @@ public class Swinger {
     }
 
     public static void showInformationDialog(final String message) {
-        JOptionPane.showMessageDialog(Frame.getFrames()[0], message, getResourceMap().getString(MESSAGE_INFORMATION_TITLE_CODE), JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(getActiveFrame(), message, getResourceMap().getString(MESSAGE_INFORMATION_TITLE_CODE), JOptionPane.INFORMATION_MESSAGE);
     }
 
     public static int getChoiceYesNoCancel(final String message) {
         final ResourceMap map = getResourceMap();
-        return JOptionPane.showOptionDialog(Frame.getFrames()[0], message, map.getString(MESSAGE_CONFIRM_TITLE_CODE),
+        return JOptionPane.showOptionDialog(getActiveFrame(), message, map.getString(MESSAGE_CONFIRM_TITLE_CODE),
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null, new Object[]{map.getString(MESSAGE_BTN_YES_CODE), map.getString(MESSAGE_BTN_NO_CODE),
@@ -79,7 +79,7 @@ public class Swinger {
 
     public static int getChoiceOKCancel(final String messageCode, Object... args) {
         final ResourceMap map = getResourceMap();
-        return JOptionPane.showOptionDialog(Frame.getFrames()[0], map.getString(messageCode, args), map.getString(MESSAGE_CONFIRM_TITLE_CODE),
+        return JOptionPane.showOptionDialog(getActiveFrame(), map.getString(messageCode, args), map.getString(MESSAGE_CONFIRM_TITLE_CODE),
                 JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null, new Object[]{map.getString(MESSAGE_BTN_OK_CODE), map.getString(MESSAGE_BTN_CANCEL_CODE)},
@@ -103,6 +103,7 @@ public class Swinger {
      * Vrati obrazek podle key property v resourcu
      * Nenajde-li se obrazek pod danym kodem, vypise WARNING pokud neni obrazek nalezen
      *
+     * @param map               resourcemapa
      * @param imagePropertyCode kod obrazku
      * @return obrazek
      */
@@ -145,7 +146,7 @@ public class Swinger {
     }
 
     public static void showErrorMessage(ResourceMap map, final String message, final Object... args) {
-        JOptionPane.showMessageDialog(Frame.getFrames()[0], map.getString(message, args), getResourceMap().getString("errorMessage", args), JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(getActiveFrame(), map.getString(message, args), getResourceMap().getString("errorMessage", args), JOptionPane.ERROR_MESSAGE);
     }
 
     public static int showOptionDialog(ResourceMap map, final int messageType, final String messageCode, final String[] buttons, final Object... args) {
@@ -156,7 +157,7 @@ public class Swinger {
             assert s != null;
             objects[i] = s;
         }
-        final Frame frame = Frame.getFrames()[0];
+        final Frame frame = getActiveFrame();
         bringToFront(frame);
         Toolkit.getDefaultToolkit().beep();
         return JOptionPane.showOptionDialog(frame, map.getString(messageCode, args), mainMap.getString("errorMessage"), JOptionPane.NO_OPTION, messageType, null, objects, objects[0]);
@@ -173,7 +174,7 @@ public class Swinger {
     }
 
     public static void showMessage(ResourceMap map, final String message, final Object... args) {
-        JOptionPane.showMessageDialog(Frame.getFrames()[0], map.getString(message, args), getResourceMap().getString("errorMessage", args), JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(getActiveFrame(), map.getString(message, args), getResourceMap().getString("errorMessage", args), JOptionPane.ERROR_MESSAGE);
     }
 
     public static void inputFocus(final JComboBox combo) {
@@ -248,7 +249,7 @@ public class Swinger {
             pane.setErrorReporter(new SubmitErrorReporter());
 
         pane.setErrorInfo(errorInfo);
-        JXErrorPane.showDialog(JFrame.getFrames()[0], pane);
+        JXErrorPane.showDialog(getActiveFrame(), pane);
     }
 
 
@@ -278,7 +279,7 @@ public class Swinger {
 
     public static int getChoiceYesNo(final String message) {
         final ResourceMap map = getResourceMap();
-        return JOptionPane.showOptionDialog(Frame.getFrames()[0], message, map.getString(MESSAGE_CONFIRM_TITLE_CODE),
+        return JOptionPane.showOptionDialog(getActiveFrame(), message, map.getString(MESSAGE_CONFIRM_TITLE_CODE),
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null, new Object[]{map.getString(MESSAGE_BTN_YES_CODE), map.getString(MESSAGE_BTN_NO_CODE)},
@@ -291,5 +292,14 @@ public class Swinger {
         state |= Frame.ICONIFIED;
         // Iconify the frame
         frame.setExtendedState(state);
+    }
+
+    private static Frame getActiveFrame() {
+        final Frame[] frames = Frame.getFrames();
+        for (Frame frame : frames) {
+            if (frame.isActive())
+                return frame;
+        }
+        return frames[0];
     }
 }

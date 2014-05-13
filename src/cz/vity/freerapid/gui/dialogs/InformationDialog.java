@@ -440,10 +440,16 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
 
     private void updateAvgSpeed() {
         String value;
-        if (file.getState() == DownloadState.DOWNLOADING) {
+        final DownloadState state = file.getState();
+        if ((state == DownloadState.DOWNLOADING) || (state == DownloadState.COMPLETED)) {
             if (file.getSpeed() >= 0) {
                 value = ContentPanel.bytesToAnother((long) file.getAverageSpeed()) + "/s";
-            } else value = "0 B/s";
+            } else {
+                if (state != DownloadState.COMPLETED)
+                    value = "0 B/s";
+                else
+                    value = "";
+            }
         } else value = "";
         avgSpeedLabel.setText(getResourceMap().getString("textBold", value));
     }
@@ -465,7 +471,14 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
             if (task != null)
                 value = ContentPanel.secondsToHMin(task.getExecutionDuration(TimeUnit.SECONDS));
             else value = "";
-        } else value = "";
+        } else {
+            final long taskDuration = file.getCompleteTaskDuration();
+            if (file.getState() == DownloadState.COMPLETED && taskDuration > 0) {
+                value = ContentPanel.secondsToHMin(taskDuration);
+            } else
+                value = "";
+        }
+
         estTimeLabel.setText(getResourceMap().getString("textBold", value));
     }
 
@@ -478,9 +491,9 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
 
             if (Float.compare(0, speed) != 0) {
                 value = ContentPanel.secondsToHMin(Math.round(hasToBeDownloaded / speed));
-            } else value = "Estimating...";
+            } else value = getResourceMap().getString("estimating");
         } else if (state == DownloadState.WAITING) {
-            value = "Waiting " + ContentPanel.secondsToHMin(file.getSleep());
+            value = getResourceMap().getString("waiting", ContentPanel.secondsToHMin(file.getSleep()));
         }
         remainingLabel.setText(getResourceMap().getString("textBold", value));
     }
@@ -529,4 +542,5 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
             updateDownloaded();
         }
     }
+
 }

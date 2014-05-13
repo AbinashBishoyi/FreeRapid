@@ -12,6 +12,7 @@ import cz.vity.freerapid.utilities.FileUtils;
 import cz.vity.freerapid.utilities.Sound;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.jdesktop.application.Application;
+import org.jdesktop.application.SingleFrameApplication;
 import org.jdesktop.application.TaskEvent;
 import org.jdesktop.application.TaskListener;
 
@@ -22,6 +23,7 @@ import java.io.*;
 import java.net.NoRouteToHostException;
 import java.net.UnknownHostException;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -230,7 +232,6 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         }
         finally {
             setSpeed(0);
-            setAverageSpeed(0);
             checkDeleteTempFile();
         }
 
@@ -345,7 +346,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         if (storeFile != null && storeFile.exists()) {
             if (storeFile.equals(outputFile)) //pokud zapisovaci == vystupnimu
             {
-                downloadFile.setState(DownloadState.COMPLETED);
+                setCompleted();
                 return;
             }
             if (outputFile.exists()) {
@@ -369,11 +370,17 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         if (runTask) {
             runMoveFileTask(overWriteFile);
         } else {
-            downloadFile.setState(DownloadState.COMPLETED);
+            setCompleted();
             if (storeFile != null && storeFile.exists()) {
                 storeFile.delete();
             }
         }
+    }
+
+    private void setCompleted() {
+        downloadFile.setCompleteTaskDuration(this.getExecutionDuration(TimeUnit.SECONDS));
+        downloadFile.setState(DownloadState.COMPLETED);
+
     }
 
     private void runMoveFileTask(boolean overWriteFile) {
@@ -474,6 +481,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     public String askForCaptcha(final BufferedImage image) throws Exception {
         SwingUtilities.invokeAndWait(new Runnable() {
             public void run() {
+                Swinger.bringToFront(((SingleFrameApplication) getApplication()).getMainFrame());
                 captchaResult = "";
                 while (captchaResult.isEmpty()) {
                     captchaResult = (String) JOptionPane.showInputDialog(null, getResourceMap().getString("InsertWhaYouSee"), getResourceMap().getString("InsertCaptcha"), JOptionPane.PLAIN_MESSAGE, new ImageIcon(image), null, null);
