@@ -122,7 +122,7 @@ public class DownloadNewPluginsTask extends DownloadTask {
 
     @Override
     protected void succeeded(Void result) {
-        final int choiceYesNo = Swinger.getChoiceYesNo("New plugins were installed.\nFor applying new versions of plugins you need to restart application.\nDo you want to restart it now?");
+        final int choiceYesNo = Swinger.getChoiceYesNo(getResourceMap().getString("installed"));
         if (choiceYesNo == Swinger.RESULT_YES) {
             director.getMenuManager().getFileActions().restartApplication();
         }

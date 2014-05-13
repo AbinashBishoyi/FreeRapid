@@ -56,6 +56,14 @@ validateLinksAction.Action.shortDescription=Validate selected link(s) on the ser
 validateLinksAction.Action.smallIcon=${iconsPath}checked.png
 validateLinksAction.Action.accelerator=ctrl W
 
+removeMenu.text=&Remove
+removeInvalidLinksAction.Action.text=Remove &Invalid Links
+removeInvalidLinksAction.Action.shortDescription=Removes all links marked as not working
+removeInvalidLinksAction.Action.smallIcon=${iconsPath}not_found.png
+removeInvalidLinksAction.Action.accelerator=ctrl DELETE
+
+#column '?' tooltip
+checkedColumnTooltip=URL validation
 
 CoreTask.properties
 ==================================
@@ -125,3 +133,9 @@ checkRecheckFilesOnStart.text=Re-check for file existence on the server when app
 invalidURL=Plugin server address is not valid URL:%n%s
 
 checkShowToolbarText.text=Show toolbar &buttons with text
+
+
+CheckForNewVersionTask.properties
+==============================================
+
+message.connect.status.checking=Checking for FRD's new version
