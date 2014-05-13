@@ -168,6 +168,7 @@ import java.util.Map;
  * @see com.jgoodies.binding.beans.PropertyAdapter
  * @see com.jgoodies.binding.value.Trigger
  */
+@SuppressWarnings({"unchecked"})
 public class MyPresentationModel<B> extends Model {
 
     /**
@@ -1380,7 +1381,7 @@ public class MyPresentationModel<B> extends Model {
          * @param evt describes the property change
          */
         public void propertyChange(PropertyChangeEvent evt) {
-            updateBufferingState(((Boolean) evt.getNewValue()).booleanValue());
+            updateBufferingState((Boolean) evt.getNewValue());
         }
 
     }
@@ -1401,7 +1402,7 @@ public class MyPresentationModel<B> extends Model {
         public void propertyChange(PropertyChangeEvent evt) {
             String propertyName = evt.getPropertyName();
             if (!PROPERTYNAME_CHANGED.equals(propertyName)
-                    || ((Boolean) evt.getNewValue()).booleanValue()) {
+                    || (Boolean) evt.getNewValue()) {
                 setChanged(true);
             }
         }
