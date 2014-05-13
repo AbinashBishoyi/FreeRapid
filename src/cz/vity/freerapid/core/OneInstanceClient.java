@@ -18,41 +18,45 @@ final class OneInstanceClient {
     }
 
     public static boolean checkInstance(final Collection<String> openFiles, AppPrefs prefs) {
-        if (!AppPrefs.getProperty(FWProp.ONEINSTANCE, true))
+        if (!AppPrefs.getProperty(FWProp.ONEINSTANCE, FWProp.ONE_INSTANCE_DEFAULT))
             return false;
         Socket clientSocket = null;
         try {
             logger.info("Testing existing instance");
-            final int port = AppPrefs.getProperty(FWProp.ONE_INSTANCE_SERVER_PORT, Consts.ONE_INSTANCE_SERVER_PORT);
-            clientSocket = new Socket("localhost", port);
-            if (openFiles != null && !openFiles.isEmpty()) {
-                OutputStream out = null;
-                try {
-                    out = clientSocket.getOutputStream();
-                    if (out != null) {
-                        for (String file : openFiles) {
-                            out.write(file.getBytes());
-                            out.write('\n');
-                        }
-                        out.close();
-                    }
-                } catch (IOException e) {
-                    LogUtils.processException(logger, e);
-                    if (out != null) {
-                        try {
+            final String portString = AppPrefs.getProperty(FWProp.ONE_INSTANCE_SERVER_PORT, null);
+            if (portString != null) {
+                clientSocket = new Socket("localhost", Integer.parseInt(portString));
+                if (openFiles != null && !openFiles.isEmpty()) {
+                    OutputStream out = null;
+                    try {
+                        out = clientSocket.getOutputStream();
+                        if (out != null) {
+                            for (String file : openFiles) {
+                                out.write(file.getBytes());
+                                out.write('\n');
+                            }
                             out.close();
-                        } catch (Exception ex) {
-                            LogUtils.processException(logger, ex);
+                        }
+                    } catch (IOException e) {
+                        LogUtils.processException(logger, e);
+                        if (out != null) {
+                            try {
+                                out.close();
+                            } catch (Exception ex) {
+                                LogUtils.processException(logger, ex);
+                            }
                         }
                     }
                 }
+                logger.info("Application is already running. Exiting");
+                return true;
+            } else {
+                logger.info("No other instance is running - first start");
+                oneInstanceServerStart(prefs);
             }
-            logger.info("Application is already running. Exiting");
-            return true;
         } catch (IOException e) {
             logger.info("No other instance is running.");
-            final OneInstanceServer server = new OneInstanceServer(prefs);
-            server.start();
+            oneInstanceServerStart(prefs);
         } finally {
             if (clientSocket != null)
                 try {
@@ -62,6 +66,11 @@ final class OneInstanceClient {
                 }
         }
         return false;
+    }
+
+    private static void oneInstanceServerStart(AppPrefs prefs) {
+        final OneInstanceServer server = new OneInstanceServer(prefs);
+        server.start();
     }
 
 }

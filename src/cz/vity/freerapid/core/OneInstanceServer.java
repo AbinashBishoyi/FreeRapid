@@ -89,26 +89,25 @@ final class OneInstanceServer extends Thread {
         }
     }
 
-
-    static boolean isAppInUse() {
-        if (!AppPrefs.getProperty(FWProp.ONEINSTANCE, true))
-            return false;
-        ServerSocket serverSocket = null;
-        try {
-            final int port = AppPrefs.getProperty(FWProp.ONE_INSTANCE_SERVER_PORT, Consts.ONE_INSTANCE_SERVER_PORT);
-            serverSocket = new ServerSocket(port, 1);
-            return false; //it is not in use => splash screen
-        } catch (IOException e) {
-            //not in use
-            return true;
-        } finally {
-            if (serverSocket != null)
-                try {
-                    serverSocket.close();
-                } catch (IOException e) {
-                    LogUtils.processException(logger, e);
-                }
-        }
-    }
+//    static boolean isAppInUse() {
+//        if (!AppPrefs.getProperty(FWProp.ONEINSTANCE, FWProp.ONE_INSTANCE_DEFAULT))
+//            return false;
+//        ServerSocket serverSocket = null;
+//        try {
+//            final int port = AppPrefs.getProperty(FWProp.ONE_INSTANCE_SERVER_PORT, Consts.ONE_INSTANCE_SERVER_PORT);
+//            serverSocket = new ServerSocket(port, 1);
+//            return false; //it is not in use => splash screen
+//        } catch (IOException e) {
+//            //not in use
+//            return true;
+//        } finally {
+//            if (serverSocket != null)
+//                try {
+//                    serverSocket.close();
+//                } catch (IOException e) {
+//                    LogUtils.processException(logger, e);
+//                }
+//        }
+//    }
 
 }

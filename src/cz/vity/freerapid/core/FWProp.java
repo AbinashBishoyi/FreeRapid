@@ -36,6 +36,7 @@ final public class FWProp {
     public static final boolean MINIMIZE_ON_CLOSE_DEFAULT = false;
     public static final String SELECTED_LANGUAGE = "selLanguage";
     public static final String DEFAULT_LANG_CODE = "EN";
+    public static final boolean ONE_INSTANCE_DEFAULT = true;
 
     private FWProp() {
     }

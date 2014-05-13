@@ -198,7 +198,7 @@ public class UserPreferencesDialog extends AppDialog {
 
     private void bindBasicComponents() {
 
-        bind(checkAllowOnlyOneInstance, FWProp.ONEINSTANCE, true);
+        bind(checkAllowOnlyOneInstance, FWProp.ONEINSTANCE, FWProp.ONE_INSTANCE_DEFAULT);
         bind(checkForNewVersion, FWProp.NEW_VERSION, true);
         bind(checkContinueInterrupted, UserProp.DOWNLOAD_ON_APPLICATION_START, true);
         bind(checkCloseWhenAllComplete, UserProp.CLOSE_WHEN_COMPLETED, false);
