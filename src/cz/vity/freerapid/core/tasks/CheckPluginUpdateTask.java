@@ -92,8 +92,8 @@ public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
     @Override
     protected void failed(Throwable cause) {
         LogUtils.processException(logger, cause);
-        if (handleRuntimeException(cause))
-            return;
+//        if (handleRuntimeException(cause))
+//            return;
         if (quietMode) {
             AppPrefs.storeProperty(UserProp.PLUGIN_LAST_UPDATE_TIMESTAMP_CHECK, -1);
             return;

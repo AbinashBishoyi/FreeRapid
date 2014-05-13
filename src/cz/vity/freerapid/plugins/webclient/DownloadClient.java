@@ -2,6 +2,7 @@ package cz.vity.freerapid.plugins.webclient;
 
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
+import cz.vity.freerapid.plugins.webclient.utils.HttpUtils;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
@@ -11,7 +12,6 @@ import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 
 import java.io.*;
-import java.net.URLDecoder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
@@ -209,7 +209,7 @@ public class DownloadClient implements HttpDownloadClient {
                     file.setFileSize(Long.valueOf(contentLength.getValue()));
             }
         }
-        final String fileName = getFileName(method);
+        final String fileName = HttpUtils.getFileName(method);
         if (fileName != null) {
             file.setFileName(fileName);
         }
@@ -223,45 +223,6 @@ public class DownloadClient implements HttpDownloadClient {
         return null;
     }
 
-    private String getFileName(HttpMethod method) {
-
-        final Header disposition = method.getResponseHeader("Content-Disposition");
-        if (disposition != null && disposition.getValue().toLowerCase().contains("attachment")) {
-            final String value = disposition.getValue();
-            String str = "filename=";
-            final String lowercased = value.toLowerCase();
-            int index = lowercased.lastIndexOf(str);
-            if (index >= 0) {
-                String s = value.substring(index + str.length());
-                if (s.startsWith("\"") && s.endsWith("\""))
-                    s = s.substring(1, s.length() - 1);
-                // napr. pro xtraupload je jeste treba dekodovat
-                if (s.matches(".*%[0-9A-Fa-f]+.*"))
-                    try {
-                        s = URLDecoder.decode(s, "UTF-8");
-                    } catch (UnsupportedEncodingException e) {
-                        logger.warning("Unsupported encoding");
-                    }
-                return s;
-            } else {
-                //test na buggove Content-Disposition
-                str = "filename\\*=UTF-8''";
-                index = lowercased.lastIndexOf(str);
-                if (index >= 0) {
-                    final String s = value.substring(index + str.length());
-                    if (!s.isEmpty())
-                        try {
-                            return URLDecoder.decode(s, "UTF-8");
-                        } catch (UnsupportedEncodingException e) {
-                            logger.warning("Unsupported encoding");
-                        }
-                } else {
-                    logger.warning("File name was not found in:" + value);
-                }
-            }
-        }
-        return null;
-    }
 
     @Override
     public InputStream makeRequestForFile(HttpMethod method) throws IOException {
@@ -363,7 +324,7 @@ public class DownloadClient implements HttpDownloadClient {
             this.asString = streamToString(method.getResponseBodyAsStream());
     }
 
-    private String streamToString(final InputStream in) {
+    private static String streamToString(final InputStream in) {
         BufferedReader in2 = null;
         StringWriter sw = new StringWriter();
         char[] buffer = new char[4000];

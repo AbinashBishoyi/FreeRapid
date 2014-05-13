@@ -130,6 +130,7 @@ public class SubmitErrorDialog extends AppDialog {
 //        return Swinger.getActionMap(this.getClass(), this);
 //    }
 
+    @SuppressWarnings({"deprecation"})
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         // Generated using JFormDesigner Open Source Project license - unknown

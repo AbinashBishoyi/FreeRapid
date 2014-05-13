@@ -300,7 +300,7 @@ public final class Utils {
             LogUtils.processException(logger, e);
             return appPath = "";
         }
-        logger.info("App Path is " + appPath);
+        logger.config("App Path is " + appPath);
         return appPath;
     }
 

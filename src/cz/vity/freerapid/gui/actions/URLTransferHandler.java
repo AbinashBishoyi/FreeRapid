@@ -59,7 +59,7 @@ public abstract class URLTransferHandler extends TransferHandler {
 //            }
 //
 //        }
-        data = data.replaceAll("=http", " http");
+        data = data.replaceAll("\\p{Punct}http", "  http");//2 spaces
         final Matcher match = REGEXP_URL.matcher(data);
         int start = 0;
         final String http = "http://";

@@ -58,6 +58,8 @@ import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.*;
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.logging.Level;
@@ -82,6 +84,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
     private boolean pluginTableWasChanged;
     private static final String PLUGIN_OPTIONS_ENABLED_PROPERTY = "pluginOptionsEnabled";
     private boolean pluginOptionsEnabled;
+    private JTabbedPane pluginTabbedPane;
 
 
     private static enum Card {
@@ -648,6 +651,9 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
     @org.jdesktop.application.Action
     public void okBtnAction() {
+        if (!validated())
+            return;
+
         final boolean updateProxyConnectionList = isBuffering(UserProp.PROXY_LIST_PATH) || isBuffering(UserProp.USE_PROXY_LIST);
         updateDefaultConnection = updateDefaultConnection || isBuffering(UserProp.USE_DEFAULT_CONNECTION);
 
@@ -692,6 +698,23 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         }
 
         doClose();
+    }
+
+    private boolean validated() {
+        final Object o = comboPluginServers.getSelectedItem();
+
+        if (o != null && !o.toString().isEmpty()) {
+            try {
+                new URI(o.toString());
+            } catch (URISyntaxException e) {
+                pluginTabbedPane.setSelectedIndex(1);
+                showCard(Card.CARD6);
+                Swinger.inputFocus(comboPluginServers);
+                Swinger.showErrorMessage(getResourceMap(), "invalidURL", o.toString());
+                return false;
+            }
+        }
+        return true;
     }
 
     private boolean isBuffering(final String property) {
@@ -1000,7 +1023,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         JLabel labelAfterDetectUpdate = new JLabel();
 
         JPanel panelPlugins = new JPanel();
-        JTabbedPane pluginTabbedPane = new JTabbedPane();
+        pluginTabbedPane = new JTabbedPane();
         pluginTabbedPane.setName("pluginTabbedPane");
         checkRecheckFilesOnStart.setName("checkRecheckFilesOnStart");
         JPanel pluginPanelSettings = new JPanel();

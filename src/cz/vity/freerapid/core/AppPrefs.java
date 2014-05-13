@@ -38,6 +38,7 @@ public final class AppPrefs {
             throw new IllegalStateException("Config property Application.ID is empty!");
         this.propertiesFileName = id.toLowerCase() + ".xml";
         AppPrefs.properties = loadProperties();
+
         if (resetOptions) {
             try {
                 AppPrefs.properties.clear();
@@ -215,7 +216,7 @@ public final class AppPrefs {
         }
 
         final File storageDir = localStorage.getDirectory();
-        logger.info("Config files directory: " + storageDir.getAbsolutePath());
+        logger.config("Config files directory: " + storageDir.getAbsolutePath());
 
         final File userFile = new File(storageDir, propertiesFileName);
         if (!(userFile.exists())) {
