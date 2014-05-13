@@ -6,7 +6,6 @@ import cz.vity.freerapid.plugins.webclient.interfaces.PluginRunner;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.PostMethod;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,7 +58,7 @@ public abstract class AbstractRunner implements PluginRunner {
         return pluginService.getPluginContext().getDialogSupport();
     }
 
-    protected boolean tryDownload(PostMethod method) throws Exception {
+    protected boolean tryDownload(HttpMethod method) throws Exception {
         httpFile.setState(DownloadState.GETTING);
         logger.info("Making final request for file");
         try {

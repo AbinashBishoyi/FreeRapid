@@ -34,21 +34,17 @@ public class StandardDialogSupport implements DialogSupport {
 
     public String askForCaptcha(final BufferedImage image) throws Exception {
         synchronized (captchaLock) {
+            captchaResult = "";
             SwingUtilities.invokeAndWait(new Runnable() {
                 public void run() {
                     if (AppPrefs.getProperty(UserProp.ACTIVATE_WHEN_CAPTCHA, UserProp.ACTIVATE_WHEN_CAPTCHA_DEFAULT))
                         Swinger.bringToFront(((SingleFrameApplication) context.getApplication()).getMainFrame(), true);
-                    captchaResult = "";
+                    captchaResult = (String) JOptionPane.showInputDialog(null, context.getResourceMap().getString("InsertWhatYouSee"), context.getResourceMap().getString("InsertCaptcha"), JOptionPane.PLAIN_MESSAGE, new ImageIcon(image), null, null);
 
-                    while (captchaResult.isEmpty()) {
-                        captchaResult = (String) JOptionPane.showInputDialog(null, context.getResourceMap().getString("InsertWhatYouSee"), context.getResourceMap().getString("InsertCaptcha"), JOptionPane.PLAIN_MESSAGE, new ImageIcon(image), null, null);
-                        if (captchaResult == null)
-                            break;
-                    }
                 }
             });
+            image.flush();
+            return captchaResult;
         }
-        image.flush();
-        return captchaResult;
     }
 }
