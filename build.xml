@@ -81,7 +81,7 @@
                     <comment value="#"/>
                 </striplinecomments>
             </filterchain>
-            <fileset dir="${src.dir}" includes="**/?*.properties" excludes="**/?*_zh*.properties"/>
+            <fileset dir="${src.dir}" includes="**/?*.properties" excludes="**/?*_zh*.properties,**/?*_ja*.properties"/>
             <mapper type="glob" from="*.properties" to="*.stripped">
             </mapper>
         </copy>
@@ -89,7 +89,7 @@
         <native2ascii src="${classes.dir}" encoding="utf-8" includes="**/?*.stripped"
                       dest="${classes.dir}" ext=".properties"/>
 
-        <native2ascii src="${src.dir}" encoding="unicode" includes="**/?*_zh*.properties"
+        <native2ascii src="${src.dir}" encoding="unicode" includes="**/?*_zh*.properties,**/?*_ja*.properties"
                       dest="${classes.dir}" ext=".properties"/>
 
         <delete>
@@ -105,7 +105,7 @@
                 <attribute name="SplashScreen-Image" value="${splash}"/>
             </manifest>
             <fileset dir="${classes.dir}" includes="**/*"
-                     excludes="**/services/**,**/dev/**,**/sandbox/**, **/**/?*.properties"/>
+                     excludes="**/services/**,**/sandbox/**, **/**/?*.properties"/>
         </jar>
         <mkdir dir="${build.dir}/${lib.dir}"/>
         <!--<mkdir dir="${build.dir}/help"/>-->
@@ -216,11 +216,11 @@
             <fileset dir="out/production/freerapid" includes="**/?*.properties" excludes="${ignoreProperties}"/>
         </delete>
 
-        <native2ascii src="${src.dir}" encoding="unicode" includes="**/?*_zh*.properties"
+        <native2ascii src="${src.dir}" encoding="unicode" includes="**/?*_zh*.properties,**/?*_ja*.properties"
                       dest="out/production/freerapid" ext=".properties"/>
 
         <native2ascii src="${src.dir}" encoding="utf-8" includes="**/?*.properties"
-                      excludes="${ignoreProperties},**/?*_zh*.properties"
+                      excludes="${ignoreProperties},**/?*_zh*.properties,**/?*_ja*.properties"
                       dest="out/production/freerapid" ext=".properties"/>
     </target>
 
