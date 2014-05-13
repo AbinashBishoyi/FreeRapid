@@ -12,6 +12,7 @@ import org.jdesktop.application.Action;
 import javax.swing.*;
 import java.applet.AudioClip;
 import java.awt.*;
+import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -82,6 +83,9 @@ public class AboutDialog extends AppDialog {
             Manifest manifest = new Manifest(manifestUrl.openStream());
             final Attributes attributes = manifest.getMainAttributes();
             return attributes.getValue("Build");
+        } catch (FileNotFoundException e) {
+            //logger.info("Manifest was not found - IDE mode");
+            return null;
         } catch (Exception e) {
             LogUtils.processException(logger, e);
             return null;

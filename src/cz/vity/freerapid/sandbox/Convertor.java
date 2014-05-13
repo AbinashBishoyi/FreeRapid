@@ -16,7 +16,7 @@ public class Convertor {
         final List<File> list = new LinkedList<File>();
         findFiles(new File("c:\\develope\\freerapid\\resources"), list);
         for (File file : list) {
-            final String f = Utils.loadFile(file, "Windows-1250");
+            final String f = Utils.loadFile(file, "Windows-1252");
             file.delete();
             writeFile(file, f);
         }
