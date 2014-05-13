@@ -326,6 +326,8 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         downloadFile.setState(DownloadState.ERROR);
         if (getResourceMap().containsKey(cause.getMessage()))
             downloadFile.setErrorMessage(getResourceMap().getString(cause.getMessage()));
+        else
+            downloadFile.setErrorMessage(cause.getMessage());
         setServiceError(DownloadTaskError.GENERAL_ERROR);
         if (!(cause instanceof YouHaveToWaitException)) {
             if (AppPrefs.getProperty(UserProp.PLAY_SOUNDS_FAILED, true))

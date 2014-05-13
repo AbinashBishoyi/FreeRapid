@@ -807,8 +807,8 @@ public class UserPreferencesDialog extends AppDialog {
                                             FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                                             FormFactory.DEFAULT_COLSPEC,
                                             FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                            new ColumnSpec("max(pref;30dlu)"),
                                             new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(0), FormSpec.DEFAULT_GROW),
-                                            new ColumnSpec("max(default;30dlu)")
                                     },
                                     new RowSpec[]{
                                             FormFactory.DEFAULT_ROWSPEC,

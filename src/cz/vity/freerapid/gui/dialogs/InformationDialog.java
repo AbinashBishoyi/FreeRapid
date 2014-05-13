@@ -441,16 +441,18 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
     private void updateAvgSpeed() {
         String value;
         final DownloadState state = file.getState();
-        if ((state == DownloadState.DOWNLOADING) || (state == DownloadState.COMPLETED)) {
-            if (file.getSpeed() >= 0) {
+        value = "";
+        if (state == DownloadState.DOWNLOADING) {
+            if (file.getAverageSpeed() >= 0) {
                 value = ContentPanel.bytesToAnother((long) file.getAverageSpeed()) + "/s";
             } else {
-                if (state != DownloadState.COMPLETED)
-                    value = "0 B/s";
-                else
-                    value = "";
+                value = "0 B/s";
             }
-        } else value = "";
+        } else if (state == DownloadState.COMPLETED) {
+            if (file.getAverageSpeed() > 0) {
+                value = ContentPanel.bytesToAnother((long) file.getAverageSpeed()) + "/s";
+            }
+        }
         avgSpeedLabel.setText(getResourceMap().getString("textBold", value));
     }
 
