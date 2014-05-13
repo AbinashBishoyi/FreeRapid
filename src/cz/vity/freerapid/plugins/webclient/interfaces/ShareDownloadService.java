@@ -1,7 +1,5 @@
 package cz.vity.freerapid.plugins.webclient.interfaces;
 
-import cz.vity.freerapid.plugins.webclient.HttpFileDownloader;
-
 import javax.swing.*;
 
 /**

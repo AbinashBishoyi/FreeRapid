@@ -1,8 +1,8 @@
 package cz.vity.freerapid.plugins.dev;
 
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
-import cz.vity.freerapid.plugins.webclient.HttpFile;
-import cz.vity.freerapid.plugins.webclient.HttpFileDownloader;
+import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
+import cz.vity.freerapid.plugins.webclient.interfaces.HttpFileDownloader;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 import org.jdesktop.application.Application;
 

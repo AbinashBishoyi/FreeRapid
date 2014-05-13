@@ -1,5 +1,6 @@
 package cz.vity.freerapid.core.tasks;
 
+import cz.vity.freerapid.core.tasks.exceptions.NoAvailableConnection;
 import cz.vity.freerapid.gui.managers.ClientManager;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
 import cz.vity.freerapid.model.DownloadFile;
@@ -40,11 +41,10 @@ public class DownloadNewPluginsTask extends DownloadTask {
         final ClientManager clientManager = director.getClientManager();
         final List<ConnectionSettings> connectionSettingses = clientManager.getEnabledConnections();
         if (connectionSettingses.isEmpty())
-            return null;
+            throw new NoAvailableConnection(getResourceMap().getString("noAvailableConnection"));
         client = new DownloadClient();
         client.initClient(connectionSettingses.get(0));
         initDownloadThread();
-        Thread.sleep(10000);
 
         final File dir = director.getPluginsManager().getPluginsDir();
         for (DownloadFile file : fileList) {

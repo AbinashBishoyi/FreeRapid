@@ -3,7 +3,7 @@ package cz.vity.freerapid.plugins.exceptions;
 /**
  * @author Vity
  */
-public class CaptchaEntryInputMismatchException extends ErrorDuringDownloadingException {
+public class CaptchaEntryInputMismatchException extends NotRecoverableDownloadException {
 
     public CaptchaEntryInputMismatchException() {
         super("Captcha Entry Input Mismatch");

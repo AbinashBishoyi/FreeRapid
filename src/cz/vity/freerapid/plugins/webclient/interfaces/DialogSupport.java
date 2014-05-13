@@ -10,9 +10,11 @@ import java.awt.image.BufferedImage;
  */
 public interface DialogSupport {
 
-    PremiumAccount showAccountDialog(Class clazz) throws Exception;
+    PremiumAccount showAccountDialog(PremiumAccount premiumAccount, String dialogTitle) throws Exception;
 
-    int showOKCancelDialog(Component container) throws Exception;
+    boolean showOKCancelDialog(Component container, String dialogTitle) throws Exception;
+
+    public void showOKDialog(Component container, String dialogTitle) throws Exception;
 
     public String askForCaptcha(final BufferedImage image) throws Exception;
 }

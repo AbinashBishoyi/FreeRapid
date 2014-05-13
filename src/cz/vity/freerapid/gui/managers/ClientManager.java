@@ -5,7 +5,7 @@ import cz.vity.freerapid.core.FWProp;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadClient;
-import cz.vity.freerapid.plugins.webclient.HttpDownloadClient;
+import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
 import cz.vity.freerapid.utilities.Utils;
 
 import java.io.File;
@@ -34,6 +34,7 @@ public class ClientManager {
 
     public ClientManager(ManagerDirector managerDirector) {
         this.managerDirector = managerDirector;
+        defaultConnectionSettings.setDefault(true);
 
         popCount = 0;
         updateConnectionSettings();
@@ -50,13 +51,18 @@ public class ClientManager {
     }
 
     private void updateDefault() {
-        if (AppPrefs.getProperty(UserProp.USE_DEFAULT_CONNECTION, UserProp.USE_DEFAULT_CONNECTION_DEFAULT)) {
+        if (useDefaultConnection()) {
             final boolean isEnabled = defaultConnectionSettings.isEnabled();
             defaultConnectionSettings = new ConnectionSettings();
+            defaultConnectionSettings.setDefault(true);
             initDefaultProxySettings(defaultConnectionSettings);
             defaultConnectionSettings.setEnabled(isEnabled);
             availableConnections.add(defaultConnectionSettings);
         }
+    }
+
+    private boolean useDefaultConnection() {
+        return AppPrefs.getProperty(UserProp.USE_DEFAULT_CONNECTION, UserProp.USE_DEFAULT_CONNECTION_DEFAULT);
     }
 
     private void initDefaultProxySettings(ConnectionSettings connectionSettings) {
@@ -136,11 +142,19 @@ public class ClientManager {
 
     public List<ConnectionSettings> getRotatedEnabledConnections() {
         synchronized (connectionSettingsLock) {
-            final List<ConnectionSettings> list = getEnabled();
-            if (list.size() > 1) {
+            final List<ConnectionSettings> list = new ArrayList<ConnectionSettings>(availableConnections.size());
+            for (ConnectionSettings settings : availableConnections) {
+                if (settings.isEnabled() && !settings.isDefault()) {
+                    list.add(settings);
+                }
+            }
+
+            if (list.size() > 1) {//rotate enabled proxies
                 Collections.rotate(list, rotate++);
             }
-            return Collections.unmodifiableList(list);
+            if (useDefaultConnection() && defaultConnectionSettings.isEnabled())
+                list.add(0, defaultConnectionSettings);
+            return list;
         }
     }
 

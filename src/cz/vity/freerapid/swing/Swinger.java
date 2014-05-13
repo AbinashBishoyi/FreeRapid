@@ -1,15 +1,12 @@
 package cz.vity.freerapid.swing;
 
-import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.application.SubmitErrorReporter;
 import cz.vity.freerapid.gui.dialogs.ErrorDialog;
-import org.jdesktop.application.ApplicationActionMap;
-import org.jdesktop.application.ApplicationContext;
-import org.jdesktop.application.ResourceManager;
-import org.jdesktop.application.ResourceMap;
+import org.jdesktop.application.*;
 import org.jdesktop.swingx.JXErrorPane;
 import org.jdesktop.swingx.error.ErrorInfo;
 
+import javax.swing.Action;
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -120,21 +117,21 @@ public class Swinger {
     }
 
     public static ResourceMap getResourceMap() {
-        return MainApp.getAContext().getResourceManager().getResourceMap();
+        return getContext().getResourceManager().getResourceMap();
     }
 
     public static ResourceMap getResourceMap(final Class className) {
-        final ResourceManager rm = MainApp.getAContext().getResourceManager();
+        final ResourceManager rm = getContext().getResourceManager();
         return rm.getResourceMap(className);
     }
 
     public static ResourceMap getResourceMap(final Class className, final Class stopClass) {
-        final ResourceManager rm = MainApp.getAContext().getResourceManager();
+        final ResourceManager rm = getContext().getResourceManager();
         return rm.getResourceMap(className, stopClass);
     }
 
     public static Action getAction(Object actionName) {
-        final Action action = MainApp.getAContext().getActionMap().get(actionName);
+        final Action action = getContext().getActionMap().get(actionName);
         if (action == null) {
             throw new IllegalStateException("Action with a name \"" + actionName + "\" does not exist.");
         }
@@ -143,11 +140,15 @@ public class Swinger {
 
 
     public static ActionMap getActionMap(Class aClass, Object actionsObject) {
-        return MainApp.getAContext().getActionMap(aClass, actionsObject);
+        return getContext().getActionMap(aClass, actionsObject);
+    }
+
+    private static ApplicationContext getContext() {
+        return Application.getInstance().getContext();
     }
 
     public static ActionMap getActionMap(Object actionsObject) {
-        return MainApp.getAContext().getActionMap(actionsObject);
+        return getContext().getActionMap(actionsObject);
     }
 
     public static void showErrorMessage(ResourceMap map, final String message, final Object... args) {
@@ -166,6 +167,24 @@ public class Swinger {
         bringToFront(frame, true);
         Toolkit.getDefaultToolkit().beep();
         return JOptionPane.showOptionDialog(frame, map.getString(messageCode, args), mainMap.getString(titleCode), JOptionPane.NO_OPTION, messageType, null, objects, objects[0]);
+    }
+
+    public static int showInputDialog(final String title, final Object inputObject, boolean cancelButton) {
+        final ResourceMap mainMap = getResourceMap();
+        final String[] buttons;
+        if (cancelButton)
+            buttons = new String[]{MESSAGE_BTN_OK_CODE, MESSAGE_BTN_CANCEL_CODE};
+        else
+            buttons = new String[]{MESSAGE_BTN_OK_CODE};
+        final Object[] objects = new Object[buttons.length];
+        for (int i = 0; i < buttons.length; i++) {
+            final String s = mainMap.getString(buttons[i]);
+            assert s != null;
+            objects[i] = s;
+        }
+        final Frame frame = getActiveFrame();
+        bringToFront(frame, true);
+        return JOptionPane.showOptionDialog(frame, inputObject, title, JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, objects, objects[0]);
     }
 
     public static void bringToFront(Frame frame, boolean activate) {
@@ -199,6 +218,7 @@ public class Swinger {
     public static TableColumn updateColumn(JTable table, String name, final int columnId, final int minWidth, final int width, TableCellRenderer renderer) {
         final TableColumnModel columnModel = table.getColumnModel();
         TableColumn column = columnModel.getColumn(columnId);
+        column.setIdentifier(name);
         if (renderer != null)
             column.setCellRenderer(renderer);
         //column.setHeaderValue(name);

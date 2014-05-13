@@ -20,7 +20,7 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.java.plugin.registry.Version;
 import org.jdesktop.application.ApplicationContext;
 
-import java.io.IOException;
+import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,12 +29,11 @@ import java.util.logging.Logger;
 /**
  * @author Ladislav Vitasek
  */
-public class CheckPluginUpdateTask extends CoreTask<ConnectResult, Void> {
+public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
     private final static Logger logger = Logger.getLogger(CheckPluginUpdateTask.class.getName());
 
     private final ManagerDirector director;
     private final boolean quietMode;
-    private List<Plugin> newPlugins;
     private static final String VERSION__PARAM = "version";
     private static final String PRODUCT_PARAM = "product";
 
@@ -44,12 +43,12 @@ public class CheckPluginUpdateTask extends CoreTask<ConnectResult, Void> {
         this.director = director;
         quietMode = quiet;
         logger.info("Starting to check for a new plugins version");
-        this.newPlugins = new ArrayList<Plugin>();
         setTaskToForeground();
     }
 
 
-    protected ConnectResult doInBackground() throws Exception {
+    protected List<Plugin> doInBackground() throws Exception {
+        final List<Plugin> newPlugins = new ArrayList<Plugin>();
         AppPrefs.storeProperty(UserProp.PLUGIN_LAST_UPDATE_TIMESTAMP_CHECK, System.currentTimeMillis());
         message("updatesPluginCheck");
         final ClientManager clientManager = director.getClientManager();
@@ -70,27 +69,24 @@ public class CheckPluginUpdateTask extends CoreTask<ConnectResult, Void> {
         }
         message("message.connecting");
         if (client.makeRequest(method) != HttpStatus.SC_OK)
-            throw new IOException("Connection failed");
+            throw new ConnectException(getResourceMap().getString("Connection_failed"));
         message("message.checkingData");
-        final Plugins rootPlugins = new XMLBind().loadSchema(client.getContentAsString());
         if (isCancelled())
             throw new InterruptedException();
+        final Plugins rootPlugins = new XMLBind().loadSchema(client.getContentAsString());
         final List<Plugin> plugins = rootPlugins.getPlugin();
-        newPlugins = new ArrayList<Plugin>(plugins.size());
         final PluginsManager pluginsManager = director.getPluginsManager();
         for (Plugin plugin : plugins) {
             final String id = plugin.getId();
+            final Version newVersion = Version.parse(plugin.getVersion());
+            plugin.setVersion(newVersion.toString());
             if (pluginsManager.hasPlugin(id)) {
-                final Version newVersion = Version.parse(plugin.getVersion());
                 final Version oldVersion = Version.parse(pluginsManager.getPluginMetadata(id).getVersion());
                 if (newVersion.isGreaterThan(oldVersion))
                     newPlugins.add(plugin);
             } else newPlugins.add(plugin);
         }
-        if (newPlugins.isEmpty())
-            return ConnectResult.CONNECT_NEW_VERSION;
-        else
-            return ConnectResult.SAME_VERSION;
+        return newPlugins;
     }
 
     @Override
@@ -109,13 +105,10 @@ public class CheckPluginUpdateTask extends CoreTask<ConnectResult, Void> {
     }
 
     @Override
-    protected void succeeded(ConnectResult result) {
-        for (Plugin plugin : newPlugins) {
+    protected void succeeded(List<Plugin> result) {
+        for (Plugin plugin : result) {
             logger.info("plugin update from server: " + plugin.getId());
         }
     }
 
-    public List<Plugin> getPluginList() {
-        return newPlugins;
-    }
 }

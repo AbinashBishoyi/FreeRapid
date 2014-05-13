@@ -20,6 +20,8 @@ public class ConnectionSettings {
 
     private final EDTPropertyChangeSupport pcs;
 
+    private boolean isDefault = false;
+
     public ConnectionSettings() {
         //setProxy("localhost", 8081);
         defaultConnectionLabel = Application.getInstance().getContext().getResourceMap().getString("defaultConnection");
@@ -153,5 +155,13 @@ public class ConnectionSettings {
 
     public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(propertyName, listener);
+    }
+
+    public boolean isDefault() {
+        return isDefault;
+    }
+
+    public void setDefault(boolean aDefault) {
+        isDefault = aDefault;
     }
 }

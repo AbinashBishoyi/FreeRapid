@@ -3,7 +3,7 @@ package cz.vity.freerapid.plugins.exceptions;
 /**
  * @author Ladislav Vitasek
  */
-public class InvalidUsernameOrPassword extends ErrorDuringDownloadingException {
+public class InvalidUsernameOrPassword extends NotRecoverableDownloadException {
     public InvalidUsernameOrPassword() {
         super();
     }

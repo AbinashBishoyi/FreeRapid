@@ -50,7 +50,7 @@ public class WrappedPluginData {
         this.selected = selected;
     }
 
-    public Object getVersion() {
+    public String getVersion() {
         return version;
     }
 

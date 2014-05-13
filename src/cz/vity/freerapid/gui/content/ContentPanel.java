@@ -12,7 +12,7 @@ import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.plugins.webclient.FileState;
-import cz.vity.freerapid.plugins.webclient.HttpFile;
+import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
 import cz.vity.freerapid.swing.SwingUtils;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.Browser;
@@ -26,6 +26,7 @@ import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.FilterPipeline;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
 import org.jdesktop.swingx.decorator.PatternFilter;
+import org.jdesktop.swingx.table.TableColumnExt;
 
 import javax.swing.*;
 import javax.swing.event.ListDataEvent;
@@ -630,7 +631,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         });
 
 
-        ColorHighlighter first = new ColorHighlighter(new HighlightPredicate() {
+        final ColorHighlighter highlighter = new ColorHighlighter(new HighlightPredicate() {
             public boolean isHighlighted(Component renderer, org.jdesktop.swingx.decorator.ComponentAdapter adapter) {
                 return FileState.FILE_NOT_FOUND.equals(((DownloadFile) adapter.getValue(COLUMN_CHECKED)).getFileState());
             }
@@ -653,6 +654,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         column.setMaxWidth(30);
         column.setWidth(30);
         column.setCellRenderer(new CheckedCellRenderer(context));
+        ((TableColumnExt) tableColumnModel.getColumn(COLUMN_CHECKED)).setToolTipText("Toooooooooltip");
         tableColumnModel.getColumn(COLUMN_PROGRESS).setCellRenderer(new ProgressCellRenderer());
         tableColumnModel.getColumn(COLUMN_STATE).setCellRenderer(new EstTimeCellRenderer(context));
         tableColumnModel.getColumn(COLUMN_SIZE).setCellRenderer(new SizeCellRenderer(context));
@@ -701,12 +703,13 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         inputMap.put(SwingUtils.getShiftKeyStroke(KeyEvent.VK_END), "selectLastRowExtendSelection");
 
         //inputMap.remove("find");
+        inputMap.remove(KeyStroke.getKeyStroke("F8"));
         actionMap.remove("find");
 
 //        paste();
 
         updateFilters();
-        table.addHighlighter(first);
+        table.addHighlighter(highlighter);
     }
 
     @org.jdesktop.application.Action

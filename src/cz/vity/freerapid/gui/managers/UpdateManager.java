@@ -4,7 +4,6 @@ import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.CheckPluginUpdateTask;
-import cz.vity.freerapid.core.tasks.ConnectResult;
 import cz.vity.freerapid.core.tasks.DownloadNewPluginsTask;
 import cz.vity.freerapid.gui.dialogs.UpdateDialog;
 import cz.vity.freerapid.gui.dialogs.WrappedPluginData;
@@ -93,9 +92,9 @@ public class UpdateManager {
     public void checkUpdate(final boolean quiet) {
 
         final CheckPluginUpdateTask pluginUpdateTask = new CheckPluginUpdateTask(director, context, quiet);
-        pluginUpdateTask.addTaskListener(new TaskListener.Adapter<ConnectResult, Void>() {
-            public void succeeded(TaskEvent<ConnectResult> event) {
-                updateDetected(pluginUpdateTask.getPluginList(), quiet);
+        pluginUpdateTask.addTaskListener(new TaskListener.Adapter<List<Plugin>, Void>() {
+            public void succeeded(TaskEvent<List<Plugin>> event) {
+                updateDetected(event.getValue(), quiet);
             }
         });
         context.getTaskService().execute(pluginUpdateTask);
@@ -158,7 +157,7 @@ public class UpdateManager {
 
         final List<DownloadFile> fileList = new LinkedList<DownloadFile>();
         for (WrappedPluginData data : wrappedList) {
-            if (data.isSelected() && !updatedPluginsCode.contains(data.getID())) {
+            if (data.isSelected() && !updatedPluginsCode.contains(getUniqueId(data.getID(), data.getVersion()))) {
                 final DownloadFile httpFile = data.getHttpFile();
                 if (httpFile.getState() != DownloadState.COMPLETED)
                     fileList.add(data.getHttpFile());
@@ -180,7 +179,7 @@ public class UpdateManager {
             public void finished(TaskEvent<Void> event) {
                 for (WrappedPluginData data : wrappedList) {
                     if (data.getHttpFile().getState() == DownloadState.COMPLETED) {
-                        updatedPluginsCode.add(data.getID());
+                        updatedPluginsCode.add(getUniqueId(data.getID(), data.getVersion()));
                     }
                 }
             }
@@ -199,7 +198,7 @@ public class UpdateManager {
         List<WrappedPluginData> result = new LinkedList<WrappedPluginData>();
         for (Plugin plugin : list) {
             final String id = plugin.getId();
-            if (updatedPluginsCode.contains(id))
+            if (updatedPluginsCode.contains(getUniqueId(id, plugin.getVersion())))
                 continue;
             final boolean isNew = !pluginsManager.hasPlugin(id);
             if (!isNew) {
@@ -223,4 +222,9 @@ public class UpdateManager {
         }
         return result;
     }
+
+    private String getUniqueId(String id, String version) {
+        return id + '@' + version;
+    }
+
 }

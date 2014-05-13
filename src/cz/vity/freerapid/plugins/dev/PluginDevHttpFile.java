@@ -2,7 +2,7 @@ package cz.vity.freerapid.plugins.dev;
 
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.plugins.webclient.FileState;
-import cz.vity.freerapid.plugins.webclient.HttpFile;
+import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
 
 import java.io.File;
 import java.net.URL;

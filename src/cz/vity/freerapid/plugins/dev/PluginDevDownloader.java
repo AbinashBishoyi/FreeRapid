@@ -1,7 +1,12 @@
 package cz.vity.freerapid.plugins.dev;
 
 import cz.vity.freerapid.plugins.exceptions.FailedToLoadCaptchaPictureException;
-import cz.vity.freerapid.plugins.webclient.*;
+import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
+import cz.vity.freerapid.plugins.webclient.DownloadClient;
+import cz.vity.freerapid.plugins.webclient.DownloadState;
+import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
+import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
+import cz.vity.freerapid.plugins.webclient.interfaces.HttpFileDownloader;
 
 import java.awt.image.BufferedImage;
 import java.io.InputStream;

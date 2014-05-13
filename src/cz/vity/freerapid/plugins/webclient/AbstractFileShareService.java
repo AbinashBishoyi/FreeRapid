@@ -1,6 +1,7 @@
 package cz.vity.freerapid.plugins.webclient;
 
 import cz.vity.freerapid.plugins.exceptions.NotSupportedDownloadByServiceException;
+import cz.vity.freerapid.plugins.webclient.interfaces.HttpFileDownloader;
 import cz.vity.freerapid.plugins.webclient.interfaces.PluginContext;
 import cz.vity.freerapid.plugins.webclient.interfaces.PluginRunner;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;

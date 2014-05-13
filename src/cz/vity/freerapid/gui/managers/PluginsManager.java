@@ -6,6 +6,7 @@ import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.model.PluginMetaData;
 import cz.vity.freerapid.plugimpl.PluginContextImpl;
 import cz.vity.freerapid.plugimpl.StandardDialogSupport;
+import cz.vity.freerapid.plugimpl.StandardStorageSupport;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.plugins.webclient.interfaces.PluginContext;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
@@ -262,7 +263,7 @@ public class PluginsManager {
     }
 
     private PluginContext createPluginContext() {
-        return PluginContextImpl.create(new StandardDialogSupport(context), null);
+        return PluginContextImpl.create(new StandardDialogSupport(context), new StandardStorageSupport(context));
     }
 
     public List<PluginMetaData> getSupportedPlugins() {

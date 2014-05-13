@@ -1,9 +1,7 @@
 package cz.vity.freerapid.plugins.webclient;
 
 import cz.vity.freerapid.plugins.webclient.hoster.CaptchaSupport;
-import cz.vity.freerapid.plugins.webclient.interfaces.DialogSupport;
-import cz.vity.freerapid.plugins.webclient.interfaces.PluginRunner;
-import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
+import cz.vity.freerapid.plugins.webclient.interfaces.*;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;

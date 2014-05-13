@@ -6,7 +6,11 @@ import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.gui.managers.TaskServiceManager;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.exceptions.*;
-import cz.vity.freerapid.plugins.webclient.*;
+import cz.vity.freerapid.plugins.webclient.DownloadState;
+import cz.vity.freerapid.plugins.webclient.FileState;
+import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
+import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
+import cz.vity.freerapid.plugins.webclient.interfaces.HttpFileDownloader;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.FileUtils;
@@ -332,7 +336,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 
     @Override
     protected void failed(Throwable cause) {
-        if (!(cause instanceof YouHaveToWaitException) && !(cause instanceof URLNotAvailableAnymoreException) && !(cause instanceof CaptchaEntryInputMismatchException))
+        if (!(cause instanceof ErrorDuringDownloadingException))
             super.failed(cause);
         error(cause);
         if (cause instanceof NotEnoughSpaceException) {
@@ -340,8 +344,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
             setServiceError(DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR);
         } else if (cause instanceof UnknownHostException) {
             downloadFile.setErrorMessage(getResourceMap().getString("UnknownHostError"));
-        } else
-        if (cause instanceof URLNotAvailableAnymoreException || cause instanceof PluginImplementationException || cause instanceof CaptchaEntryInputMismatchException) {
+        } else if (cause instanceof NotRecoverableDownloadException) {
             setServiceError(DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR);
         } else if (cause instanceof YouHaveToWaitException) {
             final YouHaveToWaitException waitException = (YouHaveToWaitException) cause;

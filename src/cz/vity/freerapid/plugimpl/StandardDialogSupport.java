@@ -3,9 +3,11 @@ package cz.vity.freerapid.plugimpl;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.DownloadTask;
+import cz.vity.freerapid.gui.dialogs.AccountDialog;
 import cz.vity.freerapid.plugins.webclient.hoster.PremiumAccount;
 import cz.vity.freerapid.plugins.webclient.interfaces.DialogSupport;
 import cz.vity.freerapid.swing.Swinger;
+import org.jdesktop.appframework.swingx.SingleXFrameApplication;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.SingleFrameApplication;
 
@@ -25,12 +27,19 @@ public class StandardDialogSupport implements DialogSupport {
         this.context = context;
     }
 
-    public PremiumAccount showAccountDialog(Class clazz) {
-        return null;
+    public PremiumAccount showAccountDialog(final PremiumAccount account, final String title) throws Exception {
+        final SingleXFrameApplication app = (SingleXFrameApplication) context.getApplication();
+        final AccountDialog dialog = new AccountDialog(app.getMainFrame(), title, account);
+        app.prepareDialog(dialog, true);
+        return dialog.getAccount();
     }
 
-    public int showOKCancelDialog(Component container) {
-        return 0;
+    public boolean showOKCancelDialog(final Component container, final String title) {
+        return Swinger.showInputDialog(title, container, true) == Swinger.RESULT_OK;
+    }
+
+    public void showOKDialog(Component container, String title) {
+        Swinger.showInputDialog(title, container, false);
     }
 
     public String askForCaptcha(final BufferedImage image) throws Exception {
@@ -48,4 +57,6 @@ public class StandardDialogSupport implements DialogSupport {
             return captchaResult;
         }
     }
+
+
 }

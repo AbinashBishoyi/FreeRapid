@@ -34,6 +34,7 @@ public class MoveFileTask extends CoreTask<Void, Void> {
         this.deleteSource = deleteSource;
         this.overWriteExisting = overWriteExisting;
         this.downloadFile = downloadFile;
+        setTaskToForeground();
     }
 
     protected Void doInBackground() throws Exception {
@@ -53,7 +54,7 @@ public class MoveFileTask extends CoreTask<Void, Void> {
             } else to.delete();
         }
 
-        //message("Moving file");
+        message("Moving_file");
         final File parentToDir = to.getParentFile();
         if (from.getParentFile().equals(parentToDir)) {
             if (from.renameTo(to)) {

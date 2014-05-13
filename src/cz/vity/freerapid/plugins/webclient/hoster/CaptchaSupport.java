@@ -1,8 +1,8 @@
 package cz.vity.freerapid.plugins.webclient.hoster;
 
 import cz.vity.freerapid.plugins.exceptions.FailedToLoadCaptchaPictureException;
-import cz.vity.freerapid.plugins.webclient.HttpDownloadClient;
 import cz.vity.freerapid.plugins.webclient.interfaces.DialogSupport;
+import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 
 import javax.imageio.ImageIO;

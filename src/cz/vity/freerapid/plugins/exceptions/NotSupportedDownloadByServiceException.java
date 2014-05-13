@@ -3,7 +3,7 @@ package cz.vity.freerapid.plugins.exceptions;
 /**
  * @author Vity
  */
-public class NotSupportedDownloadByServiceException extends ErrorDuringDownloadingException {
+public class NotSupportedDownloadByServiceException extends NotRecoverableDownloadException {
 
     public NotSupportedDownloadByServiceException() {
         super();

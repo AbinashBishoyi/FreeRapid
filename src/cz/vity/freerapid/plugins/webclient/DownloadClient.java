@@ -1,5 +1,7 @@
 package cz.vity.freerapid.plugins.webclient;
 
+import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
+import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
@@ -124,7 +126,7 @@ final public class DownloadClient implements HttpDownloadClient {
                     newuri = "/";
                 }
                 if (!newuri.contains("http://"))
-                 newuri = "http://" + method.getURI().getHost() + newuri;
+                    newuri = "http://" + method.getURI().getHost() + newuri;
 
                 logger.info("Redirect target: " + newuri);
                 setReferer(newuri);

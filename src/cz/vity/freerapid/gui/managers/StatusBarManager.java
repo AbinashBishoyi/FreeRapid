@@ -48,6 +48,8 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
     private MemoryIndicator indicator;
     private PropertyChangeListener taskPCL;
 
+    private Task activeTask = null;
+
     /**
      * Konstruktor
      *
@@ -219,7 +221,11 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
         if ("done".equals(propertyName)) {
             progress.setVisible(false);
             task.removePropertyChangeListener(taskPCL);
+            activeTask = null;
         } else if ("started".equals(propertyName)) {
+            if (activeTask != null)
+                task.removePropertyChangeListener(taskPCL);
+            activeTask = task;
             progress.setStringPainted(false);
             progress.setVisible(true);
             progress.setToolTipText(null);
