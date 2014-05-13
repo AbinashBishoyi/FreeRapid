@@ -69,8 +69,19 @@ public abstract class URLTransferHandler extends TransferHandler {
                 if (!spec.startsWith(http))
                     spec = http + spec;
                 final URL url = new URL(spec);
-                if (pluginsManager.isSupported(url))
-                    list.add(url);
+                if (pluginsManager.isSupported(url)) {
+                    final String s = url.toExternalForm();
+                    boolean containable = false;
+                    for (URL u : list) {
+                        final String previouslyAdded = u.toExternalForm();
+                        if (previouslyAdded.length() > s.length() && previouslyAdded.startsWith(s)) {
+                            containable = true;
+                            break;
+                        }
+                    }
+                    if (!containable)
+                        list.add(url);
+                }
             } catch (MalformedURLException e) {
                 //ignore
             }
