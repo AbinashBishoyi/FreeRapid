@@ -409,17 +409,23 @@ public class ProcessManager extends Thread {
         public void propertyChange(PropertyChangeEvent evt) {
             final DownloadState newState = (DownloadState) evt.getNewValue();
             if ((newState != ERROR && newState != SLEEPING)) { //doslo ke zmene stavu z venci
-                this.cancel(); //zrusime timer
-                if (newState != WAITING) {
-                    file.setTimeToQueued(-1); //odecitani casu
-                    file.setTimeToQueuedMax(-1);
+                synchronized (manipulation) {
+                    this.cancel(); //zrusime timer
+                    if (newState != WAITING) {
+                        file.setTimeToQueued(-1); //odecitani casu
+                        file.setTimeToQueuedMax(-1);
+                    }
+                    finished = true;
+                    unregisterListener();
+                    file.resetErrorAttempts(); //je nutne vyresetovat pocet error pokusu
+                    renewProblematicConnection();
                 }
-                finished = true;
-                file.removePropertyChangeListener(this);
-                renewProblematicConnection();
-                file.resetErrorAttempts(); //je nutne vyresetovat pocet error pokusu
                 queueUpdated();
             }
+        }
+
+        private void unregisterListener() {
+            file.removePropertyChangeListener("state", this);
         }
 
         public void run() {
@@ -429,12 +435,14 @@ public class ProcessManager extends Thread {
             file.setTimeToQueued(--counter); //normalni prubeh, jeden tick
             final long currentTime = System.currentTimeMillis();
             if (counter <= 0 || (currentTime - lastTime > 1000 * 60)) { //zarazeni zpatky do fronty
-                file.setTimeToQueued(-1);
-                file.setTimeToQueuedMax(-1);
-                renewProblematicConnection();
-                file.setState(QUEUED);
-                this.cancel();
-                file.removePropertyChangeListener(this);
+                synchronized (manipulation) {
+                    unregisterListener();
+                    file.setTimeToQueued(-1);
+                    file.setTimeToQueuedMax(-1);
+                    file.setState(QUEUED);
+                    this.cancel();
+                    renewProblematicConnection();
+                }
                 queueUpdated();
             }
             this.lastTime = currentTime;

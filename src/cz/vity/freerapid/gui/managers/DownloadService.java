@@ -26,8 +26,10 @@ class DownloadService {
 
 
     public boolean canDownloadWith(ConnectionSettings connectionSettings) {
-        if (problems.contains(connectionSettings))
+        if (problems.contains(connectionSettings)) {
+            //System.out.println("Still in problematic connections");
             return false;
+        }
         int foundCount = 0;
         for (ConnectionSettings settings : downloading) {
             if (settings.equals(connectionSettings)) {
@@ -75,10 +77,12 @@ class DownloadService {
     }
 
     public void addProblematicConnection(ConnectionSettings settings) {
+//        System.out.println("Adding problematic connection");
         problems.add(settings);
     }
 
     public void removeProblematicConnection(ConnectionSettings settings) {
+//        System.out.println("Renewing problematic connection");
         problems.remove(settings);
     }
 
