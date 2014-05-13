@@ -6,6 +6,7 @@ import com.jgoodies.binding.value.DelayedReadValueModel;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.model.DownloadFile;
+import cz.vity.freerapid.utilities.FileUtils;
 import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.application.*;
 
@@ -14,9 +15,11 @@ import javax.swing.event.ListDataListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EventObject;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -102,7 +105,10 @@ public class FileHistoryManager extends AbstractBean implements Application.Exit
         synchronized (saveFileLock) {
             logger.info("=====Saving download history into XML file=====");
             final LocalStorage localStorage = context.getLocalStorage();
+            File dstFile = new File(localStorage.getDirectory(), FILES_LIST_XML);
             try {
+                if (AppPrefs.getProperty(UserProp.MAKE_FILE_BACKUPS, UserProp.MAKE_FILE_BACKUPS_DEFAULT))
+                    FileUtils.makeBackup(dstFile);
                 localStorage.save(files, FILES_LIST_XML);
             } catch (IOException e) {
                 LogUtils.processException(logger, e);
@@ -114,41 +120,66 @@ public class FileHistoryManager extends AbstractBean implements Application.Exit
 
 
     @SuppressWarnings({"unchecked"})
-    private void loadList() {
+    private List<FileHistoryItem> loadList(final File srcFile) throws IOException {
+        final LinkedList<FileHistoryItem> list = new LinkedList<FileHistoryItem>();
         final LocalStorage localStorage = context.getLocalStorage();
-        if (new File(localStorage.getDirectory(), FILES_LIST_XML).exists()) {
-            try {
-                final Object o = localStorage.load(FILES_LIST_XML);
-                if (o instanceof ArrayListModel) {
-                    for (FileHistoryItem file : (ArrayListModel<FileHistoryItem>) o) {
-                        this.items.add(file);
-                    }
-                }
-                this.items.addListDataListener(new ListDataListener() {
-                    public void intervalAdded(ListDataEvent e) {
-                        fireDataChanged();
-                    }
+        if (!srcFile.exists()) {
+            return list;
+        }
 
-                    public void intervalRemoved(ListDataEvent e) {
-                        fireDataChanged();
-                    }
+        final Object o = localStorage.load(FILES_LIST_XML);
 
-                    public void contentsChanged(ListDataEvent e) {
-
-                    }
-                });
-            } catch (Exception e) {
-                LogUtils.processException(logger, e);
+        if (o instanceof ArrayListModel) {
+            for (FileHistoryItem file : (ArrayListModel<FileHistoryItem>) o) {
+                list.add(file);
             }
         }
+        return list;
     }
 
     public synchronized ArrayListModel<FileHistoryItem> getItems() {
         if (!loaded) {
-            loadList();
+            loadFileHistoryList();
             this.loaded = true;
         }
         return items;
+    }
+
+    private void loadFileHistoryList() {
+        List<FileHistoryItem> result = null;
+        final File srcFile = new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML);
+        if (srcFile.exists()) {
+            try {
+                result = loadList(srcFile);
+            } catch (Exception e) {
+                LogUtils.processException(logger, e);
+                logger.info("Trying to renew file from backup");
+                try {
+                    FileUtils.renewBackup(srcFile);
+                    result = loadList(srcFile);
+                } catch (FileNotFoundException ex) {
+                    //ignore
+                } catch (Exception e1) {
+                    LogUtils.processException(logger, e);
+                }
+            }
+            if (result != null)
+                this.items.addAll(result);
+        }
+        this.items.addListDataListener(new ListDataListener() {
+            public void intervalAdded(ListDataEvent e) {
+                fireDataChanged();
+            }
+
+            public void intervalRemoved(ListDataEvent e) {
+                fireDataChanged();
+            }
+
+            public void contentsChanged(ListDataEvent e) {
+
+            }
+        });
+
     }
 
     public synchronized void addHistoryItem(DownloadFile file, File savedAs) {

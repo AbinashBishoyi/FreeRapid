@@ -87,7 +87,7 @@ public class FileUtils {
         if (backupFile.exists()) {
             final boolean result = backupFile.delete();
             if (!result) {
-                logger.warning("Deleting backup file " + backupFile + " failed.");
+                logger.warning("Deleting old backup file " + backupFile + " failed.");
             }
         }
         final boolean result = srcFile.renameTo(backupFile);

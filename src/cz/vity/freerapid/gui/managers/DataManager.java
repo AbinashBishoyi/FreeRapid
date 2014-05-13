@@ -49,7 +49,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
     public DataManager(ManagerDirector director, ApplicationContext context) {
         this.director = director;
         this.context = context;
-        fileListMaintainer = new FileListMaintainer(context, director);
+        fileListMaintainer = new FileListMaintainer(context, director, this);
         pluginsManager = director.getPluginsManager();
         context.getApplication().addExitListener(new Application.ExitListener() {
             public boolean canExit(EventObject event) {

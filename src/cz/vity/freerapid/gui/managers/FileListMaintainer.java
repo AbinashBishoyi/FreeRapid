@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 /**
  * @author Ladislav Vitasek
  */
-public class FileListMaintainer {
+class FileListMaintainer {
     private final ApplicationContext context;
     private final ManagerDirector director;
     private final DataManager dataManager;
@@ -33,10 +33,10 @@ public class FileListMaintainer {
     private static final String FILES_LIST_XML = "filesList.xml";
 
 
-    public FileListMaintainer(ApplicationContext context, ManagerDirector director) {
+    public FileListMaintainer(ApplicationContext context, ManagerDirector director, DataManager dataManager) {
         this.context = context;
         this.director = director;
-        this.dataManager = director.getDataManager();
+        this.dataManager = dataManager;
     }
 
 
@@ -50,13 +50,13 @@ public class FileListMaintainer {
         final boolean removeCompleted = AppPrefs.getProperty(UserProp.REMOVE_COMPLETED_DOWNLOADS, UserProp.REMOVE_COMPLETED_DOWNLOADS_DEFAULT) == UserProp.REMOVE_COMPLETED_DOWNLOADS_AT_STARTUP;
         List<DownloadFile> result = null;
         try {
-            result = loadListFromFile(srcFile, localStorage, downloadOnStart, removeCompleted);
+            result = loadListFromFile(srcFile, downloadOnStart, removeCompleted);
         } catch (Exception e) {
             LogUtils.processException(logger, e);
             logger.info("Trying to renew file from backup");
             try {
                 FileUtils.renewBackup(srcFile);
-                result = loadListFromFile(srcFile, localStorage, downloadOnStart, removeCompleted);
+                result = loadListFromFile(srcFile, downloadOnStart, removeCompleted);
             } catch (FileNotFoundException ex) {
                 //ignore            
             } catch (Exception e1) {
@@ -68,9 +68,9 @@ public class FileListMaintainer {
     }
 
     @SuppressWarnings({"unchecked"})
-    List<DownloadFile> loadListFromFile(final File srcFile, final LocalStorage localStorage, final boolean downloadOnStart, final boolean removeCompleted) throws IOException {
+    List<DownloadFile> loadListFromFile(final File srcFile, final boolean downloadOnStart, final boolean removeCompleted) throws IOException {
         LinkedList<DownloadFile> list = new LinkedList<DownloadFile>();
-        final Object o = localStorage.load(srcFile.getName());
+        final Object o = context.getLocalStorage().load(srcFile.getName());
         if (!(o instanceof ArrayListModel))
             return list;
         if (!srcFile.exists()) {
