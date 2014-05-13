@@ -110,7 +110,7 @@ public final class PlugUtils {
      */
 
     public static String getParameter(String name, String content) throws PluginImplementationException {
-        Matcher matcher = PlugUtils.matcher("name=\"" + name + "\"[^v>]*value=\"([^\"]*)\"", content);
+        Matcher matcher = PlugUtils.matcher("name=\"" + name + "\"[^>]*value=\"([^\"]*)\"", content);
         if (matcher.find()) {
             return matcher.group(1);
         } else
