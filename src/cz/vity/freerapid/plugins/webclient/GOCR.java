@@ -56,11 +56,11 @@ class GOCR {
             processOut.flush();
 
             scanner = new Scanner(process.getInputStream());
-            final String s = scanner.next();
-            process.waitFor();
-            if (process.exitValue() != 0)
-                throw new IOException("Process exited abnormally");
-            return s;
+            return scanner.next();
+//            process.waitFor();
+//            if (process.exitValue() != 0)
+//                throw new IOException("Process exited abnormally");
+            //return s;
         } catch (Exception e) {
             LogUtils.processException(logger, e);
             throw new IOException(e);
