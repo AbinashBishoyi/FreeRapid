@@ -111,7 +111,9 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
 
     @Action
     public void btnSelectPathAction() {
-        final JDirectoryChooser directoryChooser = new JDirectoryChooser(comboPath.getEditor().getItem().toString());
+        final JDirectoryChooser directoryChooser = new JDirectoryChooser((String) comboPath.getEditor().getItem());
+        directoryChooser.setDialogTitle(getResourceMap().getString("directoryChooserTitle"));
+        directoryChooser.setControlButtonsAreShown(true);
         if (directoryChooser.showDialog(this, getResourceMap().getString("SelectDirectory")) != JDirectoryChooser.CANCEL_OPTION) {
             comboPath.getEditor().setItem(directoryChooser.getSelectedFile().getAbsolutePath());
             Swinger.inputFocus(comboPath);
@@ -123,6 +125,7 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
         if (!validateStart())
             return;
         setResult(RESULT_OK);
+        saveLastSaveToPath();
         startPaused = true;
         doClose();
     }
@@ -158,9 +161,13 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
     public void okBtnAction() {
         if (!validateStart())
             return;
-        AppPrefs.storeProperty(UserProp.LAST_COMBO_PATH, comboPath.getSelectedItem().toString());
+        saveLastSaveToPath();
         setResult(RESULT_OK);
         doClose();
+    }
+
+    private void saveLastSaveToPath() {
+        AppPrefs.storeProperty(UserProp.LAST_COMBO_PATH, comboPath.getSelectedItem().toString());
     }
 
     private boolean validateStart() {
