@@ -35,6 +35,9 @@ public class ProcessManager extends Thread {
 
     private volatile Stack<HttpDownloadClient> workingClients;
     private volatile Map<String, DownloadService> services = new Hashtable<String, DownloadService>();
+    private volatile Map<DownloadFile, ConnectionSettings> forceDownloadFiles = new Hashtable<DownloadFile, ConnectionSettings>();
+
+//    private volatile Map<String, DownloadService> services = new Hashtable<String, DownloadService>();
 
     private boolean threadSuspended;
     //private final Object queueLock;
@@ -72,9 +75,10 @@ public class ProcessManager extends Thread {
     public void run() {
         while (true) {
             synchronized (manipulation) {
-                if (!this.workingClients.isEmpty()) {
-                    execute();
-                }
+                if (!this.workingClients.isEmpty() && !forceDownloadFiles.isEmpty())
+                    execute(getFilesForForceDownload(), true);
+                if (!this.workingClients.isEmpty())
+                    execute(getQueued(), false);
             }
             try {
                 synchronized (this) {
@@ -90,8 +94,11 @@ public class ProcessManager extends Thread {
         }
     }
 
-    private boolean execute() {
-        final List<DownloadFile> files = getQueued();
+    private LinkedList<DownloadFile> getFilesForForceDownload() {
+        return new LinkedList<DownloadFile>(forceDownloadFiles.keySet());
+    }
+
+    private boolean execute(Collection<DownloadFile> files, boolean forceDownload) {
         for (DownloadFile file : files) {
             logger.info("Getting downloadFile " + file);
             final String serviceID = file.getShareDownloadServiceID();
@@ -109,13 +116,19 @@ public class ProcessManager extends Thread {
                 services.put(serviceID, downloadService);
             }
 
-            for (ConnectionSettings settings : availableConnections) {
-                if (downloadService.canDownloadWith(settings)) {
-                    HttpDownloadClient client = workingClients.pop();
-                    client.initClient(settings);
-                    downloadService.addDownloadingClient(client);
-                    queueDownload(file, client, service);
-                    break;
+            if (!forceDownload) {
+                for (ConnectionSettings settings : availableConnections) {
+                    if (downloadService.canDownloadWith(settings)) {
+                        queueDownload(file, settings, downloadService, service);
+                        break;
+                    }
+                }
+            } else {
+                if (!forceDownloadFiles.containsKey(file)) {
+                    throw new IllegalStateException("Cannot find forceDownloaded File");
+                } else {
+                    final ConnectionSettings settings = forceDownloadFiles.remove(file);
+                    queueDownload(file, settings, downloadService, service);
                 }
             }
             if (workingClients.isEmpty())
@@ -124,7 +137,23 @@ public class ProcessManager extends Thread {
         return false;
     }
 
-    private void queueDownload(final DownloadFile downloadFile, final HttpDownloadClient client, final ShareDownloadService service) {
+    public void forceDownload(ConnectionSettings settings, List<DownloadFile> files) {
+        synchronized (manipulation) {
+            for (DownloadFile file : files) {
+                if (!DownloadState.isProcessState(file.getState())) {
+                    file.setState(DownloadState.QUEUED);
+                    forceDownloadFiles.put(file, settings);
+                }
+            }
+        }
+        queueUpdated();
+    }
+
+    private void queueDownload(final DownloadFile downloadFile, final ConnectionSettings settings, DownloadService downloadService, final ShareDownloadService service) {
+        final HttpDownloadClient client = workingClients.pop();
+        client.initClient(settings);
+        downloadService.addDownloadingClient(client);
+
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 if (downloadFile.getState() != DownloadState.QUEUED)
@@ -188,7 +217,7 @@ public class ProcessManager extends Thread {
                 } else {
                     file.setErrorAttemptsCount(--errorAttemptsCount);
                     if (error == DownloadTaskError.YOU_HAVE_TO_WAIT_ERROR) {
-                        int waitTime = task.getYouHaveToSleepSecondsTime() * 1000;
+                        int waitTime = task.getYouHaveToSleepSecondsTime();
                         errorTimer.schedule(new MyTimerTask(file, waitTime), 0, 1000);
                     } else
                         errorTimer.schedule(new MyTimerTask(file), 0, 1000);
@@ -241,4 +270,5 @@ public class ProcessManager extends Thread {
             }
         }
     }
+
 }

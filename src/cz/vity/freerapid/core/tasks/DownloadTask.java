@@ -44,6 +44,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 
     private int youHaveToSleepSecondsTime = 0;
     private String captchaResult;
+    private static final int NO_DATA_TIMEOUT_LIMIT = 8;
 
 
     public DownloadTask(Application application, HttpDownloadClient client, DownloadFile downloadFile, ShareDownloadService service) {
@@ -60,6 +61,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     }
 
     protected Void doInBackground() throws Exception {
+        client.getHTTPClient().getHttpConnectionManager().closeIdleConnections(0);
 //        final GetMethod getMethod = client.getGetMethod("http://data.idnes.cz/televize/img/1/1466255.jpg");
 //        InputStream stream = client.makeRequestForFile(getMethod);
 //        final BufferedImage image = loadCaptcha(stream);
@@ -75,7 +77,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         if (f.getParentFile().getFreeSpace() < fileSize) {
             throw new NotEnoughSpaceException();
         }
-        return new FileOutputStream(f);
+        return new BufferedOutputStream(new FileOutputStream(f), 300000);
     }
 
     protected void initBackground() {
@@ -111,20 +113,35 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                 final long time = System.currentTimeMillis();
 
                 timer.schedule(new TimerTask() {
-                    private long lastSize;
+                    private long lastSize = 0;
+                    private int noDataTimeOut = 0; //10 seconds to timeout
 
                     public void run() {
+//                        final HttpClient httpClient = client.getHTTPClient();
                         if (isTerminated() || downloadFile.getState() != DownloadState.DOWNLOADING) {
                             this.cancel();
                             return;
                         }
 
                         final long speed = counter - lastSize;
+
                         setSpeed(speed);
+
+                        if (speed == 0) {
+                            if (noDataTimeOut >= NO_DATA_TIMEOUT_LIMIT) { //X seconds with no data
+                                logger.info("Cancelling download - no downloaded data during " + NO_DATA_TIMEOUT_LIMIT + " seconds");
+                                this.cancel();
+                                DownloadTask.this.cancel(true);
+                                return;
+                            }
+                        } else {
+                            noDataTimeOut = 0;
+                            lastSize = counter;
+                            setDownloaded(counter);
+                        }
+
                         final long current = System.currentTimeMillis();
                         final double l = (current - time) / 1000.0;
-                        lastSize = counter;
-                        setDownloaded(counter);
                         if (l == 0) {
                             setAverageSpeed(0.0F);
                         } else
@@ -285,7 +302,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     }
 
     private void runMoveFileTask(boolean overWriteFile) {
-        final MoveFileTask moveFileTask = new MoveFileTask(getApplication(), storeFile, outputFile, true, overWriteFile);
+        final MoveFileTask moveFileTask = new MoveFileTask(getApplication(), storeFile, outputFile, true, overWriteFile, downloadFile);
         moveFileTask.addTaskListener(new TaskListener.Adapter<Void, Void>() {
             public boolean succeeded = false;
 

@@ -39,7 +39,7 @@ public class MenuManager {
         return fileActions;
     }
 
-    private JMenu autosearchSubmenu = null;
+///    private JMenu autosearchSubmenu = null;
 
     public MenuManager(final ApplicationContext context) {
         super();
@@ -83,6 +83,8 @@ public class MenuManager {
         final Object[] viewMenuActionNames = {
                 CHECKED + "showToolbar",
                 CHECKED + "showStatusBar",
+                MENU_SEPARATOR,
+                "showDownloadHistoryAction"
         };
 
         final Object[] helpMenuActionNames = {
@@ -140,19 +142,19 @@ public class MenuManager {
 
     }
 
-    private void setMenuEnabled(boolean enabled) {
-        final int itemCount = autosearchSubmenu.getItemCount();
-        for (int i = 0; i < itemCount; i++) {
-            final JMenuItem item = autosearchSubmenu.getItem(i);
-            if (item != null) {
-                final Action action = item.getAction();
-                if (action != null) {
-                    action.setEnabled(enabled);
-                }
-            }
-        }
-        autosearchSubmenu.setEnabled(enabled);
-    }
+//    private void setMenuEnabled(boolean enabled) {
+//        final int itemCount = autosearchSubmenu.getItemCount();
+//        for (int i = 0; i < itemCount; i++) {
+//            final JMenuItem item = autosearchSubmenu.getItem(i);
+//            if (item != null) {
+//                final Action action = item.getAction();
+//                if (action != null) {
+//                    action.setEnabled(enabled);
+//                }
+//            }
+//        }
+//        autosearchSubmenu.setEnabled(enabled);
+//    }
 
     public JMenuBar getMenuBar() {
         if (menuBar == null) {

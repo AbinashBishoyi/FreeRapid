@@ -3,6 +3,7 @@ package cz.vity.freerapid.plugins.devservices.filefactory;
 import cz.vity.freerapid.plugins.webclient.AbstractFileShareService;
 import cz.vity.freerapid.plugins.webclient.HttpFileDownloader;
 
+import javax.swing.*;
 import java.util.regex.Pattern;
 
 /**
@@ -18,6 +19,18 @@ public class FileFactoryShareServiceImpl extends AbstractFileShareService {
 
     public int getMaxDownloadsFromOneIP() {
         return 1;
+    }
+
+    public Icon getFaviconImage() {
+        return null;
+    }
+
+    public Icon getSmallImage() {
+        return null;
+    }
+
+    public Icon getBigImage() {
+        return null;
     }
 
     public boolean supportsURL(String url) {

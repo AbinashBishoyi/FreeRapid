@@ -455,9 +455,21 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         popup.addSeparator();
         popup.add(map.get("removeSelectedAction"));
         final JMenu menu = new JMenu("Misc");
+        popup.add(menu);
+        JMenu forceMenu = new JMenu("Force Download");
+        forceMenu.setMnemonic('F');
+        menu.add(forceMenu);
+        boolean forceEnabled = isSelectedEnabled() && this.manager.hasDownloadFilesStates(table.getSelectedRows(), DownloadState.QUEUED);
+        forceMenu.setEnabled(forceEnabled);
+        final List<ConnectionSettings> connectionSettingses = director.getClientManager().getAvailableConnections();
+        for (ConnectionSettings settings : connectionSettingses) {
+            final ForceDownloadAction action = new ForceDownloadAction(settings);
+            forceMenu.add(action);
+            action.setEnabled(forceEnabled);
+        }
+        menu.addSeparator();
         menu.add(map.get("copyContent"));
         menu.add(map.get("openInBrowser"));
-        popup.add(menu);
 
         popup.show(this, e.getX(), e.getY());
     }
@@ -817,5 +829,20 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     private static String stateToString(DownloadState state) {
         return state.toString();
     }
+
+
+    private class ForceDownloadAction extends AbstractAction {
+        private final ConnectionSettings settings;
+
+        public ForceDownloadAction(ConnectionSettings settings) {
+            this.settings = settings;
+            this.putValue(NAME, settings.toString());
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            manager.forceDownload(settings, table.getSelectedRows());
+        }
+    }
+
 
 }

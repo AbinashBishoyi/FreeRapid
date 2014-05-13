@@ -31,6 +31,7 @@ public class DownloadClient implements HttpDownloadClient {
 
     public void initClient(final ConnectionSettings settings) {
         this.settings = settings;
+        this.client.setHttpConnectionManager(new SimpleHttpConnectionManager(true));
         HttpState initialState = new HttpState();
         if (settings.isProxySet()) {
             HostConfiguration configuration = new HostConfiguration();
@@ -42,7 +43,7 @@ public class DownloadClient implements HttpDownloadClient {
 
         // Get initial state object
 
-        initialState.purgeExpiredCookies();
+        //initialState.purgeExpiredCookies();
         client.setState(initialState);
     }
 

@@ -37,8 +37,8 @@ class DownloadService {
     }
 
     public void addDownloadingClient(HttpDownloadClient client) {
-        if (!this.canDownloadWith(client.getSettings()))
-            throw new IllegalStateException("Cannot download more through this IP");
+//        if (!this.canDownloadWith(client.getSettings()))
+//            throw new IllegalStateException("Cannot download more through this IP");
         downloading.add(client.getSettings());
     }
 

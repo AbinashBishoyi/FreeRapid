@@ -6,6 +6,7 @@ import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.DownloadTask;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.exceptions.NotSupportedDownloadServiceException;
+import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Sound;
@@ -420,5 +421,13 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                 }
             }
         }
+    }
+
+    public void forceDownload(final ConnectionSettings settings, final int[] indexes) {
+        List<DownloadFile> forceDownloadList;
+        synchronized (this.lock) {
+            forceDownloadList = selectionToList(indexes);
+        }
+        processManager.forceDownload(settings, forceDownloadList);
     }
 }

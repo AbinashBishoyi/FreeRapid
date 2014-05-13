@@ -16,6 +16,8 @@ import java.util.logging.Logger;
 
 /**
  * @author Vity
+ *         Hashcode a Equals nepretizeny na url (muze byt vic souboru s touto url, neni unikatni),
+ *         pocita se s tim v ProcessManageru pri force download.
  */
 public class DownloadFile extends AbstractBean implements PropertyChangeListener, HttpFile {
     private final static Logger logger = Logger.getLogger(DownloadFile.class.getName());

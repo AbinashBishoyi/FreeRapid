@@ -1,5 +1,7 @@
 package cz.vity.freerapid.core.tasks;
 
+import cz.vity.freerapid.core.MainApp;
+import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.exceptions.FileTransferFailedException;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
@@ -23,14 +25,16 @@ public class MoveFileTask extends CoreTask<Void, Void> {
     private File to;
     private final boolean deleteSource;
     private final boolean overWriteExisting;
+    private final DownloadFile downloadFile;
     private static final int BSIZE = 4096;
 
-    public MoveFileTask(Application application, File from, File to, final boolean deleteSource, boolean overWriteExisting) {
+    public MoveFileTask(Application application, File from, File to, final boolean deleteSource, boolean overWriteExisting, DownloadFile downloadFile) {
         super(application);
         this.from = from;
         this.to = to;
         this.deleteSource = deleteSource;
         this.overWriteExisting = overWriteExisting;
+        this.downloadFile = downloadFile;
     }
 
     protected Void doInBackground() throws Exception {
@@ -93,6 +97,8 @@ public class MoveFileTask extends CoreTask<Void, Void> {
                     LogUtils.processException(logger, e);
                 }
             }
+
+            ((MainApp) getApplication()).getManagerDirector().getFileHistoryManager().addHistoryItem(downloadFile, to);
         }
         catch (Exception e) {
             if (to.exists())

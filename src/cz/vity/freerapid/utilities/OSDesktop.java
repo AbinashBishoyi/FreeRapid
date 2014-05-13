@@ -12,6 +12,8 @@ public class OSDesktop {
     private final static Logger logger = Logger.getLogger(OSDesktop.class.getName());
 
     public static void openFile(File file) {
+        if (!file.exists())
+            return;
         if (Desktop.isDesktopSupported()) {
             try {
                 Desktop.getDesktop().open(file);

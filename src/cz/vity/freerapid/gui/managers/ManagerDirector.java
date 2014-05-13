@@ -53,6 +53,8 @@ public class ManagerDirector {
 
     private PluginsManager pluginsManager;
 
+    private FileHistoryManager fileHistoryManager;
+
     /**
      * Konstruktor
      *
@@ -72,6 +74,8 @@ public class ManagerDirector {
         this.rootContainer.setPreferredSize(new Dimension(700, 550));
 
         this.clientManager = new ClientManager();
+
+        this.fileHistoryManager = new FileHistoryManager(context);
 
         this.pluginsManager = new PluginsManager(context);
 
@@ -151,5 +155,9 @@ public class ManagerDirector {
 
     public PluginsManager getPluginsManager() {
         return pluginsManager;
+    }
+
+    public FileHistoryManager getFileHistoryManager() {
+        return fileHistoryManager;
     }
 }

@@ -1,7 +1,11 @@
 package cz.vity.freerapid.gui.actions;
 
 import cz.vity.freerapid.core.MainApp;
+import cz.vity.freerapid.gui.dialogs.DownloadHistoryDialog;
+import cz.vity.freerapid.gui.managers.ManagerDirector;
 import org.jdesktop.application.Action;
+
+import java.awt.*;
 
 /**
  * @author Vity
@@ -42,12 +46,16 @@ public class ViewActions {
 //        System.out.println("check selected");
 //        return ((SingleFrameApplication)ApplicationContext.getInstance().getApplication()).getMainFrame().getJMenuBar().isVisible();
 //    }
-//
-//    public void setSelectedShowMenu(final boolean selected) {
-//        System.out.println("set selected");
-//        final ManagerDirector mainPanel = ((MainApp) ApplicationContext.getInstance().getApplication()).getMainPanel();
-//        mainPanel.getStatusBar().setVisible(selected);
-//        AppPrefs.storeProperty(AppPrefs.SHOW_STATUSBAR, selected);
-//    }
+
+    //
+
+    @Action
+    public void showDownloadHistoryAction() {
+        final ManagerDirector managerDirector = app.getManagerDirector();
+        final DownloadHistoryDialog dialog = new DownloadHistoryDialog(managerDirector, app.getMainFrame());
+        dialog.setModalExclusionType(Dialog.ModalExclusionType.TOOLKIT_EXCLUDE);
+        dialog.setModal(false);
+        app.prepareDialog(dialog, true);
+    }
 
 }

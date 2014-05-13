@@ -39,6 +39,12 @@ public class Swinger {
     public static final int RESULT_CANCEL = 1;
     public static final int RESULT_OK = 0;
 
+    //    // Create an AlphaComposite with 50% translucency.
+//    Composite alphaComp = AlphaComposite.getInstance(
+//                              AlphaComposite.SRC_OVER, 0.5f);
+    // http://java.sun.com/products/jfc/tsc/articles/swing2d/
+
+
     private Swinger() {
     }
 
@@ -182,9 +188,11 @@ public class Swinger {
         if (renderer != null)
             column.setCellRenderer(renderer);
         column.setHeaderValue(name);
-        column.setPreferredWidth(width);
-        column.setWidth(width);
-        column.setMinWidth(width);
+        if (width != -1) {
+            column.setPreferredWidth(width);
+            //column.setWidth(width);
+            column.setMinWidth(width);
+        }
         return column;
     }
 

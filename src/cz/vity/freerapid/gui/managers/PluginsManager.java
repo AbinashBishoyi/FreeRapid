@@ -1,6 +1,5 @@
 package cz.vity.freerapid.gui.managers;
 
-import cz.vity.freerapid.plugins.devservices.filefactory.FileFactoryShareServiceImpl;
 import cz.vity.freerapid.plugins.exceptions.NotSupportedDownloadServiceException;
 import cz.vity.freerapid.plugins.webclient.ShareDownloadService;
 import cz.vity.freerapid.utilities.LogUtils;
@@ -74,8 +73,8 @@ public class PluginsManager {
             LogUtils.processException(logger, e);
             context.getApplication().exit();
         }
-        final FileFactoryShareServiceImpl factoryShareService = new FileFactoryShareServiceImpl();
-        loadedPlugins.put(factoryShareService.getName(), factoryShareService);
+//        final FileFactoryShareServiceImpl factoryShareService = new FileFactoryShareServiceImpl();
+//        loadedPlugins.put(factoryShareService.getName(), factoryShareService);
     }
 
     public ShareDownloadService getPlugin(String shareDownloadServiceID) throws NotSupportedDownloadServiceException {

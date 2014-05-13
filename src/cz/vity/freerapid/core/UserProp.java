@@ -33,4 +33,5 @@ public class UserProp {
     public static final int ERROR_ATTEMPTS_COUNT_DEFAULT = 5;
     public static int MAX_DOWNLOADS_AT_A_TIME_DEFAULT = 5;
     public static final String PROXY_LIST_FILE = "proxyListFile";
+    public static final String DOWNLOADED_HISTORY_FILE_NAME = "downloads.txt";
 }
