@@ -1,7 +1,6 @@
 package cz.vity.freerapid.gui.dialogs.filechooser;
 
 import cz.vity.freerapid.core.AppPrefs;
-import cz.vity.freerapid.core.UIStringsManager;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.gui.FRDUtils;
 import cz.vity.freerapid.swing.Swinger;
@@ -23,7 +22,7 @@ public class OpenSaveDialogFactory {
     private static OpenSaveDialogFactory instance = null;
 
     private OpenSaveDialogFactory(ApplicationContext context) {
-        UIStringsManager.load(context.getResourceManager());
+
     }
 
     public static synchronized OpenSaveDialogFactory getInstance(ApplicationContext context) {

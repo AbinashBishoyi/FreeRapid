@@ -89,9 +89,9 @@ public class MainApp extends SingleXFrameApplication {
     @Override
     protected void startup() {
         super.startup();
-
         director = new ManagerDirector(getContext());
         director.initComponents();
+        UIStringsManager.load(this.getContext().getResourceManager());
         initMainFrame();
         this.addExitListener(new MainAppExitListener());
         //this.getContext().getLocalStorage().load()

@@ -8,7 +8,7 @@ import javax.swing.*;
 /**
  * @author Vity
  */
-public class UIStringsManager {
+final public class UIStringsManager {
     private static boolean loaded = false;
 
     public static void load(ResourceManager manager) {
