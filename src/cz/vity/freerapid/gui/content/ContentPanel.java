@@ -600,7 +600,9 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         table.setColumnControlVisible(true);
         table.setSortable(false);
         //table.setColumnMargin(10);
-
+        final WinampMoveStyle w = new WinampMoveStyle();
+        table.addMouseListener(w);
+        table.addMouseMotionListener(w);
 
         table.setTransferHandler(new URLTransferHandler(director) {
             @Override
@@ -921,6 +923,45 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
         public void actionPerformed(ActionEvent e) {
             manager.forceDownload(settings, getSelectedRows());
+        }
+    }
+
+
+    private class WinampMoveStyle extends MouseAdapter {
+        private boolean active = false;
+        private int rowPosition;
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            if (SwingUtilities.isRightMouseButton(e)) {
+                rowPosition = table.rowAtPoint(e.getPoint());
+                if (rowPosition != -1)
+                    active = true;
+            }
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            if (SwingUtilities.isRightMouseButton(e))
+                active = false;
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            if (!active)
+                return;
+            final int position = table.rowAtPoint(e.getPoint());
+            if (position == -1)
+                return;
+            if (rowPosition - position >= 1) {
+                for (int i = rowPosition - position; i > 0; --i)
+                    upAction();
+                rowPosition = position;
+            } else if (rowPosition - position <= -1) {
+                for (int i = -1 * (rowPosition - position); i > 0; --i)
+                    downAction();
+                rowPosition = position;
+            }
         }
     }
 

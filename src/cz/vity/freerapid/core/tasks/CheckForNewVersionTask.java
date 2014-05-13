@@ -32,6 +32,7 @@ public class CheckForNewVersionTask extends CoreTask<ConnectResult, Void> {
     public CheckForNewVersionTask(final boolean showInfoMessages) {
         super(Application.getInstance());
         logger.info("Starting to check for a new version");
+        this.firePropertyChange("statusbar", Boolean.FALSE, Boolean.TRUE);
         this.showInfoMessages = showInfoMessages;
         this.setUserCanCancel(false);
         ProxyHelper.initProxy();//init proxy settings

@@ -13,9 +13,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,7 +40,7 @@ public abstract class URLTransferHandler extends TransferHandler {
     }
 
     private List<URL> textURIListToFileList(String data) {
-        final List<URL> list = new LinkedList<URL>();
+        final Set<URL> list = new LinkedHashSet<URL>();
 //        final String[] strings = data.split("\\p{Space}");
 //        logger.info("Dragged string data " + data);
 //        for (String s : strings) {
@@ -83,7 +81,7 @@ public abstract class URLTransferHandler extends TransferHandler {
 //            String s = st.nextToken().trim();
 //            // the line is a comment (as per the RFC 2483)
 //        }
-        return list;
+        return new LinkedList<URL>(list);
     }
 
     @Override

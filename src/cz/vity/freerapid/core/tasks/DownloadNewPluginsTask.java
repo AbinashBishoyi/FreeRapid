@@ -39,6 +39,7 @@ public class DownloadNewPluginsTask extends DownloadTask {
         client = new DownloadClient();
         client.initClient(connectionSettingses.get(0));
         initDownloadThread();
+        Thread.sleep(10000);
 
         final File dir = director.getPluginsManager().getPluginsDir();
         for (DownloadFile file : fileList) {
@@ -100,7 +101,7 @@ public class DownloadNewPluginsTask extends DownloadTask {
 
     @Override
     protected void succeeded(Void result) {
-        final int choiceYesNo = Swinger.getChoiceYesNo("New plugins were installed.\nFor using new plugins you need to restart application.\nDo you want to restart it now?");
+        final int choiceYesNo = Swinger.getChoiceYesNo("New plugins were installed.\nFor applying new versions of plugins you need to restart application.\nDo you want to restart it now?");
         if (choiceYesNo == Swinger.RESULT_YES) {
             director.getMenuManager().getFileActions().restartApplication();
         }

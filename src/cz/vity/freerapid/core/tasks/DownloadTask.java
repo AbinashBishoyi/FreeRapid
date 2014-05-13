@@ -283,14 +283,16 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 
     @Override
     protected void cancelled() {
-        if (connectionTimeOut) {//no data in many seconds
-            downloadFile.setState(DownloadState.ERROR);
-            this.setServiceError(DownloadTaskError.CONNECTION_TIMEOUT);//we try reconnect
-        } else
-            downloadFile.setState(DownloadState.CANCELLED);
-        downloadFile.setDownloaded(0);
-        setSpeed(0);
-        setAverageSpeed(0);
+        if (downloadFile != null) {
+            if (connectionTimeOut) {//no data in many seconds
+                downloadFile.setState(DownloadState.ERROR);
+                this.setServiceError(DownloadTaskError.CONNECTION_TIMEOUT);//we try reconnect
+            } else
+                downloadFile.setState(DownloadState.CANCELLED);
+            downloadFile.setDownloaded(0);
+            setSpeed(0);
+            setAverageSpeed(0);
+        }
     }
 
     protected void setSpeed(final long speedInBytes) {
@@ -548,6 +550,8 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
             setSleep(i);
             Thread.sleep(1000);
         }
+        if (isTerminated())
+            throw new InterruptedException();
     }
 
     public HttpFile getDownloadFile() {

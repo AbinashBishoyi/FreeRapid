@@ -8,6 +8,7 @@ import cz.vity.freerapid.gui.managers.ManagerDirector;
 import cz.vity.freerapid.gui.managers.PluginsManager;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadClient;
+import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.xmlimport.XMLBind;
 import cz.vity.freerapid.xmlimport.ver1.Plugin;
 import cz.vity.freerapid.xmlimport.ver1.Plugins;
@@ -16,26 +17,36 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.java.plugin.registry.Version;
 import org.jdesktop.application.ApplicationContext;
 
+import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * @author Ladislav Vitasek
  */
-public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
+public class CheckPluginUpdateTask extends CoreTask<ConnectResult, Void> {
+    private final static Logger logger = Logger.getLogger(CheckPluginUpdateTask.class.getName());
+
     private final ManagerDirector director;
-    private List<Plugin> pluginList;
+    private final boolean quietMode;
+    private List<Plugin> newPlugins;
     private static final String VERSION__PARAM = "version";
     private static final String PRODUCT_PARAM = "product";
 
 
-    public CheckPluginUpdateTask(ManagerDirector director, ApplicationContext context) {
+    public CheckPluginUpdateTask(ManagerDirector director, ApplicationContext context, boolean quiet) {
         super(context.getApplication());
         this.director = director;
+        quietMode = quiet;
+        logger.info("Starting to check for a new plugins version");
+        this.newPlugins = new ArrayList<Plugin>();
+        this.firePropertyChange("statusbar", Boolean.FALSE, Boolean.TRUE);
     }
 
 
-    protected List<Plugin> doInBackground() throws Exception {
+    protected ConnectResult doInBackground() throws Exception {
         AppPrefs.storeProperty(UserProp.PLUGIN_LAST_UPDATE_TIMESTAMP_CHECK, System.currentTimeMillis());
         message("updatesPluginCheck");
         final ClientManager clientManager = director.getClientManager();
@@ -48,12 +59,15 @@ public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
         postMethod.addParameter(PRODUCT_PARAM, Consts.PRODUCT);
         postMethod.addParameter(VERSION__PARAM, Consts.VERSION);
 
+        message("message.connecting");
         if (client.makeRequest(postMethod) != HttpStatus.SC_OK)
-            throw new IllegalStateException("Connection failed");
-
+            throw new IOException("Connection failed");
+        message("message.checkingData");
         final Plugins rootPlugins = new XMLBind().loadSchema(client.getContentAsString());
+        if (isCancelled())
+            throw new InterruptedException();
         final List<Plugin> plugins = rootPlugins.getPlugin();
-        final List<Plugin> newPlugins = new ArrayList<Plugin>(plugins.size());
+        newPlugins = new ArrayList<Plugin>(plugins.size());
         final PluginsManager pluginsManager = director.getPluginsManager();
         for (Plugin plugin : plugins) {
             final String id = plugin.getId();
@@ -64,23 +78,34 @@ public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
                     newPlugins.add(plugin);
             } else newPlugins.add(plugin);
         }
-        return newPlugins;
+        if (newPlugins.isEmpty())
+            return ConnectResult.CONNECT_NEW_VERSION;
+        else
+            return ConnectResult.SAME_VERSION;
     }
 
     @Override
     protected void failed(Throwable cause) {
-        super.failed(cause);
+        if (handleRuntimeException(cause))
+            return;
+        if (quietMode)
+            return;
+        if (cause instanceof UnknownHostException) {
+            Swinger.showErrorMessage(getResourceMap(), "errormessage_check_inet_settings");
+        } else {
+            Swinger.showErrorMessage(getResourceMap(), "errormessage_submit_failed", cause.getMessage());
+        }
+
     }
 
     @Override
-    protected void succeeded(List<Plugin> result) {
-        this.pluginList = result;
-        for (Plugin plugin : result) {
-            System.out.println("id: " + plugin.getId());
+    protected void succeeded(ConnectResult result) {
+        for (Plugin plugin : newPlugins) {
+            logger.info("id: " + plugin.getId());
         }
     }
 
     public List<Plugin> getPluginList() {
-        return pluginList;
+        return newPlugins;
     }
 }

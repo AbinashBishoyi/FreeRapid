@@ -4,6 +4,7 @@ import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.CheckPluginUpdateTask;
+import cz.vity.freerapid.core.tasks.ConnectResult;
 import cz.vity.freerapid.core.tasks.DownloadNewPluginsTask;
 import cz.vity.freerapid.gui.dialogs.UpdateDialog;
 import cz.vity.freerapid.gui.dialogs.WrappedPluginData;
@@ -77,7 +78,7 @@ public class UpdateManager {
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
                 if (checkForUpdates())
-                    checkUpdate();
+                    checkUpdate(true);
             }
         }, instance.getTime(), interval * 1000 * 3600);
     }
@@ -86,16 +87,20 @@ public class UpdateManager {
         return AppPrefs.getProperty(UserProp.CHECK4_PLUGIN_UPDATES_AUTOMATICALLY, UserProp.CHECK4_PLUGIN_UPDATES_AUTOMATICALLY_DEFAULT);
     }
 
-    public void checkUpdate() {
+    public void checkUpdate(boolean quiet) {
 
-        final CheckPluginUpdateTask pluginUpdateTask = new CheckPluginUpdateTask(director, context);
-        pluginUpdateTask.addTaskListener(new TaskListener.Adapter<List<Plugin>, Void>() {
-            public void succeeded(TaskEvent<List<Plugin>> event) {
-                final List<Plugin> result = event.getValue();
-                if (result != null && !result.isEmpty()) {
-                    //downloadUpdate(result);
-                    showUpdateDialog(result);
-                }
+        final CheckPluginUpdateTask pluginUpdateTask = new CheckPluginUpdateTask(director, context, quiet);
+        pluginUpdateTask.addTaskListener(new TaskListener.Adapter<ConnectResult, Void>() {
+            public void succeeded(TaskEvent<ConnectResult> event) {
+                final ConnectResult result = event.getValue();
+//                if (result == ConnectResult.CONNECT_NEW_VERSION) {
+//                    //downloadUpdate(result);
+//                    showUpdateDialog(result);
+//                } else if (result == ConnectResult.SAME_VERSION) {
+//                    if (quiet) {
+//
+//                    }
+//                }
             }
         });
         context.getTaskService().execute(pluginUpdateTask);

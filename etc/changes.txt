@@ -11,9 +11,21 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
-XXX   08 - FreeRapid Downloader 0.8 released
-  
-
+XXX December 2008 - FreeRapid Downloader 0.8 released
+  Added : support for plugins update + many UI settings for it
+  Added : UI - new tab sheet in User Preferences dialog for plugins
+          - ability to disable plugin for using/updating
+  Added : plugins - service server is indicated by icon
+  Added : support for checking file existence on the server (if it is supported by given plugin)
+          - it's indicated by new icons in the table:
+            green - link working/downloadable, red - file was deleted/removed, gray - unknown state
+          - this feature can be disabled in User Preferences dialog  
+  Added : UI - moving lines on right mouse dragged [requested by Tuiz] - http://bugtracker.wordrider.net/task/39?project=4
+  Added : UI - clipboard monitoring catches links like http://blabla.com/?url=http:%25%25service.com%25 (decoding URL)
+  Changed : UI - clipboard monitoring is ON by default
+  Changed : plugins are loaded on the fly (not during start) from system temporary directory
+  Changed : plugins - major intern changes and fixes in most of plugins
+  Fixed : UI - clipboard monitoring didn't catch html links like <a href="http://service.com/asdasd/">Part1</a> [reported by Alex]
 
 10th November 2008 - FreeRapid Downloader 0.71 released
   Added : Hungarian translation [thanks to Denisz Kosztyukovics!]

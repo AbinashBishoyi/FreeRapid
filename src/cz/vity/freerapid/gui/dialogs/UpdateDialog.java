@@ -98,8 +98,10 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
         setAction(btnCancel, "btnCancelAction");
     }
 
-    @org.jdesktop.application.Action
+    @Action
     public void okBtnAction() {
+        getActionMap().get("okBtnAction").setEnabled(false);
+        Swinger.inputFocus(btnCancel);
         final UpdateManager updateManager = managerDirector.getUpdateManager();
         final Task task = updateManager.getDownloadPluginsTask(new LinkedList<WrappedPluginData>(listModel));
         updateManager.executeUpdateTask(task);
@@ -162,7 +164,7 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
 
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        Swinger.updateColumn(table, "Selected", COLUMN_SELECTED, 25, 40, null).setWidth(45);
+        Swinger.updateColumn(table, "Selected", COLUMN_SELECTED, 25, 40, null).setMaxWidth(45);
         Swinger.updateColumn(table, "Name", COLUMN_NAME, -1, 70, null);
         Swinger.updateColumn(table, "Version", COLUMN_VERSION, -1, 50, null);
         Swinger.updateColumn(table, "Services", COLUMN_SERVICES, -1, 50, null);
@@ -234,7 +236,6 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
         labelServer = new JLabel();
         labelUpdatesCount = new JLabel();
         JXButtonPanel buttonBar = new JXButtonPanel();
-        progressBar = new JProgressBar();
         btnOK = new JButton();
         btnCancel = new JButton();
         CellConstraints cc = new CellConstraints();
@@ -313,7 +314,6 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
                         RowSpec.decodeSpecs("pref")), buttonBar);
                 ((FormLayout) buttonBar.getLayout()).setColumnGroups(new int[][]{{4, 6}});
 
-                buttonBarBuilder.add(progressBar, cc.xy(2, 1));
                 buttonBarBuilder.add(btnOK, cc.xy(4, 1));
                 buttonBarBuilder.add(btnCancel, cc.xy(6, 1));
             }
@@ -325,7 +325,6 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
     private JXTable table;
     private JLabel labelServer;
     private JLabel labelUpdatesCount;
-    private JProgressBar progressBar;
     private JButton btnOK;
     private JButton btnCancel;
 
@@ -434,10 +433,10 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
 
 
     private static class ProgressBarCellRenderer extends JProgressBar implements TableCellRenderer {
-        private static final Color BG_RED = new Color(0xFFD0D0);
-        private static final Color BG_ORANGE = new Color(0xFFEDD0);
-        private static final Color BG_GREEN = new Color(0xD0FFE9);
-        private static final Color BG_BLUE = new Color(0xb6e9ff);
+//        private static final Color BG_RED = new Color(0xFFD0D0);
+//        private static final Color BG_ORANGE = new Color(0xFFEDD0);
+//        private static final Color BG_GREEN = new Color(0xD0FFE9);
+//        private static final Color BG_BLUE = new Color(0xb6e9ff);
 
         public ProgressBarCellRenderer() {
             super(0, 100);
@@ -448,23 +447,7 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             final DownloadFile downloadFile = (DownloadFile) value;
-            final DownloadState state = downloadFile.getState();
-            if (state == DownloadState.DOWNLOADING || state == DownloadState.GETTING || state == DownloadState.WAITING) {
-                this.setBackground(BG_GREEN);
-            } else
-            if (state == DownloadState.CANCELLED || state == DownloadState.ERROR || state == DownloadState.DELETED) {
-                this.setBackground(BG_RED);
-            } else if (state == DownloadState.PAUSED || state == DownloadState.DISABLED) {
-                this.setBackground(null);
-            } else if (state == DownloadState.QUEUED) {
-                this.setBackground(BG_ORANGE);
-            } else if (state == DownloadState.SLEEPING) {
-                this.setBackground(BG_BLUE);
-            } else if (state == DownloadState.COMPLETED) {
-                //    this.setBackground(null);
-                // this.setBackground(Color.GREEN);
-            } else
-                this.setBackground(Color.BLACK);
+//            final DownloadState state = downloadFile.getState();
 
             this.setToolTipText(null);
             final int progress = ContentPanel.getProgress(downloadFile);

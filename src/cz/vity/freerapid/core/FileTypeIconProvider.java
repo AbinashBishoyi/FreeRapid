@@ -22,7 +22,8 @@ public class FileTypeIconProvider {
     private ResourceMap map;
     private final static Logger logger = Logger.getLogger(FileTypeIconProvider.class.getName());
     private static Pattern pattern;
-//    private static final String DEFAULT_EXTENSION = "unknown";
+    private static Pattern fileNamePattern = Pattern.compile("(.*?(zip|rar|avi|wmv|mp3))\\.html?", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+    //    private static final String DEFAULT_EXTENSION = "unknown";
     private final Map<String, Icon> systemLargeIcons = new Hashtable<String, Icon>();
     private final Map<String, Icon> systemSmallIcons = new Hashtable<String, Icon>();
 
@@ -59,7 +60,7 @@ public class FileTypeIconProvider {
         } else {
             fileType = "";
         }
-        
+
         return fileType;
     }
 
@@ -73,6 +74,10 @@ public class FileTypeIconProvider {
         String s = url.replaceAll("\\:", "_").trim();
         if (s.startsWith("?"))
             s = s.substring(1);
+        final Matcher matcher = fileNamePattern.matcher(s);
+        if (matcher.find()) {
+            s = matcher.group(1);
+        }
         if (s.isEmpty()) {
             return "?";
         }
