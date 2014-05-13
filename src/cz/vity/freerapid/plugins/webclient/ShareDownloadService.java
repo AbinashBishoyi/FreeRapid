@@ -17,4 +17,10 @@ public interface ShareDownloadService {
 //    Icon getBigImage();
 
     void run(HttpFileDownloader downloader) throws Exception;
+
+    void showOptions() throws Exception;
+
+    PluginContext getPluginContext();
+
+    void setPluginContext(PluginContext pluginContext);
 }

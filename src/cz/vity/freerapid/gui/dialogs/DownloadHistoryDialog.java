@@ -13,11 +13,9 @@ import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.FileTypeIconProvider;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.gui.MyPreferencesAdapter;
-import cz.vity.freerapid.gui.managers.ContentPanel;
-import cz.vity.freerapid.gui.managers.FileHistoryItem;
-import cz.vity.freerapid.gui.managers.FileHistoryManager;
-import cz.vity.freerapid.gui.managers.ManagerDirector;
+import cz.vity.freerapid.gui.managers.*;
 import cz.vity.freerapid.swing.SwingUtils;
+import cz.vity.freerapid.swing.SwingXUtils;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.Browser;
 import cz.vity.freerapid.utilities.LogUtils;
@@ -43,7 +41,6 @@ import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
-import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
@@ -145,7 +142,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         Swinger.updateColumn(table, "Name", COLUMN_NAME, -1, 150, new FileNameCellRenderer(director.getFileTypeIconProvider()));
         Swinger.updateColumn(table, "Description", COLUMN_DESCRIPTION, -1, 170, new DescriptionCellRenderer());
         Swinger.updateColumn(table, "Size", COLUMN_SIZE, -1, 40, new SizeCellRenderer());
-        Swinger.updateColumn(table, "URL", COLUMN_URL, -1, -1, new URLCellRenderer());
+        Swinger.updateColumn(table, "URL", COLUMN_URL, -1, -1, SwingXUtils.getHyperLinkTableCellRenderer());
 
 
         table.addMouseListener(new MouseAdapter() {
@@ -212,9 +209,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
             }
             builder.append(value).append('\n');
         }
-        final StringSelection stringSelection = new StringSelection(builder.toString().trim());
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clipboard.setContents(stringSelection, this);
+        SwingUtils.copyToClipboard(builder.toString().trim(), this);
     }
 
 
@@ -225,9 +220,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         for (FileHistoryItem file : files) {
             builder.append(file.getUrl().toExternalForm()).append('\n');
         }
-        final StringSelection stringSelection = new StringSelection(builder.toString().trim());
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clipboard.setContents(stringSelection, this);
+        SwingUtils.copyToClipboard(builder.toString().trim(), this);
     }
 
     @org.jdesktop.application.Action(enabledProperty = FILE_EXISTS_ENABLED_PROPERTY)
@@ -647,23 +640,24 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         }
 
         public Object getValueAt(int rowIndex, int columnIndex) {
+            final FileHistoryItem fileHistoryItem = model.get(rowIndex);
             switch (columnIndex) {
                 case COLUMN_DATE:
-                    return model.get(rowIndex).getFinishedTime();
+                    return fileHistoryItem.getFinishedTime();
                 case COLUMN_NAME:
-                    return model.get(rowIndex).getFileName();
+                    return fileHistoryItem.getFileName();
                 case COLUMN_DESCRIPTION:
-                    return model.get(rowIndex).getDescription();
+                    return fileHistoryItem.getDescription();
                 case COLUMN_SIZE:
-                    return model.get(rowIndex).getFileSize();
+                    return fileHistoryItem.getFileSize();
                 case COLUMN_URL:
-                    return model.get(rowIndex).getUrl();
+                    return SwingXUtils.createLink(fileHistoryItem.getUrl());
                 case -1:
-                    return model.get(rowIndex);
+                    return fileHistoryItem;
                 default:
                     assert false;
             }
-            return model.get(rowIndex);
+            return fileHistoryItem;
         }
 
         public void intervalAdded(ListDataEvent e) {
@@ -680,27 +674,11 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
     }
 
     private void showPopMenu(MouseEvent e) {
+        final MenuManager menuManager = director.getMenuManager();
         final JPopupMenu popup = new JPopupMenu();
-        final ActionMap map = this.getActionMap();
-        final javax.swing.Action openFileAction = map.get("openFileAction");
-
-
-        popup.add(openFileAction);
-        final javax.swing.Action deleteFileAction = map.get("deleteFileAction");
-
-        popup.add(deleteFileAction);
-        final javax.swing.Action openDirectoryAction = map.get("openDirectoryAction");
-
-        popup.add(openDirectoryAction);
-        popup.addSeparator();
-        popup.add(map.get("copyContent"));
-        popup.addSeparator();
-        popup.add(map.get("copyURL"));
-        popup.add(map.get("openInBrowser"));
-        popup.addSeparator();
-        popup.add(map.get("removeSelectedAction"));
-        final MouseEvent event = SwingUtilities.convertMouseEvent(table, e, this);
-        popup.show(this, event.getX(), event.getY());
+        final Object[] objects = {"openFileAction", "deleteFileAction", "openDirectoryAction", MenuManager.MENU_SEPARATOR, "copyContent", MenuManager.MENU_SEPARATOR, "copyURL", "openInBrowser", MenuManager.MENU_SEPARATOR, "removeSelectedAction"};
+        menuManager.processMenu(popup, "popup", getActionMap(), objects);
+        SwingUtils.showPopMenu(popup, e, table, this);
     }
 
     @org.jdesktop.application.Action
@@ -948,17 +926,6 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
                 value = ContentPanel.bytesToAnother(fs);
                 this.setToolTipText(NumberFormat.getIntegerInstance().format(fs) + " B");
             }
-            return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        }
-    }
-
-    static class URLCellRenderer extends DefaultTableCellRenderer {
-        private static final Color LINK_COLOR = Color.BLUE.brighter();
-
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            //value = String.format("<html><u><font color=blue>%s</blue></u></html>", value);
-
-            this.setForeground(LINK_COLOR);
             return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         }
     }

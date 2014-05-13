@@ -16,15 +16,26 @@ public final class RecentsFilesComboModel extends DefaultComboBoxModel {
     private final Stack<String> stack;
     private String keyProperties = null;
     private boolean autosave;
+    private int maxRecentPhrasesCount;
+    private boolean files;
 
 
-    public RecentsFilesComboModel(final String keyProperties, final boolean autosave) {
+    public RecentsFilesComboModel(final String propertyKey, final boolean autosave) {
+        this(Consts.MAX_RECENT_PHRASES_COUNT, propertyKey, autosave, true);
+
+    }
+
+    public RecentsFilesComboModel(final int maxRecentPhrasesCount, final String keyProperties, final boolean autosave, boolean isFiles) {
         this(new Stack<String>());
+        this.files = isFiles;
+        this.maxRecentPhrasesCount = maxRecentPhrasesCount;
         this.keyProperties = keyProperties;
         this.autosave = autosave;
         final String[] values = AppPrefs.getProperty(keyProperties, "").split("\\|");
         for (String value : values) {
-            if (value.length() > 0 && new File(value).exists()) {
+            if (isFiles && !(new File(value).exists()))
+                continue;
+            if (value.length() > 0) {
                 stack.add(0, value);
 //                System.out.println("Loading :" + searched);
                 //       AppPrefs.removeProperty(key);
@@ -48,16 +59,19 @@ public final class RecentsFilesComboModel extends DefaultComboBoxModel {
             return;
         final int index = getIndexOf(anObject);
         if (index < 0) {
-            if (!"".equals(anObject) && !"?".equals(anObject) && new File(anObject.toString()).exists()) {
-                super.insertElementAt(anObject, 0);
-                if (stack.size() > Consts.MAX_RECENT_PHRASES_COUNT) {
-                    this.remove(Consts.MAX_RECENT_PHRASES_COUNT - 1);
-                    if (autosave)
-                        store();
+            final String s = anObject.toString().trim();
+            if (!"".equals(s) && !"?".equals(s)) {
+                if (!(files && new File(s).exists())) {
+                    super.insertElementAt(anObject, 0);
+                    if (stack.size() > maxRecentPhrasesCount) {
+                        this.remove(Consts.MAX_RECENT_PHRASES_COUNT - 1);
+                        if (autosave)
+                            storeFiles();
+                    }
                 }
             }
             if (autosave)
-                store();
+                storeFiles();
         }
 
     }
@@ -77,7 +91,7 @@ public final class RecentsFilesComboModel extends DefaultComboBoxModel {
         AppPrefs.removeProperty(keyProperties);
     }
 
-    public void store() {
+    public void storeFiles() {
         final StringBuilder builder = new StringBuilder();
         final Set<File> set = new HashSet<File>(stack.size());
         final boolean isWindows = Utils.isWindows();
@@ -92,6 +106,20 @@ public final class RecentsFilesComboModel extends DefaultComboBoxModel {
         for (final Iterator<File> it = set.iterator(); it.hasNext();) {
             File str = it.next();
             builder.append(str.getAbsolutePath());
+            if (it.hasNext())
+                builder.append("|");
+        }
+
+        AppPrefs.storeProperty(keyProperties, builder.toString());
+
+    }
+
+    public void store() {
+        final StringBuilder builder = new StringBuilder();
+        final Set<String> set = new HashSet<String>(stack);
+        for (final Iterator<String> it = set.iterator(); it.hasNext();) {
+            String str = it.next();
+            builder.append(str);
             if (it.hasNext())
                 builder.append("|");
         }

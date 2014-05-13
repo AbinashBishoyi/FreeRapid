@@ -37,7 +37,6 @@ import javax.swing.table.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
-import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
@@ -707,9 +706,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         for (DownloadFile file : files) {
             builder.append(file.toString()).append('\n');
         }
-        final StringSelection stringSelection = new StringSelection(builder.toString().trim());
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clipboard.setContents(stringSelection, this);
+        SwingUtils.copyToClipboard(builder.toString().trim(), this);
     }
 
     private void showPopMenu(MouseEvent e) {

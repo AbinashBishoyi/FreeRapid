@@ -15,7 +15,7 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
     private final static Logger logger = Logger.getLogger(AbstractFileShareService.class.getName());
 
     private Pattern pattern;
-
+    private PluginContext pluginContext;
 
     public AbstractFileShareService() {
         super();
@@ -53,5 +53,17 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
         if (!supportURL(downloader.getDownloadFile().getFileUrl().toExternalForm())) {
             throw new NotSupportedDownloadByServiceException();
         }
+    }
+
+    public void showOptions() throws Exception {
+
+    }
+
+    public PluginContext getPluginContext() {
+        return pluginContext;
+    }
+
+    public void setPluginContext(PluginContext pluginContext) {
+        this.pluginContext = pluginContext;
     }
 }

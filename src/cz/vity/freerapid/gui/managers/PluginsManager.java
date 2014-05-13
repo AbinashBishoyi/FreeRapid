@@ -1,7 +1,9 @@
 package cz.vity.freerapid.gui.managers;
 
 import cz.vity.freerapid.model.PluginMetaData;
+import cz.vity.freerapid.plugimpl.PluginContextImpl;
 import cz.vity.freerapid.plugins.exceptions.NotSupportedDownloadServiceException;
+import cz.vity.freerapid.plugins.webclient.PluginContext;
 import cz.vity.freerapid.plugins.webclient.ShareDownloadService;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
@@ -153,17 +155,24 @@ public class PluginsManager {
     public ShareDownloadService getPluginInstance(final String shareDownloadServiceID) throws NotSupportedDownloadServiceException {
 
         synchronized (lock) {
-            Plugin plugin;
+            Plugin p;
             try {
-                plugin = pluginManager.getPlugin(shareDownloadServiceID);
+                p = pluginManager.getPlugin(shareDownloadServiceID);
             } catch (Exception e) {
                 throw new NotSupportedDownloadServiceException(shareDownloadServiceID);
             }
-
-            if (!(plugin instanceof ShareDownloadService))
+            if (!(p instanceof ShareDownloadService))
                 throw new NotSupportedDownloadServiceException(shareDownloadServiceID);
-            else return (ShareDownloadService) plugin;
+            final ShareDownloadService plugin = (ShareDownloadService) p;
+            if (plugin.getPluginContext() == null)
+                plugin.setPluginContext(createPluginContext());
+
+            return plugin;
         }
+    }
+
+    private PluginContext createPluginContext() {
+        return PluginContextImpl.create(null, null);
     }
 
     public List<PluginMetaData> getSupportedPlugins() {

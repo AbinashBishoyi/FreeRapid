@@ -17,7 +17,7 @@ final public class DescriptorUtils {
     public static String getAttribute(final String name, final String defaultValue, final PluginDescriptor descriptor) {
         final PluginAttribute attribute = descriptor.getAttribute(name);
         if (attribute == null) {
-            logger.warning(name + " attribute was not found in plugin manifest for plugin " + descriptor.getId());
+            //     logger.warning(name + " attribute was not found in plugin manifest for plugin " + descriptor.getId());
             return defaultValue;
         } else return attribute.getValue();
     }
@@ -25,7 +25,7 @@ final public class DescriptorUtils {
     public static boolean getAttribute(final String name, final boolean defaultValue, final PluginDescriptor descriptor) {
         final PluginAttribute attribute = descriptor.getAttribute(name);
         if (attribute == null) {
-            logger.warning(name + " attribute was not found in plugin manifest for plugin " + descriptor.getId());
+            //   logger.warning(name + " attribute was not found in plugin manifest for plugin " + descriptor.getId());
             return defaultValue;
         } else return "true".equalsIgnoreCase(attribute.getValue());
     }

@@ -342,7 +342,7 @@
                </void> 
                <void method="setProperty"> 
                 <string>$rowSpecs</string> 
-                <string>default, relgap, default</string> 
+                <string>fill:default:grow, relgap, default</string> 
                </void> 
               </object> 
               <void method="setProperty"> 
@@ -384,7 +384,7 @@
                    </void> 
                    <void method="setProperty"> 
                     <string>$rowSpecs</string> 
-                    <string>default, linegap, default, linegap, glue</string> 
+                    <string>fill:default:grow, linegap, default, linegap, glue</string> 
                    </void> 
                   </object> 
                   <void method="setProperty"> 
@@ -457,7 +457,7 @@
                      <class>com.jgoodies.forms.layout.FormLayout</class> 
                      <void method="setProperty"> 
                       <string>$columnSpecs</string> 
-                      <string>unrelgap, labelcompgap, default:grow, labelcompgap, default, labelcompgap, unrelgap</string> 
+                      <string>labelcompgap, labelcompgap, default:grow, labelcompgap, default, unrelgap, default, labelcompgap, unrelgap</string> 
                      </void> 
                      <void method="setProperty"> 
                       <string>$rowSpecs</string> 
@@ -507,6 +507,38 @@
                     </void> 
                     <void method="add"> 
                      <object class="com.jformdesigner.model.FormComponent"> 
+                      <string>javax.swing.JToggleButton</string> 
+                      <void method="setProperty"> 
+                       <string>text</string> 
+                       <object class="com.jformdesigner.model.FormMessage"> 
+                        <null/> 
+                        <string>popmenuButton.text</string> 
+                       </object> 
+                      </void> 
+                      <void property="name"> 
+                       <string>popmenuButton</string> 
+                      </void> 
+                      <void method="auxiliary"> 
+                       <void method="setProperty"> 
+                        <string>JavaCodeGenerator.customCreateCode</string> 
+                        <string>ComponentFactory.getPopdownButton()</string> 
+                       </void> 
+                      </void> 
+                     </object> 
+                     <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+                      <class>com.jgoodies.forms.layout.CellConstraints</class> 
+                      <void method="setProperty"> 
+                       <string>gridX</string> 
+                       <int>5</int> 
+                      </void> 
+                      <void method="setProperty"> 
+                       <string>gridY</string> 
+                       <int>1</int> 
+                      </void> 
+                     </object> 
+                    </void> 
+                    <void method="add"> 
+                     <object class="com.jformdesigner.model.FormComponent"> 
                       <string>javax.swing.JButton</string> 
                       <void method="setProperty"> 
                        <string>text</string> 
@@ -523,7 +555,7 @@
                       <class>com.jgoodies.forms.layout.CellConstraints</class> 
                       <void method="setProperty"> 
                        <string>gridX</string> 
-                       <int>5</int> 
+                       <int>7</int> 
                       </void> 
                       <void method="setProperty"> 
                        <string>gridY</string> 
@@ -567,7 +599,7 @@
                    </void> 
                    <void method="setProperty"> 
                     <string>$rowSpecs</string> 
-                    <string>default, linegap, default, linegap, default, linegap, default:grow, linegap, default</string> 
+                    <string>default, linegap, default, linegap, default, linegap, default, linegap, default:grow</string> 
                    </void> 
                   </object> 
                   <void method="setProperty"> 
@@ -629,6 +661,32 @@
                      <string>text</string> 
                      <object class="com.jformdesigner.model.FormMessage"> 
                       <null/> 
+                      <string>checkConfirmUpdating.text</string> 
+                     </object> 
+                    </void> 
+                    <void property="name"> 
+                     <string>checkConfirmUpdating</string> 
+                    </void> 
+                   </object> 
+                   <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+                    <class>com.jgoodies.forms.layout.CellConstraints</class> 
+                    <void method="setProperty"> 
+                     <string>gridY</string> 
+                     <int>3</int> 
+                    </void> 
+                    <void method="setProperty"> 
+                     <string>gridWidth</string> 
+                     <int>3</int> 
+                    </void> 
+                   </object> 
+                  </void> 
+                  <void method="add"> 
+                   <object class="com.jformdesigner.model.FormComponent"> 
+                    <string>javax.swing.JCheckBox</string> 
+                    <void method="setProperty"> 
+                     <string>text</string> 
+                     <object class="com.jformdesigner.model.FormMessage"> 
+                      <null/> 
                       <string>checkDownloadNotExistingPlugins.text</string> 
                      </object> 
                     </void> 
@@ -640,7 +698,7 @@
                     <class>com.jgoodies.forms.layout.CellConstraints</class> 
                     <void method="setProperty"> 
                      <string>gridY</string> 
-                     <int>3</int> 
+                     <int>5</int> 
                     </void> 
                     <void method="setProperty"> 
                      <string>gridWidth</string> 
@@ -682,7 +740,7 @@
                     </void> 
                     <void method="setProperty"> 
                      <string>gridY</string> 
-                     <int>5</int> 
+                     <int>7</int> 
                     </void> 
                     <void method="setProperty"> 
                      <string>hAlign</string> 
@@ -709,7 +767,7 @@
                     </void> 
                     <void method="setProperty"> 
                      <string>gridY</string> 
-                     <int>5</int> 
+                     <int>7</int> 
                     </void> 
                    </object> 
                   </void> 
@@ -735,33 +793,7 @@
                     </void> 
                     <void method="setProperty"> 
                      <string>gridY</string> 
-                     <int>5</int> 
-                    </void> 
-                   </object> 
-                  </void> 
-                  <void method="add"> 
-                   <object class="com.jformdesigner.model.FormComponent"> 
-                    <string>javax.swing.JButton</string> 
-                    <void method="setProperty"> 
-                     <string>text</string> 
-                     <object class="com.jformdesigner.model.FormMessage"> 
-                      <null/> 
-                      <string>btnUpdatePlugins.text</string> 
-                     </object> 
-                    </void> 
-                    <void property="name"> 
-                     <string>btnUpdatePlugins</string> 
-                    </void> 
-                   </object> 
-                   <object class="com.jformdesigner.model.FormLayoutConstraints"> 
-                    <class>com.jgoodies.forms.layout.CellConstraints</class> 
-                    <void method="setProperty"> 
-                     <string>gridX</string> 
-                     <int>3</int> 
-                    </void> 
-                    <void method="setProperty"> 
-                     <string>gridY</string> 
-                     <int>9</int> 
+                     <int>7</int> 
                     </void> 
                    </object> 
                   </void> 

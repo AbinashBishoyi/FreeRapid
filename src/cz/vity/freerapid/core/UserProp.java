@@ -173,4 +173,16 @@ final public class UserProp {
     public static final boolean DISABLE_CONNECTION_ON_EXCEPTION_DEFAULT = false;
 
 
+    public static final String CHECK4_PLUGIN_UPDATES_AUTOMATICALLY = "check4PluginUpdatesAutomatically";
+    public static final boolean CHECK4_PLUGIN_UPDATES_AUTOMATICALLY_DEFAULT = true;
+
+    public static final String DOWNLOAD_NOT_EXISTING_PLUGINS = "downloadNotExistingPlugins";
+    public static final boolean DOWNLOAD_NOT_EXISTING_PLUGINS_DEFAULT = true;
+
+    public static final String CONFIRM_UPDATING_PLUGINS = "confirmUpdatingPlugins";
+    public static final boolean CONFIRM_UPDATING_PLUGINS_DEFAULT = true;
+
+    public static final String PLUGIN_CHECK_URL_LIST = "pluginCheckUrlList";
+    public static final String PLUGIN_CHECK_URL_SELECTED = "pluginCheckUrlSelected";
+
 }

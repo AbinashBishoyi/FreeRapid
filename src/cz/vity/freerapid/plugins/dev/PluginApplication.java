@@ -15,11 +15,18 @@ public abstract class PluginApplication extends Application {
         return new PluginDevDownloader(file, settings);
     }
 
+    @Override
+    protected void initialize(String[] args) {
+        super.initialize(args);
+
+    }
+
     protected HttpFile getHttpFile() {
         return new PluginDevHttpFile();
     }
 
     public void run(ShareDownloadService service, HttpFile file, ConnectionSettings settings) throws Exception {
+
         service.run(getHttpFileDownloader(file, settings));
     }
 

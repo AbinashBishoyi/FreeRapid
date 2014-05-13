@@ -7,6 +7,7 @@ import cz.vity.freerapid.swing.Swinger;
 
 import java.awt.*;
 import java.net.URI;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -48,4 +49,14 @@ public class Browser {
         openBrowser(AppPrefs.getProperty(FWProp.WEBURL, Consts.WEBURL));
     }
 
+    public static void openBrowser(URL url) {
+        if (!Desktop.isDesktopSupported())
+            return;
+        try {
+            Desktop.getDesktop().browse(url.toURI());
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Opening browser failed", e);
+            Swinger.showErrorDialog("errorOpeningBrowser", e);
+        }
+    }
 }

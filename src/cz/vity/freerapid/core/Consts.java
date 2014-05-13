@@ -79,6 +79,7 @@ public class Consts {
     static final String DEFAULT_PROPERTIES = "frd.xml";
 
     public static final int MAX_RECENT_PHRASES_COUNT = 5;
+    public static final String PLUGIN_CHECK_UPDATE_URL = "http://wordrider.net/freerapid/pluginsCheck.php";
 
     /**
      * Od teto tridy se nebudou delat zadne instance

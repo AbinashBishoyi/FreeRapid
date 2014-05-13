@@ -294,6 +294,7 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
     }
 
 
+    @SuppressWarnings({"deprecation"})
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         // Generated using JFormDesigner Open Source Project license - unknown

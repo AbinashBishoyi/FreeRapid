@@ -1,8 +1,13 @@
 package cz.vity.freerapid.swing;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 
 /**
  * Utility pro Swing
@@ -395,4 +400,18 @@ public class SwingUtils {
     public static KeyStroke getCtrlShiftKeyStroke(final int vkC) {
         return KeyStroke.getKeyStroke(vkC, InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK);
     }
+
+
+    public static void copyToClipboard(String text, ClipboardOwner owner) {
+        final StringSelection stringSelection = new StringSelection(text);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, owner);
+    }
+
+    public static void showPopMenu(JPopupMenu popupMenu, MouseEvent e, Component source, Component destination) {
+        final MouseEvent event = SwingUtilities.convertMouseEvent(source, e, destination);
+        popupMenu.show(destination, event.getX(), event.getY());
+    }
+
+
 }

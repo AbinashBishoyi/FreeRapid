@@ -24,6 +24,10 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
     private boolean updatesEnabled;
     private Pattern supportedURL;
     private PluginDescriptor descriptor;
+    private boolean hasOptions;
+    private String services;
+    private String www;
+    private String premium;
 
     static {
         try {
@@ -32,7 +36,7 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
                     info.getPropertyDescriptors();
             for (PropertyDescriptor pd : propertyDescriptors) {
                 final Object name = pd.getName();
-                if ("supportedURL".equals(name) || "descriptor".equals(name)) {
+                if ("supportedURL".equals(name) || "descriptor".equals(name) || "www".equals(name) || "services".equals(name) || "hasOptions".equals(name) || "premium".equals(name)) {
                     pd.setValue("transient", Boolean.TRUE);
                 }
             }
@@ -55,6 +59,10 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
 
     public void setPluginDescriptor(PluginDescriptor descriptor) {
         supportedURL = Pattern.compile(DescriptorUtils.getAttribute("urlRegex", "XX", descriptor), Pattern.CASE_INSENSITIVE);
+        hasOptions = DescriptorUtils.getAttribute("hasOptions", false, descriptor);
+        services = DescriptorUtils.getAttribute("services", "", descriptor);
+        www = DescriptorUtils.getAttribute("www", Consts.WEBURL, descriptor);
+        premium = DescriptorUtils.getAttribute("premiumFor", null, descriptor);
     }
 
 
@@ -81,11 +89,11 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
     }
 
     public boolean isOptionable() {
-        return DescriptorUtils.getAttribute("hasOptions", false, descriptor);
+        return hasOptions;
     }
 
     public String getServices() {
-        return DescriptorUtils.getAttribute("services", "", descriptor);
+        return services;
     }
 
     public String getVendor() {
@@ -93,11 +101,15 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
     }
 
     public String getWWW() {
-        return DescriptorUtils.getAttribute("www", Consts.WEBURL, descriptor);
+        return www;
     }
 
     public boolean isDescriptorSet() {
         return descriptor != null;
+    }
+
+    public boolean hasPremium() {
+        return premium != null;
     }
 
     public void setEnabled(boolean enabled) {
@@ -127,7 +139,7 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
     }
 
     public int compareTo(PluginMetaData o) {
-        return this.id.compareTo(o.id);
+        return this.id.compareToIgnoreCase(o.id);
     }
 
     public int hashCode() {
@@ -137,5 +149,9 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
 
     public String getVersion() {
         return descriptor.getVersion().toString();
+    }
+
+    public boolean isPremiumFor(PluginMetaData data) {
+        return this.premium != null && data.getId().equals(premium);
     }
 }

@@ -2,6 +2,7 @@ package cz.vity.freerapid.swing;
 
 import com.jgoodies.forms.layout.ColumnSpec;
 import cz.vity.freerapid.swing.components.EditorPaneLinkDetector;
+import cz.vity.freerapid.swing.components.PopdownButton;
 import cz.vity.freerapid.swing.models.NaiiveComboModel;
 import cz.vity.freerapid.swing.renderers.ComboBoxRenderer;
 import org.jdesktop.swingx.JXDatePicker;
@@ -26,7 +27,9 @@ public class ComponentFactory {
     private FocusListener focusListener;
 
     private static ComponentFactory instance;
+    @SuppressWarnings({"deprecation"})
     public final static ColumnSpec DATEPICKER_COLUMN_SPEC = new ColumnSpec("max(pref;65dlu)");
+    @SuppressWarnings({"deprecation"})
     public static final ColumnSpec BUTTON_COLSPEC = new ColumnSpec("max(pref;42dlu)");
 
     private synchronized static ComponentFactory getInstance() {
@@ -120,6 +123,10 @@ public class ComponentFactory {
 
     public static EditorPaneLinkDetector getURLsEditorPane() {
         return new EditorPaneLinkDetector();
+    }
+
+    public static PopdownButton getPopdownButton() {
+        return new PopdownButton();
     }
 
 

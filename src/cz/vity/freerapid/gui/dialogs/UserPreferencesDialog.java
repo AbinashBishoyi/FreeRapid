@@ -21,12 +21,14 @@ import cz.vity.freerapid.gui.MyPresentationModel;
 import cz.vity.freerapid.gui.dialogs.filechooser.OpenSaveDialogFactory;
 import cz.vity.freerapid.gui.managers.ClientManager;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
+import cz.vity.freerapid.gui.managers.MenuManager;
 import cz.vity.freerapid.model.PluginMetaData;
-import cz.vity.freerapid.swing.LaF;
-import cz.vity.freerapid.swing.LookAndFeels;
-import cz.vity.freerapid.swing.SwingUtils;
-import cz.vity.freerapid.swing.Swinger;
+import cz.vity.freerapid.plugins.webclient.ShareDownloadService;
+import cz.vity.freerapid.swing.*;
+import cz.vity.freerapid.swing.components.PopdownButton;
+import cz.vity.freerapid.swing.models.RecentsFilesComboModel;
 import cz.vity.freerapid.utilities.LogUtils;
+import cz.vity.freerapid.utilities.Utils;
 import cz.vity.freerapid.utilities.os.OSCommand;
 import cz.vity.freerapid.utilities.os.SystemCommander;
 import cz.vity.freerapid.utilities.os.SystemCommanderFactory;
@@ -42,22 +44,23 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.*;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.Transferable;
+import java.awt.event.*;
 import java.io.File;
 import java.net.URL;
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * @author Vity
  */
-public class UserPreferencesDialog extends AppDialog {
+public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
     private final static Logger logger = Logger.getLogger(UserPreferencesDialog.class.getName());
     private MyPresentationModel model;
     private static final String CARD_PROPERTY = "card";
@@ -70,25 +73,23 @@ public class UserPreferencesDialog extends AppDialog {
     private boolean updateDefaultConnection;
     private ManagerDirector managerDirector;
     private Trigger trigger;
+    private boolean pluginTableWasChanged;
+    private static final String PLUGIN_OPTIONS_ENABLED_PROPERTY = "pluginOptionsEnabled";
+    private boolean pluginOptionsEnabled;
+
 
     private static enum Card {
         CARD1, CARD2, CARD3, CARD4, CARD5, CARD6
     }
 
-    private static final int COLUMN_ACTIVE = 0;
-    private static final int COLUMN_UPDATE = 1;
-    private static final int COLUMN_ID = 2;
-    private static final int COLUMN_VERSION = 3;
-    private static final int COLUMN_SERVICES = 4;
-    private static final int COLUMN_AUTHOR = 5;
-    private static final int COLUMN_WWW = 6;
-
     public UserPreferencesDialog(Frame owner, ApplicationContext context) throws Exception {
         super(owner, true);
         this.context = context;
         updateDefaultConnection = false;
+        pluginTableWasChanged = false;
         managerDirector = ((MainApp) context.getApplication()).getManagerDirector();
         clientManager = managerDirector.getClientManager();
+        setPluginOptionsEnabled(false);
         //managerDirector.getPluginsManager().getAvailablePlugins()
         this.setName("UserPreferencesDialog");
         bundle = getResourceMap();
@@ -130,7 +131,7 @@ public class UserPreferencesDialog extends AppDialog {
         setAction(btnUpdatePlugins, "btnUpdatePluginsAction");
 
 
-        buildPluginTable();
+        initPluginTable();
 
         setDefaultValues();
         Card card;
@@ -174,10 +175,11 @@ public class UserPreferencesDialog extends AppDialog {
 
         setAction(btnProxyListPathSelect, "btnSelectProxyListAction");
 
+        buildPopmenuButton(popmenuButton.getPopupMenu());
 
     }
 
-    private void buildPluginTable() {
+    private void initPluginTable() {
         pluginTable.setName("pluginTable");
         pluginTable.setAutoCreateColumnsFromModel(false);
         pluginTable.setColumnControlVisible(true);
@@ -196,37 +198,59 @@ public class UserPreferencesDialog extends AppDialog {
 
         pluginTable.setColumnSelectionAllowed(false);
 
-        pluginTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-
-            }
-        });
-
         pluginTable.createDefaultColumnsFromModel();
-        pluginTable.getModel().addTableModelListener(new TableModelListener() {
+        final TableModel tableModel = pluginTable.getModel();
+        final PluginMetaDataTableModel customTableModel = (PluginMetaDataTableModel) tableModel;
+        tableModel.addTableModelListener(new TableModelListener() {
             public void tableChanged(TableModelEvent e) {
-                UserPreferencesDialog.this.model.setChanged(true);
+                UserPreferencesDialog.this.model.setBuffering(true);
+                if (e.getType() == TableModelEvent.UPDATE) {
+                    pluginTableWasChanged = true;
+                    if (e.getColumn() == PluginMetaDataTableModel.COLUMN_ACTIVE) {
+                        final PluginMetaData data = customTableModel.getObject(e.getFirstRow());
+                        updatePremium(data);
+                    }
+                }
             }
         });
-        TableColumn tableColumn = Swinger.updateColumn(pluginTable, "X", COLUMN_ACTIVE, 22, 22, null);
+
+        final ListSelectionModel selectionModel = pluginTable.getSelectionModel();
+        selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        selectionModel.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                if (e.getValueIsAdjusting())
+                    return;
+                final int index = e.getLastIndex();
+                if (index != -1) {
+                    final PluginMetaData data = customTableModel.getObject(pluginTable.convertRowIndexToModel(selectionModel.getMinSelectionIndex()));
+                    setPluginOptionsEnabled(data.isOptionable());
+                } else setPluginOptionsEnabled(false);
+            }
+        });
+
+        pluginTable.setSortOrder(PluginMetaDataTableModel.COLUMN_ID, org.jdesktop.swingx.decorator.SortOrder.ASCENDING);
+
+        TableColumn tableColumn = Swinger.updateColumn(pluginTable, "X", PluginMetaDataTableModel.COLUMN_ACTIVE, 22, 22, null);
         tableColumn.setWidth(22);
         tableColumn.setMaxWidth(22);
         //((DefaultCellEditor)tableColumn.getCellEditor()).setToolTipText("asasdasd");
-        tableColumn = Swinger.updateColumn(pluginTable, "U", COLUMN_UPDATE, 22, 22, null);
+        tableColumn = Swinger.updateColumn(pluginTable, "U", PluginMetaDataTableModel.COLUMN_UPDATE, 22, 22, null);
         tableColumn.setWidth(22);
         tableColumn.setMaxWidth(22);
-        Swinger.updateColumn(pluginTable, "ID", COLUMN_ID, -1, 70, null);
-        Swinger.updateColumn(pluginTable, "Version", COLUMN_VERSION, -1, 40, null);
-        Swinger.updateColumn(pluginTable, "Services", COLUMN_SERVICES, -1, 100, null);
-        Swinger.updateColumn(pluginTable, "Author", COLUMN_AUTHOR, -1, -1, null);
-        Swinger.updateColumn(pluginTable, "WWW", COLUMN_WWW, -1, -1, new DownloadHistoryDialog.URLCellRenderer());
-
+        pluginTable.setRolloverEnabled(true);
+        Swinger.updateColumn(pluginTable, "ID", PluginMetaDataTableModel.COLUMN_ID, -1, 70, null);
+        Swinger.updateColumn(pluginTable, "Version", PluginMetaDataTableModel.COLUMN_VERSION, -1, 40, null);
+        Swinger.updateColumn(pluginTable, "Services", PluginMetaDataTableModel.COLUMN_SERVICES, -1, 100, null);
+        Swinger.updateColumn(pluginTable, "Author", PluginMetaDataTableModel.COLUMN_AUTHOR, -1, -1, null);
+        Swinger.updateColumn(pluginTable, "WWW", PluginMetaDataTableModel.COLUMN_WWW, -1, -1, SwingXUtils.getHyperLinkTableCellRenderer());
 
         pluginTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (!pluginTable.hasFocus())
                     Swinger.inputFocus(pluginTable);
+                if (SwingUtilities.isRightMouseButton(e))
+                    SwingUtils.showPopMenu(popmenuButton.getPopupMenu(), e, pluginTable, UserPreferencesDialog.this);
             }
         });
 
@@ -234,8 +258,8 @@ public class UserPreferencesDialog extends AppDialog {
         final ActionMap tableActionMap = pluginTable.getActionMap();
         final ActionMap actionMap = getActionMap();
 
-//        tableInputMap.put(SwingUtils.getCtrlKeyStroke(KeyEvent.VK_C), "copy");
-//        tableActionMap.put("copy", actionMap.get("copyContent"));
+        tableInputMap.put(SwingUtils.getCtrlKeyStroke(KeyEvent.VK_C), "copy");
+        tableActionMap.put("copy", actionMap.get("copyContent"));
 
 //        final KeyStroke ctrlF = SwingUtils.getCtrlKeyStroke(KeyEvent.VK_F);
 //        tableInputMap.put(ctrlF, "getFocusFind");
@@ -246,13 +270,61 @@ public class UserPreferencesDialog extends AppDialog {
 //        };
 //        tableActionMap.put("getFocusFind", focusFilterAction);
 
-        pluginTable.getParent().setPreferredSize(new Dimension(230, 230));
+        pluginTable.getParent().setPreferredSize(new Dimension(230, 200));
 
         tableInputMap.put(SwingUtils.getShiftKeyStroke(KeyEvent.VK_HOME), "selectFirstRowExtendSelection");
         tableInputMap.put(SwingUtils.getShiftKeyStroke(KeyEvent.VK_END), "selectLastRowExtendSelection");
 
 //        registerKeyboardAction(focusFilterAction, ctrlF);
 
+    }
+
+    private void buildPopmenuButton(final JPopupMenu popupMenu) {
+        final MenuManager menuManager = managerDirector.getMenuManager();
+        final ActionMap actionMap = getActionMap();
+        final JMenu updatesMenu = menuManager.createMenu("updatesMenu", actionMap, "selectAllUpdatesAction", "deSelectAllUpdatesAction");
+        getResourceMap().injectComponent(updatesMenu);
+        final JMenu activityMenu = menuManager.createMenu("activityMenu", actionMap, "selectAllActivityAction", "deSelectAllActivityAction");
+        getResourceMap().injectComponent(activityMenu);
+        final Object[] objects = {"copyPluginListAction", "copyPluginListWithVersionAction", "copySupportedSitesListAction", MenuManager.MENU_SEPARATOR, activityMenu, updatesMenu};
+        menuManager.processMenu(popupMenu, "", actionMap, objects);
+    }
+
+
+    @org.jdesktop.application.Action()
+    public void copyContent() {
+        final int[] rows = Swinger.getSelectedRows(pluginTable);
+        if (rows.length <= 0)
+            return;
+
+        final TableModel tableModel = pluginTable.getModel();
+
+        final int selCol = pluginTable.convertColumnIndexToModel(pluginTable.getColumnModel().getSelectionModel().getLeadSelectionIndex());
+        if (selCol == PluginMetaDataTableModel.COLUMN_ACTIVE || selCol == PluginMetaDataTableModel.COLUMN_UPDATE)
+            return;
+        final Object value = tableModel.getValueAt(rows[0], selCol);
+
+        SwingUtils.copyToClipboard(value.toString(), this);
+    }
+
+
+    private void updatePremium(PluginMetaData data) {
+        final java.util.List<PluginMetaData> dataList = managerDirector.getPluginsManager().getSupportedPlugins();
+        if (!data.isEnabled())
+            return;
+        if (data.hasPremium()) {
+            for (PluginMetaData metaData : dataList) {
+                if (data.isPremiumFor(metaData)) {
+                    metaData.setEnabled(false);
+                }
+            }
+        } else {
+            for (PluginMetaData metaData : dataList) {
+                if (metaData.isPremiumFor(data)) {
+                    metaData.setEnabled(false);
+                }
+            }
+        }
     }
 
     @org.jdesktop.application.Action
@@ -265,14 +337,22 @@ public class UserPreferencesDialog extends AppDialog {
         }
     }
 
-    @org.jdesktop.application.Action
+    @org.jdesktop.application.Action(enabledProperty = PLUGIN_OPTIONS_ENABLED_PROPERTY)
     public void btnPluginOptionsAction() {
-
+        final int selectedRow = pluginTable.getSelectedRow();
+        final int i = pluginTable.convertRowIndexToModel(selectedRow);
+        final PluginMetaData data = ((PluginMetaDataTableModel) pluginTable.getModel()).getObject(i);
+        final ShareDownloadService service = managerDirector.getPluginsManager().getPluginInstance(data.getId());
+        try {
+            service.showOptions();
+        } catch (Exception e) {
+            //ignore
+        }
     }
 
     @org.jdesktop.application.Action
     public void btnResetDefaultPluginServerAction() {
-
+        comboPluginServers.getModel().setSelectedItem(Consts.PLUGIN_CHECK_UPDATE_URL);
     }
 
     @org.jdesktop.application.Action
@@ -341,15 +421,54 @@ public class UserPreferencesDialog extends AppDialog {
         final ArrayListModel<PluginMetaData> plugins = new ArrayListModel<PluginMetaData>(managerDirector.getPluginsManager().getSupportedPlugins());
 
 
-        pluginTable.setModel(new CustomTableModel(plugins, getList("pluginTableColumns")));
+        pluginTable.setModel(new PluginMetaDataTableModel(plugins, getList("pluginTableColumns")));
 
         bindBasicComponents();
+
+        final RecentsFilesComboModel listComboModel = new RecentsFilesComboModel(10, UserProp.PLUGIN_CHECK_URL_LIST, false, false);
+        comboPluginServers.setModel(listComboModel);
+
+        comboPluginServers.setSelectedItem(AppPrefs.getProperty(UserProp.PLUGIN_CHECK_URL_SELECTED, Consts.PLUGIN_CHECK_UPDATE_URL));
+
+        final JTextField field = (JTextField) comboPluginServers.getEditor().getEditorComponent();
+        field.getDocument().addDocumentListener(new DocumentListener() {
+            public void insertUpdate(DocumentEvent e) {
+                changedUpdate(e);
+            }
+
+            public void removeUpdate(DocumentEvent e) {
+                changedUpdate(e);
+            }
+
+            public void changedUpdate(DocumentEvent e) {
+                model.setBuffering(true);
+            }
+        });
+
+//        field.getDocument(new ActionListener() {
+//            public void actionPerformed(ActionEvent e) {
+//                model.setBuffering(true);
+//            }
+//        }).;
+
+        field.addFocusListener(new FocusListener() {
+            public void focusGained(FocusEvent e) {
+
+            }
+
+            public void focusLost(FocusEvent e) {
+                final String s = field.getText();
+                if (s != null && !s.trim().isEmpty()) {
+                    listComboModel.addElement(s);
+                }
+            }
+        });
+
 
         final ActionMap map = getActionMap();
         final javax.swing.Action actionOK = map.get("okBtnAction");
         PropertyConnector connector = PropertyConnector.connect(model, PresentationModel.PROPERTYNAME_BUFFERING, actionOK, "enabled");
         connector.updateProperty2();
-
     }
 
     private void bindBasicComponents() {
@@ -394,6 +513,11 @@ public class UserPreferencesDialog extends AppDialog {
         bind(checkGenerateTXTDescription, UserProp.GENERATE_DESCRIPTION_BY_FILENAME, UserProp.GENERATE_DESCRIPTION_BY_FILENAME_DEFAULT);
         bind(checkGenerateDescIon, UserProp.GENERATE_DESCRIPT_ION_FILE, UserProp.GENERATE_DESCRIPT_ION_FILE_DEFAULT);
         bind(checkGenerateHidden, UserProp.GENERATE_DESCRIPTION_FILES_HIDDEN, UserProp.GENERATE_DESCRIPTION_FILES_HIDDEN_DEFAULT);
+
+
+        bind(check4PluginUpdatesAutomatically, UserProp.CHECK4_PLUGIN_UPDATES_AUTOMATICALLY, UserProp.CHECK4_PLUGIN_UPDATES_AUTOMATICALLY_DEFAULT);
+        bind(checkDownloadNotExistingPlugins, UserProp.DOWNLOAD_NOT_EXISTING_PLUGINS, UserProp.DOWNLOAD_NOT_EXISTING_PLUGINS_DEFAULT);
+        bind(checkConfirmUpdating, UserProp.CONFIRM_UPDATING_PLUGINS, UserProp.CONFIRM_UPDATING_PLUGINS_DEFAULT);
 
         bind(checkPrepareFile, UserProp.ANTI_FRAGMENT_FILES, UserProp.ANTI_FRAGMENT_FILES_DEFAULT);
 
@@ -480,6 +604,8 @@ public class UserPreferencesDialog extends AppDialog {
         final boolean updateProxyConnectionList = isBuffering(UserProp.PROXY_LIST_PATH) || isBuffering(UserProp.USE_PROXY_LIST);
         updateDefaultConnection = updateDefaultConnection || isBuffering(UserProp.USE_DEFAULT_CONNECTION);
 
+        AppPrefs.storeProperty(UserProp.PLUGIN_CHECK_URL_SELECTED, comboPluginServers.getSelectedItem().toString());
+
         trigger.triggerCommit();
 //        final String s = AppPrefs.getProperty(UserProp.PROXY_LIST_PATH, "");
 //        System.out.println("s = " + s);
@@ -498,6 +624,8 @@ public class UserPreferencesDialog extends AppDialog {
 
         }
 
+        ((RecentsFilesComboModel) comboPluginServers.getModel()).store();
+
         if (updateDefaultConnection && updateProxyConnectionList) {
             clientManager.updateConnectionSettings();
         } else {
@@ -506,6 +634,10 @@ public class UserPreferencesDialog extends AppDialog {
             if (updateProxyConnectionList)
                 clientManager.updateProxyConnectionList();
         }
+
+//        if (pluginTableWasChanged) {
+//            Swinger.showInformationDialog(getResourceMap().getString("pluginSettingsTakeEffectOnRestart"));
+//        }
 
         doClose();
     }
@@ -565,6 +697,80 @@ public class UserPreferencesDialog extends AppDialog {
     }
 
 
+    @org.jdesktop.application.Action
+    public void copyPluginListAction() {
+        copyPluginList(false);
+    }
+
+    private void copyPluginList(final boolean withVersion) {
+        java.util.List<PluginMetaData> datas = getSortedPluginList();
+        StringBuilder builder = new StringBuilder();
+        final String lineSeparator = Utils.getSystemLineSeparator();
+        for (PluginMetaData data : datas) {
+            builder.append(data.getId());
+            if (withVersion)
+                builder.append(' ').append(data.getVersion());
+            builder.append(lineSeparator);
+        }
+        SwingUtils.copyToClipboard(builder.toString().trim(), this);
+    }
+
+    private java.util.List<PluginMetaData> getSortedPluginList() {
+        java.util.List<PluginMetaData> datas = getSupportedPlugins();
+        Collections.sort(datas);
+        return datas;
+    }
+
+    private java.util.List<PluginMetaData> getSupportedPlugins() {
+        return managerDirector.getPluginsManager().getSupportedPlugins();
+    }
+
+    @org.jdesktop.application.Action
+    public void copyPluginListWithVersionAction() {
+        copyPluginList(true);
+    }
+
+    @org.jdesktop.application.Action
+    public void copySupportedSitesListAction() {
+        final java.util.List<PluginMetaData> dataList = getSortedPluginList();
+        StringBuilder builder = new StringBuilder();
+        final String lineSeparator = Utils.getSystemLineSeparator();
+        for (PluginMetaData data : dataList) {
+            builder.append(data.getServices());
+            builder.append(lineSeparator);
+        }
+        SwingUtils.copyToClipboard(builder.toString().trim(), this);
+    }
+
+    private void checkOrUncheckPlugin(Object value, int columnIndex) {
+        final PluginMetaDataTableModel tableModel = (PluginMetaDataTableModel) pluginTable.getModel();
+        final int count = tableModel.getRowCount();
+        for (int i = 0; i < count; i++) {
+            tableModel.setValueAt(value, i, columnIndex);
+        }
+    }
+
+    @org.jdesktop.application.Action
+    public void selectAllUpdatesAction() {
+        checkOrUncheckPlugin(Boolean.TRUE, PluginMetaDataTableModel.COLUMN_UPDATE);
+    }
+
+    @org.jdesktop.application.Action
+    public void deSelectAllUpdatesAction() {
+        checkOrUncheckPlugin(Boolean.FALSE, PluginMetaDataTableModel.COLUMN_UPDATE);
+    }
+
+    @org.jdesktop.application.Action
+    public void selectAllActivityAction() {
+        checkOrUncheckPlugin(Boolean.TRUE, PluginMetaDataTableModel.COLUMN_ACTIVE);
+    }
+
+    @org.jdesktop.application.Action
+    public void deSelectAllActivityAction() {
+        checkOrUncheckPlugin(Boolean.FALSE, PluginMetaDataTableModel.COLUMN_ACTIVE);
+    }
+
+
     @Override
     public void doClose() {
         AppPrefs.removeProperty(LAF_PROPERTY);
@@ -607,6 +813,16 @@ public class UserPreferencesDialog extends AppDialog {
             Swinger.showErrorMessage(context.getResourceMap(), "systemCommandNotSupported", command.toString().toLowerCase());
     }
 
+    public boolean isPluginOptionsEnabled() {
+        return pluginOptionsEnabled;
+    }
+
+
+    public void setPluginOptionsEnabled(boolean pluginOptionsEnabled) {
+        final boolean oldValue = this.pluginOptionsEnabled;
+        this.pluginOptionsEnabled = pluginOptionsEnabled;
+        firePropertyChange(PLUGIN_OPTIONS_ENABLED_PROPERTY, oldValue, pluginOptionsEnabled);
+    }
 
     @SuppressWarnings({"deprecation"})
     private void initComponents() {
@@ -664,6 +880,9 @@ public class UserPreferencesDialog extends AppDialog {
         labelLanguage.setName("language");
         labelLanguage.setLabelFor(comboLng);
         comboLng = new JComboBox();
+        checkConfirmUpdating = new JCheckBox();
+        checkConfirmUpdating.setName("checkConfirmUpdating");
+
         comboRemoveCompleted = new JComboBox();
         comboRemoveCompleted.setName("comboRemoveCompleted");
         comboLng.setName("comboLng");
@@ -716,6 +935,7 @@ public class UserPreferencesDialog extends AppDialog {
 
         JPanel panelPlugins = new JPanel();
         JTabbedPane pluginTabbedPane = new JTabbedPane();
+        pluginTabbedPane.setName("pluginTabbedPane");
         JPanel pluginPanelSettings = new JPanel();
         JScrollPane scrollPane1 = new JScrollPane();
         pluginTable = new JXTable();
@@ -730,6 +950,7 @@ public class UserPreferencesDialog extends AppDialog {
         btnResetDefaultPluginServer = new JButton();
         btnUpdatePlugins = new JButton();
 
+        popmenuButton = ComponentFactory.getPopdownButton();
 
         checkPrepareFile.setName("checkPrepareFile");
 
@@ -1059,14 +1280,19 @@ public class UserPreferencesDialog extends AppDialog {
                                     //---- labelPluginInfo ----
                                     labelPluginInfo.setName("labelPluginInfo");
 
+                                    //---- popmenuButton ----
+                                    popmenuButton.setName("popmenuButton");
+
                                     //---- btnPluginOptions ----
                                     btnPluginOptions.setName("btnPluginOptions");
 
                                     PanelBuilder pluginsButtonPanelBuilder = new PanelBuilder(new FormLayout(
                                             new ColumnSpec[]{
-                                                    FormFactory.UNRELATED_GAP_COLSPEC,
+                                                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                                                     FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                                                     new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
+                                                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                                    FormFactory.DEFAULT_COLSPEC,
                                                     FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                                                     FormFactory.DEFAULT_COLSPEC,
                                                     FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
@@ -1075,13 +1301,14 @@ public class UserPreferencesDialog extends AppDialog {
                                             RowSpec.decodeSpecs("default")), pluginsButtonPanel);
 
                                     pluginsButtonPanelBuilder.add(labelPluginInfo, cc.xy(3, 1));
-                                    pluginsButtonPanelBuilder.add(btnPluginOptions, cc.xy(5, 1));
+                                    pluginsButtonPanelBuilder.add(popmenuButton, cc.xy(5, 1));
+                                    pluginsButtonPanelBuilder.add(btnPluginOptions, cc.xy(7, 1));
                                 }
 
                                 PanelBuilder pluginPanelSettingsBuilder = new PanelBuilder(new FormLayout(
                                         ColumnSpec.decodeSpecs("default:grow"),
                                         new RowSpec[]{
-                                                FormFactory.DEFAULT_ROWSPEC,
+                                                new RowSpec(RowSpec.CENTER, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
                                                 FormFactory.LINE_GAP_ROWSPEC,
                                                 FormFactory.DEFAULT_ROWSPEC,
                                                 FormFactory.LINE_GAP_ROWSPEC,
@@ -1102,6 +1329,9 @@ public class UserPreferencesDialog extends AppDialog {
                                 //---- check4PluginUpdatesAutomatically ----
                                 check4PluginUpdatesAutomatically.setName("check4PluginUpdatesAutomatically");
 
+                                //---- checkConfirmUpdating ----
+                                checkConfirmUpdating.setName("checkConfirmUpdating");
+
                                 //---- checkDownloadNotExistingPlugins ----
                                 checkDownloadNotExistingPlugins.setName("checkDownloadNotExistingPlugins");
 
@@ -1114,9 +1344,6 @@ public class UserPreferencesDialog extends AppDialog {
 
                                 //---- btnResetDefaultPluginServer ----
                                 btnResetDefaultPluginServer.setName("btnResetDefaultPluginServer");
-
-                                //---- btnUpdatePlugins ----
-                                btnUpdatePlugins.setName("btnUpdatePlugins");
 
                                 PanelBuilder pluginPanelUpdatesBuilder = new PanelBuilder(new FormLayout(
                                         new ColumnSpec[]{
@@ -1135,17 +1362,17 @@ public class UserPreferencesDialog extends AppDialog {
                                                 FormFactory.LINE_GAP_ROWSPEC,
                                                 FormFactory.DEFAULT_ROWSPEC,
                                                 FormFactory.LINE_GAP_ROWSPEC,
-                                                new RowSpec(RowSpec.CENTER, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
+                                                FormFactory.DEFAULT_ROWSPEC,
                                                 FormFactory.LINE_GAP_ROWSPEC,
-                                                FormFactory.DEFAULT_ROWSPEC
+                                                new RowSpec(RowSpec.CENTER, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
                                         }), pluginPanelUpdates);
 
                                 pluginPanelUpdatesBuilder.add(check4PluginUpdatesAutomatically, cc.xywh(1, 1, 3, 1));
-                                pluginPanelUpdatesBuilder.add(checkDownloadNotExistingPlugins, cc.xywh(1, 3, 3, 1));
-                                pluginPanelUpdatesBuilder.add(labelUpdateFromServer, cc.xywh(1, 5, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
-                                pluginPanelUpdatesBuilder.add(comboPluginServers, cc.xy(3, 5));
-                                pluginPanelUpdatesBuilder.add(btnResetDefaultPluginServer, cc.xy(5, 5));
-                                pluginPanelUpdatesBuilder.add(btnUpdatePlugins, cc.xy(3, 9));
+                                pluginPanelUpdatesBuilder.add(checkConfirmUpdating, cc.xywh(1, 3, 3, 1));
+                                pluginPanelUpdatesBuilder.add(checkDownloadNotExistingPlugins, cc.xywh(1, 5, 3, 1));
+                                pluginPanelUpdatesBuilder.add(labelUpdateFromServer, cc.xywh(1, 7, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
+                                pluginPanelUpdatesBuilder.add(comboPluginServers, cc.xy(3, 7));
+                                pluginPanelUpdatesBuilder.add(btnResetDefaultPluginServer, cc.xy(5, 7));
                             }
                             pluginTabbedPane.addTab(bundle.getString("pluginPanelUpdates.tab.title"), pluginPanelUpdates);
 
@@ -1154,7 +1381,7 @@ public class UserPreferencesDialog extends AppDialog {
                         PanelBuilder panelPluginsBuilder = new PanelBuilder(new FormLayout(
                                 ColumnSpec.decodeSpecs("default:grow"),
                                 new RowSpec[]{
-                                        FormFactory.DEFAULT_ROWSPEC,
+                                        new RowSpec(RowSpec.CENTER, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
                                         FormFactory.RELATED_GAP_ROWSPEC,
                                         FormFactory.DEFAULT_ROWSPEC
                                 }), panelPlugins);
@@ -1476,9 +1703,13 @@ public class UserPreferencesDialog extends AppDialog {
     private JButton btnPluginOptions;
     private JCheckBox check4PluginUpdatesAutomatically;
     private JCheckBox checkDownloadNotExistingPlugins;
+    private JCheckBox checkConfirmUpdating;
     private JComboBox comboPluginServers;
+
     private JButton btnResetDefaultPluginServer;
     private JButton btnUpdatePlugins;
+
+    private PopdownButton popmenuButton;
 
 
     private void updateLookAndFeel() {
@@ -1529,90 +1760,8 @@ public class UserPreferencesDialog extends AppDialog {
         }
     }
 
-    private static class CustomTableModel extends AbstractTableModel implements ListDataListener {
-        private final ArrayListModel<PluginMetaData> model;
-        private final String[] columns;
+    public void lostOwnership(Clipboard clipboard, Transferable contents) {
 
-
-        public CustomTableModel(ArrayListModel<PluginMetaData> model, String[] columns) {
-            super();
-            this.model = model;
-            this.columns = columns;
-            model.addListDataListener(this);
-        }
-
-        @Override
-        public int getRowCount() {
-            return model.getSize();
-        }
-
-        @Override
-        public boolean isCellEditable(int rowIndex, int columnIndex) {
-            return columnIndex == COLUMN_ACTIVE || columnIndex == COLUMN_UPDATE;
-        }
-
-        @Override
-        public String getColumnName(int column) {
-            return this.columns[column];
-        }
-
-        @Override
-        public int getColumnCount() {
-            return this.columns.length;
-        }
-
-        @Override
-        public Class<?> getColumnClass(int columnIndex) {
-            if (columnIndex == COLUMN_ACTIVE || columnIndex == COLUMN_UPDATE) {
-                return Boolean.class;
-            } else return String.class;
-        }
-
-        @Override
-        public Object getValueAt(int rowIndex, int columnIndex) {
-            switch (columnIndex) {
-                case COLUMN_ACTIVE:
-                    return model.get(rowIndex).isEnabled();
-                case COLUMN_UPDATE:
-                    return model.get(rowIndex).isUpdatesEnabled();
-                case COLUMN_ID:
-                    return model.get(rowIndex).getId();
-                case COLUMN_VERSION:
-                    return model.get(rowIndex).getVersion();
-                case COLUMN_SERVICES:
-                    return model.get(rowIndex).getServices();
-                case COLUMN_AUTHOR:
-                    return model.get(rowIndex).getVendor();
-                case COLUMN_WWW:
-                    return model.get(rowIndex).getWWW();
-                default:
-                    assert false;
-            }
-            return model.get(rowIndex);
-        }
-
-        @Override
-        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-            if (columnIndex == COLUMN_ACTIVE)
-                model.get(rowIndex).setEnabled((Boolean) aValue);
-            if (columnIndex == COLUMN_UPDATE)
-                model.get(rowIndex).setUpdatesEnabled((Boolean) aValue);
-        }
-
-        @Override
-        public void intervalAdded(ListDataEvent e) {
-            fireTableRowsInserted(e.getIndex0(), e.getIndex1());
-        }
-
-        @Override
-        public void intervalRemoved(ListDataEvent e) {
-            fireTableRowsDeleted(e.getIndex0(), e.getIndex1());
-        }
-
-        @Override
-        public void contentsChanged(ListDataEvent e) {
-            fireTableRowsUpdated(e.getIndex0(), e.getIndex1());
-        }
     }
 
 

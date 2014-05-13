@@ -50,14 +50,15 @@ public class UserPreferencesDialog extends JDialog {
 		pluginTable = new JXTable();
 		JXButtonPanel pluginsButtonPanel = new JXButtonPanel();
 		JLabel labelPluginInfo = new JLabel();
+		popmenuButton = ComponentFactory.getPopdownButton()
 		btnPluginOptions = new JButton();
 		JPanel pluginPanelUpdates = new JPanel();
 		check4PluginUpdatesAutomatically = new JCheckBox();
+		checkConfirmUpdating = new JCheckBox();
 		checkDownloadNotExistingPlugins = new JCheckBox();
 		JLabel labelUpdateFromServer = new JLabel();
 		comboPluginServers = new JComboBox();
 		btnResetDefaultPluginServer = new JButton();
-		btnUpdatePlugins = new JButton();
 		buttonBar = new JXButtonPanel();
 		btnOK = new JButton();
 		btnCancel = new JButton();
@@ -218,15 +219,20 @@ public class UserPreferencesDialog extends JDialog {
 									//---- labelPluginInfo ----
 									labelPluginInfo.setText(bundle.getString("labelPluginInfo.text"));
 
+									//---- popmenuButton ----
+									popmenuButton.setText(bundle.getString("popmenuButton.text"));
+
 									//---- btnPluginOptions ----
 									btnPluginOptions.setText(bundle.getString("btnPluginOptions.text"));
 
 									PanelBuilder pluginsButtonPanelBuilder = new PanelBuilder(new FormLayout(
 										new ColumnSpec[] {
-											FormFactory.UNRELATED_GAP_COLSPEC,
+											FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
 											FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
 											new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
 											FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+											FormFactory.DEFAULT_COLSPEC,
+											FormFactory.UNRELATED_GAP_COLSPEC,
 											FormFactory.DEFAULT_COLSPEC,
 											FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
 											FormFactory.UNRELATED_GAP_COLSPEC
@@ -234,13 +240,14 @@ public class UserPreferencesDialog extends JDialog {
 										RowSpec.decodeSpecs("default")), pluginsButtonPanel);
 
 									pluginsButtonPanelBuilder.add(labelPluginInfo,  cc.xy(3, 1));
-									pluginsButtonPanelBuilder.add(btnPluginOptions, cc.xy(5, 1));
+									pluginsButtonPanelBuilder.add(popmenuButton,    cc.xy(5, 1));
+									pluginsButtonPanelBuilder.add(btnPluginOptions, cc.xy(7, 1));
 								}
 
 								PanelBuilder pluginPanelSettingsBuilder = new PanelBuilder(new FormLayout(
 									ColumnSpec.decodeSpecs("default:grow"),
 									new RowSpec[] {
-										FormFactory.DEFAULT_ROWSPEC,
+										new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
 										FormFactory.LINE_GAP_ROWSPEC,
 										FormFactory.DEFAULT_ROWSPEC,
 										FormFactory.LINE_GAP_ROWSPEC,
@@ -262,6 +269,9 @@ public class UserPreferencesDialog extends JDialog {
 								//---- check4PluginUpdatesAutomatically ----
 								check4PluginUpdatesAutomatically.setText(bundle.getString("check4PluginUpdatesAutomatically.text"));
 
+								//---- checkConfirmUpdating ----
+								checkConfirmUpdating.setText(bundle.getString("checkConfirmUpdating.text"));
+
 								//---- checkDownloadNotExistingPlugins ----
 								checkDownloadNotExistingPlugins.setText(bundle.getString("checkDownloadNotExistingPlugins.text"));
 
@@ -274,9 +284,6 @@ public class UserPreferencesDialog extends JDialog {
 
 								//---- btnResetDefaultPluginServer ----
 								btnResetDefaultPluginServer.setText(bundle.getString("btnResetDefaultPluginServer.text"));
-
-								//---- btnUpdatePlugins ----
-								btnUpdatePlugins.setText(bundle.getString("btnUpdatePlugins.text"));
 
 								PanelBuilder pluginPanelUpdatesBuilder = new PanelBuilder(new FormLayout(
 									new ColumnSpec[] {
@@ -295,17 +302,17 @@ public class UserPreferencesDialog extends JDialog {
 										FormFactory.LINE_GAP_ROWSPEC,
 										FormFactory.DEFAULT_ROWSPEC,
 										FormFactory.LINE_GAP_ROWSPEC,
-										new RowSpec(RowSpec.CENTER, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
+										FormFactory.DEFAULT_ROWSPEC,
 										FormFactory.LINE_GAP_ROWSPEC,
-										FormFactory.DEFAULT_ROWSPEC
+										new RowSpec(RowSpec.CENTER, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
 									}), pluginPanelUpdates);
 
 								pluginPanelUpdatesBuilder.add(check4PluginUpdatesAutomatically, cc.xywh(1, 1, 3, 1));
-								pluginPanelUpdatesBuilder.add(checkDownloadNotExistingPlugins,  cc.xywh(1, 3, 3, 1));
-								pluginPanelUpdatesBuilder.add(labelUpdateFromServer,            cc.xywh(1, 5, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
-								pluginPanelUpdatesBuilder.add(comboPluginServers,               cc.xy  (3, 5));
-								pluginPanelUpdatesBuilder.add(btnResetDefaultPluginServer,      cc.xy  (5, 5));
-								pluginPanelUpdatesBuilder.add(btnUpdatePlugins,                 cc.xy  (3, 9));
+								pluginPanelUpdatesBuilder.add(checkConfirmUpdating,             cc.xywh(1, 3, 3, 1));
+								pluginPanelUpdatesBuilder.add(checkDownloadNotExistingPlugins,  cc.xywh(1, 5, 3, 1));
+								pluginPanelUpdatesBuilder.add(labelUpdateFromServer,            cc.xywh(1, 7, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
+								pluginPanelUpdatesBuilder.add(comboPluginServers,               cc.xy  (3, 7));
+								pluginPanelUpdatesBuilder.add(btnResetDefaultPluginServer,      cc.xy  (5, 7));
 							}
 							pluginTabbedPane.addTab(bundle.getString("pluginPanelUpdates.tab.title"), pluginPanelUpdates);
 
@@ -314,7 +321,7 @@ public class UserPreferencesDialog extends JDialog {
 						PanelBuilder panelPluginsBuilder = new PanelBuilder(new FormLayout(
 							ColumnSpec.decodeSpecs("default:grow"),
 							new RowSpec[] {
-								FormFactory.DEFAULT_ROWSPEC,
+								new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
 								FormFactory.RELATED_GAP_ROWSPEC,
 								FormFactory.DEFAULT_ROWSPEC
 							}), panelPlugins);
@@ -365,12 +372,13 @@ public class UserPreferencesDialog extends JDialog {
 	private JPanel panelCard;
 	private JCheckBox checkShowIconInSystemTray;
 	private JXTable pluginTable;
+	private JToggleButton popmenuButton;
 	private JButton btnPluginOptions;
 	private JCheckBox check4PluginUpdatesAutomatically;
+	private JCheckBox checkConfirmUpdating;
 	private JCheckBox checkDownloadNotExistingPlugins;
 	private JComboBox comboPluginServers;
 	private JButton btnResetDefaultPluginServer;
-	private JButton btnUpdatePlugins;
 	private JXButtonPanel buttonBar;
 	private JButton btnOK;
 	private JButton btnCancel;

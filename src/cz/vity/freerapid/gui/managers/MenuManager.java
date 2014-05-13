@@ -39,7 +39,7 @@ public class MenuManager {
      *
      */
     private static final String SELECTED_TEXT_PROPERTY = "selectedText";
-    private static final String MENU_SEPARATOR = "---";
+    public static final String MENU_SEPARATOR = "---";
     private final FileActions fileActions;
     private final static String RADIO = "*";
     private final static String RADIO2 = "*2";
@@ -290,12 +290,17 @@ public class MenuManager {
         return menuBar;
     }
 
-    private static JMenu createMenu(String menuName, Object[] actionNames) {
+    private JMenu createMenu(String menuName, Object[] actionNames) {
         JMenu menu = new JMenu();
-        return processMenu(menu, menuName, actionNames);
+        return processMenu(menu, menuName, context.getActionMap(), actionNames);
     }
 
-    private static JMenu processMenu(JMenu menu, String menuName, Object[] actionNames) {
+    public JMenu createMenu(String menuName, final ActionMap actionMap, Object... actionNames) {
+        JMenu menu = new JMenu();
+        return processMenu(menu, menuName, actionMap, actionNames);
+    }
+
+    private JMenu processMenu(JMenu menu, String menuName, final ActionMap actionMap, Object... actionNames) {
         menu.setName(menuName);
         ButtonGroup group = new ButtonGroup();
         ButtonGroup group2 = new ButtonGroup();
@@ -321,7 +326,7 @@ public class MenuManager {
                     menuItem = new JCheckBoxMenuItem();
                 } else
                     menuItem = new JMenuItem();
-                menuItem.setAction(Swinger.getAction(action));
+                menuItem.setAction(actionMap.get(action));
                 menuItem.setToolTipText(null);//showed in statusbar
                 menu.add(menuItem);
             }
@@ -329,14 +334,17 @@ public class MenuManager {
         return menu;
     }
 
-    public static JPopupMenu processMenu(JPopupMenu menu, String menuName, Object[] actionNames) {
+    public JPopupMenu processMenu(JPopupMenu menu, String menuName, ActionMap actionMap, Object[] actionNames) {
         menu.setName(menuName);
+
         for (Object actionName : actionNames) {
-            if (MENU_SEPARATOR.equals(actionName)) {
+            if (actionName instanceof JMenu) { //pokud se jedna o submenu
+                menu.add((JMenu) actionName);
+            } else if (MENU_SEPARATOR.equals(actionName)) {
                 menu.addSeparator();
             } else {
                 JMenuItem menuItem = new JMenuItem();
-                menuItem.setAction(Swinger.getAction(actionName));
+                menuItem.setAction(actionMap.get(actionName));
                 menu.add(menuItem);
             }
         }
