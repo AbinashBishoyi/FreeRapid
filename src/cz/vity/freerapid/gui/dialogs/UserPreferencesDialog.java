@@ -27,6 +27,7 @@ import cz.vity.freerapid.gui.managers.MenuManager;
 import cz.vity.freerapid.model.PluginMetaData;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 import cz.vity.freerapid.swing.*;
+import cz.vity.freerapid.swing.components.EnhancedToolbar;
 import cz.vity.freerapid.swing.components.PopdownButton;
 import cz.vity.freerapid.swing.models.SimplePreferencesComboModel;
 import cz.vity.freerapid.utilities.FileUtils;
@@ -167,10 +168,8 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
     }
 
     private void buildGUI() {
-        toolbar.setUI(new BlueishButtonBarUI());//nenechat to default?
-        //  toolbar.setOrientation(JButtonBar.HORIZONTAL);
-        //    toolbar.setUI(new BasicButtonBarUI());//nenechat to default?
 
+        toolbar.setUI(new BlueishButtonBarUI());//nenechat to default?
 
         final ActionMap map = getActionMap();
 
@@ -187,6 +186,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         buildPopmenuButton(popmenuButton.getPopupMenu());
 
     }
+
 
     private void initPluginTable() {
         pluginTable.setName("pluginTable");
@@ -1015,7 +1015,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         spinnerAutoReconnectTime = new JSpinner();
         JLabel labelSeconds = new JLabel();
         JLabel labelRequiresRestart = new JLabel();
-        toolbar = new JButtonBar();
+        toolbar = new EnhancedToolbar();
         CellConstraints cc = new CellConstraints();
         checkAnimateIcon = new JCheckBox();
         checkShowTitle = new JCheckBox();
