@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -132,7 +135,7 @@ public final class PlugUtils {
      */
 
     public static String getParameter(String name, String content) throws PluginImplementationException {
-        Matcher matcher = PlugUtils.matcher("name=\"" + name + "\"[^>]*value=\"([^\"]*)\"", content);
+        final Matcher matcher = Pattern.compile("name=\"" + name + "\"[^>]*value=\"([^\"]*)\"", Pattern.MULTILINE).matcher(content);
         if (matcher.find()) {
             return matcher.group(1);
         } else
@@ -141,18 +144,36 @@ public final class PlugUtils {
 
     /**
      * Parses content and search for parameter's value in tag form.<br />
-     * This parameter and its value are added to POST method
+     * Html <code>&lt;form&gt;</code> should have structure <code>name="paramName" .... value="paramValue"</code></br>
+     * This parameter and its value are added to POST method.
      *
-     * @param name    name of parameter
-     * @param content <code>String</code> to search in
-     * @return <code>String</code> value of parameter
-     * @throws PluginImplementationException given name not found in given content
+     * @param postMethod method to add found parameters
+     * @param content    <code>String</code> to search in
+     * @param parameters form parameter names
+     * @throws PluginImplementationException any of the parameter were not found in given content
      * @see cz.vity.freerapid.plugins.webclient.utils.PlugUtils#getParameter(String, String)
      */
-    public static String addParameter(String name, String content, PostMethod postMethod) throws PluginImplementationException {
-        final String result = getParameter(name, content);
-        postMethod.addParameter(name, result);
-        return result;
+    public static void addParameters(PostMethod postMethod, String content, String[] parameters) throws PluginImplementationException {
+        if (parameters.length == 0)
+            throw new IllegalArgumentException("You have to provide some parameters");
+        final Set<Object> set = Collections.emptySet();
+        set.addAll(Arrays.asList(parameters));
+        final Matcher matcher = Pattern.compile("name=\"(.*?)\"[^>]*value=\"([^\"]*)\"", Pattern.MULTILINE).matcher(content);
+        int start = 0;
+        String param;
+        while (matcher.find(start)) {
+            param = matcher.group(1);
+            if (set.contains(param)) {
+                set.remove(param);
+                postMethod.addParameter(param, matcher.group(2));
+            }
+            if (set.isEmpty())
+                break;
+            start = matcher.end();
+        }
+        if (!set.isEmpty()) {
+            throw new PluginImplementationException("Following parameters: " + Arrays.toString(set.toArray()) + " were not found");
+        }
     }
 
     /**

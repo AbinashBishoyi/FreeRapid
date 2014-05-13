@@ -216,6 +216,8 @@ public class DownloadClient implements HttpDownloadClient {
         final String fileName = HttpUtils.getFileName(method);
         if (fileName != null) {
             file.setFileName(fileName);
+            if (client.getParams().isParameterTrue("noContentTypeInHeader"))
+                isStream = true;
         }
 
         if (isStream) {
