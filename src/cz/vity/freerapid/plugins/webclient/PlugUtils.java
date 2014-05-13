@@ -2,6 +2,7 @@ package cz.vity.freerapid.plugins.webclient;
 
 import cz.vity.freerapid.plugins.webclient.utils.Entities;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigDecimal;
@@ -90,6 +91,15 @@ public final class PlugUtils {
             return writer.toString();
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Cannot unescape HTML", e);
+            return null;
+        }
+    }
+
+    public static String recognize(final BufferedImage image, final String commandLineOptions) {
+        final GOCR gocr = new GOCR(image, commandLineOptions);
+        try {
+            return gocr.recognize();
+        } catch (IOException e) {
             return null;
         }
     }

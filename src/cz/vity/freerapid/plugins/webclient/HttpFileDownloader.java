@@ -19,7 +19,7 @@ public interface HttpFileDownloader {
 
     boolean isTerminated();
 
-    BufferedImage loadCaptcha(InputStream inputStream) throws FailedToLoadCaptchaPictureException;
+    BufferedImage getCaptchaImage(final String url) throws FailedToLoadCaptchaPictureException;
 
     String askForCaptcha(BufferedImage image) throws Exception;
 

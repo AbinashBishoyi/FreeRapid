@@ -109,14 +109,17 @@ public class ConnectionSettings {
 
         if (proxyPort != that.proxyPort) return false;
         if (proxySet != that.proxySet) return false;
+        if (!proxyURL.equalsIgnoreCase(that.proxyURL)) return false;
+        if (userName != null ? !userName.equals(that.userName) : that.userName != null) return false;
 
         return true;
     }
 
+
     public int hashCode() {
         int result;
         result = (userName != null ? userName.hashCode() : 0);
-        result = 31 * result + (proxyURL != null ? proxyURL.hashCode() : 0);
+        result = 31 * result + (proxyURL != null ? proxyURL.toLowerCase().hashCode() : 0);
         result = 31 * result + proxyPort;
         result = 31 * result + (proxySet ? 1 : 0);
         return result;

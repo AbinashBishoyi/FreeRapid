@@ -23,6 +23,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.net.ConnectException;
 import java.net.NoRouteToHostException;
 import java.net.UnknownHostException;
 import java.util.TimerTask;
@@ -334,9 +335,12 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
             this.youHaveToSleepSecondsTime = waitException.getHowManySecondsToWait();
             setServiceError(DownloadTaskError.YOU_HAVE_TO_WAIT_ERROR);
         }
-        if (cause instanceof NoRouteToHostException) {
-            setServiceError(DownloadTaskError.NO_ROUTE_TO_HOST);
+        if (AppPrefs.getProperty(UserProp.DISABLE_CONNECTION_ON_EXCEPTION, UserProp.DISABLE_CONNECTION_ON_EXCEPTION_DEFAULT)) {
+            if (cause instanceof NoRouteToHostException || cause instanceof ConnectException || cause instanceof UnknownHostException) {
+                setServiceError(DownloadTaskError.NO_ROUTE_TO_HOST);
+            }
         }
+
         if (getServiceError() == DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR) {
             downloadFile.setErrorAttemptsCount(0);
             downloadFile.setTimeToQueued(-1);
@@ -541,7 +545,23 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         return youHaveToSleepSecondsTime;
     }
 
-    public BufferedImage loadCaptcha(InputStream inputStream) throws FailedToLoadCaptchaPictureException {
+
+    public BufferedImage getCaptchaImage(final String url) throws FailedToLoadCaptchaPictureException {
+        final GetMethod getMethod = client.getGetMethod(url);
+        try {
+            InputStream stream = client.makeRequestForFile(getMethod);
+            if (stream == null)
+                throw new FailedToLoadCaptchaPictureException();
+            return loadCaptcha(stream);
+        } catch (FailedToLoadCaptchaPictureException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new FailedToLoadCaptchaPictureException(e);
+        }
+
+    }
+
+    private BufferedImage loadCaptcha(InputStream inputStream) throws FailedToLoadCaptchaPictureException {
         if (inputStream == null)
             throw new NullPointerException("InputStreamForCaptchaIsNull");
         try {
@@ -572,12 +592,8 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     }
 
     public String getCaptcha(final String url) throws FailedToLoadCaptchaPictureException {
-        final GetMethod getMethod = client.getGetMethod(url);
         try {
-            InputStream stream = client.makeRequestForFile(getMethod);
-            if (stream == null)
-                throw new FailedToLoadCaptchaPictureException();
-            return askForCaptcha(loadCaptcha(stream));
+            return askForCaptcha(getCaptchaImage(url));
         } catch (FailedToLoadCaptchaPictureException e) {
             throw e;
         } catch (Exception e) {

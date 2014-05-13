@@ -244,34 +244,36 @@ public class ProcessManager extends Thread {
             clientManager.pushWorkingClient(client);
             setDownloading(downloading - 1);
 
-            DownloadTaskError error = task.getServiceError();
-            final ConnectionSettings settings = client.getSettings();
-            if (error == DownloadTaskError.NO_ROUTE_TO_HOST) {
-                clientManager.setConnectionEnabled(settings, false);
-                final int problematic = service.getProblematicConnectionsCount();
-                if (clientManager.getEnabledConnections().size() - problematic >= 1) {
-                    file.setState(DownloadState.QUEUED);
-                } else error = DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR;
-            }
+            if (task != null) {
+                DownloadTaskError error = task.getServiceError();
+                final ConnectionSettings settings = client.getSettings();
+                if (error == DownloadTaskError.NO_ROUTE_TO_HOST) {
+                    clientManager.setConnectionEnabled(settings, false);
+                    final int problematic = service.getProblematicConnectionsCount();
+                    if (clientManager.getEnabledConnections().size() - problematic >= 1) {
+                        file.setState(DownloadState.QUEUED);
+                    } else error = DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR;
+                }
 
-            final DownloadState state = file.getState();
-            int errorAttemptsCount = file.getErrorAttemptsCount();
-            if ((state == DownloadState.ERROR && errorAttemptsCount != 0) || (state == DownloadState.SLEEPING)) {
-                if (error == DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR && errorAttemptsCount != -1) {
-                    file.setErrorAttemptsCount(0);
-                } else {
-                    if (errorAttemptsCount != -1)
-                        file.setErrorAttemptsCount(errorAttemptsCount - 1);
+                final DownloadState state = file.getState();
+                int errorAttemptsCount = file.getErrorAttemptsCount();
+                if ((state == DownloadState.ERROR && errorAttemptsCount != 0) || (state == DownloadState.SLEEPING)) {
+                    if (error == DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR && errorAttemptsCount != -1) {
+                        file.setErrorAttemptsCount(0);
+                    } else {
+                        if (errorAttemptsCount != -1)
+                            file.setErrorAttemptsCount(errorAttemptsCount - 1);
 
-                    service.addProblematicConnection(settings);
-                    final int purge = errorTimer.purge();
-                    if (purge > 0)
-                        logger.info("Purging timer threads count:" + purge);
-                    if (error == DownloadTaskError.YOU_HAVE_TO_WAIT_ERROR) {
-                        int waitTime = task.getYouHaveToSleepSecondsTime();
-                        errorTimer.schedule(new ErrorTimerTask(service, settings, file, waitTime), 0, 1000);
-                    } else
-                        errorTimer.schedule(new ErrorTimerTask(service, settings, file), 0, 1000);
+                        service.addProblematicConnection(settings);
+                        final int purge = errorTimer.purge();
+                        if (purge > 0)
+                            logger.info("Purging timer threads count:" + purge);
+                        if (error == DownloadTaskError.YOU_HAVE_TO_WAIT_ERROR) {
+                            int waitTime = task.getYouHaveToSleepSecondsTime();
+                            errorTimer.schedule(new ErrorTimerTask(service, settings, file, waitTime), 0, 1000);
+                        } else
+                            errorTimer.schedule(new ErrorTimerTask(service, settings, file), 0, 1000);
+                    }
                 }
             }
         }

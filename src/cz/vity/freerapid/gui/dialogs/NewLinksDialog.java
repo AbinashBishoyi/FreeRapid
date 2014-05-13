@@ -408,12 +408,12 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
                                 FormFactory.UNRELATED_GAP_COLSPEC,
                                 FormFactory.PREF_COLSPEC,
                                 FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                FormFactory.PREF_COLSPEC,
+                                new ColumnSpec("max(pref;50dlu)"),
                                 FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                FormFactory.DEFAULT_COLSPEC
+                                new ColumnSpec("max(pref;50dlu)"),
                         },
                         RowSpec.decodeSpecs("fill:pref")), buttonBar);
-                ((FormLayout) buttonBar.getLayout()).setColumnGroups(new int[][]{{5, 7, 9}});
+                ((FormLayout) buttonBar.getLayout()).setColumnGroups(new int[][]{{5, 9}});
 
                 buttonBarBuilder.add(btnPasteFromClipboard, cc.xy(1, 1));
                 buttonBarBuilder.add(okButton, cc.xy(5, 1));

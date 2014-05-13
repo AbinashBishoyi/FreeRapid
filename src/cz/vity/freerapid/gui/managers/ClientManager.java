@@ -99,14 +99,20 @@ public class ClientManager {
                     s2 = s.substring(i + 1);
                     i = s1.indexOf(':');
                     final String[] hostPort = s2.split(":");
+                    final Integer port = Integer.valueOf(hostPort[1]);
+                    if (port > 65535)
+                        continue;
                     if (i > 0)
-                        settings.setProxy(hostPort[0], Integer.valueOf(hostPort[1]), s1.substring(0, i), s1.substring(i + 1));
+                        settings.setProxy(hostPort[0], port, s1.substring(0, i), s1.substring(i + 1));
                     else
-                        settings.setProxy(hostPort[0], Integer.valueOf(hostPort[1]), s1, null);
+                        settings.setProxy(hostPort[0], port, s1, null);
                 } else {
                     s2 = s;
                     final String[] hostPort = s2.split(":");
-                    settings.setProxy(hostPort[0], Integer.valueOf(hostPort[1]));
+                    final Integer port = Integer.valueOf(hostPort[1]);
+                    if (port > 65535)
+                        continue;
+                    settings.setProxy(hostPort[0], port);
                 }
                 availableConnections.add(settings);
                 logger.info("Reading proxy definition " + settings.toString());

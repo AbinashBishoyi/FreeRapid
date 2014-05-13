@@ -54,6 +54,9 @@ V souèasné dobì jsou podporovány následující služby:
  -  Load.to
  -  Iskladka.cz
  -  Uloz.to
+ -  HellShare.com
+ -  QuickShare.cz
+
 
  II.    Systémové požadavky
 =======================================
@@ -68,6 +71,8 @@ Doporuèená konfigurace
 
 Aplikace pro své spuštìní vyžaduje mít nainstalovanou alespoò Javu 6.0 (http://java.sun.com/javase/downloads/index.jsp , JRE 6).
 
+Uživatelé Linuxu (Debian) like mohou použít tento pøíkaz k instalaci Javy:
+     sudo apt-get install sun-java6-jre
 
 III.   Jak spustit FreeRapid
 =======================================

@@ -169,4 +169,8 @@ final public class UserProp {
     public static final String MAKE_FILE_BACKUPS = "makeFileBackups";
     public static final boolean MAKE_FILE_BACKUPS_DEFAULT = true;
 
+    public static final String DISABLE_CONNECTION_ON_EXCEPTION = "disableConnectionOnException";
+    public static final boolean DISABLE_CONNECTION_ON_EXCEPTION_DEFAULT = false;
+
+
 }

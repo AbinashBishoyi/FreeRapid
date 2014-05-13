@@ -54,6 +54,9 @@ Currently supported services are:
  -  Load.to
  -  Iskladka.cz
  -  Uloz.to
+ -  HellShare.com
+ -  QuickShare.cz
+
 
  II.    System requirements
 =======================================
@@ -68,6 +71,8 @@ Recommended configuration:
 
 Application needs at least Java 6.0 to start (http://java.sun.com/javase/downloads/index.jsp , JRE 6).
 
+Linux Debian like users can use this command to intall Java:
+   sudo apt-get install sun-java6-jre
 
 III.   How to run FreeRapid Downloader
 =======================================
@@ -87,10 +92,13 @@ DO NOT copy new version over older one.
 Launching
 -----------
 Windows
- Simply launch frd.exe
+ Simply launch frd.exe or double click on frd.jar
+
 
 Linux
  Run command ./frd.sh
+ (as first put correct executable rights on this file )
+
 
 All platforms
  Run command java -jar frd.jar
@@ -133,7 +141,7 @@ IV.    Known bugs and Limitations
                                                      Component creation must be done on Event Dispatch Thread
     X ignore this exception in the app.log
 - java.lang.UnsupportedClassVersionError exception
-    X You are using old Java version, you should use version Sun Java version 6 or newer
+    X You are using old Java version, you should use Sun Java version 6 or newer
 - DirectoryChooser throws java.lang.InternalError or freezes on Win Vista (64bit)
     X ignore this exception in the app.log
 - java.lang.ClassCastException: java.awt.TrayIcon cannot be cast to java.awt.Component

@@ -12,13 +12,16 @@ Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
 XXth November 2008 - FreeRapid Downloader 0.71 released
+  Added : Hungarian translation [thanks to Denisz Kosztyukovics!]
   Added : Spanish translation [thanks to El Lalo!]
+  Added : plugins - support for HellShare [implemented by Lukiz, thanks!]
   Changed : rotating of enabled connections (can help to avoid some problems with many proxies)
-  Changed : disabling connection if there is NoRouteToHost exception - if there are more available connections
-            then restart downloading
-  Changed : autoreconnect time bottom limit set to 0  
+  Changed : automatic disabling connection if there are Connect exceptions - if there are more available connections
+            then restart downloading (neccessary to set intern property disableConnectionOnException to value true)
+  Changed : autoreconnect time bottom limit set to 1  
   Changed : UI - open folder (Ctrl+Enter) on file which hasn’t been yet downloaded  [requested by Tuiz] 
   Changed : UI - choose another file by right click [requested by Tuiz]
+  Fixed : problem with connecting when proxies had a same port
   Fixed: MS Windows: FRD does not start minimized from Start Up shortcut  (=> added new switch -m to start FRD minimized)
 
 
