@@ -286,6 +286,7 @@ public class ProcessManager extends Thread {
         private final DownloadService service;
         private final ConnectionSettings settings;
         private final DownloadFile file;
+        private long lastTime;
 
         public ErrorTimerTask(DownloadService service, ConnectionSettings settings, DownloadFile file) {
             this(service, settings, file, AppPrefs.getProperty(UserProp.AUTO_RECONNECT_TIME, UserProp.AUTO_RECONNECT_TIME_DEFAULT));
@@ -297,11 +298,13 @@ public class ProcessManager extends Thread {
             this.file = file;
             this.counter = waitTime;
             file.setTimeToQueuedMax(waitTime);
+            this.lastTime = System.currentTimeMillis();
         }
 
         public void run() {
             final DownloadState state = file.getState();
-            if (state != DownloadState.ERROR && state != DownloadState.SLEEPING) { //doslo ke zmene stavu z venci
+
+            if ((state != DownloadState.ERROR && state != DownloadState.SLEEPING)) { //doslo ke zmene stavu z venci
                 this.cancel(); //zrusime timer
                 if (state != DownloadState.WAITING) {
                     file.setTimeToQueued(-1); //odecitani casu
@@ -312,8 +315,10 @@ public class ProcessManager extends Thread {
                 queueUpdated();
                 return;
             }
+
             file.setTimeToQueued(--counter); //normalni prubeh, jeden tick
-            if (counter <= 0) { //zarazeni zpatky do fronty
+            final long currentTime = System.currentTimeMillis();
+            if (counter <= 0 || (Math.abs(currentTime - lastTime) > 1000 * 60)) { //zarazeni zpatky do fronty
                 file.setTimeToQueued(-1);
                 file.setTimeToQueuedMax(-1);
                 renewProblematicConnection();
@@ -321,6 +326,7 @@ public class ProcessManager extends Thread {
                 this.cancel();
                 queueUpdated();
             }
+            this.lastTime = currentTime;
         }
 
         private void renewProblematicConnection() {
