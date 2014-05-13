@@ -6,7 +6,7 @@ package cz.vity.freerapid.utilities.os;
 import cz.vity.freerapid.utilities.Utils;
 import org.jdesktop.application.ApplicationContext;
 
-public class SystemCommanderFactory {
+final public class SystemCommanderFactory {
     private static SystemCommanderFactory ourInstance = new SystemCommanderFactory();
     private SystemCommander commander = null;
 

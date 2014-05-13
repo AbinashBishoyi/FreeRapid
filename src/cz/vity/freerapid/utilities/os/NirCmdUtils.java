@@ -34,6 +34,13 @@ final class NirCmdUtils implements SystemCommander {
         return createShortCut("", "", "~$folder.appdata$\\Microsoft\\Internet Explorer\\Quick Launch", "");
     }
 
+    private boolean startNewApplicationInstance() {
+        final String appPath = Utils.getAppPath();
+        final String appSep = Utils.addFileSeparator(appPath);
+        final String exe = appSep + Consts.WINDOWS_EXE_NAME;
+        return run(exe + " " + Utils.getApplicationArguments(), false);
+    }
+
     private boolean createShortCut(final String shortcutTitle, final String arguments, final String type, final String moreCommands) {
         final String appPath = Utils.getAppPath();
         final String appSep = Utils.addFileSeparator(appPath);
@@ -66,6 +73,9 @@ final class NirCmdUtils implements SystemCommander {
     public boolean shutDown(OSCommand shutDownCommand, boolean force) {
         if (!OSCommand.shutDownCommands.contains(shutDownCommand))
             throw new IllegalArgumentException("OS command " + shutDownCommand + " is not a shut down command");
+        if (shutDownCommand == OSCommand.RESTART_APPLICATION) {
+            return startNewApplicationInstance();
+        }
         String command = "";
         switch (shutDownCommand) {
             case HIBERNATE:
@@ -94,18 +104,22 @@ final class NirCmdUtils implements SystemCommander {
     }
 
     private static boolean runCommand(final String cmd, final boolean waitForResult) {
+        final String command = Utils.addFileSeparator(Utils.getAppPath()) + PATH;
+        return run(command + " " + cmd, waitForResult);
+    }
+
+    private static boolean run(final String cmd, final boolean waitForResult) {
         if (!Utils.isWindows())
             return true;
-        logger.info("NirCmd command:" + cmd);
+        logger.info("System command:" + cmd);
         try {
-            final String command = Utils.addFileSeparator(Utils.getAppPath()) + PATH;
-            final Process process = Runtime.getRuntime().exec(command + " " + cmd);
+            final Process process = Runtime.getRuntime().exec(cmd);
             if (waitForResult) {
                 process.waitFor();
                 return process.exitValue() == 0;
             } else return true;
         } catch (IOException e) {
-            logger.warning("NirCmd command:" + cmd);
+            logger.warning("Command:" + cmd + " failed from some reason");
             LogUtils.processException(logger, e);
             return false;
         } catch (InterruptedException e) {

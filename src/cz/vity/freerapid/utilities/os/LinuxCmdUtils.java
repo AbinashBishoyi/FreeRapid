@@ -72,6 +72,7 @@ class LinuxCmdUtils implements SystemCommander {
         cmd = cmd.replaceAll("%PRODUCT%", Consts.PRODUCT);
         cmd = cmd.replaceAll("%ICON_PATH%", appPathSep + Consts.LINUX_ICON_NAME);
         cmd = cmd.replaceAll("%SH_SCRIPT_PATH%", appPathSep + Consts.LINUX_SHELL_SCRIPT);
+        cmd = cmd.replaceAll("%ARGS%", Utils.getApplicationArguments());
         return cmd;
     }
 

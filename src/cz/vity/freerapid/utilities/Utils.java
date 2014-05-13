@@ -307,4 +307,17 @@ public final class Utils {
     public static String getSystemLineSeparator() {
         return System.getProperty("line.separator", "\n");
     }
+
+    public static String getApplicationArguments() {
+        final Properties properties = System.getProperties();
+        if (properties.containsKey("arguments")) {
+            final String[] strings = (String[]) properties.get("arguments");
+            StringBuilder builder = new StringBuilder();
+            for (String s : strings) {
+                builder.append(s).append(' ');
+            }
+            return builder.toString().trim();
+        }
+        return "";
+    }
 }

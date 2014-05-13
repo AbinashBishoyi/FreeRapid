@@ -9,7 +9,11 @@ import cz.vity.freerapid.gui.managers.DataManager;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.swing.Swinger;
+import cz.vity.freerapid.utilities.os.OSCommand;
+import cz.vity.freerapid.utilities.os.SystemCommander;
+import cz.vity.freerapid.utilities.os.SystemCommanderFactory;
 import org.jdesktop.application.Action;
+import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.ProxyActions;
 import org.jdesktop.beans.AbstractBean;
 
@@ -27,12 +31,14 @@ import java.util.List;
 @ProxyActions({"select-all", "copy", "cut", "paste"})
 public class FileActions extends AbstractBean {
 
-    private MainApp app;
     private NewLinksDialog dialog;
+    private final MainApp app;
+    private long restart;
+    private boolean restartHookInstalled;
 
-
-    public FileActions() {
-        app = MainApp.getInstance(MainApp.class);
+    public FileActions(ApplicationContext context) {
+        app = (MainApp) context.getApplication();
+        restartHookInstalled = false;
     }
 
     @SuppressWarnings({"unchecked"})
@@ -101,5 +107,33 @@ public class FileActions extends AbstractBean {
             dialog = null;
         }
     }
+
+    @Action
+    public void restartApplication() {
+        installShutdownHook();
+        this.restart = System.currentTimeMillis();
+        app.exit();
+    }
+
+    private void installShutdownHook() {
+        if (restartHookInstalled)
+            return;
+        final SystemCommander commander = SystemCommanderFactory.getInstance().getSystemCommanderInstance(app.getContext());
+        if (!commander.isSupported(OSCommand.RESTART_APPLICATION)) {
+            Swinger.showErrorMessage(app.getContext().getResourceMap(), "systemCommandNotSupported", OSCommand.RESTART_APPLICATION.toString().toLowerCase());
+            return;
+        }
+
+        final Thread thread = new Thread(new Runnable() {
+            public void run() {
+                if (System.currentTimeMillis() - restart < 4000) {
+                    commander.shutDown(OSCommand.RESTART_APPLICATION, false);
+                }
+            }
+        });
+        Runtime.getRuntime().addShutdownHook(thread);
+        restartHookInstalled = true;
+    }
+
 
 }
