@@ -149,6 +149,7 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
 
         comboPath.setSelectedItem(AppPrefs.getProperty(UserProp.LAST_COMBO_PATH, ""));
 
+        descriptionArea.setFont(descriptionArea.getFont().deriveFont(11.0F));
 
         this.setTransferHandler(new URLTransferHandler(director) {
             protected void doDropAction(List<URL> files) {
