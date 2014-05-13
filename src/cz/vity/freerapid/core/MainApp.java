@@ -48,6 +48,9 @@ public class MainApp extends SingleXFrameApplication {
 
         minimizeOnStart = line.isMinimize();
 
+        if (Utils.isWindows() && new java.io.File("C:/Program files/Eset").exists())
+            line.getProperties().put(FWProp.ONEINSTANCE, "false");
+
         this.appPrefs = new AppPrefs(this.getContext(), line.getProperties(), line.isResetOptions());
 
         final String path = Utils.getAppPath();//Utils pouzivaji AppPrefs i logovani
