@@ -1025,7 +1025,7 @@ public class UserPreferencesDialog extends AppDialog {
 
         private LanguageComboCellRenderer(ApplicationContext context) {
             map = context.getResourceMap();
-            path = map.getResourcesDir() + map.getString("flagsPath");
+            path = (map.getResourcesDir() + map.getString("flagsPath")).trim();
         }
 
         @Override
