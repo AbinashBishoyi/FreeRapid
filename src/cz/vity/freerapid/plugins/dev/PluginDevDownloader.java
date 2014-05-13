@@ -49,10 +49,6 @@ class PluginDevDownloader implements HttpFileDownloader {
 
     }
 
-    public BufferedImage loadCaptcha(InputStream inputStream) throws FailedToLoadCaptchaPictureException {
-        return null;
-    }
-
     public String askForCaptcha(BufferedImage image) throws Exception {
         return null;
     }
@@ -63,6 +59,10 @@ class PluginDevDownloader implements HttpFileDownloader {
 
     public boolean isTerminated() {
         return false;
+    }
+
+    public BufferedImage getCaptchaImage(String url) throws FailedToLoadCaptchaPictureException {
+        return null;
     }
 }
 
