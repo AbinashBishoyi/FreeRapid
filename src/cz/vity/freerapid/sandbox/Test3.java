@@ -18,14 +18,14 @@ import java.util.zip.GZIPInputStream;
 /**
  * @author Vity
  */
-public class Test {
-    private final static Logger logger = Logger.getLogger(Test.class.getName());
+public class Test3 {
+    private final static Logger logger = Logger.getLogger(Test3.class.getName());
     private String referer = "";
     private String asString;
     private HttpClient client;
     private int redirect;
 
-    public Test() {
+    public Test3() {
         HostConfiguration configuration = new HostConfiguration();
         final Integer port = new Integer(8081);
         if (port != -1) {
@@ -72,7 +72,7 @@ public class Test {
 
 
     public static void main(String[] args) throws IOException {
-        new Test().start();
+        new Test3().start();
     }
 
     private void start() throws IOException {

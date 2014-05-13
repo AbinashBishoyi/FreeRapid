@@ -32,7 +32,7 @@ public class FileHistoryItem {
         this.description = file.getDescription();
         this.fileName = file.getFileName();
         this.fileSize = file.getFileSize();
-        this.fileName = file.getFileType();
+        this.fileType = file.getFileType();
         this.shareDownloadServiceID = file.getShareDownloadServiceID();
     }
 
@@ -98,5 +98,12 @@ public class FileHistoryItem {
 
     public void setShareDownloadServiceID(String shareDownloadServiceID) {
         this.shareDownloadServiceID = shareDownloadServiceID;
+    }
+
+
+    public String toString() {
+        return "FileHistoryItem{" +
+                "url=" + url +
+                '}';
     }
 }

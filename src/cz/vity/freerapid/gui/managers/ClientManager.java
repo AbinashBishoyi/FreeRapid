@@ -28,7 +28,8 @@ public class ClientManager {
 
 
     public ClientManager() {
-        availableConnections.add(new ConnectionSettings());
+        if (AppPrefs.getProperty(UserProp.USE_DEFAULT_CONNECTION, true))
+            availableConnections.add(new ConnectionSettings());
 
         maxClients = AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, 5);
         //String input = "    vity:heslo@exfort.org:8787 vity2:angor@@exfort2.org:8788  exfort3.org:5478  pavel@exfort.org:564 exfort5.org";

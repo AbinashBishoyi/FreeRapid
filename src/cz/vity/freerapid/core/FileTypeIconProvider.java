@@ -2,10 +2,16 @@ package cz.vity.freerapid.core;
 
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.ResourceMap;
+import sun.awt.shell.ShellFolder;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileSystemView;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Map;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,6 +25,8 @@ public class FileTypeIconProvider {
     private final static Logger logger = Logger.getLogger(FileTypeIconProvider.class.getName());
     private static Pattern pattern;
     private static final String DEFAULT_EXTENSION = "iso";
+    private final Map<String, Icon> systemLargeIcons = new Hashtable<String, Icon>();
+    private final Map<String, Icon> systemSmallIcons = new Hashtable<String, Icon>();
 
 
     public FileTypeIconProvider(ApplicationContext context) {
@@ -68,21 +76,74 @@ public class FileTypeIconProvider {
         } else return "";
     }
 
-    public ImageIcon getIconImageByFileType(String fileType, boolean bigImage) {
-        fileType = fileType.toUpperCase();
-        final String base;
-        if (bigImage) {
-            base = "iconFileTypeBig_" + fileType;
-        } else {
-            base = "iconFileTypeSmall_" + fileType;
-        }
-        if (map.containsKey(base)) {
-            return map.getImageIcon(base);
-        } else {
+    public Icon getIconImageByFileType(String fileType, boolean bigImage) {
+        if (fileType == null)
+            return null;
+        if (AppPrefs.getProperty(UserProp.USE_SYSTEM_ICONS, true)) {
+            fileType = fileType.toLowerCase();
+
             if (bigImage)
-                return map.getImageIcon("iconFileTypeBig_ISO");
+                return getBigSystemIcon(fileType);
             else
-                return map.getImageIcon("iconFileTypeSmall_ISO");
+                return getSmallSystemIcon(fileType);
+
+        } else {
+
+
+            fileType = fileType.toUpperCase();
+
+
+            final String base;
+            if (bigImage) {
+                base = "iconFileTypeBig_" + fileType;
+            } else {
+                base = "iconFileTypeSmall_" + fileType;
+            }
+            if (map.containsKey(base)) {
+                return map.getImageIcon(base);
+            } else {
+                if (bigImage)
+                    return map.getImageIcon("iconFileTypeBig_ISO");
+                else
+                    return map.getImageIcon("iconFileTypeSmall_ISO");
+            }
+        }
+    }
+
+    private Icon getSmallSystemIcon(String extension) {
+        if (this.systemSmallIcons.containsKey(extension))
+            return systemSmallIcons.get(extension);
+        try {
+//Create a temporary file with the specified extension
+            File file = File.createTempFile("icon", "." + extension);
+
+            FileSystemView view = FileSystemView.getFileSystemView();
+            Icon icon = view.getSystemIcon(file);
+
+            //Delete the temporary file
+            systemSmallIcons.put(extension, icon);
+            file.delete();
+            return icon;
+        } catch (IOException e) {
+            return map.getImageIcon("iconFileTypeSmall_ISO");
+        }
+    }
+
+    private Icon getBigSystemIcon(String extension) {
+        if (this.systemLargeIcons.containsKey(extension))
+            return systemLargeIcons.get(extension);
+        try {
+            File file = File.createTempFile("icon", "." + extension);
+
+            ShellFolder shellFolder = ShellFolder.getShellFolder(file);
+            Icon icon = new ImageIcon(shellFolder.getIcon(true));
+
+            //Delete the temporary file
+            systemLargeIcons.put(extension, icon);
+            file.delete();
+            return icon;
+        } catch (IOException e) {
+            return map.getImageIcon("iconFileTypeBig_ISO");
         }
     }
 }

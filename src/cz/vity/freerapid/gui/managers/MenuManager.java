@@ -9,6 +9,7 @@ import org.jdesktop.application.ApplicationContext;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.plaf.basic.ComboPopup;
 
 
 /**
@@ -31,6 +32,7 @@ public class MenuManager {
     private final static String RADIO = "*";
     private final static String RADIO2 = "*2";
     private final static String CHECKED = "!";
+    private ViewActions viewActions;
 
 //    private final static String AUTOSEARCH_PROPERTY = "autosearch";
 //    private boolean isAutoSearchEnabled = false;
@@ -46,7 +48,8 @@ public class MenuManager {
         this.context = context;
         fileActions = new FileActions();
         Swinger.initActions(fileActions, context);
-        Swinger.initActions(new ViewActions(), context);
+        viewActions = new ViewActions();
+        Swinger.initActions(viewActions, context);
         Swinger.initActions(new HelpActions(), context);
     }
 
@@ -84,6 +87,8 @@ public class MenuManager {
                 CHECKED + "showToolbar",
                 CHECKED + "showStatusBar",
                 MENU_SEPARATOR,
+                CHECKED + "showCompletedAction",
+                MENU_SEPARATOR,
                 "showDownloadHistoryAction"
         };
 
@@ -101,11 +106,17 @@ public class MenuManager {
                     public void stateChanged(ChangeEvent evt) {
                         // Get the selected menu or menu item
                         MenuSelectionManager msm = (MenuSelectionManager) evt.getSource();
+
                         MenuElement[] path = msm.getSelectedPath();
+//                        for (MenuElement menuElement : path) {
+//                            System.out.println("menuElement = " + menuElement);
+//                        }
                         // To interpret path, see
                         // e813 Getting the Currently Selected Menu or Menu Item
                         final StringBuilder builder = new StringBuilder();
                         for (MenuElement menuElement : path) {
+                            if (menuElement instanceof ComboPopup)
+                                return;
                             if (!(menuElement.getComponent() instanceof JMenuItem))
                                 continue;
 
@@ -138,6 +149,7 @@ public class MenuManager {
         menuBar.add(createMenu("helpMenu", helpMenuActionNames));
         menuBar.putClientProperty(SELECTED_TEXT_PROPERTY, "");
 
+        context.getActionMap().get("showCompletedAction").putValue(AbstractAction.SELECTED_KEY, viewActions.isShowCompleted());
 //        final MainApp app = (MainApp) context.getApplication();
 
     }

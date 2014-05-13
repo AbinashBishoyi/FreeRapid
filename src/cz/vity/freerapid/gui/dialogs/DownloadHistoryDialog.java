@@ -1,10 +1,19 @@
 package cz.vity.freerapid.gui.dialogs;
 
+import com.jgoodies.binding.adapter.Bindings;
 import com.jgoodies.binding.list.ArrayListModel;
+import com.jgoodies.binding.list.SelectionInList;
+import com.jgoodies.binding.value.DelayedReadValueModel;
+import com.jgoodies.binding.value.ValueHolder;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
+import cz.vity.freerapid.core.AppPrefs;
+import cz.vity.freerapid.core.FileTypeIconProvider;
+import cz.vity.freerapid.core.UserProp;
+import cz.vity.freerapid.gui.MyPreferencesAdapter;
+import cz.vity.freerapid.gui.managers.ContentPanel;
 import cz.vity.freerapid.gui.managers.FileHistoryItem;
 import cz.vity.freerapid.gui.managers.FileHistoryManager;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
@@ -15,6 +24,8 @@ import cz.vity.freerapid.utilities.OSDesktop;
 import org.jdesktop.application.Action;
 import org.jdesktop.swinghelper.buttonpanel.JXButtonPanel;
 import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.decorator.FilterPipeline;
+import org.jdesktop.swingx.decorator.PatternFilter;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -25,19 +36,24 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.text.NumberFormat;
+import java.util.Calendar;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 /**
  * @author Vity
  */
-public class DownloadHistoryDialog extends AppDialog implements ClipboardOwner, ListSelectionListener {
+public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, ListSelectionListener {
     private final static Logger logger = Logger.getLogger(DownloadHistoryDialog.class.getName());
     private FileHistoryManager manager;
     private static final int COLUMN_DATE = 0;
@@ -50,12 +66,14 @@ public class DownloadHistoryDialog extends AppDialog implements ClipboardOwner, 
     private static final String SELECTED_ACTION_ENABLED_PROPERTY = "selectedEnabled";
     private final ManagerDirector director;
 
+    private final String exampleSearchString;
 
     public DownloadHistoryDialog(ManagerDirector director, Frame owner) throws HeadlessException {
-        super(owner, true);
+        super(owner);
         this.director = director;
         this.manager = director.getFileHistoryManager();
-        this.setName("DownloadHistoryDialog");
+        this.setName("DonwloadHistoryDialog");
+        this.exampleSearchString = getResourceMap().getString("exampleSearchString");
         try {
             initComponents();
             build();
@@ -79,9 +97,19 @@ public class DownloadHistoryDialog extends AppDialog implements ClipboardOwner, 
         setAction(okButton, "okBtnAction");
         setAction(clearHistoryBtn, "clearHistoryBtnAction");
 
+        registerKeyboardAction("openFileAction");
+        registerKeyboardAction("deleteFileAction");
+        registerKeyboardAction("openDirectoryAction");
+        registerKeyboardAction("openInBrowser");
+        registerKeyboardAction("removeSelectedAction");
+        registerKeyboardAction("copyContent");
+
+        updateActions();
+
         pack();
         locateOnOpticalScreenCenter(this);
     }
+
 
     private void initTable() {
         table.setName("historyTable");
@@ -89,24 +117,28 @@ public class DownloadHistoryDialog extends AppDialog implements ClipboardOwner, 
         table.setAutoCreateColumnsFromModel(false);
         table.setEditable(false);
         table.setColumnControlVisible(true);
-        table.setSortable(false);
+        table.setSortable(true);
         table.setColumnMargin(10);
-        table.setShowGrid(false, false);
+        table.setRolloverEnabled(true);
+        table.setRowHeight(36);
+        table.setShowGrid(true, false);
+
 
         table.getSelectionModel().addListSelectionListener(this);
 
-//        final TableColumnModel tableColumnModel = table.getColumnModel();
         table.createDefaultColumnsFromModel();
-        Swinger.updateColumn(table, "Date", COLUMN_DATE, 40, new DateCellRenderer());
-        Swinger.updateColumn(table, "Name", COLUMN_NAME, 150, new FileNameCellRenderer());
-        Swinger.updateColumn(table, "Description", COLUMN_DESCRIPTION, 170, new DescriptionCellRenderer());
-        Swinger.updateColumn(table, "Size", COLUMN_SIZE, 40, new SizeCellRenderer());
-        Swinger.updateColumn(table, "URL", COLUMN_URL, -1, new URLCellRenderer());
+        Swinger.updateColumn(table, "Date", COLUMN_DATE, -1, 40, new DateCellRenderer());
+        Swinger.updateColumn(table, "Name", COLUMN_NAME, -1, 150, new FileNameCellRenderer(director.getFileTypeIconProvider()));
+        Swinger.updateColumn(table, "Description", COLUMN_DESCRIPTION, -1, 170, new DescriptionCellRenderer());
+        Swinger.updateColumn(table, "Size", COLUMN_SIZE, -1, 40, new SizeCellRenderer());
+        Swinger.updateColumn(table, "URL", COLUMN_URL, -1, -1, new URLCellRenderer());
 
 
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                if (!table.hasFocus())
+                    Swinger.inputFocus(table);
                 if (SwingUtilities.isRightMouseButton(e))
                     showPopMenu(e);
                 else if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2) {
@@ -116,15 +148,40 @@ public class DownloadHistoryDialog extends AppDialog implements ClipboardOwner, 
         });
 
         table.getInputMap().put(KeyStroke.getKeyStroke("control C"), "copy");
-        table.getActionMap().put("copy", Swinger.getAction("copyContent"));
+        table.getActionMap().put("copy", getActionMap().get("copyContent"));
+
+        table.getParent().setPreferredSize(new Dimension(600, 400));
     }
 
     @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
     public void copyContent() {
+        final int[] rows = table.getSelectedRows();
+
+        final TableModel tableModel = table.getModel();
+        final int selCol = table.getSelectedColumn();
+        StringBuilder builder = new StringBuilder();
+        String value;
+        for (int row : rows) {
+            if (selCol == COLUMN_DATE) {
+                final Calendar instance = Calendar.getInstance();
+                instance.setTimeInMillis((Long) tableModel.getValueAt(row, selCol));
+                value = String.format("%1$tm %1$tB,%1$tY", instance);
+            } else {
+                value = tableModel.getValueAt(row, selCol).toString();
+            }
+            builder.append(value).append('\n');
+        }
+        final StringSelection stringSelection = new StringSelection(builder.toString().trim());
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, this);
+    }
+
+    @Action
+    public void copyURL() {
         final java.util.List<FileHistoryItem> files = manager.getSelectionToList(table.getSelectedRows());
         StringBuilder builder = new StringBuilder();
         for (FileHistoryItem file : files) {
-            builder.append(file.toString()).append('\n');
+            builder.append(file.getUrl().toExternalForm()).append('\n');
         }
         final StringSelection stringSelection = new StringSelection(builder.toString().trim());
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -165,11 +222,72 @@ public class DownloadHistoryDialog extends AppDialog implements ClipboardOwner, 
 
     private void buildGUI() {
         initTable();
+
+        if ("".equals(AppPrefs.getProperty(UserProp.CONTAIN_DOWNLOADS_FILTER, "")))
+            AppPrefs.storeProperty(UserProp.CONTAIN_DOWNLOADS_FILTER, exampleSearchString);
+
+        final MyPreferencesAdapter adapter = new MyPreferencesAdapter(UserProp.CONTAIN_DOWNLOADS_FILTER, "");
+        final DelayedReadValueModel delayedReadValueModel = new DelayedReadValueModel(adapter, 300, true);
+        delayedReadValueModel.addValueChangeListener(new PropertyChangeListener() {
+
+            public void propertyChange(PropertyChangeEvent evt) {
+                updateFilters();
+            }
+        });
+
+
+        fieldFilter.setForeground(Color.GRAY);
+
+        fieldFilter.addFocusListener(new FocusListener() {
+            public void focusGained(FocusEvent e) {
+                if (exampleSearchString.equals(fieldFilter.getText())) {
+                    fieldFilter.setForeground(Color.BLACK);
+                    fieldFilter.setText("");
+                }
+            }
+
+            public void focusLost(FocusEvent e) {
+                if (fieldFilter.getText().isEmpty()) {
+                    fieldFilter.setForeground(Color.GRAY);
+                    fieldFilter.setText(exampleSearchString);
+                }
+            }
+        });
+
+        Bindings.bind(fieldFilter, delayedReadValueModel);
+        //combobox.setModel(new DefaultComboBoxModel(getList("datesFilter")));
+
+        bindCombobox(combobox, UserProp.SELECTED_DOWNLOADS_FILTER, DownloadsFilters.ALL_DOWNLOADS.ordinal(), "datesFilter");
+
+        combobox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                updateFilters();
+            }
+        });
+
+
+        updateFilters();
     }
 
     @Action
     public void okBtnAction() {
         doClose();
+    }
+
+
+    private void bindCombobox(final JComboBox combobox, final String key, final Object defaultValue, final String propertyResourceMap) {
+        final String[] stringList = getList(propertyResourceMap);
+        if (stringList == null)
+            throw new IllegalArgumentException("Property '" + propertyResourceMap + "' does not provide any string list from resource map.");
+        bindCombobox(combobox, key, defaultValue, stringList);
+    }
+
+    private void bindCombobox(final JComboBox combobox, String key, final Object defaultValue, final String[] values) {
+        if (values == null)
+            throw new IllegalArgumentException("List of combobox values cannot be null!!");
+        final MyPreferencesAdapter adapter = new MyPreferencesAdapter(key, defaultValue);
+        final SelectionInList<String> inList = new SelectionInList<String>(values, new ValueHolder(values[(Integer) adapter.getValue()]), adapter);
+        Bindings.bind(combobox, inList);
     }
 
 
@@ -377,6 +495,22 @@ public class DownloadHistoryDialog extends AppDialog implements ClipboardOwner, 
         }
 
         public Object getValueAt(int rowIndex, int columnIndex) {
+            switch (columnIndex) {
+                case COLUMN_DATE:
+                    return model.get(rowIndex).getFinishedTime();
+                case COLUMN_NAME:
+                    return model.get(rowIndex).getFileName();
+                case COLUMN_DESCRIPTION:
+                    return model.get(rowIndex).getDescription();
+                case COLUMN_SIZE:
+                    return model.get(rowIndex).getFileSize();
+                case COLUMN_URL:
+                    return model.get(rowIndex).getUrl();
+                case -1:
+                    return model.get(rowIndex);
+                default:
+                    assert false;
+            }
             return model.get(rowIndex);
         }
 
@@ -396,17 +530,38 @@ public class DownloadHistoryDialog extends AppDialog implements ClipboardOwner, 
     private void showPopMenu(MouseEvent e) {
         final JPopupMenu popup = new JPopupMenu();
         final ActionMap map = this.getActionMap();
-        popup.add(map.get("openFileAction"));
-        popup.add(map.get("deleteFileAction"));
-        popup.add(map.get("openDirectoryAction"));
+        boolean valid = true;
+        final java.util.List<FileHistoryItem> items = this.manager.getSelectionToList(table.getSelectedRows());
+        for (FileHistoryItem item : items) {
+            if (!item.getOutputFile().exists()) {
+                valid = false;
+                break;
+            }
+        }
+
+
+        final javax.swing.Action openFileAction = map.get("openFileAction");
+        openFileAction.setEnabled(valid);
+
+        popup.add(openFileAction);
+        final javax.swing.Action deleteFileAction = map.get("deleteFileAction");
+        deleteFileAction.setEnabled(valid);
+        popup.add(deleteFileAction);
+        final javax.swing.Action openDirectoryAction = map.get("openDirectoryAction");
+        openDirectoryAction.setEnabled(valid);
+        popup.add(openDirectoryAction);
         popup.addSeparator();
         popup.add(map.get("copyContent"));
+        popup.addSeparator();
+        popup.add(map.get("copyURL"));
         popup.add(map.get("openInBrowser"));
-
-        popup.show(this, e.getX(), e.getY());
+        popup.addSeparator();
+        popup.add(map.get("removeSelectedAction"));
+        final MouseEvent event = SwingUtilities.convertMouseEvent(table, e, this);
+        popup.show(this, event.getX(), event.getY());
     }
 
-    @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
+    @org.jdesktop.application.Action
     public void clearHistoryBtnAction() {
         final ListSelectionModel selectionModel = table.getSelectionModel();
         selectionModel.setValueIsAdjusting(true);
@@ -414,33 +569,241 @@ public class DownloadHistoryDialog extends AppDialog implements ClipboardOwner, 
         selectionModel.setValueIsAdjusting(false);
     }
 
+    private void updateFilters() {
+        String filterText = fieldFilter.getText();
+        if (exampleSearchString.equals(filterText))
+            filterText = "";
+        final AllPatternFilter allPatternFilter = new AllPatternFilter(filterText, Pattern.CASE_INSENSITIVE, table.getColumnCount());
+        final int selectedIndex = combobox.getSelectedIndex();
+        final DownloadsFilters filter;
+        if (selectedIndex == -1)
+            filter = DownloadsFilters.ALL_DOWNLOADS;
+        else
+            filter = DownloadsFilters.values()[selectedIndex];
+
+        table.setFilters(new FilterPipeline(new DateTimeFilter(filter), allPatternFilter));
+
+    }
+
+
+    /**
+     * Filtr pro redukci seznamu podle inputu. Prohledava pres vsechny sloupce (defaultne se prohledava jen pevne
+     * urceny).
+     */
+    private static class AllPatternFilter extends PatternFilter {
+        final boolean filter;
+
+        public AllPatternFilter(String string, int patternFlags, int columnCount) {
+            super(Pattern.quote(string), patternFlags, columnCount);
+            filter = (string != null && !string.isEmpty());
+        }
+
+        @Override
+        public boolean test(int row) {
+            if (!filter)
+                return true;
+            final int maxColumnIndex = getColumnIndex();
+            for (int i = 0; i < maxColumnIndex; ++i) {
+                if (adapter.isTestable(i)) {
+                    Object value = getInputValue(row, i);
+                    if (value != null) {
+                        boolean matches = pattern.matcher(value.toString()).find();
+                        if (matches)
+                            return true;
+                    }
+                }
+            }
+            return false;
+        }
+    }
+
+
+    private static class DateTimeFilter extends PatternFilter {
+        private final DownloadsFilters filter;
+
+        private DateTimeFilter(DownloadsFilters filter) {
+            this.filter = filter;
+        }
+
+        @Override
+        public boolean test(int row) {
+            Long value = (Long) getInputValue(row, COLUMN_DATE);
+
+            if (value == null)
+                return false;
+
+            if (filter == DownloadsFilters.ALL_DOWNLOADS)
+                return true;
+
+
+            final Calendar today = Calendar.getInstance();
+            today.set(Calendar.HOUR, 0);
+            today.set(Calendar.MINUTE, 0);
+            today.set(Calendar.SECOND, 1);
+
+            final Calendar valueDate = Calendar.getInstance();
+            valueDate.setTimeInMillis(value);
+
+            switch (filter) {
+                case TODAY:
+                    if (valueDate.after(today))
+                        return true;
+                    break;
+                case YESTERDAY:
+                    final Calendar yesterday = Calendar.getInstance();
+                    yesterday.set(Calendar.HOUR, 0);
+                    yesterday.set(Calendar.MINUTE, 0);
+                    yesterday.set(Calendar.SECOND, 1);
+                    yesterday.add(Calendar.DATE, -1);
+
+                    if (valueDate.after(yesterday) && valueDate.before(today)) {
+                        return true;
+                    }
+
+                    break;
+                case LAST_WEEK:
+                    final Calendar last7Days = Calendar.getInstance();
+                    last7Days.set(Calendar.HOUR, 0);
+                    last7Days.set(Calendar.MINUTE, 0);
+                    last7Days.set(Calendar.SECOND, 1);
+                    last7Days.add(Calendar.DATE, -7);
+
+                    if (valueDate.after(last7Days))
+                        return true;
+
+                    break;
+                case LAST_MONTH:
+                    final Calendar last31Days = Calendar.getInstance();
+                    last31Days.set(Calendar.HOUR, 0);
+                    last31Days.set(Calendar.MINUTE, 0);
+                    last31Days.set(Calendar.SECOND, 1);
+                    last31Days.add(Calendar.DATE, -31);
+
+                    if (valueDate.after(last31Days))
+                        return true;
+                    break;
+                case THIS_CALENDAR_MONTH:
+                    today.set(Calendar.DAY_OF_MONTH, 1);
+                    today.set(Calendar.HOUR, 0);
+                    today.set(Calendar.MINUTE, 0);
+                    today.set(Calendar.SECOND, 1);
+
+                    if (valueDate.after(today))
+                        return true;
+                    break;
+                default:
+                    assert false;
+            }
+
+
+            return false;
+        }
+    }
+
 
     private static class DateCellRenderer extends DefaultTableCellRenderer {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            value = millisToString((Long) value);
+            this.setHorizontalAlignment(CENTER);
             return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        }
+
+        private String millisToString(long value) {
+            final Calendar valueDate = Calendar.getInstance();
+            valueDate.setTimeInMillis(value);
+            final Calendar today = Calendar.getInstance();
+            today.set(Calendar.HOUR, 0);
+            today.set(Calendar.MINUTE, 0);
+            today.set(Calendar.SECOND, 0);
+            //long todayStart = today.getTimeInMillis();
+            if (valueDate.after(today)) {
+                return String.format("%tH:%tM", value, value);
+            }
+            today.add(Calendar.DATE, -1);
+            if (valueDate.after(today)) {
+                return "yesterday";
+            }
+            today.add(Calendar.DATE, -6);
+            if (valueDate.after(today)) {
+                return String.format("%tA", value);
+            }
+            //jinak
+            return String.format("%1$tB %1$te", value);
         }
     }
 
     private static class FileNameCellRenderer extends DefaultTableCellRenderer {
+
+        private final FileTypeIconProvider iconProvider;
+
+        public FileNameCellRenderer(FileTypeIconProvider iconProvider) {
+            this.iconProvider = iconProvider;
+        }
+
+
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            final FileHistoryItem fileHistoryItem = (FileHistoryItem) table.getValueAt(row, -1);
+            final String fn = (String) value;
+            final String url = fileHistoryItem.getUrl().toExternalForm();
+            if (fn != null && !fn.isEmpty()) {
+                value = String.format("<html><b>%s</b></html>", fn);
+            } else {
+                value = url;
+            }
+
+            super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+            if (value != null) {
+                this.setToolTipText(url);
+                this.setIconTextGap(6);
+                this.setIcon(iconProvider.getIconImageByFileType(fileHistoryItem.getFileType(), true));
+
+            }
+            return this;
         }
     }
 
     private static class DescriptionCellRenderer extends DefaultTableCellRenderer {
+
+        private String tooltip;
+
+        private DescriptionCellRenderer() {
+            tooltip = Swinger.getResourceMap().getString("tooltip");
+        }
+
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            if (value != null) {
+                if (!((String) value).isEmpty()) {
+                    this.setToolTipText(String.format(tooltip, value));
+                    value = "<html>" + value + "</html>";
+                } else this.setToolTipText(null);
+            } else {
+                this.setToolTipText(null);
+            }
             return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         }
     }
 
     private static class SizeCellRenderer extends DefaultTableCellRenderer {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            final FileHistoryItem item = (FileHistoryItem) table.getValueAt(row, -1);
+            final long fs = item.getFileSize();
+
+            if (fs == -1) {
+                value = "";
+                this.setToolTipText(null);
+            } else {
+
+                value = ContentPanel.bytesToAnother(fs);
+                this.setToolTipText(NumberFormat.getIntegerInstance().format(fs) + " B");
+            }
             return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         }
     }
 
     private static class URLCellRenderer extends DefaultTableCellRenderer {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            value = String.format("<html><u><font color=blue>%s</blue></u></html>", value);
             return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         }
     }
@@ -450,5 +813,10 @@ public class DownloadHistoryDialog extends AppDialog implements ClipboardOwner, 
     private JXTable table;
     private JButton clearHistoryBtn;
     private JButton okButton;
+
+
+    private static enum DownloadsFilters {
+        ALL_DOWNLOADS, TODAY, YESTERDAY, LAST_WEEK, LAST_MONTH, THIS_CALENDAR_MONTH
+    }
 
 }

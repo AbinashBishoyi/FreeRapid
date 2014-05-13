@@ -56,6 +56,17 @@ public abstract class URLTransferHandler extends TransferHandler {
     }
 
     @Override
+    public boolean importData(JComponent comp, Transferable t) {
+        return super.importData(comp, t);
+    }
+
+
+    @Override
+    public boolean canImport(JComponent comp, DataFlavor[] transferFlavors) {
+        return super.canImport(comp, transferFlavors);
+    }
+
+    @Override
     public boolean canImport(TransferSupport support) {
         if (!support.isDrop()) {
             return super.canImport(support);

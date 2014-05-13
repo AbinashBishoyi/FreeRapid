@@ -41,22 +41,24 @@ public final class RecentsFilesComboModel extends DefaultComboBoxModel {
 
     public void setSelectedItem(Object anObject) {
         super.setSelectedItem(anObject);
-        //addElement(anObject);
+        addElement(anObject);
     }
 
     public final void addElement(final Object anObject) {
         if (anObject == null)
             return;
-        if (getIndexOf(anObject) >= 0) {
-
-        } else if (!"".equals(anObject) && !"?".equals(anObject) && new File(anObject.toString()).exists()) {
-            super.insertElementAt(anObject, 0);
-            if (stack.size() > Consts.MAX_RECENT_PHRASES_COUNT) {
-                this.remove(Consts.MAX_RECENT_PHRASES_COUNT - 1);
+        final int index = getIndexOf(anObject);
+        if (index < 0) {
+            if (!"".equals(anObject) && !"?".equals(anObject) && new File(anObject.toString()).exists()) {
+                super.insertElementAt(anObject, 0);
+                if (stack.size() > Consts.MAX_RECENT_PHRASES_COUNT) {
+                    this.remove(Consts.MAX_RECENT_PHRASES_COUNT - 1);
+                }
             }
             if (autosave)
                 store();
         }
+
     }
 
 

@@ -12,7 +12,7 @@ public class ConnectionSettings {
     private boolean proxySet;
 
     public ConnectionSettings() {
-        setProxy("localhost", 8081);
+        //setProxy("localhost", 8081);
     }
 
     public void setProxy(String proxyURL, int proxyPort, String userName, String password) {
@@ -63,8 +63,30 @@ public class ConnectionSettings {
         } else return "Default";
     }
 
+//    @SuppressWarnings({"RedundantIfStatement"})
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//
+//        ConnectionSettings that = (ConnectionSettings) o;
+//
+//        if (proxyPort != that.proxyPort) return false;
+//        if (proxySet != that.proxySet) return false;
+//        if (!proxyURL.equals(that.proxyURL)) return false;
+//
+//        return true;
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        int result = proxyURL.hashCode();
+//        result = 31 * result + proxyPort;
+//        result = 31 * result + (proxySet ? 1 : 0);
+//        return result;
+//    }
+
     @SuppressWarnings({"RedundantIfStatement"})
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -73,14 +95,14 @@ public class ConnectionSettings {
 
         if (proxyPort != that.proxyPort) return false;
         if (proxySet != that.proxySet) return false;
-        if (!proxyURL.equals(that.proxyURL)) return false;
 
         return true;
     }
 
-    @Override
     public int hashCode() {
-        int result = proxyURL.hashCode();
+        int result;
+        result = (userName != null ? userName.hashCode() : 0);
+        result = 31 * result + (proxyURL != null ? proxyURL.hashCode() : 0);
         result = 31 * result + proxyPort;
         result = 31 * result + (proxySet ? 1 : 0);
         return result;

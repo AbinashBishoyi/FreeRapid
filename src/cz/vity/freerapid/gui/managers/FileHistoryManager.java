@@ -43,7 +43,7 @@ public class FileHistoryManager implements Application.ExitListener {
     private void saveList() {
         final LocalStorage localStorage = context.getLocalStorage();
         try {
-            localStorage.save(items, FILES_LIST_XML);
+            localStorage.save(getItems(), FILES_LIST_XML);
         } catch (IOException e) {
             LogUtils.processException(logger, e);
         }
@@ -65,6 +65,14 @@ public class FileHistoryManager implements Application.ExitListener {
                 LogUtils.processException(logger, e);
             }
         }
+//        try {
+//            DownloadFile df = new DownloadFile(new URL("http://pokus.cz/kjhggfhg.rar"), new File("c:\\"), "popis");
+//            items.add(new FileHistoryItem(df, new File("c:\\test.txt")));
+//            df = new DownloadFile(new URL("http://pokus2.cz/hghghg.zip"), new File("c:\\"), "popisa asd asdasd ");
+//            items.add(new FileHistoryItem(df, new File("c:\\test2.txt")));
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+//        }
         this.loaded = true;
     }
 

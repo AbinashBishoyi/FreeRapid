@@ -6,6 +6,7 @@ import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
 import com.l2fprod.common.swing.JDirectoryChooser;
+import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.gui.actions.URLTransferHandler;
 import cz.vity.freerapid.gui.managers.DataManager;
@@ -138,9 +139,9 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
         //urlsArea.setURLs("http://www.filefactory.com/file/a3f880/n/KOW_-_Monica_divx_002");
         comboPath.setModel(new RecentsFilesComboModel(UserProp.LAST_USED_SAVED_PATH, true));
         AutoCompleteDecorator.decorate(comboPath);
-        if (comboPath.getModel().getSize() > 0) {
-            comboPath.setSelectedIndex(0);
-        }
+
+        comboPath.setSelectedItem(AppPrefs.getProperty(UserProp.LAST_COMBO_PATH, ""));
+
 
         this.setTransferHandler(new URLTransferHandler() {
             protected void doDropAction(List<URL> files) {
@@ -153,6 +154,7 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
     public void okBtnAction() {
         if (!validateStart())
             return;
+        AppPrefs.storeProperty(UserProp.LAST_COMBO_PATH, comboPath.getSelectedItem().toString());
         setResult(RESULT_OK);
         doClose();
     }

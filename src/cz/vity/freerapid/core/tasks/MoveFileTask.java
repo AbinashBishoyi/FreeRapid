@@ -59,7 +59,9 @@ public class MoveFileTask extends CoreTask<Void, Void> {
 
         message("Moving file");
         if (from.getParentFile().equals(to.getParentFile())) {
-            from.renameTo(to);
+            if (from.renameTo(to)) {
+                saveToHistoryList();
+            } else throw new FileTransferFailedException("Creating output file path failed");
             return null;
         }
 
@@ -98,7 +100,7 @@ public class MoveFileTask extends CoreTask<Void, Void> {
                 }
             }
 
-            ((MainApp) getApplication()).getManagerDirector().getFileHistoryManager().addHistoryItem(downloadFile, to);
+            saveToHistoryList();
         }
         catch (Exception e) {
             if (to.exists())
@@ -109,6 +111,12 @@ public class MoveFileTask extends CoreTask<Void, Void> {
                 from.delete();
         }
         return null;
+    }
+
+
+    private void saveToHistoryList() {
+        downloadFile.setFileName(to.getName());
+        ((MainApp) getApplication()).getManagerDirector().getFileHistoryManager().addHistoryItem(downloadFile, to);
     }
 
     @Override

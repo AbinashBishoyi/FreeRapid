@@ -9,7 +9,6 @@ import cz.vity.freerapid.plugins.webclient.*;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.Sound;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.jdesktop.application.*;
 
 import javax.imageio.ImageIO;
@@ -44,7 +43,9 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 
     private int youHaveToSleepSecondsTime = 0;
     private String captchaResult;
-    private static final int NO_DATA_TIMEOUT_LIMIT = 8;
+    private static final int NO_DATA_TIMEOUT_LIMIT = 30;
+    private static final int INPUT_BUFFER_SIZE = 50000;
+    private static final int OUTPUT_FILE_BUFFER_SIZE = 600000;
 
 
     public DownloadTask(Application application, HttpDownloadClient client, DownloadFile downloadFile, ShareDownloadService service) {
@@ -77,7 +78,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         if (f.getParentFile().getFreeSpace() < fileSize) {
             throw new NotEnoughSpaceException();
         }
-        return new BufferedOutputStream(new FileOutputStream(f), 300000);
+        return new BufferedOutputStream(new FileOutputStream(f), OUTPUT_FILE_BUFFER_SIZE);
     }
 
     protected void initBackground() {
@@ -91,18 +92,14 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     public void saveToFile(InputStream inputStream) throws Exception {
         boolean temporary = AppPrefs.getProperty(UserProp.USE_TEMPORARY_FILES, true);
 
-        final byte[] buffer = new byte[100000];
+        final byte[] buffer = new byte[INPUT_BUFFER_SIZE];
         OutputStream fileOutputStream = null;
         final String fileName = downloadFile.getFileName();
         outputFile = downloadFile.getOutputFile();
         //outputFile = new File("d:/vystup.pdf");
         storeFile = (temporary) ? File.createTempFile(fileName + ".", ".part", downloadFile.getSaveToDirectory()) : outputFile;
         final long fileSize = downloadFile.getFileSize();
-        final HttpConnectionManagerParams params = client.getHTTPClient().getHttpConnectionManager().getParams();
-        final int connectionsPerHost = params.getDefaultMaxConnectionsPerHost();
-        System.out.println("connectionsPerHost = " + connectionsPerHost);
-        final int bufferSize = params.getReceiveBufferSize();
-        System.out.println("bufferSize = " + bufferSize);
+
         try {
             try {
                 fileOutputStream = getFileOutputStream(storeFile, fileSize);
@@ -201,6 +198,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     @Override
     protected void cancelled() {
         downloadFile.setState(DownloadState.CANCELLED);
+        downloadFile.setDownloaded(0);
     }
 
     protected void setSpeed(final long speedInBytes) {
@@ -339,8 +337,9 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
             }
         });
         final ApplicationContext context = getApplication().getContext();
+        TaskService service;
         synchronized (getApplication().getContext()) {
-            TaskService service = context.getTaskService(MOVE_FILE_SERVICE);
+            service = context.getTaskService(MOVE_FILE_SERVICE);
             if (service == null) {
                 service = new TaskService(MOVE_FILE_SERVICE, new ThreadPoolExecutor(
                         1,   // corePool size
@@ -349,8 +348,9 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                         new LinkedBlockingQueue<Runnable>()));
                 context.addTaskService(service);
             }
-            service.execute(moveFileTask);
         }
+        service.execute(moveFileTask);
+
     }
 
     public void sleep(int seconds) throws InterruptedException {

@@ -24,6 +24,10 @@ public class UserProp {
 
     public static final String PLAY_SOUNDS = "playSound";
     public static final String LAST_USED_SAVED_PATH = "lastUsedSavedPaths";
+
+    public static final String LAST_COMBO_PATH = "lastComboPath";
+
+
     public static final String MAX_DOWNLOADS_AT_A_TIME = "maxDownloadsAtATime";
 
     public static final String AUTO_RECONNECT_TIME = "autoReconnectTime";
@@ -34,4 +38,14 @@ public class UserProp {
     public static int MAX_DOWNLOADS_AT_A_TIME_DEFAULT = 5;
     public static final String PROXY_LIST_FILE = "proxyListFile";
     public static final String DOWNLOADED_HISTORY_FILE_NAME = "downloads.txt";
+
+    public static final String CONTAIN_DOWNLOADS_FILTER = "containDownloadsFilter";
+
+    public static final String SELECTED_DOWNLOADS_FILTER = "selectedDownloadsFilter";
+
+    public static final String SHOW_COMPLETED = "removeCompleted";
+
+    public static final String USE_DEFAULT_CONNECTION = "useDefaultConnection";
+
+    public static final String USE_SYSTEM_ICONS = "useSystemIcons";
 }

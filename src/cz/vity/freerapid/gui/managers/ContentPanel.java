@@ -1,7 +1,9 @@
 package cz.vity.freerapid.gui.managers;
 
 import com.jgoodies.binding.list.ArrayListModel;
+import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.FileTypeIconProvider;
+import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.DownloadTask;
 import cz.vity.freerapid.gui.actions.URLTransferHandler;
 import cz.vity.freerapid.model.DownloadFile;
@@ -16,6 +18,8 @@ import org.jdesktop.application.ApplicationActionMap;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.Task;
 import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.decorator.FilterPipeline;
+import org.jdesktop.swingx.decorator.PatternFilter;
 
 import javax.swing.*;
 import javax.swing.event.ListDataEvent;
@@ -43,14 +47,14 @@ import java.util.concurrent.TimeUnit;
  * @author Vity
  */
 public class ContentPanel extends JPanel implements ListSelectionListener, ListDataListener, PropertyChangeListener, ClipboardOwner {
-    private static final int COLUMN_ID = 0;
-    private static final int COLUMN_NAME = 1;
-    private static final int COLUMN_PROGRESSBAR = 2;
-    private static final int COLUMN_PROGRESS = 3;
-    private static final int COLUMN_STATE = 4;
-    private static final int COLUMN_SIZE = 5;
-    private static final int COLUMN_SPEED = 6;
-    private static final int COLUMN_PROXY = 7;
+    //private static final int COLUMN_ID = 0;
+    private static final int COLUMN_NAME = 0;
+    private static final int COLUMN_PROGRESSBAR = 1;
+    private static final int COLUMN_PROGRESS = 2;
+    private static final int COLUMN_STATE = 3;
+    private static final int COLUMN_SIZE = 4;
+    private static final int COLUMN_SPEED = 5;
+    private static final int COLUMN_PROXY = 6;
 
     private final ApplicationContext context;
     private final ManagerDirector director;
@@ -104,8 +108,9 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         final java.util.List<DownloadFile> files = manager.getSelectionToList(indexes);
         StringBuilder builder = new StringBuilder();
         for (DownloadFile file : files) {
-            builder.append('\n').append(file.getFileName());
+            builder.append('\n').append(file.getOutputFile());
         }
+
         final int result = Swinger.getChoiceOKCancel("message.areyousuredelete", builder.toString());
         if (result == Swinger.RESULT_OK) {
             for (DownloadFile file : files) {
@@ -258,6 +263,26 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     }
 
 
+    public void updateFilters() {
+        if (!AppPrefs.getProperty(UserProp.SHOW_COMPLETED, true)) {
+            table.setFilters(new FilterPipeline(new StateFilter()));
+        } else table.setFilters(null);
+
+    }
+
+    private static class StateFilter extends PatternFilter {
+        public StateFilter() {
+            super("", 0, 0);
+
+        }
+
+        @Override
+        public boolean test(int row) {
+            DownloadFile file = (DownloadFile) getInputValue(row, COLUMN_STATE);
+            return file != null && file.getState() != DownloadState.COMPLETED;
+        }
+    }
+
     public boolean isPauseActionEnabled() {
         return pauseActionEnabled;
     }
@@ -366,7 +391,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     private void initTable() {
         table.setName("mainTable");
-        table.setModel(new CustomTableModel(manager.getDownloadFiles(), new String[]{"ID", "Name", "Progress", "Completition", "Est. time", "Size", "Speed", "Connection"}));
+        table.setModel(new CustomTableModel(manager.getDownloadFiles(), new String[]{"Name", "Progress", "Completition", "Est. time", "Size", "Speed", "Connection"}));
         table.setAutoCreateColumnsFromModel(false);
         table.setEditable(false);
         table.setColumnControlVisible(true);
@@ -389,10 +414,10 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
         final TableColumnModel tableColumnModel = table.getColumnModel();
         table.createDefaultColumnsFromModel();
-        final TableColumn columnID = tableColumnModel.getColumn(COLUMN_ID);
-        columnID.setCellRenderer(new IDCellRenderer());
-        columnID.setMaxWidth(30);
-        columnID.setWidth(30);
+//        final TableColumn columnID = tableColumnModel.getColumn(COLUMN_ID);
+//        columnID.setCellRenderer(new IDCellRenderer());
+//        columnID.setMaxWidth(30);
+//        columnID.setWidth(30);
         final TableColumn colName = tableColumnModel.getColumn(COLUMN_NAME);
         colName.setCellRenderer(new NameURLCellRenderer(director.getFileTypeIconProvider()));
         colName.setWidth(150);
@@ -418,6 +443,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
         table.getInputMap().put(KeyStroke.getKeyStroke("control C"), "copy");
         table.getActionMap().put("copy", Swinger.getAction("copyContent"));
+
+        updateFilters();
     }
 
     @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
@@ -448,18 +475,13 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         popup.add(map.get("selectAllAction"));
         popup.add(map.get("invertSelectionAction"));
         popup.addSeparator();
-        popup.add(map.get("topAction"));
-        popup.add(map.get("upAction"));
-        popup.add(map.get("downAction"));
-        popup.add(map.get("bottomAction"));
-        popup.addSeparator();
         popup.add(map.get("removeSelectedAction"));
-        final JMenu menu = new JMenu("Misc");
-        popup.add(menu);
+//        final JMenu menu = new JMenu("Misc");
+//        popup.add(menu);
         JMenu forceMenu = new JMenu("Force Download");
         forceMenu.setMnemonic('F');
-        menu.add(forceMenu);
-        boolean forceEnabled = isSelectedEnabled() && this.manager.hasDownloadFilesStates(table.getSelectedRows(), DownloadState.QUEUED);
+//      menu.add(forceMenu);
+        boolean forceEnabled = isSelectedEnabled() && this.manager.hasDownloadFilesStates(table.getSelectedRows(), DownloadState.QUEUED, DownloadState.PAUSED, DownloadState.CANCELLED);
         forceMenu.setEnabled(forceEnabled);
         final List<ConnectionSettings> connectionSettingses = director.getClientManager().getAvailableConnections();
         for (ConnectionSettings settings : connectionSettingses) {
@@ -467,11 +489,14 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             forceMenu.add(action);
             action.setEnabled(forceEnabled);
         }
-        menu.addSeparator();
-        menu.add(map.get("copyContent"));
-        menu.add(map.get("openInBrowser"));
+        popup.addSeparator();
+        popup.add(forceMenu);
+        popup.addSeparator();
+        popup.add(map.get("copyContent"));
+        popup.add(map.get("openInBrowser"));
 
-        popup.show(this, e.getX(), e.getY());
+        final MouseEvent event = SwingUtilities.convertMouseEvent(table, e, this);
+        popup.show(this, event.getX(), event.getY());
     }
 
 
@@ -594,15 +619,14 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         return (int) (((downloaded / (float) fileSize) * 100));
     }
 
-
-    private static class IDCellRenderer extends DefaultTableCellRenderer {
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            this.setHorizontalAlignment(RIGHT);
-            return super.getTableCellRendererComponent(table, row, isSelected, hasFocus, row, column);
-        }
-    }
+//    private static class IDCellRenderer extends DefaultTableCellRenderer {
+//
+//        @Override
+//        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+//            this.setHorizontalAlignment(RIGHT);
+//            return super.getTableCellRendererComponent(table, row, isSelected, hasFocus, row, column);
+//        }
+//    }
 
     private static class NameURLCellRenderer extends DefaultTableCellRenderer {
 

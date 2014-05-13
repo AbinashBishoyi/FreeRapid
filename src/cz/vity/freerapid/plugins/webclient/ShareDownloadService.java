@@ -1,7 +1,5 @@
 package cz.vity.freerapid.plugins.webclient;
 
-import javax.swing.*;
-
 /**
  * @author Vity
  */
@@ -12,11 +10,11 @@ public interface ShareDownloadService {
 
     int getMaxDownloadsFromOneIP();
 
-    Icon getFaviconImage();
-
-    Icon getSmallImage();
-
-    Icon getBigImage();
+//    Icon getFaviconImage();
+//
+//    Icon getSmallImage();
+//
+//    Icon getBigImage();
 
     void run(HttpFileDownloader downloader) throws Exception;
 }

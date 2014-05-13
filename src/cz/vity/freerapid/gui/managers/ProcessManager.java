@@ -37,8 +37,6 @@ public class ProcessManager extends Thread {
     private volatile Map<String, DownloadService> services = new Hashtable<String, DownloadService>();
     private volatile Map<DownloadFile, ConnectionSettings> forceDownloadFiles = new Hashtable<DownloadFile, ConnectionSettings>();
 
-//    private volatile Map<String, DownloadService> services = new Hashtable<String, DownloadService>();
-
     private boolean threadSuspended;
     //private final Object queueLock;
     private final Object manipulation = new Object();
@@ -216,11 +214,13 @@ public class ProcessManager extends Thread {
                     file.setErrorAttemptsCount(0);
                 } else {
                     file.setErrorAttemptsCount(--errorAttemptsCount);
+                    final ConnectionSettings settings = client.getSettings();
+                    service.addProblematicConnection(settings);
                     if (error == DownloadTaskError.YOU_HAVE_TO_WAIT_ERROR) {
                         int waitTime = task.getYouHaveToSleepSecondsTime();
-                        errorTimer.schedule(new MyTimerTask(file, waitTime), 0, 1000);
+                        errorTimer.schedule(new MyTimerTask(service, settings, file, waitTime), 0, 1000);
                     } else
-                        errorTimer.schedule(new MyTimerTask(file), 0, 1000);
+                        errorTimer.schedule(new MyTimerTask(service, settings, file), 0, 1000);
                 }
             }
         }
@@ -240,13 +240,17 @@ public class ProcessManager extends Thread {
 
     private class MyTimerTask extends TimerTask {
         private int counter;
+        private final DownloadService service;
+        private final ConnectionSettings settings;
         private final DownloadFile file;
 
-        public MyTimerTask(DownloadFile file) {
-            this(file, AppPrefs.getProperty(UserProp.AUTO_RECONNECT_TIME, UserProp.AUTO_RECONNECT_TIME_DEFAULT));
+        public MyTimerTask(DownloadService service, ConnectionSettings settings, DownloadFile file) {
+            this(service, settings, file, AppPrefs.getProperty(UserProp.AUTO_RECONNECT_TIME, UserProp.AUTO_RECONNECT_TIME_DEFAULT));
         }
 
-        public MyTimerTask(DownloadFile file, int waitTime) {
+        public MyTimerTask(DownloadService service, ConnectionSettings settings, DownloadFile file, int waitTime) {
+            this.service = service;
+            this.settings = settings;
             this.file = file;
             this.counter = waitTime;
             file.setTimeToQueuedMax(waitTime);
@@ -257,6 +261,7 @@ public class ProcessManager extends Thread {
                 this.cancel(); //zrusime timer
                 file.setTimeToQueued(-1); //odecitani casu
                 file.setTimeToQueuedMax(-1);
+                renewProblematicConnection();
                 file.resetErrorAttempts(); //je nutne vyresetovat pocet error pokusu
                 return;
             }
@@ -264,10 +269,15 @@ public class ProcessManager extends Thread {
             if (counter <= 0) { //zarazeni zpatky do fronty
                 file.setTimeToQueued(-1);
                 file.setTimeToQueuedMax(-1);
+                renewProblematicConnection();
                 file.setState(DownloadState.QUEUED);
                 this.cancel();
                 queueUpdated();
             }
+        }
+
+        private void renewProblematicConnection() {
+            service.removeProblematicConnection(settings);
         }
     }
 

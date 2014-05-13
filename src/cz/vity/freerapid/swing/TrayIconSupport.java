@@ -23,6 +23,7 @@ public class TrayIconSupport implements PropertyChangeListener {
     private boolean enabled;
     private WindowAdapter windowAdapter;
     private static final String TITLE_PROPERTY = "title";
+    private String toolTip;
 
     public TrayIconSupport() {
 
@@ -151,9 +152,18 @@ public class TrayIconSupport implements PropertyChangeListener {
     }
 
     public void propertyChange(PropertyChangeEvent evt) {
-        if (isEnabled() && TITLE_PROPERTY.equals(evt.getPropertyName()) && trayIcon != null) {
-            final JFrame w = (JFrame) evt.getSource();
-            trayIcon.setToolTip(w.getTitle());
+        if (toolTip != null)
+            if (isEnabled() && TITLE_PROPERTY.equals(evt.getPropertyName()) && trayIcon != null) {
+                final JFrame w = (JFrame) evt.getSource();
+                trayIcon.setToolTip(w.getTitle());
+            }
+    }
+
+    public void setToolTip(String toolTip) {
+        this.toolTip = toolTip;
+        if (isEnabled()) {
+            trayIcon.setToolTip(toolTip);
         }
     }
+
 }

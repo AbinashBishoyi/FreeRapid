@@ -21,30 +21,21 @@ import java.util.logging.Logger;
 /**
  * @author Vity
  */
-abstract class AppDialog extends JDialog {
-    private final static Logger logger = Logger.getLogger(AppDialog.class.getName());
+abstract class AppFrame extends JFrame {
+    private final static Logger logger = Logger.getLogger(AppFrame.class.getName());
 
-    public final static int RESULT_OK = 0;
-    final static int RESULT_CANCEL = 1;
-    int result = RESULT_CANCEL;
     private ActionMap actionMap = null;
+    protected final Frame owner;
 
-//    private final boolean closeOnCancel = true;
 
-    public AppDialog(Dialog owner, boolean modal) throws HeadlessException {
-        super(owner, modal);
-    }
-
-    public AppDialog(final Frame owner, final boolean modal) throws HeadlessException {
-        super(owner, modal);
+    public AppFrame(final Frame owner) throws HeadlessException {
+        super();
+        this.setIconImage(owner.getIconImage());
+        this.owner = owner;
     }
 
     public void doClose() {
         dispose();
-    }
-
-    public final int getModalResult() {
-        return result;
     }
 
     protected AbstractButton getBtnCancel() {
@@ -97,8 +88,8 @@ abstract class AppDialog extends JDialog {
         final ActionListener okButtonListener = new ActionListener() {
 
             public void actionPerformed(final ActionEvent actionEvent) {
-                if (AppDialog.this.getFocusOwner() instanceof AbstractButton) {
-                    final AbstractButton button = ((AbstractButton) AppDialog.this.getFocusOwner());
+                if (AppFrame.this.getFocusOwner() instanceof AbstractButton) {
+                    final AbstractButton button = ((AbstractButton) AppFrame.this.getFocusOwner());
                     if (button instanceof JToggleButton) {
                         final JToggleButton toggleButton = (JToggleButton) button;
                         if (!toggleButton.isSelected()) {
@@ -147,12 +138,8 @@ abstract class AppDialog extends JDialog {
     }
 
 
-    void setResult(int result) {
-        this.result = result;
-    }
-
     protected ResourceMap getResourceMap() {
-        return Swinger.getResourceMap(this.getClass(), AppDialog.class);
+        return Swinger.getResourceMap(this.getClass(), AppFrame.class);
     }
 
     /**

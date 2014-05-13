@@ -18,7 +18,7 @@ public class BugTest {
     }
 
     private static void show() {
-        final JFrame test = new JFrame("Test");
+        final JFrame test = new JFrame("Test3");
         test.getContentPane().add(getCombobox());
         test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         test.setLocationRelativeTo(null);

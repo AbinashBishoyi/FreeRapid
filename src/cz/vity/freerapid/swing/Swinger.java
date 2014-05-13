@@ -182,7 +182,7 @@ public class Swinger {
         });
     }
 
-    public static TableColumn updateColumn(JTable table, String name, final int columnId, final int width, TableCellRenderer renderer) {
+    public static TableColumn updateColumn(JTable table, String name, final int columnId, final int minWidth, final int width, TableCellRenderer renderer) {
         final TableColumnModel columnModel = table.getColumnModel();
         TableColumn column = columnModel.getColumn(columnId);
         if (renderer != null)
@@ -191,13 +191,14 @@ public class Swinger {
         if (width != -1) {
             column.setPreferredWidth(width);
             //column.setWidth(width);
-            column.setMinWidth(width);
         }
+        if (minWidth != -1)
+            column.setMinWidth(width);
         return column;
     }
 
     public static TableColumn updateColumn(JTable table, String name, final int columnId, final int width) {
-        return updateColumn(table, name, columnId, width, null);
+        return updateColumn(table, name, columnId, width, width, null);
     }
 
     public static void showErrorDialog(Class clazz, final String messageResource, final Throwable e, final boolean showErrorReporter) {

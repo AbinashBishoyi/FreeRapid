@@ -8,6 +8,7 @@ import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.exceptions.NotSupportedDownloadServiceException;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
+import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Sound;
 import org.jdesktop.application.AbstractBean;
@@ -48,6 +49,10 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         pluginsManager = director.getPluginsManager();
         context.getApplication().addExitListener(new Application.ExitListener() {
             public boolean canExit(EventObject event) {
+                if (isDownloading()) {
+                    final int result = Swinger.getChoiceOKCancel("downloadInProgress");
+                    return (result == Swinger.RESULT_OK);
+                }
                 return true;
             }
 
@@ -232,10 +237,10 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                     //file.setState(DownloadState.CANCELLED);
                 }
                 file.setState(DownloadState.CANCELLED);
+                file.setDownloaded(0);
                 final File outputFile = file.getOutputFile();
                 if (outputFile.exists()) {
                     outputFile.delete();
-                    file.setDownloaded(0);
                 }
             }
         }
@@ -421,6 +426,16 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                 }
             }
         }
+    }
+
+    public boolean isDownloading() {
+        synchronized (lock) {
+            for (DownloadFile file : downloadFiles) {
+                if (DownloadState.isProcessState(file.getState()))
+                    return true;
+            }
+        }
+        return false;
     }
 
     public void forceDownload(final ConnectionSettings settings, final int[] indexes) {

@@ -1,6 +1,8 @@
 package cz.vity.freerapid.gui.managers;
 
+import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.tasks.MoveFileTask;
+import cz.vity.freerapid.swing.TrayIconSupport;
 import cz.vity.freerapid.swing.components.MemoryIndicator;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.Task;
@@ -24,6 +26,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
     private final ManagerDirector director;
     private final ApplicationContext context;
     private JProgressBar progress;
+    private MainApp app;
 
     /**
      * Konstruktor
@@ -34,6 +37,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
     public StatusBarManager(ManagerDirector director, ApplicationContext context) {
         this.director = director;
         this.context = context;
+        app = (MainApp) context.getApplication();
     }
 
     /**
@@ -130,10 +134,16 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
         final int completed = dataManager.getCompleted();
         final int size = dataManager.getDownloadFiles().size();
         final int speed = dataManager.getCurrentAllSpeed();
+        final TrayIconSupport trayIconSupport = app.getTrayIconSupport();
         if (size >= 0) {
-            infoLabel.setText(String.format("Complete downloads %d of %d - Current speed: %s/s", completed, size, ContentPanel.bytesToAnother(speed)));
-        } else
+            final String speedFormatted = ContentPanel.bytesToAnother(speed);
+            trayIconSupport.setToolTip(String.format("FreeRapid Downloader\n\nComplete downloads %d of %d\nCurrent speed: %s/s</html>", completed, size, speedFormatted));
+            infoLabel.setText(String.format("Complete downloads %d of %d - Current speed: %s/s", completed, size, speedFormatted));
+        } else {
+            trayIconSupport.setToolTip(app.getMainFrame().getTitle());
             infoLabel.setText("Ready");
+        }
+
     }
 
     public void intervalAdded(ListDataEvent e) {

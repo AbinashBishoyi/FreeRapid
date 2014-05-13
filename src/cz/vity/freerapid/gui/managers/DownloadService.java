@@ -4,7 +4,9 @@ import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.HttpDownloadClient;
 import cz.vity.freerapid.plugins.webclient.ShareDownloadService;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 /**
@@ -12,6 +14,7 @@ import java.util.Vector;
  */
 class DownloadService {
     private List<ConnectionSettings> downloading = new Vector<ConnectionSettings>();
+    private Set<ConnectionSettings> problems = new HashSet<ConnectionSettings>();
 
     private String serviceName;
     private int maxDownloadsFromOneIP;
@@ -23,6 +26,8 @@ class DownloadService {
 
 
     public boolean canDownloadWith(ConnectionSettings connectionSettings) {
+        if (problems.contains(connectionSettings))
+            return false;
         int foundCount = 0;
         final int oneIP = getMaxDownloadsFromOneIP();
         for (ConnectionSettings settings : downloading) {
@@ -42,6 +47,13 @@ class DownloadService {
         downloading.add(client.getSettings());
     }
 
+    public void addProblematicConnection(ConnectionSettings settings) {
+        problems.add(settings);
+    }
+
+    public void removeProblematicConnection(ConnectionSettings settings) {
+        problems.remove(settings);
+    }
 
     public void finishedDownloading(HttpDownloadClient client) {
         downloading.remove(client.getSettings());
