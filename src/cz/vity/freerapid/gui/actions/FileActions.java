@@ -22,6 +22,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.net.URL;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * FileActions = Menu soubory
@@ -30,6 +31,7 @@ import java.util.List;
  */
 @ProxyActions({"select-all", "copy", "cut", "paste"})
 public class FileActions extends AbstractBean {
+    private final static Logger logger = Logger.getLogger(FileActions.class.getName());
 
     private NewLinksDialog dialog;
     private final MainApp app;
@@ -84,7 +86,11 @@ public class FileActions extends AbstractBean {
             final List<URL> urlList1 = urlList;
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
-                    dialog.setURLs(urlList1);
+                    if (dialog != null) {
+                        dialog.setURLs(urlList1);
+                    } else {
+                        logger.warning("Dialog is null");
+                    }
                 }
             });
         }

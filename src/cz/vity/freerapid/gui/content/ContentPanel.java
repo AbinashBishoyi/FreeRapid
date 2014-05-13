@@ -95,6 +95,9 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     private static final String VALIDATELINKS_ACTION_ENABLED_PROPERTY = "validateLinksEnabled";
 
 
+    private boolean removeInvalidLinksActionEnabled = false;
+    private static final String REMOVEINVALID_ACTION_ENABLED_PROPERTY = "removeInvalidLinksActionEnabled";
+
     private JXTable table;
     private static String[] states;
 
@@ -306,7 +309,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         removeSelected(files, indexes, false);
     }
 
-    @org.jdesktop.application.Action(enabledProperty = NONEMPTY_ACTION_ENABLED_PROPERTY)
+    @org.jdesktop.application.Action(enabledProperty = REMOVEINVALID_ACTION_ENABLED_PROPERTY)
     public void removeInvalidLinksAction() {
         final int[] rows = getSelectedRows();
         final ListSelectionModel selectionModel = table.getSelectionModel();
@@ -593,6 +596,18 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         this.removeCompletedActionEnabled = removeCompletedActionEnabled;
         firePropertyChange(REMOVECOMPLETED_ACTION_ENABLED_PROPERTY, oldValue, removeCompletedActionEnabled);
     }
+
+
+    public boolean isRemoveInvalidLinksActionEnabled() {
+        return removeInvalidLinksActionEnabled;
+    }
+
+    public void setRemoveInvalidLinksActionEnabled(boolean removeInvalidLinksActionEnabled) {
+        boolean oldValue = this.removeInvalidLinksActionEnabled;
+        this.removeInvalidLinksActionEnabled = removeInvalidLinksActionEnabled;
+        firePropertyChange(REMOVEINVALID_ACTION_ENABLED_PROPERTY, oldValue, removeInvalidLinksActionEnabled);
+    }
+
 
     public boolean isCompleteWithFilesEnabled() {
         return completeWithFilesEnabled;
@@ -928,8 +943,12 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     }
 
     public void propertyChange(PropertyChangeEvent evt) {
-        if ("completed".equals(evt.getPropertyName())) {
+        final String propertyName = evt.getPropertyName();
+        if ("completed".equals(propertyName)) {
             setRemoveCompletedActionEnabled(((Integer) evt.getNewValue()) > 0);
+        }
+        if ("notFound".equals("propertyName")) {
+            setRemoveInvalidLinksActionEnabled(((Integer) evt.getNewValue()) > 0);
         }
     }
 

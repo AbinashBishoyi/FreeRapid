@@ -43,10 +43,12 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
 
     private final Object lock = new Object();
     private int completed;
+    private int notFound;
+
     private PluginsManager pluginsManager;
     private float averageSpeed = 0;
-    private int speed = 0;
 
+    private int speed = 0;
     private int dataChanged = 0;
     private FileListMaintainer fileListMaintainer;
 
@@ -361,18 +363,38 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         synchronized (lock) {
             //          logger.info("updateCompleted2");
             int counter = 0;
+            int notFound = 0;
             for (DownloadFile file : downloadFiles) {
                 if (file.getState() == COMPLETED) {
                     counter++;
                 }
+                if (file.getFileState() == FileState.FILE_NOT_FOUND) {
+                    notFound++;
+                }
             }
             setCompleted(counter);
+            setNotFound(notFound);
         }
+    }
+
+    private void setNotFound(int notFound) {
+        int oldValue = this.notFound;
+        this.notFound = notFound;
+        firePropertyChange("notFound", oldValue, this.notFound);
     }
 
 
     public int getCompleted() {
         return completed;
+    }
+
+    /**
+     * Getter for property 'notFound'.
+     *
+     * @return Value for property 'notFound'.
+     */
+    public int getNotFound() {
+        return notFound;
     }
 
     public void setCompleted(int completed) {
