@@ -332,7 +332,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         setServiceError(DownloadTaskError.GENERAL_ERROR);
         if (!(cause instanceof YouHaveToWaitException)) {
             if (AppPrefs.getProperty(UserProp.PLAY_SOUNDS_FAILED, true))
-                Sound.playSound(getResourceMap().getString("error.wav"));
+                Sound.playSound(getContext().getResourceMap().getString("errorWav"));
         }
     }
 
@@ -399,7 +399,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                     if (allComplete) {
                         final boolean sound = AppPrefs.getProperty(UserProp.PLAY_SOUNDS_OK, true);
                         if (sound)
-                            Sound.playSound(getResourceMap().getString("done.wav"));
+                            Sound.playSound(getContext().getResourceMap().getString("doneWav"));
                         if (AppPrefs.getProperty(UserProp.CLOSE_WHEN_COMPLETED, false)) {
                             app.getContext().getTaskService().execute(new CloseInTimeTask(app));
                         }
@@ -419,7 +419,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                 downloadFile.setState(DownloadState.ERROR);
                 //noinspection ThrowableResultOfMethodCallIgnored
                 downloadFile.setErrorMessage(getResourceMap().getString("transferFailed", event.getValue().getMessage()));
-                Sound.playSound(getResourceMap().getString("error.wav"));
+                Sound.playSound(getContext().getResourceMap().getString("errorWav"));
             }
 
             @Override

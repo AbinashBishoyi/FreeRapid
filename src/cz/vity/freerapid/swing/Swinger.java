@@ -74,7 +74,7 @@ public class Swinger {
                 JOptionPane.QUESTION_MESSAGE,
                 null, new Object[]{map.getString(MESSAGE_BTN_YES_CODE), map.getString(MESSAGE_BTN_NO_CODE),
                 map.getString(MESSAGE_BTN_CANCEL_CODE)},
-                null);
+                map.getString(MESSAGE_BTN_YES_CODE));
     }
 
     public static int getChoiceOKCancel(final String messageCode, Object... args) {
@@ -83,7 +83,7 @@ public class Swinger {
                 JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null, new Object[]{map.getString(MESSAGE_BTN_OK_CODE), map.getString(MESSAGE_BTN_CANCEL_CODE)},
-                null);
+                map.getString(MESSAGE_BTN_OK_CODE));
     }
 
 
@@ -303,4 +303,58 @@ public class Swinger {
         }
         return frames[0];
     }
+
+//    private static int showOptionDialog(Component parentComponent,
+//                                        Object message, String title, int optionType, int messageType,
+//                                        Icon icon, Object[] options, Object initialValue)
+//            throws HeadlessException {
+//        JOptionPane pane = new JOptionPane(message, messageType, optionType, icon, options, initialValue);
+//
+//        pane.setInitialValue(initialValue);
+//        pane.setComponentOrientation(((parentComponent == null) ?
+//                JOptionPane.getRootFrame() : parentComponent).getComponentOrientation());
+//
+//        final JDialog dialog = pane.createDialog(parentComponent, title);
+//
+//
+////        pane.getRootPane().getInputMap().put(KeyStroke.getKeyStroke("ENTER"), "smartEnterAction");
+////        pane.getRootPane().getActionMap().put("smartEnterAction", new AbstractAction() {
+////            public void actionPerformed(ActionEvent e) {
+////                final Component focusOwner = dialog.getFocusOwner();
+////                if (focusOwner instanceof AbstractButton) {
+////                    doButtonAction((AbstractButton) focusOwner, new ActionEvent(focusOwner, 0, "Enter"));
+////                }
+////            }
+////        });
+//
+//
+//        pane.selectInitialValue();
+//        dialog.setVisible(true);
+//        dialog.dispose();
+//
+//        Object selectedValue = pane.getValue();
+//
+//        if (selectedValue == null)
+//            return JOptionPane.CLOSED_OPTION;
+//        if (options == null) {
+//            if (selectedValue instanceof Integer)
+//                return (Integer) selectedValue;
+//            return JOptionPane.CLOSED_OPTION;
+//        }
+//        for (int counter = 0, maxCounter = options.length;
+//             counter < maxCounter; counter++) {
+//            if (options[counter].equals(selectedValue))
+//                return counter;
+//        }
+//        return JOptionPane.CLOSED_OPTION;
+//    }
+//
+//    private static void doButtonAction(final AbstractButton button, final ActionEvent actionEvent) {
+//        button.doClick();
+//        final Action action = button.getAction();
+//        if (action != null && action.isEnabled())
+//            action.actionPerformed(actionEvent);
+//    }
+//
+
 }

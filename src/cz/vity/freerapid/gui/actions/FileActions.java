@@ -50,7 +50,8 @@ public class FileActions extends AbstractBean {
             dialog = new NewLinksDialog(managerDirector, app.getMainFrame());
 
         if (urlList != null) {
-            Swinger.bringToFront(app.getMainFrame(), AppPrefs.getProperty(UserProp.BRING_TO_FRONT_WHEN_PASTED, UserProp.BRING_TO_FRONT_WHEN_PASTED_DEFAULT));
+            if (!showing)
+                Swinger.bringToFront(app.getMainFrame(), AppPrefs.getProperty(UserProp.BRING_TO_FRONT_WHEN_PASTED, UserProp.BRING_TO_FRONT_WHEN_PASTED_DEFAULT));
             final List<URL> urlList1 = urlList;
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {

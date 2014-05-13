@@ -366,7 +366,7 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
                         new ColumnSpec[]{
                                 new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
                                 FormFactory.UNRELATED_GAP_COLSPEC,
-                                new ColumnSpec("max(pref;55dlu)"),
+                                new ColumnSpec("max(pref;42dlu)"),
                                 FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                                 FormFactory.DEFAULT_COLSPEC
                         },

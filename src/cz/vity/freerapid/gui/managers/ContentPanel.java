@@ -537,15 +537,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                 if (SwingUtilities.isRightMouseButton(e))
                     showPopMenu(e);
                 else if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2) {
-                    if (ContentPanel.this.isCompleteWithFilesEnabled())
-                        openFileAction();
-                    else if (isSelectedEnabled()) {
-                        try {
-                            downloadInformationAction();
-                        } catch (Exception ex) {
-                            LogUtils.processException(logger, ex);
-                        }
-                    }
+                    smartEnterAction();
                 }
             }
         });
@@ -567,9 +559,25 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         inputMap.put(KeyStroke.getKeyStroke("SPACE"), "resumeAction");
         actionMap.put("resumeAction", Swinger.getAction("resumeAction"));
 
+        inputMap.put(KeyStroke.getKeyStroke("ENTER"), "smartEnterAction");
+        actionMap.put("smartEnterAction", Swinger.getAction("smartEnterAction"));
+
 //        paste();
 
         updateFilters();
+    }
+
+    @org.jdesktop.application.Action
+    public void smartEnterAction() {
+        if (this.isCompleteWithFilesEnabled())
+            openFileAction();
+        else if (isSelectedEnabled()) {
+            try {
+                downloadInformationAction();
+            } catch (Exception ex) {
+                LogUtils.processException(logger, ex);
+            }
+        }
     }
 
     public void paste() {

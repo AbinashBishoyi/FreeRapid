@@ -11,10 +11,12 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
-XXth October 2008 - FreeRapid Downloader 0.62 released
-  Added : plugins - support for egoshare.com and share-online.biz [implemented by Lukiz]
+8th October 2008 - FreeRapid Downloader 0.65 released
+  Added : plugins - support for letibit.com [FS#25 - requested by Chris C., implemented by Lukiz] 
+  Added : plugins - support for egoshare.com, share-online.biz, easy-share.com [implemented by Lukiz]
   Added : plugins - support for megarotic.com and sexuploader.com [FS#24 - requested by Anonymous, implemented by Lukiz]   
   Added : new keystroke for Resume action - SPACE key
+  Added : new alternative keystroke for Open file/Show Information dialog - ENTER key
   Added : possibility to import (with clipboard monitoring) or paste links without 'http://' at the beginning         
   Added : Sort by name function - available from Downloads menu - ctrl+S [requested by ATom]
   Added : link to the Flash video on the web from Help menu
@@ -23,19 +25,19 @@ XXth October 2008 - FreeRapid Downloader 0.62 released
   Added : option to disable using default connection (warning: only connections from proxy list will be used)
   Added : possibility to set proxy settings for default connection 
   Added : support to set application property from command line (mostly for debug or testing purposes)
-#  Added : Czech translation [thanks to Lukiz&Kajda!]
-#  Added : German translation [thanks to JayDee!]
+  Added : Czech translation [thanks to Lukiz&Kajda!] - more translations will come soon
   Added : option to select language (translation) for application
   Changed : improved searching for free available net port on localhost for creating only one instance of the application
-  Changed : average speed and duration time attributes on completed file are stored [requested by Chris Clemson]
+  Changed : average speed and duration time attributes on completed file are stored [requested by Chris C.]
   Changed : small redesign of Appearance panel in User Preferences dialog
   Changed : improved pre-allocation files (less file fragmentation)
   Changed : minor changes in RapidShare, FileFactory, Megaupload, Uploaded.to plugins
   Changed : plugin extension was renamed from .zip to .frp
-  Changed : default connection timeout is set to 100 seconds 
+  Changed : default connection timeout is set to 100 seconds
+  Fixed : OK button is not active when pressing shift+DELETE [reported by Saymon]
   Fixed : window size/position was not restored when application crashed
   Fixed : description area was not enabled for selection copy after file completion
-  Fixed : removed czech labels from open proxy file dialog 
+  Fixed : removed czech labels from open proxy file dialog for English locales
 
 20th September 2008 - FreeRapid Downloader 0.61 released - bug fix release + 1 great option ;-)
   Fixed : updated a few labels  
