@@ -123,6 +123,9 @@ final public class DownloadClient implements HttpDownloadClient {
                 if ((newuri == null) || ("".equals(newuri))) {
                     newuri = "/";
                 }
+                if (!newuri.contains("http://"))
+                 newuri = "http://" + method.getURI().getHost() + newuri;
+
                 logger.info("Redirect target: " + newuri);
                 setReferer(newuri);
                 method.releaseConnection();
@@ -276,6 +279,9 @@ final public class DownloadClient implements HttpDownloadClient {
                 if ((newuri == null) || ("".equals(newuri))) {
                     newuri = "/";
                 }
+                if (!newuri.contains("http://"))
+                    newuri = "http://" + method.getURI().getHost() + newuri;
+
                 logger.info("Redirect target: " + newuri);
                 setReferer(newuri);
                 GetMethod redirect = getGetMethod(newuri);
