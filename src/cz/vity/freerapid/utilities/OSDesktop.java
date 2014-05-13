@@ -38,17 +38,15 @@ public class OSDesktop {
      * @param file file with folder to open with local application
      */
     public static void openDirectoryForFile(File file) {
-        if (!file.exists())
-            return;
-
-        if (Utils.isWindows()) {
+        final File parentFile = file.getParentFile();
+        if (Utils.isWindows() && file.exists()) {
             try {
                 Runtime.getRuntime().exec("explorer.exe /n,/e,/select,\"" + file.getAbsolutePath() + '\"');
             } catch (IOException e) {
                 LogUtils.processException(logger, e);
             }
         } else {
-            openFile(file.getParentFile());
+            openFile(parentFile);
         }
     }
 }
