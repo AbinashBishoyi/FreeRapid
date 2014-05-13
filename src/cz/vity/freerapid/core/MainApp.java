@@ -107,6 +107,7 @@ public class MainApp extends SingleXFrameApplication {
     private void initMainFrame() {
         final JFrame frame = getMainFrame();
         if (AppPrefs.getProperty(FWProp.DECORATED_FRAMES, false)) {
+            JFrame.setDefaultLookAndFeelDecorated(true);
             frame.setUndecorated(true);
             frame.getRootPane().setWindowDecorationStyle(JRootPane.FRAME);
             LookAndFeels.updateWindowUI(frame);

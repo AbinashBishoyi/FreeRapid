@@ -207,7 +207,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
             public boolean isHighlighted(Component renderer, ComponentAdapter adapter) {
                 return Boolean.FALSE.equals(adapter.getValue(PluginMetaDataTableModel.COLUMN_ACTIVE));
             }
-        }, HighlighterFactory.GENERIC_GRAY, null);
+        }, HighlighterFactory.GENERIC_GRAY, Color.BLACK);
 
         pluginTable.addHighlighter(first);
 
