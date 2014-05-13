@@ -37,6 +37,7 @@ final public class FWProp {
     public static final String SELECTED_LANGUAGE = "selLanguage";
     public static final String DEFAULT_LANG_CODE = "EN";
     public static final boolean ONE_INSTANCE_DEFAULT = true;
+    public static final String SELECTED_COUNTRY = "country";
 
     private FWProp() {
     }

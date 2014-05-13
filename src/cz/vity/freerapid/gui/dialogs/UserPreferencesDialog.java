@@ -351,6 +351,7 @@ public class UserPreferencesDialog extends AppDialog {
 
     private void updateLng() {
         AppPrefs.storeProperty(FWProp.SELECTED_LANGUAGE, ((SupportedLanguage) comboLng.getSelectedItem()).getLanguageCode());
+        AppPrefs.storeProperty(FWProp.SELECTED_COUNTRY, ((SupportedLanguage) comboLng.getSelectedItem()).getCountry());
         Swinger.showInformationDialog(getResourceMap().getString("changeLanguageAfterRestart"));
     }
 

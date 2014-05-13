@@ -198,17 +198,17 @@ public final class AppPrefs {
             inputStream = new FileInputStream(new File(storageDir, propertiesFileName));
             //props.loadFromXML(inputStream);
             Preferences.importPreferences(inputStream);
-            inputStream.close();
         } catch (FileNotFoundException e) {
             logger.log(Level.CONFIG, "User preferences file was not found (first application start?)");
         } catch (Exception e) {
+            logger.log(Level.WARNING, e.getMessage(), e);
+        } finally {
             try {
                 if (inputStream != null)
                     inputStream.close();
             } catch (IOException ex) {
                 logger.log(Level.WARNING, ex.getMessage(), ex);
             }
-            logger.log(Level.WARNING, e.getMessage(), e);
         }
         return Preferences.userRoot().node(getUserNode());
     }

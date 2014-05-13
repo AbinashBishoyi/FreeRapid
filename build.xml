@@ -178,8 +178,9 @@
 
 
     <target name="resources" depends="init">
+        <delete dir="${resources.dir}"/>
         <mkdir dir="${resources.dir}"/>
-        <copy todir="${resources.dir}">
+        <copy todir="${resources.dir}" overwrite="">
             <fileset dir="${src.dir}" includes="**/?*.properties" excludes="${ignoreProperties}"/>
         </copy>
         <zip zipfile="${dist.dir}/resources.zip">
@@ -192,13 +193,17 @@
             <fileset dir="out/production/freerapid" includes="**/?*.properties" excludes="${ignoreProperties}"/>
         </delete>
 
-        <native2ascii src="${src.dir}" encoding="utf-8" includes="**/?*.properties" excludes="${ignoreProperties}"
+        <native2ascii src="${src.dir}" encoding="unicode" includes="**/?*_zh*.properties"
+                      dest="out/production/freerapid" ext=".properties"/>
+
+        <native2ascii src="${src.dir}" encoding="utf-8" includes="**/?*.properties"
+                      excludes="${ignoreProperties},**/?*_zh*.properties"
                       dest="out/production/freerapid" ext=".properties"/>
     </target>
 
 
     <target name="dist" depends="build" description="creating release">
-        <zip zipfile="${dist.dir}/${version.name}.zip">
+        <zip zipfile="${dist.dir}/${version.name}.zip" level="9" compress="">
             <fileset dir=".">
                 <include name="${build.dir}/"/>
                 <!--<exclude name="${build.dir}/${mainjar-packed.file}"/>-->

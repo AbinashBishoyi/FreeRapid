@@ -13,19 +13,19 @@ Fixed - indicates a bug fix
 
 XXth October 2008 - FreeRapid Downloader 0.7 released
   Added : plugins - support for xtraupload.de [implemented by Lukiz]
-  Added : slovak translation 
+  Added : slovak translation [thanks to dDwarf!] 
   Added : autobackup files (filelist.xml, history.xml)  
   Added : new download state WAIT! to show to user "you have to wait XX minutes"
   Added : table scrolls to new position of selection [requested by Pavel]
   Added : options to control confirmation dialogs 
   Added : option to disable history
   Added : buttons to create desktop, start menu, quick launch, start up shortcuts;
-          Linux users can configure syscmd.properties file
+          Linux/MacOS users can configure syscmd.properties file
   Added : autoshutdown options - standby, hibernate, reboot, shutdown, quit when all downloads complete; 
-          Linux users can configure syscmd.properties file
+          Linux/MacOS users can configure syscmd.properties file
   Added : command line option to reset application properties (--reset)
   Changed : remapped selection shortcuts - HOME-first row , END-last row, ctrl+HOME-first column, ctrl+END-last column
-  Changed : removed memory indicator
+  Changed : removed heap memory indicator
   Changed : updated czech translation
   Changed : plugin file names renamed - version info removed
   Fixed : NewLinks dialog - pressed ENTER caused calling insert action twice  

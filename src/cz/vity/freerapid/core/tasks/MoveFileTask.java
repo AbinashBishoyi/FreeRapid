@@ -55,7 +55,8 @@ public class MoveFileTask extends CoreTask<Void, Void> {
 
 
         message("Moving file");
-        if (from.getParentFile().equals(to.getParentFile())) {
+        final File parentToDir = to.getParentFile();
+        if (from.getParentFile().equals(parentToDir)) {
             if (from.renameTo(to)) {
                 saveToHistoryList();
             } else throw new FileTransferFailedException(getResourceMap().getString("creatingOutputFilePathFailed"));
@@ -63,8 +64,8 @@ public class MoveFileTask extends CoreTask<Void, Void> {
             return null;
         }
 
-        if (!to.getParentFile().exists()) {
-            if (!to.mkdirs())
+        if (!parentToDir.exists()) {
+            if (!parentToDir.mkdirs())
                 throw new FileTransferFailedException(getResourceMap().getString("creatingOutputFilePathFailed"));
         }
 

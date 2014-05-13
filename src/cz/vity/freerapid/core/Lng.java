@@ -6,20 +6,21 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 /**
  * @author Vity
  */
 public final class Lng {
-    private final static Logger logger = Logger.getLogger(Lng.class.getName());
+    //private final static Logger logger = Logger.getLogger(Lng.class.getName());
 
     private static List<SupportedLanguage> supportedLanguages = null;
 
     private static final String LANG_LIST_FILE = "languages.properties";
     private static final String LANG_NONAME_ICON = "blank.gif";
-    public static final String localeLanguageCode = Locale.getDefault().getLanguage().toUpperCase();
+    public static final String localeLanguageCode = Locale.getDefault().getLanguage();
     private static String selLanguageCode;
+    private static String selCountryCode;
+    private static final String localeCountry = Locale.getDefault().getCountry();
 
 
     private Lng() {
@@ -30,65 +31,74 @@ public final class Lng {
             supportedLanguages = new LinkedList<SupportedLanguage>();
             final Properties languages = Utils.loadProperties(LANG_LIST_FILE, true);
             int counter = -1;
-            final String lngPostfix = "language", lngNamePostfix = ".name", lngMnemonicPostfix = ".mnemonic", lngIconPostfix = ".icon";
-            String lngCode, lngItem;
+            final String lngPostfix = "language", lngNamePostfix = ".name", lngMnemonicPostfix = ".mnemonic", lngIconPostfix = ".icon", countryPrefix = ".country";
+            String lngCode, lngItem, country;
             Integer mnemonic;
             SupportedLanguage language;
             while ((lngCode = languages.getProperty(lngItem = (lngPostfix + ++counter))) != null) {
                 mnemonic = (int) languages.getProperty(lngItem + lngMnemonicPostfix, "\0").charAt(0);
-                language = new SupportedLanguage(lngCode, languages.getProperty(lngItem + lngNamePostfix, "?"), languages.getProperty(lngItem + lngIconPostfix, LANG_NONAME_ICON), mnemonic);
+                country = languages.getProperty(lngItem + countryPrefix, "");
+                language = new SupportedLanguage(lngCode, languages.getProperty(lngItem + lngNamePostfix, "?"), languages.getProperty(lngItem + lngIconPostfix, LANG_NONAME_ICON), mnemonic, country);
                 supportedLanguages.add(language);
             }
         }
         return supportedLanguages;
     }
 
-    public static void loadLangProperties() {
-        selLanguageCode = AppPrefs.getProperty(FWProp.SELECTED_LANGUAGE, null);
-        if (selLanguageCode == null) {
-            selLanguageCode = FWProp.DEFAULT_LANG_CODE;
+    private static SupportedLanguage findSupportedLanguage(SupportedLanguage lang) {
+        if ("".equals(lang.getCountry())) {
             for (SupportedLanguage supportedLanguage : getSupportedLanguages()) {
-
-                if (supportedLanguage.getLanguageCode().equals(localeLanguageCode)) {
-                    selLanguageCode = supportedLanguage.getLanguageCode();
-                    break;
+                if (supportedLanguage.getLanguageCode().equalsIgnoreCase(lang.getLanguageCode())) {
+                    return supportedLanguage;
                 }
             }
-            if (!selLanguageCode.equals(localeLanguageCode))
-                Locale.setDefault(new Locale(selLanguageCode, Locale.getDefault().getCountry()));
-            //AppPrefs.storeProperty(FWProp.SELECTED_LANGUAGE, Locale.getDefault().getLanguage());
         } else {
-            boolean found = false;
-            for (SupportedLanguage lng : getSupportedLanguages()) {
-                if (lng.getLanguageCode().equals(selLanguageCode)) {
-                    found = true;
-                    break;
+            for (SupportedLanguage supportedLanguage : getSupportedLanguages()) {
+                if (supportedLanguage.equals(lang)) {
+                    return supportedLanguage;
                 }
-            }
-
-            if (found) {
-                if (!selLanguageCode.equals(localeLanguageCode))
-                    Locale.setDefault(new Locale(selLanguageCode, Locale.getDefault().getCountry()));
-            } else {
-                selLanguageCode = FWProp.DEFAULT_LANG_CODE;
-                for (SupportedLanguage supportedLanguage : getSupportedLanguages()) {
-
-                    if (supportedLanguage.getLanguageCode().equals(localeLanguageCode)) {
-                        selLanguageCode = supportedLanguage.getLanguageCode();
-                        break;
-                    }
-                }
-                Locale.setDefault(new Locale(selLanguageCode, Locale.getDefault().getCountry()));
             }
         }
+        return null;
+    }
+
+    public static void loadLangProperties() {
+        selLanguageCode = AppPrefs.getProperty(FWProp.SELECTED_LANGUAGE, null);
+        SupportedLanguage result;
+        if (selLanguageCode == null) {
+            result = findSupportedLanguage(new SupportedLanguage(localeLanguageCode, localeCountry));
+            if (result == null) {
+                result = findSupportedLanguage(new SupportedLanguage(localeLanguageCode, ""));
+                if (result == null) {
+                    result = new SupportedLanguage(FWProp.DEFAULT_LANG_CODE, "");
+                }
+            }
+        } else {
+            selCountryCode = AppPrefs.getProperty(FWProp.SELECTED_COUNTRY, "");
+            result = findSupportedLanguage(new SupportedLanguage(selLanguageCode, selCountryCode));
+            if (result == null) {
+                result = findSupportedLanguage(new SupportedLanguage(selLanguageCode, ""));
+                if (result == null) {
+                    result = new SupportedLanguage(FWProp.DEFAULT_LANG_CODE, "");
+                }
+            }
+        }
+
+        selLanguageCode = result.getLanguageCode();
+        selCountryCode = result.getCountry();
+
+        final Locale selLocale = new Locale(selLanguageCode.toLowerCase(), ("".equals(selCountryCode) ? localeCountry : selCountryCode).toUpperCase());
+        Locale.setDefault(selLocale);
     }
 
     public static SupportedLanguage getSelectedLanguage() {
-        for (SupportedLanguage language : getSupportedLanguages()) {
-            if (language.getLanguageCode().equals(selLanguageCode))
-                return language;
+        SupportedLanguage result = findSupportedLanguage(new SupportedLanguage(selLanguageCode, selCountryCode));
+        if (result == null) {
+            result = findSupportedLanguage(new SupportedLanguage(selLanguageCode, ""));
+            if (result == null) {
+                result = new SupportedLanguage(FWProp.DEFAULT_LANG_CODE, "");
+            }
         }
-        logger.warning("Language code not found among available languages: " + selLanguageCode);
-        return new SupportedLanguage(selLanguageCode);
+        return result;
     }
 }
