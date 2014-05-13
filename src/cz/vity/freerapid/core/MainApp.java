@@ -19,6 +19,7 @@ import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.util.EventObject;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -48,10 +49,13 @@ public class MainApp extends SingleXFrameApplication {
 
         minimizeOnStart = line.isMinimize();
 
-        if (Utils.isWindows() && new java.io.File("C:/Program files/Eset").exists())
-            line.getProperties().put(FWProp.ONEINSTANCE, "false");
+        final Map<String, String> map = line.getProperties();
+        if (Utils.isWindows() && new java.io.File("C:/Program files/Eset").exists()) {
+            if (!map.containsKey(FWProp.ONEINSTANCE))
+                map.put(FWProp.ONEINSTANCE, "false");
+        }
 
-        this.appPrefs = new AppPrefs(this.getContext(), line.getProperties(), line.isResetOptions());
+        this.appPrefs = new AppPrefs(this.getContext(), map, line.isResetOptions());
 
         final String path = Utils.getAppPath();//Utils pouzivaji AppPrefs i logovani
         int index = path.indexOf('+');
