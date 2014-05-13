@@ -596,14 +596,14 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         });
     }
 
-    public void intervalAdded(ListDataEvent e) {
-        if (isInInterval(getSelectedRows(), e.getIndex0(), e.getIndex1())) {
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
+    public void intervalAdded(final ListDataEvent e) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                if (isInInterval(getSelectedRows(), e.getIndex0(), e.getIndex1())) {
                     updateActions();
                 }
-            });
-        }
+            }
+        });
     }
 
     public void intervalRemoved(ListDataEvent e) {
