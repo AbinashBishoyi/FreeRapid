@@ -450,12 +450,24 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         initTable();
 
         AppPrefs.getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
-            public void preferenceChange(PreferenceChangeEvent evt) {
-                if (UserProp.SHOW_GRID_HORIZONTAL.equals(evt.getKey()) || UserProp.SHOW_GRID_VERTICAL.equals(evt.getKey()))
-                    updateGridLines();
+            public void preferenceChange(final PreferenceChangeEvent evt) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        updateTableFromPreferences(evt);
+                    }
+                });
             }
         });
         updateGridLines();
+    }
+
+    private void updateTableFromPreferences(PreferenceChangeEvent evt) {
+        if (UserProp.SHOW_GRID_HORIZONTAL.equals(evt.getKey()) || UserProp.SHOW_GRID_VERTICAL.equals(evt.getKey()))
+            updateGridLines();
+        else if (UserProp.SHOW_SERVICES_ICONS.equals(evt.getKey())) {
+            table.repaint();
+            table.packAll();
+        }
     }
 
     private void updateGridLines() {
@@ -603,6 +615,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         final WinampMoveStyle w = new WinampMoveStyle();
         table.addMouseListener(w);
         table.addMouseMotionListener(w);
+
+        table.packAll();
 
         table.setTransferHandler(new URLTransferHandler(director) {
             @Override
@@ -934,9 +948,11 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         @Override
         public void mousePressed(MouseEvent e) {
             if (SwingUtilities.isRightMouseButton(e)) {
-                rowPosition = table.rowAtPoint(e.getPoint());
-                if (rowPosition != -1)
-                    active = true;
+                if (AppPrefs.getProperty(UserProp.DRAG_ON_RIGHT_MOUSE, UserProp.DRAG_ON_RIGHT_MOUSE_DEFAULT)) {
+                    rowPosition = table.rowAtPoint(e.getPoint());
+                    if (rowPosition != -1)
+                        active = true;
+                }
             }
         }
 

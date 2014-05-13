@@ -32,37 +32,38 @@ class ServiceCellRenderer extends DefaultTableCellRenderer {
         final String shareDownloadServiceID = downloadFile.getPluginID();
         assert shareDownloadServiceID != null;
         final String serviceName = downloadFile.getServiceName();
-        Icon faviconImage = null;
+        Icon faviconImage;
         super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        if (AppPrefs.getProperty(UserProp.SHOW_SERVICES_ICONS, UserProp.SHOW_SERVICES_ICONS_DEFAULT)) {
-            faviconImage = iconCache.get(shareDownloadServiceID);
-            if (faviconImage == null) {
-                try {
-                    if (manager.hasPlugin(shareDownloadServiceID) && manager.getPluginMetadata(shareDownloadServiceID).hasFavicon()) {
-                        final ShareDownloadService service = manager.getPluginInstance(shareDownloadServiceID);
-                        faviconImage = service.getFaviconImage();
-                        if (faviconImage != null) {
-                            iconCache.put(shareDownloadServiceID, faviconImage);
-                        }
+
+        faviconImage = iconCache.get(shareDownloadServiceID);
+        if (faviconImage == null) {
+            try {
+                if (manager.hasPlugin(shareDownloadServiceID) && manager.getPluginMetadata(shareDownloadServiceID).hasFavicon()) {
+                    final ShareDownloadService service = manager.getPluginInstance(shareDownloadServiceID);
+                    faviconImage = service.getFaviconImage();
+                    if (faviconImage != null) {
+                        iconCache.put(shareDownloadServiceID, faviconImage);
                     }
-                } catch (NotSupportedDownloadServiceException e) {
-                    //do nothing
                 }
-                if (faviconImage == null)
-                    faviconImage = iconCache.get("default");
+            } catch (NotSupportedDownloadServiceException e) {
+                //do nothing
             }
+            if (faviconImage == null)
+                faviconImage = iconCache.get("default");
         }
         if (faviconImage != null) {
             this.setIcon(faviconImage);
-            this.setHorizontalAlignment(CENTER);
-            this.setText(null);
-            this.setToolTipText(serviceName);
-        } else {
-            this.setIcon(null);
-            this.setHorizontalAlignment(LEFT);
-            this.setToolTipText(null);
-            this.setText(serviceName);
         }
+        if (!AppPrefs.getProperty(UserProp.SHOW_SERVICES_ICONS, UserProp.SHOW_SERVICES_ICONS_DEFAULT)) {
+            this.setHorizontalAlignment(LEFT);
+            this.setText(serviceName);
+            this.setToolTipText(null);
+        } else {
+            this.setToolTipText(serviceName);
+            this.setText(null);
+            this.setHorizontalAlignment(CENTER);
+        }
+
         return this;
     }
 }

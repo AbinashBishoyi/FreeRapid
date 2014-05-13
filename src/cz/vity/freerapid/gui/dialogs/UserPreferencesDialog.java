@@ -6,6 +6,7 @@ import com.jgoodies.binding.adapter.SpinnerAdapterFactory;
 import com.jgoodies.binding.beans.PropertyConnector;
 import com.jgoodies.binding.list.ArrayListModel;
 import com.jgoodies.binding.list.SelectionInList;
+import com.jgoodies.binding.value.ConverterFactory;
 import com.jgoodies.binding.value.Trigger;
 import com.jgoodies.binding.value.ValueHolder;
 import com.jgoodies.binding.value.ValueModel;
@@ -482,6 +483,8 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         bind(spinnerErrorAttemptsCount, UserProp.ERROR_ATTEMPTS_COUNT, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT, -1, 999, 1);
         bind(spinnerAutoReconnectTime, UserProp.AUTO_RECONNECT_TIME, UserProp.AUTO_RECONNECT_TIME_DEFAULT, 1, 10000, 10);
 
+        bind(spinnerUpdateHour, UserProp.PLUGIN_UPDATE_CHECK_INTERVAL, UserProp.PLUGIN_UPDATE_CHECK_INTERVAL_DEFAULT, 1, 1000, 1);
+
         bind(checkProcessFromTop, UserProp.START_FROM_TOP, UserProp.START_FROM_TOP_DEFAULT);
 
         ValueModel valueModel = bind(checkUseProxyList, UserProp.USE_PROXY_LIST, false);
@@ -525,6 +528,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
         PropertyConnector.connectAndUpdate(confirmRemove, checkConfirmDownloadingRemoveOnly, "enabled");
 
+
         bind(checkShowHorizontalLinesInTable, UserProp.SHOW_GRID_HORIZONTAL, UserProp.SHOW_GRID_HORIZONTAL_DEFAULT);
         bind(checkShowVerticalLinesInTable, UserProp.SHOW_GRID_VERTICAL, UserProp.SHOW_GRID_VERTICAL_DEFAULT);
 
@@ -535,7 +539,11 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
         bind(check4PluginUpdatesAutomatically, UserProp.CHECK4_PLUGIN_UPDATES_AUTOMATICALLY, UserProp.CHECK4_PLUGIN_UPDATES_AUTOMATICALLY_DEFAULT);
         bind(checkDownloadNotExistingPlugins, UserProp.DOWNLOAD_NOT_EXISTING_PLUGINS, UserProp.DOWNLOAD_NOT_EXISTING_PLUGINS_DEFAULT);
-        bind(checkConfirmUpdating, UserProp.CONFIRM_UPDATING_PLUGINS, UserProp.CONFIRM_UPDATING_PLUGINS_DEFAULT);
+        ValueModel checkConfirmValueModel = bind(checkConfirmUpdating, UserProp.CONFIRM_UPDATING_PLUGINS, UserProp.CONFIRM_UPDATING_PLUGINS_DEFAULT);
+
+        bind(checkForFileExistenceBeforeDownload, UserProp.TEST_FILE, UserProp.TEST_FILE_DEFAULT);
+        bind(checkServiceAsIconOnly, UserProp.SHOW_SERVICES_ICONS, UserProp.SHOW_SERVICES_ICONS_DEFAULT);
+
 
         bind(checkPrepareFile, UserProp.ANTI_FRAGMENT_FILES, UserProp.ANTI_FRAGMENT_FILES_DEFAULT);
 
@@ -551,8 +559,13 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         PropertyConnector.connectAndUpdate(valueModel, checkCloseToTray, "enabled");
         PropertyConnector.connectAndUpdate(valueModel, checkHideWhenMinimized, "enabled");
 
+        PropertyConnector.connectAndUpdate(ConverterFactory.createBooleanNegator(checkConfirmValueModel), comboHowToUpdate, "enabled");
+
+
         bind(comboFileExists, UserProp.FILE_ALREADY_EXISTS, UserProp.FILE_ALREADY_EXISTS_DEFAULT, "fileAlreadyExistsOptions");
         bind(comboRemoveCompleted, UserProp.REMOVE_COMPLETED_DOWNLOADS, UserProp.REMOVE_COMPLETED_DOWNLOADS_DEFAULT, "removeCompletedOptions");
+
+        bindCombobox(comboHowToUpdate, UserProp.PLUGIN_UPDATE_METHOD, UserProp.PLUGIN_UPDATE_METHOD_DEFAULT, "comboHowToUpdate");
 
         bindLaFCombobox();
 
@@ -576,6 +589,20 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         comboLng.setRenderer(new LanguageComboCellRenderer(context));
     }
 
+    private void bindCombobox(final JComboBox combobox, final String key, final Object defaultValue, final String propertyResourceMap) {
+        final String[] stringList = getList(propertyResourceMap);
+        if (stringList == null)
+            throw new IllegalArgumentException("Property '" + propertyResourceMap + "' does not provide any string list from resource map.");
+        bindCombobox(combobox, key, defaultValue, stringList);
+    }
+
+    private void bindCombobox(final JComboBox combobox, String key, final Object defaultValue, final String[] values) {
+        if (values == null)
+            throw new IllegalArgumentException("List of combobox values cannot be null!!");
+        final MyPreferencesAdapter adapter = new MyPreferencesAdapter(key, defaultValue);
+        final SelectionInList<String> inList = new SelectionInList<String>(values, new ValueHolder(values[(Integer) adapter.getValue()]), adapter);
+        Bindings.bind(combobox, inList);
+    }
 
     private void bind(JSpinner spinner, String key, int defaultValue, int minValue, int maxValue, int step) {
         spinner.setModel(SpinnerAdapterFactory.createNumberAdapter(
@@ -875,6 +902,12 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         checkConfirmFileRemove = new JCheckBox();
         checkConfirmDownloadingRemoveOnly = new JCheckBox();
 
+        checkForFileExistenceBeforeDownload = new JCheckBox();
+        checkServiceAsIconOnly = new JCheckBox();
+        checkServiceAsIconOnly = new JCheckBox();
+        checkForFileExistenceBeforeDownload.setName("checkForFileExistenceBeforeDownload");
+        checkServiceAsIconOnly.setName("checkServiceAsIconOnly");
+
         checkConfirmExiting.setName("checkConfirmExiting");
         checkConfirmFileDeletion.setName("checkConfirmFileDeletion");
         checkConfirmFileRemove.setName("checkConfirmFileRemove");
@@ -957,6 +990,13 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         checkShowTitle = new JCheckBox();
         checkPrepareFile = new JCheckBox();
 
+        JLabel labelCheckForUpdateEvery = new JLabel();
+        comboHowToUpdate = new JComboBox();
+        spinnerUpdateHour = new JSpinner();
+        JLabel labelHours = new JLabel();
+        JLabel labelUpdateFromServer = new JLabel();
+        JLabel labelAfterDetectUpdate = new JLabel();
+
         JPanel panelPlugins = new JPanel();
         JTabbedPane pluginTabbedPane = new JTabbedPane();
         pluginTabbedPane.setName("pluginTabbedPane");
@@ -969,7 +1009,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         JPanel pluginPanelUpdates = new JPanel();
         check4PluginUpdatesAutomatically = new JCheckBox();
         checkDownloadNotExistingPlugins = new JCheckBox();
-        JLabel labelUpdateFromServer = new JLabel();
+
         comboPluginServers = new JComboBox();
         btnResetDefaultPluginServer = new JButton();
         btnUpdatePlugins = new JButton();
@@ -1119,18 +1159,20 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                                             FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.LINE_GAP_ROWSPEC,
                                             FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.LINE_GAP_ROWSPEC,
                                     }), panelDownloadsSettings);
 
-                            panelDownloadsSettingsBuilder.add(checkContinueInterrupted, cc.xywh(3, 1, 7, 1));
-                            panelDownloadsSettingsBuilder.add(checkProcessFromTop, cc.xywh(3, 2, 7, 1));
-                            panelDownloadsSettingsBuilder.add(checkAutoShutDownDisabledWhenExecuted, cc.xywh(3, 3, 7, 1));
-                            panelDownloadsSettingsBuilder.add(labelIfFilenameExists, cc.xywh(3, 5, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
-                            panelDownloadsSettingsBuilder.add(comboFileExists, cc.xy(5, 5));
-                            panelDownloadsSettingsBuilder.add(labelRemoveCompleted, cc.xywh(7, 5, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
-                            panelDownloadsSettingsBuilder.add(comboRemoveCompleted, cc.xy(9, 5));
+                            panelDownloadsSettingsBuilder.add(checkForFileExistenceBeforeDownload, cc.xywh(3, 1, 7, 1));
+                            panelDownloadsSettingsBuilder.add(checkContinueInterrupted, cc.xywh(3, 2, 7, 1));
+                            panelDownloadsSettingsBuilder.add(checkProcessFromTop, cc.xywh(3, 3, 7, 1));
+                            panelDownloadsSettingsBuilder.add(checkAutoShutDownDisabledWhenExecuted, cc.xywh(3, 4, 7, 1));
+                            panelDownloadsSettingsBuilder.add(labelIfFilenameExists, cc.xywh(3, 6, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
+                            panelDownloadsSettingsBuilder.add(comboFileExists, cc.xy(5, 6));
+                            panelDownloadsSettingsBuilder.add(labelRemoveCompleted, cc.xywh(7, 6, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
+                            panelDownloadsSettingsBuilder.add(comboRemoveCompleted, cc.xy(9, 6));
                         }
 
                         PanelBuilder panelGeneralBuilder = new PanelBuilder(new FormLayout(
@@ -1347,8 +1389,17 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                                 //---- checkConfirmUpdating ----
                                 checkConfirmUpdating.setName("checkConfirmUpdating");
 
+                                //---- labelAfterDetectUpdate ----
+                                labelAfterDetectUpdate.setName("labelAfterDetectUpdate");
+
                                 //---- checkDownloadNotExistingPlugins ----
                                 checkDownloadNotExistingPlugins.setName("checkDownloadNotExistingPlugins");
+
+                                //---- labelCheckForUpdateEvery ----
+                                labelCheckForUpdateEvery.setName("labelCheckForUpdateEvery");
+
+                                //---- labelHours ----
+                                labelHours.setName("labelHours");
 
                                 //---- labelUpdateFromServer ----
                                 labelUpdateFromServer.setName("labelUpdateFromServer");
@@ -1363,6 +1414,8 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                                 PanelBuilder pluginPanelUpdatesBuilder = new PanelBuilder(new FormLayout(
                                         new ColumnSpec[]{
                                                 FormFactory.DEFAULT_COLSPEC,
+                                                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                                new ColumnSpec(Sizes.bounded(Sizes.MINIMUM, Sizes.dluX(30), Sizes.dluX(30))),
                                                 FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                                                 new ColumnSpec(ColumnSpec.FILL, Sizes.bounded(Sizes.DEFAULT, Sizes.dluX(50), Sizes.dluX(75)), FormSpec.DEFAULT_GROW),
                                                 FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
@@ -1379,15 +1432,24 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                                                 FormFactory.LINE_GAP_ROWSPEC,
                                                 FormFactory.DEFAULT_ROWSPEC,
                                                 FormFactory.LINE_GAP_ROWSPEC,
+                                                FormFactory.DEFAULT_ROWSPEC,
+                                                FormFactory.UNRELATED_GAP_ROWSPEC,
+                                                FormFactory.DEFAULT_ROWSPEC,
+                                                FormFactory.LINE_GAP_ROWSPEC,
                                                 new RowSpec(RowSpec.CENTER, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
                                         }), pluginPanelUpdates);
 
-                                pluginPanelUpdatesBuilder.add(check4PluginUpdatesAutomatically, cc.xywh(1, 1, 3, 1));
-                                pluginPanelUpdatesBuilder.add(checkConfirmUpdating, cc.xywh(1, 3, 3, 1));
-                                pluginPanelUpdatesBuilder.add(checkDownloadNotExistingPlugins, cc.xywh(1, 5, 3, 1));
-                                pluginPanelUpdatesBuilder.add(labelUpdateFromServer, cc.xywh(1, 7, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
-                                pluginPanelUpdatesBuilder.add(comboPluginServers, cc.xy(3, 7));
-                                pluginPanelUpdatesBuilder.add(btnResetDefaultPluginServer, cc.xy(5, 7));
+                                pluginPanelUpdatesBuilder.add(check4PluginUpdatesAutomatically, cc.xywh(1, 1, 5, 1));
+                                pluginPanelUpdatesBuilder.add(checkConfirmUpdating, cc.xywh(1, 3, 5, 1));
+                                pluginPanelUpdatesBuilder.add(labelAfterDetectUpdate, cc.xywh(1, 5, 3, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
+                                pluginPanelUpdatesBuilder.add(comboHowToUpdate, cc.xywh(5, 5, 1, 1, CellConstraints.LEFT, CellConstraints.DEFAULT));
+                                pluginPanelUpdatesBuilder.add(checkDownloadNotExistingPlugins, cc.xywh(1, 7, 5, 1));
+                                pluginPanelUpdatesBuilder.add(labelCheckForUpdateEvery, cc.xywh(1, 9, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
+                                pluginPanelUpdatesBuilder.add(spinnerUpdateHour, cc.xy(3, 9));
+                                pluginPanelUpdatesBuilder.add(labelHours, cc.xy(5, 9));
+                                pluginPanelUpdatesBuilder.add(labelUpdateFromServer, cc.xywh(1, 11, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
+                                pluginPanelUpdatesBuilder.add(comboPluginServers, cc.xywh(3, 11, 3, 1));
+                                pluginPanelUpdatesBuilder.add(btnResetDefaultPluginServer, cc.xy(7, 11));
                             }
                             pluginTabbedPane.addTab(bundle.getString("pluginPanelUpdates.tab.title"), pluginPanelUpdates);
 
@@ -1404,6 +1466,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                         panelPluginsBuilder.add(pluginTabbedPane, cc.xy(1, 1));
                     }
                     panelCard.add(panelPlugins, "CARD6");
+
                     //======== panelViews ========
                     {
                         panelViews.setBorder(Borders.TABBED_DIALOG_BORDER);
@@ -1445,6 +1508,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                                             FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC,
                                     }), panelAppearance);
 
                             panelAppearanceBuilder.add(labelLaF, cc.xy(3, 1));
@@ -1454,6 +1518,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                             panelAppearanceBuilder.add(checkShowHorizontalLinesInTable, cc.xywh(3, 5, 5, 1));
                             panelAppearanceBuilder.add(checkShowVerticalLinesInTable, cc.xywh(3, 6, 5, 1));
                             panelAppearanceBuilder.add(checkShowTitle, cc.xywh(3, 7, 5, 1));
+                            panelAppearanceBuilder.add(checkServiceAsIconOnly, cc.xywh(3, 8, 5, 1));
                         }
 
                         //======== panel System tray ========
@@ -1706,6 +1771,8 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
     private JCheckBox checkUseProxyList;
     private JCheckBox checkShowTitle;
     private JCheckBox checkProcessFromTop;
+    private JCheckBox checkForFileExistenceBeforeDownload;
+    private JCheckBox checkServiceAsIconOnly;
 
     private JTextField fieldProxyListPath;
     private JButton btnProxyListPathSelect;
@@ -1723,9 +1790,11 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
     private JButton btnResetDefaultPluginServer;
     private JButton btnUpdatePlugins;
+    private JComboBox comboHowToUpdate;
 
     private PopdownButton popmenuButton;
 
+    private JSpinner spinnerUpdateHour;
 
     private void updateLookAndFeel() {
         boolean succesful;

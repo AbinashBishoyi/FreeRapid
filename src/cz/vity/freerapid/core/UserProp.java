@@ -196,4 +196,12 @@ final public class UserProp {
 
     public static final String PLUGIN_LAST_UPDATE_TIMESTAMP_CHECK = "pluginLastUpdateDateTime";
 
+    public static final String DRAG_ON_RIGHT_MOUSE = "dragOnRightMouse";
+    public static final boolean DRAG_ON_RIGHT_MOUSE_DEFAULT = true;
+
+    public static final String PLUGIN_UPDATE_METHOD = "pluginUpdateMethod";
+    public static final int PLUGIN_UPDATE_METHOD_DIALOG = 0;
+    public static final int PLUGIN_UPDATE_METHOD_AUTO = 1;
+    public static final int PLUGIN_UPDATE_METHOD_DEFAULT = PLUGIN_UPDATE_METHOD_DIALOG;
+
 }

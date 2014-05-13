@@ -55,7 +55,12 @@ public class UserPreferencesDialog extends JDialog {
 		JPanel pluginPanelUpdates = new JPanel();
 		check4PluginUpdatesAutomatically = new JCheckBox();
 		checkConfirmUpdating = new JCheckBox();
+		JLabel labelAfterDetectUpdate = new JLabel();
+		comboHowToUpdate = new JComboBox();
 		checkDownloadNotExistingPlugins = new JCheckBox();
+		JLabel labelCheckForUpdateEvery = new JLabel();
+		spinnerUpdateHour = new JSpinner();
+		JLabel labelHours = new JLabel();
 		JLabel labelUpdateFromServer = new JLabel();
 		comboPluginServers = new JComboBox();
 		btnResetDefaultPluginServer = new JButton();
@@ -263,8 +268,17 @@ public class UserPreferencesDialog extends JDialog {
 								//---- checkConfirmUpdating ----
 								checkConfirmUpdating.setText(bundle.getString("checkConfirmUpdating.text"));
 
+								//---- labelAfterDetectUpdate ----
+								labelAfterDetectUpdate.setText(bundle.getString("labelAfterDetectUpdate.text"));
+
 								//---- checkDownloadNotExistingPlugins ----
 								checkDownloadNotExistingPlugins.setText(bundle.getString("checkDownloadNotExistingPlugins.text"));
+
+								//---- labelCheckForUpdateEvery ----
+								labelCheckForUpdateEvery.setText(bundle.getString("labelCheckForUpdateEvery.text"));
+
+								//---- labelHours ----
+								labelHours.setText(bundle.getString("labelHours.text"));
 
 								//---- labelUpdateFromServer ----
 								labelUpdateFromServer.setText(bundle.getString("labelUpdateFromServer.text"));
@@ -279,6 +293,8 @@ public class UserPreferencesDialog extends JDialog {
 								PanelBuilder pluginPanelUpdatesBuilder = new PanelBuilder(new FormLayout(
 									new ColumnSpec[] {
 										FormFactory.DEFAULT_COLSPEC,
+										FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+										new ColumnSpec(Sizes.bounded(Sizes.MINIMUM, Sizes.dluX(30), Sizes.dluX(30))),
 										FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
 										new ColumnSpec(ColumnSpec.FILL, Sizes.bounded(Sizes.DEFAULT, Sizes.dluX(50), Sizes.dluX(75)), FormSpec.DEFAULT_GROW),
 										FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
@@ -295,15 +311,24 @@ public class UserPreferencesDialog extends JDialog {
 										FormFactory.LINE_GAP_ROWSPEC,
 										FormFactory.DEFAULT_ROWSPEC,
 										FormFactory.LINE_GAP_ROWSPEC,
+										FormFactory.DEFAULT_ROWSPEC,
+										FormFactory.UNRELATED_GAP_ROWSPEC,
+										FormFactory.DEFAULT_ROWSPEC,
+										FormFactory.LINE_GAP_ROWSPEC,
 										new RowSpec(RowSpec.CENTER, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
 									}), pluginPanelUpdates);
 
-								pluginPanelUpdatesBuilder.add(check4PluginUpdatesAutomatically, cc.xywh(1, 1, 3, 1));
-								pluginPanelUpdatesBuilder.add(checkConfirmUpdating,             cc.xywh(1, 3, 3, 1));
-								pluginPanelUpdatesBuilder.add(checkDownloadNotExistingPlugins,  cc.xywh(1, 5, 3, 1));
-								pluginPanelUpdatesBuilder.add(labelUpdateFromServer,            cc.xywh(1, 7, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
-								pluginPanelUpdatesBuilder.add(comboPluginServers,               cc.xy  (3, 7));
-								pluginPanelUpdatesBuilder.add(btnResetDefaultPluginServer,      cc.xy  (5, 7));
+								pluginPanelUpdatesBuilder.add(check4PluginUpdatesAutomatically, cc.xywh(1,  1, 5, 1));
+								pluginPanelUpdatesBuilder.add(checkConfirmUpdating,             cc.xywh(1,  3, 5, 1));
+								pluginPanelUpdatesBuilder.add(labelAfterDetectUpdate,           cc.xywh(1,  5, 3, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
+								pluginPanelUpdatesBuilder.add(comboHowToUpdate,                 cc.xywh(5,  5, 1, 1, CellConstraints.LEFT , CellConstraints.DEFAULT));
+								pluginPanelUpdatesBuilder.add(checkDownloadNotExistingPlugins,  cc.xywh(1,  7, 5, 1));
+								pluginPanelUpdatesBuilder.add(labelCheckForUpdateEvery,         cc.xywh(1,  9, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
+								pluginPanelUpdatesBuilder.add(spinnerUpdateHour,                cc.xy  (3,  9));
+								pluginPanelUpdatesBuilder.add(labelHours,                       cc.xy  (5,  9));
+								pluginPanelUpdatesBuilder.add(labelUpdateFromServer,            cc.xywh(1, 11, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
+								pluginPanelUpdatesBuilder.add(comboPluginServers,               cc.xywh(3, 11, 3, 1));
+								pluginPanelUpdatesBuilder.add(btnResetDefaultPluginServer,      cc.xy  (7, 11));
 							}
 							pluginTabbedPane.addTab(bundle.getString("pluginPanelUpdates.tab.title"), pluginPanelUpdates);
 
@@ -367,7 +392,9 @@ public class UserPreferencesDialog extends JDialog {
 	private JButton btnPluginOptions;
 	private JCheckBox check4PluginUpdatesAutomatically;
 	private JCheckBox checkConfirmUpdating;
+	private JComboBox comboHowToUpdate;
 	private JCheckBox checkDownloadNotExistingPlugins;
+	private JSpinner spinnerUpdateHour;
 	private JComboBox comboPluginServers;
 	private JButton btnResetDefaultPluginServer;
 	private JXButtonPanel buttonBar;

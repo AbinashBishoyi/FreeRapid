@@ -590,11 +590,11 @@
                    <class>com.jgoodies.forms.layout.FormLayout</class> 
                    <void method="setProperty"> 
                     <string>$columnSpecs</string> 
-                    <string>default, labelcompgap, (50dlu&lt;default&lt;75dlu):grow, labelcompgap, default, labelcompgap, unrelgap</string> 
+                    <string>default, labelcompgap, (30dlu&lt;min&lt;30dlu), labelcompgap, (50dlu&lt;default&lt;75dlu):grow, labelcompgap, default, labelcompgap, unrelgap</string> 
                    </void> 
                    <void method="setProperty"> 
                     <string>$rowSpecs</string> 
-                    <string>default, linegap, default, linegap, default, linegap, default, linegap, default:grow</string> 
+                    <string>default, linegap, default, linegap, default, linegap, default, linegap, default, unrelgap, default, linegap, default:grow</string> 
                    </void> 
                   </object> 
                   <void method="setProperty"> 
@@ -645,7 +645,7 @@
                     <class>com.jgoodies.forms.layout.CellConstraints</class> 
                     <void method="setProperty"> 
                      <string>gridWidth</string> 
-                     <int>3</int> 
+                     <int>5</int> 
                     </void> 
                    </object> 
                   </void> 
@@ -671,7 +671,66 @@
                     </void> 
                     <void method="setProperty"> 
                      <string>gridWidth</string> 
+                     <int>5</int> 
+                    </void> 
+                   </object> 
+                  </void> 
+                  <void method="add"> 
+                   <object class="com.jformdesigner.model.FormComponent"> 
+                    <string>javax.swing.JLabel</string> 
+                    <void method="setProperty"> 
+                     <string>text</string> 
+                     <object class="com.jformdesigner.model.FormMessage"> 
+                      <null/> 
+                      <string>labelAfterDetectUpdate.text</string> 
+                     </object> 
+                    </void> 
+                    <void property="name"> 
+                     <string>labelAfterDetectUpdate</string> 
+                    </void> 
+                    <void method="auxiliary"> 
+                     <void method="setProperty"> 
+                      <string>JavaCodeGenerator.variableLocal</string> 
+                      <boolean>true</boolean> 
+                     </void> 
+                    </void> 
+                   </object> 
+                   <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+                    <class>com.jgoodies.forms.layout.CellConstraints</class> 
+                    <void method="setProperty"> 
+                     <string>gridY</string> 
+                     <int>5</int> 
+                    </void> 
+                    <void method="setProperty"> 
+                     <string>gridWidth</string> 
                      <int>3</int> 
+                    </void> 
+                    <void method="setProperty"> 
+                     <string>hAlign</string> 
+                     <object class="com.jgoodies.forms.layout.CellConstraints" field="RIGHT"/> 
+                    </void> 
+                   </object> 
+                  </void> 
+                  <void method="add"> 
+                   <object class="com.jformdesigner.model.FormComponent"> 
+                    <string>javax.swing.JComboBox</string> 
+                    <void property="name"> 
+                     <string>comboHowToUpdate</string> 
+                    </void> 
+                   </object> 
+                   <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+                    <class>com.jgoodies.forms.layout.CellConstraints</class> 
+                    <void method="setProperty"> 
+                     <string>gridX</string> 
+                     <int>5</int> 
+                    </void> 
+                    <void method="setProperty"> 
+                     <string>gridY</string> 
+                     <int>5</int> 
+                    </void> 
+                    <void method="setProperty"> 
+                     <string>hAlign</string> 
+                     <object class="com.jgoodies.forms.layout.CellConstraints" field="LEFT"/> 
                     </void> 
                    </object> 
                   </void> 
@@ -693,11 +752,98 @@
                     <class>com.jgoodies.forms.layout.CellConstraints</class> 
                     <void method="setProperty"> 
                      <string>gridY</string> 
-                     <int>5</int> 
+                     <int>7</int> 
                     </void> 
                     <void method="setProperty"> 
                      <string>gridWidth</string> 
+                     <int>5</int> 
+                    </void> 
+                   </object> 
+                  </void> 
+                  <void method="add"> 
+                   <object class="com.jformdesigner.model.FormComponent"> 
+                    <string>javax.swing.JLabel</string> 
+                    <void method="setProperty"> 
+                     <string>text</string> 
+                     <object class="com.jformdesigner.model.FormMessage"> 
+                      <null/> 
+                      <string>labelCheckForUpdateEvery.text</string> 
+                     </object> 
+                    </void> 
+                    <void property="name"> 
+                     <string>labelCheckForUpdateEvery</string> 
+                    </void> 
+                    <void method="auxiliary"> 
+                     <void method="setProperty"> 
+                      <string>JavaCodeGenerator.variableLocal</string> 
+                      <boolean>true</boolean> 
+                     </void> 
+                    </void> 
+                   </object> 
+                   <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+                    <class>com.jgoodies.forms.layout.CellConstraints</class> 
+                    <void method="setProperty"> 
+                     <string>gridX</string> 
+                     <int>1</int> 
+                    </void> 
+                    <void method="setProperty"> 
+                     <string>gridY</string> 
+                     <int>9</int> 
+                    </void> 
+                    <void method="setProperty"> 
+                     <string>hAlign</string> 
+                     <object class="com.jgoodies.forms.layout.CellConstraints" field="RIGHT"/> 
+                    </void> 
+                   </object> 
+                  </void> 
+                  <void method="add"> 
+                   <object class="com.jformdesigner.model.FormComponent"> 
+                    <string>javax.swing.JSpinner</string> 
+                    <void property="name"> 
+                     <string>spinnerUpdateHour</string> 
+                    </void> 
+                   </object> 
+                   <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+                    <class>com.jgoodies.forms.layout.CellConstraints</class> 
+                    <void method="setProperty"> 
+                     <string>gridX</string> 
                      <int>3</int> 
+                    </void> 
+                    <void method="setProperty"> 
+                     <string>gridY</string> 
+                     <int>9</int> 
+                    </void> 
+                   </object> 
+                  </void> 
+                  <void method="add"> 
+                   <object class="com.jformdesigner.model.FormComponent"> 
+                    <string>javax.swing.JLabel</string> 
+                    <void method="setProperty"> 
+                     <string>text</string> 
+                     <object class="com.jformdesigner.model.FormMessage"> 
+                      <null/> 
+                      <string>labelHours.text</string> 
+                     </object> 
+                    </void> 
+                    <void property="name"> 
+                     <string>labelHours</string> 
+                    </void> 
+                    <void method="auxiliary"> 
+                     <void method="setProperty"> 
+                      <string>JavaCodeGenerator.variableLocal</string> 
+                      <boolean>true</boolean> 
+                     </void> 
+                    </void> 
+                   </object> 
+                   <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+                    <class>com.jgoodies.forms.layout.CellConstraints</class> 
+                    <void method="setProperty"> 
+                     <string>gridX</string> 
+                     <int>5</int> 
+                    </void> 
+                    <void method="setProperty"> 
+                     <string>gridY</string> 
+                     <int>9</int> 
                     </void> 
                    </object> 
                   </void> 
@@ -730,12 +876,8 @@
                    <object class="com.jformdesigner.model.FormLayoutConstraints"> 
                     <class>com.jgoodies.forms.layout.CellConstraints</class> 
                     <void method="setProperty"> 
-                     <string>gridX</string> 
-                     <int>1</int> 
-                    </void> 
-                    <void method="setProperty"> 
                      <string>gridY</string> 
-                     <int>7</int> 
+                     <int>11</int> 
                     </void> 
                     <void method="setProperty"> 
                      <string>hAlign</string> 
@@ -762,7 +904,11 @@
                     </void> 
                     <void method="setProperty"> 
                      <string>gridY</string> 
-                     <int>7</int> 
+                     <int>11</int> 
+                    </void> 
+                    <void method="setProperty"> 
+                     <string>gridWidth</string> 
+                     <int>3</int> 
                     </void> 
                    </object> 
                   </void> 
@@ -784,11 +930,11 @@
                     <class>com.jgoodies.forms.layout.CellConstraints</class> 
                     <void method="setProperty"> 
                      <string>gridX</string> 
-                     <int>5</int> 
+                     <int>7</int> 
                     </void> 
                     <void method="setProperty"> 
                      <string>gridY</string> 
-                     <int>7</int> 
+                     <int>11</int> 
                     </void> 
                    </object> 
                   </void> 
