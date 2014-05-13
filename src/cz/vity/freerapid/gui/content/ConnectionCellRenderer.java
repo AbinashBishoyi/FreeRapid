@@ -34,7 +34,8 @@ class ConnectionCellRenderer extends DefaultTableCellRenderer {
 
         if (con == null && task != null) {
             final HttpDownloadClient client = task.getClient();
-            con = client.getSettings();
+            if (client != null)
+                con = client.getSettings();
         }
 
         if (con != null) {
