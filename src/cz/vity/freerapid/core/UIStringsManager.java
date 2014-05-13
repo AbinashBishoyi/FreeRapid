@@ -37,7 +37,7 @@ final public class UIStringsManager {
         for (String key : bundle.keySet()) {
             final String value = bundle.getString(key);
             if (value != null && !value.isEmpty() && key.endsWith("Mnemonic")) {
-                UIManager.put(key, (int) value.charAt(0));
+                UIManager.put(key, String.valueOf((int) value.charAt(0)));
             } else
                 UIManager.put(key, value);
         }
