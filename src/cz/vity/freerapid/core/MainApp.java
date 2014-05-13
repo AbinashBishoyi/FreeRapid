@@ -48,7 +48,9 @@ public class MainApp extends SingleXFrameApplication {
         final String path = Utils.getAppPath();//Utils pouzivaji AppPrefs i logovani
         int index = path.indexOf('+');
         if (index == -1)
-            index = path.indexOf('!');
+            index = path.indexOf("!/");
+        if (index == -1)
+            index = path.indexOf("!\\");
         if (index > 0) {
             java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainApp.class.getName());
             logger.severe("Application cannot be started on the path containing '+' or '!' characters ('" + path.substring(0, index + 1) + "'...)\nExiting.");

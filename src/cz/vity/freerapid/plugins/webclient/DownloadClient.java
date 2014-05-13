@@ -1,6 +1,5 @@
 package cz.vity.freerapid.plugins.webclient;
 
-import cz.vity.freerapid.utilities.LogUtils;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
@@ -32,7 +31,9 @@ final public class DownloadClient implements HttpDownloadClient {
 
     public void initClient(final ConnectionSettings settings) {
         this.settings = settings;
-        client.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+        final HttpClientParams clientParams = client.getParams();
+        clientParams.setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+        clientParams.setHttpElementCharset("UTF-8");
         this.client.setHttpConnectionManager(new SimpleHttpConnectionManager(true));
 
         HttpState initialState = new HttpState();
@@ -44,7 +45,7 @@ final public class DownloadClient implements HttpDownloadClient {
                 initialState.setProxyCredentials(AuthScope.ANY, new NTCredentials(settings.getUserName(), settings.getPassword(), "", ""));
         } else client.setHostConfiguration(new HostConfiguration());
 
-        client.getParams().setBooleanParameter(HttpClientParams.ALLOW_CIRCULAR_REDIRECTS, true);
+        clientParams.setBooleanParameter(HttpClientParams.ALLOW_CIRCULAR_REDIRECTS, true);
         // Get initial state object
 
         client.setState(initialState);
@@ -61,6 +62,7 @@ final public class DownloadClient implements HttpDownloadClient {
         method.setRequestHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         method.setRequestHeader("Accept-Language", "cs,en-us;q=0.7,en;q=0.3");
         method.setRequestHeader("Accept-Charset", "windows-1250,utf-8;q=0.7,*;q=0.7");
+        //method.setRequestHeader("Accept-Charset", "utf-8, windows-1250;q=0.7,*;q=0.7");
         method.setRequestHeader("Accept-Encoding", "gzip,deflate");
         method.setRequestHeader("Keep-Alive", "30");
         if (referer.length() > 0)
@@ -128,6 +130,7 @@ final public class DownloadClient implements HttpDownloadClient {
     }
 
     private String getFileName(HttpMethod method) {
+
         final Header disposition = method.getResponseHeader("Content-Disposition");
         if (disposition != null && disposition.getValue().toLowerCase().contains("attachment")) {
             final String value = disposition.getValue();
@@ -137,12 +140,7 @@ final public class DownloadClient implements HttpDownloadClient {
                 String s = value.substring(index + str.length());
                 if (s.startsWith("\"") && s.endsWith("\""))
                     s = s.substring(1, s.length() - 1);
-                try {
-                    return new String(s.getBytes(), "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    LogUtils.processException(logger, e);
-                    return s;
-                }
+                return s;
             } else {
                 logger.warning("File name was not found in:" + value);
             }
