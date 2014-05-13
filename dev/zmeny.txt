@@ -1,3 +1,4 @@
+Yes, it is possible. Look at PluginManager class. Mainly registerPlugins(), activatePlugin() and deactivatePlugin() methods. To unregister plug-in, use PluginRegistry.unregister() method. If you want to "update" or "reload" a plug-in you need to unregister it first and than register again.
 
 
 MainApp.properties
@@ -6,4 +7,3 @@ MainApp.properties
 Changes:
 was: tooltipTrayInfo=FreeRapid Downloader\n\nComplete downloads %d of %d\nCurrent speed: %s/s\n
 is:  tooltipTrayInfo=FreeRapid Downloader%n%nComplete downloads %d of %d%nCurrent speed: %s/s%n
-

@@ -5,7 +5,9 @@ import cz.vity.freerapid.plugins.webclient.ShareDownloadService;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
 import org.java.plugin.ObjectFactory;
+import org.java.plugin.Plugin;
 import org.java.plugin.PluginManager;
+import org.java.plugin.registry.PluginAttribute;
 import org.java.plugin.registry.PluginDescriptor;
 import org.java.plugin.standard.StandardPluginLocation;
 import org.jdesktop.application.ApplicationContext;
@@ -15,9 +17,11 @@ import java.io.FilenameFilter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 /**
  * @author Vity
@@ -25,8 +29,14 @@ import java.util.logging.Logger;
 public class PluginsManager {
     private final static Logger logger = Logger.getLogger(PluginsManager.class.getName());
 
-    private Map<String, ShareDownloadService> loadedPlugins = new Hashtable<String, ShareDownloadService>();
+    //private Map<String, ShareDownloadService> loadedPlugins = new Hashtable<String, ShareDownloadService>();
+    private Map<String, Pattern> supportedURLs = new HashMap<String, Pattern>();
+
+    private final Object lock = new Object();
+
     private final ApplicationContext context;
+    private PluginManager pluginManager;
+    private static final String URL_REGEX_ATTRIBUTE = "urlRegex";
 
 
     public PluginsManager(ApplicationContext context) {
@@ -39,7 +49,7 @@ public class PluginsManager {
 
         logger.info("Init Plugins Manager");
 //        final ExtendedProperties config = new ExtendedProperties(Utils.loadProperties("jpf.properties", true));
-        final PluginManager pluginManager = ObjectFactory.newInstance().createManager();
+        pluginManager = ObjectFactory.newInstance().createManager();
 
 
         final File pluginsDir = new File(Utils.getAppPath(), "plugins");
@@ -81,11 +91,15 @@ public class PluginsManager {
             final Collection<PluginDescriptor> pluginDescriptorCollection = pluginManager.getRegistry().getPluginDescriptors();
             for (PluginDescriptor pluginDescriptor : pluginDescriptorCollection) {
                 final String id = pluginDescriptor.getId();
-                ShareDownloadService service = (ShareDownloadService) pluginManager.getPlugin(id);
-                loadedPlugins.put(service.getName(), service);
-                logger.info("Loaded support for service  " + id);
+                logger.info("Loading plugin with ID=" + id);
+                final PluginAttribute attribute = pluginDescriptor.getAttribute(URL_REGEX_ATTRIBUTE);
+                if (attribute != null) {
+                    final String value = attribute.getValue();
+                    supportedURLs.put(id, Pattern.compile(value, Pattern.CASE_INSENSITIVE));
+                    logger.info("Loaded url support for service " + id + " with supported URL: " + value);
+                } else
+                    logger.warning(URL_REGEX_ATTRIBUTE + " attribute was not found in plugin manifest for plugin " + id);
             }
-
 
         } catch (Exception e) {
             LogUtils.processException(logger, e);
@@ -99,26 +113,59 @@ public class PluginsManager {
         return plugin.toURI().toURL();
     }
 
-    //
-    public ShareDownloadService getPlugin(String shareDownloadServiceID) throws NotSupportedDownloadServiceException {
-        if (!loadedPlugins.containsKey(shareDownloadServiceID))
-            throw new NotSupportedDownloadServiceException(shareDownloadServiceID);
-        return loadedPlugins.get(shareDownloadServiceID);
-    }
-
-    public boolean isSupported(URL s) {
-        for (ShareDownloadService service : loadedPlugins.values()) {
-            if (service.supportsURL(s.toExternalForm()))
+    /**
+     * Overuje, zda je dane URL podporovane mezi pluginy
+     *
+     * @param url
+     * @return vraci v pripade, ze nejaky plugin podporuje dane URL, jinak false
+     */
+    public boolean isSupported(final URL url) {
+        for (Pattern pattern : supportedURLs.values()) {
+            if (pattern.matcher(url.toExternalForm()).matches())
                 return true;
         }
         return false;
     }
 
-    public String getServiceIDForURL(URL s) throws NotSupportedDownloadServiceException {
-        for (ShareDownloadService service : loadedPlugins.values()) {
-            if (service.supportsURL(s.toExternalForm()))
-                return service.getName();
+    /**
+     * Vraci ID sluzby podle daneho URL
+     *
+     * @param url
+     * @return
+     * @throws NotSupportedDownloadServiceException
+     *
+     */
+    public String getServiceIDForURL(URL url) throws NotSupportedDownloadServiceException {
+        final Set<Map.Entry<String, Pattern>> entries = this.supportedURLs.entrySet();
+        for (Map.Entry<String, Pattern> entry : entries) {
+            if (entry.getValue().matcher(url.toExternalForm()).matches())
+                return entry.getKey();
         }
         throw new NotSupportedDownloadServiceException();
+    }
+
+    /**
+     * Vraci samotny plugin z registry podle jeho ID.
+     * Provadi jeho dynamickou alokaci.
+     *
+     * @param shareDownloadServiceID ID pluginu
+     * @return nacteny plugin - tato hodnota neni nikdy null
+     * @throws NotSupportedDownloadServiceException
+     *          pokud doslo k chybe pri ziskani pluginu podle daneho ID
+     */
+    public ShareDownloadService getPlugin(final String shareDownloadServiceID) throws NotSupportedDownloadServiceException {
+
+        synchronized (lock) {
+            Plugin plugin;
+            try {
+                plugin = pluginManager.getPlugin(shareDownloadServiceID);
+            } catch (Exception e) {
+                throw new NotSupportedDownloadServiceException(shareDownloadServiceID);
+            }
+
+            if (!(plugin instanceof ShareDownloadService))
+                throw new NotSupportedDownloadServiceException(shareDownloadServiceID);
+            else return (ShareDownloadService) plugin;
+        }
     }
 }

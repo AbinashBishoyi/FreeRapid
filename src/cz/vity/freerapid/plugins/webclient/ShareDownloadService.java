@@ -6,7 +6,7 @@ package cz.vity.freerapid.plugins.webclient;
 public interface ShareDownloadService {
     String getName();
 
-    boolean supportsURL(String url);
+    String getId();
 
     int getMaxDownloadsFromOneIP();
 
