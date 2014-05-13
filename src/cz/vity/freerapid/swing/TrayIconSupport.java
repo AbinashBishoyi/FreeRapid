@@ -50,7 +50,7 @@ public class TrayIconSupport implements PropertyChangeListener {
 
     private synchronized void enable() {
         if (!SystemTray.isSupported()) {
-            logger.log(Level.WARNING, "Cannot enable Tray icon is not supported on this system");
+            logger.log(Level.WARNING, "Cannot enable tray icon - Tray icon is not supported on this system");
             return;
         }
         final MainApp app = MainApp.getInstance(MainApp.class);
@@ -96,7 +96,7 @@ public class TrayIconSupport implements PropertyChangeListener {
             SystemTray tray = SystemTray.getSystemTray();
             tray.add(trayIcon);
         } catch (AWTException e) {
-            logger.log(Level.WARNING, "Cannot enable Tray - Tray icon is not supported on this system");
+            logger.log(Level.WARNING, "Cannot enable Tray icon - Tray icon is not supported on this system");
         }
         setEnabled(true);
     }
@@ -188,7 +188,7 @@ public class TrayIconSupport implements PropertyChangeListener {
 
     public synchronized void disable() {
         if (!SystemTray.isSupported()) {
-            logger.log(Level.WARNING, "Cannot disable Tray icon is not supported on this system");
+            logger.log(Level.WARNING, "Cannot disable Tray icon - Tray icon is not supported on this system");
             return;
         }
         final SystemTray tray = SystemTray.getSystemTray();

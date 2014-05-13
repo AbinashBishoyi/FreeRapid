@@ -15,6 +15,7 @@ import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.ResourceConverter;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.util.EventObject;
 import java.util.List;
@@ -96,6 +97,7 @@ public class MainApp extends SingleXFrameApplication {
 
         frame.setJMenuBar(director.getMenuManager().getMenuBar());
         frame.setContentPane(director.getComponent());
+        frame.setMinimumSize(new Dimension(30, 30));
         frame.pack();
 
         if (AppPrefs.getProperty(FWProp.NEW_VERSION, true) && !debug)

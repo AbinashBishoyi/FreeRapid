@@ -33,18 +33,8 @@ public abstract class SingleXFrameApplication extends SingleFrameApplication {
     @Override
     protected void initialize(String[] args) {
         injectSessionProperties();
-        customizeSwingXContext();
         setMainFrame(createXMainFrame());
     }
-
-    /**
-     * Hook to configure SwingX related global state. Here: sets SearchFactory. <p> PENDING: okay to do on the EDT?
-     */
-    protected void customizeSwingXContext() {
-        //       SearchFactory.setInstance(new AppSearchFactory());
-
-    }
-
 
     public void prepareDialog(JDialog c, boolean visible) {
         if (c == null) {
@@ -219,16 +209,12 @@ public abstract class SingleXFrameApplication extends SingleFrameApplication {
     }
 
     protected JXFrame createXMainFrame() {
-        JXFrame xFrame = createXFrame();
+        JXFrame xFrame = new JXFrame();
         ApplicationContext appContext = getContext();
         String title = appContext.getResourceMap().getString("Application.title");
         xFrame.setTitle(title);
         xFrame.setName("mainFrame");
         return xFrame;
-    }
-
-    protected JXFrame createXFrame() {
-        return new JXFrame();
     }
 
     /**
