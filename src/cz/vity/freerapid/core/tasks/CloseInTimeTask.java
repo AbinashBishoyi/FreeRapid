@@ -3,8 +3,10 @@ package cz.vity.freerapid.core.tasks;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
+import cz.vity.freerapid.gui.managers.DataManager;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.LogUtils;
+import cz.vity.freerapid.utilities.NirCmdUtils;
 import org.jdesktop.application.Application;
 
 import java.util.logging.Logger;
@@ -12,8 +14,9 @@ import java.util.logging.Logger;
 /**
  * @author Vity
  */
-public class CloseInTimeTask extends CoreTask<Void, Void> {
+final public class CloseInTimeTask extends CoreTask<Void, Void> {
     private final static Logger logger = Logger.getLogger(CloseInTimeTask.class.getName());
+    private DataManager dataManager;
 
 
     public CloseInTimeTask(Application application) {
@@ -22,6 +25,7 @@ public class CloseInTimeTask extends CoreTask<Void, Void> {
         this.setUserCanCancel(true);
         this.setInputBlocker(new ScreenltInputBlocker(this, BlockingScope.APPLICATION, app.getMainFrame(), null));
         Swinger.bringToFront(app.getMainFrame(), true);
+        dataManager = app.getManagerDirector().getDataManager();
     }
 
     protected Void doInBackground() throws Exception {
@@ -31,14 +35,53 @@ public class CloseInTimeTask extends CoreTask<Void, Void> {
                 break;
             message((i > 1) ? "closeAppMessageN" : "closeAppMessage1", i);
             Thread.sleep(1000);
+            if (!dataManager.checkComplete()) {
+                //   cancel(true);
+                throw new InterruptedException();
+            }
         }
 
         return null;
     }
 
     @Override
-    protected void succeeded(Void result) {
-        getApplication().exit();
+    protected void succeeded(Void taskResult) {
+        final int property = AppPrefs.getProperty(UserProp.AUTOSHUTDOWN, UserProp.AUTOSHUTDOWN_DEFAULT);
+        if (property == UserProp.AUTOSHUTDOWN_CLOSE) {
+            getApplication().exit();
+            return;
+        } else if (property == UserProp.AUTOSHUTDOWN_DISABLED)
+            return;
+        final NirCmdUtils utils = new NirCmdUtils();
+        final boolean force = AppPrefs.getProperty(UserProp.AUTOSHUTDOWN_FORCE, UserProp.AUTOSHUTDOWN_FORCE_DEFAULT);
+        final boolean renew = AppPrefs.getProperty(UserProp.AUTOSHUTDOWN_DISABLED_WHEN_EXECUTED, UserProp.AUTOSHUTDOWN_DISABLED_WHEN_EXECUTED_DEFAULT);
+        if (renew) {
+            AppPrefs.storeProperty(UserProp.AUTOSHUTDOWN, UserProp.AUTOSHUTDOWN_DISABLED);
+        }
+        boolean result = true;
+        switch (property) {
+            case UserProp.AUTOSHUTDOWN_HIBERNATE:
+                result = utils.shutDown(NirCmdUtils.ShutdownType.AUTOSHUTDOWN_HIBERNATE, force);
+                break;
+            case UserProp.AUTOSHUTDOWN_REBOOT:
+                result = utils.shutDown(NirCmdUtils.ShutdownType.AUTOSHUTDOWN_REBOOT, force);
+                break;
+            case UserProp.AUTOSHUTDOWN_SHUTDOWN:
+                result = utils.shutDown(NirCmdUtils.ShutdownType.AUTOSHUTDOWN_SHUTDOWN, force);
+                break;
+            case UserProp.AUTOSHUTDOWN_STANDBY:
+                result = utils.shutDown(NirCmdUtils.ShutdownType.AUTOSHUTDOWN_STANDBY, force);
+                break;
+            default:
+                break;
+        }
+        if (!result) {
+            Swinger.showErrorMessage(getResourceMap(), "shutdownActionFailed");
+        } else {
+            if (property == UserProp.AUTOSHUTDOWN_SHUTDOWN) {
+                getApplication().exit();
+            }
+        }
     }
 
     @Override
@@ -49,8 +92,16 @@ public class CloseInTimeTask extends CoreTask<Void, Void> {
         }
     }
 
+
+    @Override
+    protected void cancelled() {
+        super.cancelled();
+        AppPrefs.storeProperty(UserProp.AUTOSHUTDOWN, UserProp.AUTOSHUTDOWN_DISABLED);
+    }
+
     public void sleep(int seconds) throws InterruptedException {
         logger.info("Going to sleep on " + (seconds) + " seconds");
     }
+
 
 }

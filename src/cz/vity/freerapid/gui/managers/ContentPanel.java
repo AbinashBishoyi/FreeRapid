@@ -42,6 +42,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.util.Arrays;
@@ -134,21 +135,28 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         return Swinger.getSelectedRows(table);
     }
 
-    @org.jdesktop.application.Action(enabledProperty = COMPLETED_OK_ACTION_ENABLED_PROPERTY)
+    @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
     public void deleteFileAction() {
-        if (!isCompleteWithFilesEnabled())
-            return;
+//        if (!isCompleteWithFilesEnabled())
+//            return;
         final int[] indexes = getSelectedRows();
         final java.util.List<DownloadFile> files = manager.getSelectionToList(indexes);
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         for (DownloadFile file : files) {
-            builder.append('\n').append(file.getOutputFile());
+            if (file.getOutputFile() != null && file.getOutputFile().exists())
+                builder.append('\n').append(file.getOutputFile());
         }
 
-        final int result = Swinger.getChoiceOKCancel("message.areyousuredelete", builder.toString());
+        final String s = builder.toString();
+        final int result;
+        if (s.isEmpty()) {
+            result = Swinger.RESULT_OK;
+        } else result = Swinger.getChoiceOKCancel("message.areyousuredelete", s);
         if (result == Swinger.RESULT_OK) {
             for (DownloadFile file : files) {
-                file.getOutputFile().delete();
+                final File outputFile = file.getOutputFile();
+                if (outputFile != null)
+                    outputFile.delete();
             }
             this.removeSelectedAction();
             selectFirstIfNoSelection();
@@ -211,7 +219,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     private void selectFirstIfNoSelection() {
         final int[] rows = getSelectedRows();
         if (rows.length == 0) {
-            table.getSelectionModel().setSelectionInterval(0, 0);
+            if (getVisibleRowCount() > 0)
+                table.getSelectionModel().setSelectionInterval(0, 0);
         }
     }
 
@@ -889,6 +898,11 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     private static class ProgressCellRenderer extends DefaultTableCellRenderer {
 
+        private ProgressCellRenderer() {
+            final int h = this.getPreferredSize().height;
+            this.setPreferredSize(new Dimension(55, h));
+        }
+
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             final DownloadFile downloadFile = (DownloadFile) value;
@@ -925,9 +939,9 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                     }
                 }
             } else if (state == DownloadState.WAITING) {
-                if (downloadFile.getSleep() >= 0)
-                    value = String.format("%s (%s)", stateToString(state), secondsToHMin(downloadFile.getSleep()));
-                else value = "";
+//                if (downloadFile.getSleep() >= 0)
+//                    value = String.format("%s (%s)", stateToString(state), secondsToHMin(downloadFile.getSleep()));
+//                else value = "";
             }
             if (state == DownloadState.ERROR || state == DownloadState.SLEEPING) {
                 final String errorMessage = downloadFile.getErrorMessage();
@@ -977,6 +991,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             } else if (state == DownloadState.SLEEPING) {
                 this.setBackground(BG_BLUE);
             } else if (state == DownloadState.COMPLETED) {
+                this.setBackground(null);
                 // this.setBackground(Color.GREEN);
             } else
                 this.setBackground(Color.BLACK);
@@ -985,7 +1000,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             if ((state == DownloadState.ERROR || state == DownloadState.SLEEPING) && toQueued >= 0) {
                 final int max = downloadFile.getTimeToQueuedMax();
                 this.setStringPainted(true);
-                this.setString(toQueued + "/" + max);
+                this.setString(secondsToHMin(toQueued));
                 this.setValue(getProgress(max, toQueued));
                 this.setToolTipText(String.format(autoReconnectIn, toQueued));
             } else {
@@ -993,7 +1008,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                 if (state == DownloadState.WAITING && sleep >= 0) {
                     final int max = downloadFile.getTimeToQueuedMax();
                     this.setStringPainted(true);
-                    this.setString(sleep + "/" + max);
+                    this.setString(secondsToHMin(sleep));
                     this.setValue(getProgress(max, sleep));
                     this.setToolTipText(String.format(attemptForDownloading, sleep));
                 } else {
@@ -1014,7 +1029,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     }
 
-    private static int getProgress(int max, int timeToQueued) {
+    private static int getProgress(final int max, final int timeToQueued) {
         return (int) ((timeToQueued / (float) max) * 100);
     }
 

@@ -92,7 +92,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         //  processManager.queueUpdated();
         if (foundRunning) {
             try {
-                Thread.sleep(500);//time to cancel DownloadTask properly
+                Thread.sleep(700);//time to cancel DownloadTask properly
             } catch (InterruptedException e) {
                 //ignore
             }
@@ -157,9 +157,10 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                         this.downloadFiles.add(file);
                     }
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 LogUtils.processException(logger, e);
             }
+
         }
     }
 
@@ -480,10 +481,19 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
 
     public boolean checkComplete() {
         synchronized (lock) {
+            final boolean nonFatalErrorIsOK = AppPrefs.getProperty(UserProp.AUTOSHUTDOWN_WITH_ERRORS, UserProp.AUTOSHUTDOWN_WITH_ERRORS_DEFAULT);
             for (DownloadFile file : downloadFiles) {
                 final DownloadState state = file.getState();
-                if (DownloadState.isProcessState(state) || state == DownloadState.QUEUED) {
+                if (DownloadState.isProcessState(state) || state == DownloadState.QUEUED || state == DownloadState.SLEEPING) {
                     return false;
+                }
+                if (state == DownloadState.ERROR) {
+                    final boolean isFatal = file.getErrorAttemptsCount() == 0;
+                    if (isFatal)
+                        continue;
+                    if (!nonFatalErrorIsOK) {
+                        return false;
+                    }
                 }
             }
             return true;

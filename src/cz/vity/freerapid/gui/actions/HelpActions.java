@@ -8,6 +8,7 @@ import cz.vity.freerapid.core.tasks.CheckForNewVersionTask;
 import cz.vity.freerapid.gui.dialogs.AboutDialog;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.Browser;
+import cz.vity.freerapid.utilities.NirCmdUtils;
 import org.jdesktop.application.Action;
 
 import java.awt.event.ActionEvent;
@@ -64,6 +65,31 @@ public class HelpActions {
     public void about() {
         final AboutDialog aboutDialog = new AboutDialog(app.getMainFrame());
         app.prepareDialog(aboutDialog, true);
+    }
+
+    @Action
+    public void createDesktopShortcut() {
+        final boolean result = new NirCmdUtils().createDesktopShortcut("frd.exe", Consts.APPVERSION, "frd.ico");
+        if (!result)
+            shortCutsCreationFailed();
+    }
+
+    @Action
+    public void createStartMenuShortcut() {
+        final boolean result = new NirCmdUtils().createStartMenuShortcut("frd.exe", Consts.APPVERSION, "frd.ico");
+        if (!result)
+            shortCutsCreationFailed();
+    }
+
+    @Action
+    public void createStartupShortcut() {
+        final boolean result = new NirCmdUtils().createStartupShortcut("frd.exe", Consts.APPVERSION, "frd.ico");
+        if (!result)
+            shortCutsCreationFailed();
+    }
+
+    private void shortCutsCreationFailed() {
+        Swinger.showErrorMessage(app.getContext().getResourceMap(), "createShortCutFailed");
     }
 
 }

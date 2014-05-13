@@ -1,10 +1,13 @@
 package cz.vity.freerapid.gui.managers;
 
+import cz.vity.freerapid.core.AppPrefs;
+import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.gui.actions.FileActions;
 import cz.vity.freerapid.gui.actions.HelpActions;
 import cz.vity.freerapid.gui.actions.ViewActions;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.swing.Swinger;
+import cz.vity.freerapid.utilities.Utils;
 import org.jdesktop.application.ApplicationActionMap;
 import org.jdesktop.application.ApplicationContext;
 
@@ -94,24 +97,46 @@ public class MenuManager {
                 "removeSelectedAction"
         };
 
+        final Object[] shutdownActionNames = {
+                RADIO2 + "shutdownDisabledAction",
+                MENU_SEPARATOR,
+                RADIO2 + "shutdownQuitAction",
+                RADIO2 + "shutdownHibernateAction",
+                RADIO2 + "shutdownStandByAction",
+                RADIO2 + "shutdownRebootAction",
+                RADIO2 + "shutdownShutdownAction",
+        };
+
+        JMenu shutDownMenu = createMenu("autoShutdownMenu", shutdownActionNames);
+
+
         final Object[] optionsMenuActionNames = {
-                createConnectionsMenu(),
+                "options",
                 MENU_SEPARATOR,
                 CHECKED + "monitorClipboardAction",
                 MENU_SEPARATOR,
-                "options"
+                createConnectionsMenu(),
+                MENU_SEPARATOR,
+                shutDownMenu,
         };
 
         final Object[] viewMenuActionNames = {
-                CHECKED + "showToolbar",
-                CHECKED + "showStatusBar",
+                "showDownloadHistoryAction",
                 MENU_SEPARATOR,
                 CHECKED + "showCompletedAction",
                 MENU_SEPARATOR,
-                "showDownloadHistoryAction",
+                CHECKED + "showToolbar",
+                CHECKED + "showStatusBar",
                 //          "showSpeedMonitor"
         };
 
+
+        final Object[] shortcutActionNames = {
+                "createDesktopShortcut",
+                "createStartMenuShortcut",
+                "createStartupShortcut",
+        };
+        JMenu shortCutMenu = createMenu("shortcutMenu", shortcutActionNames);
 
         final Object[] helpMenuActionNames = {
                 "help",
@@ -119,12 +144,20 @@ public class MenuManager {
                 "showDemo",
                 "visitHomepage",
                 MENU_SEPARATOR,
+                shortCutMenu,
+                MENU_SEPARATOR,
                 "checkForNewVersion",
                 MENU_SEPARATOR,
                 "paypalSupportAction",
                 MENU_SEPARATOR,
                 "about"
         };
+
+        final boolean isWindows = Utils.isWindows();
+        if (!isWindows) {
+            shortCutMenu.setEnabled(false);
+            shutDownMenu.setEnabled(false);
+        }
 
         MenuSelectionManager.defaultManager().addChangeListener(
                 new ChangeListener() {
@@ -176,14 +209,59 @@ public class MenuManager {
         menuBar.putClientProperty(SELECTED_TEXT_PROPERTY, "");
 
         final ApplicationActionMap map = context.getActionMap();
+        disableOnLinux(map, "createDesktopShortcut", "createStartMenuShortcut", "createStartupShortcut", "shutdownDisabledAction", "shutdownQuitAction", "shutdownHibernateAction", "shutdownShutdownAction", "shutdownStandByAction", "shutdownRebootAction");
         map.get("showCompletedAction").putValue(AbstractAction.SELECTED_KEY, viewActions.isShowCompleted());
         map.get("monitorClipboardAction").putValue(AbstractAction.SELECTED_KEY, viewActions.isClipboardMonitoringSelected());
 
         final JRootPane rootPane = director.getMainFrame().getRootPane();
         rootPane.registerKeyboardAction(Swinger.getAction("showDownloadHistoryAction"), KeyStroke.getKeyStroke("control H"), JComponent.WHEN_IN_FOCUSED_WINDOW);
 
+        if (isWindows)
+            selectAutoShutDownMenu(map);
+
 //        final MainApp app = (MainApp) context.getApplication();
 
+    }
+
+    private void selectAutoShutDownMenu(ApplicationActionMap map) {
+        final String action = getSelectedShutDownAction();
+        map.get(action).putValue(Action.SELECTED_KEY, Boolean.TRUE);
+
+    }
+
+    public String getSelectedShutDownAction() {
+        final int property = AppPrefs.getProperty(UserProp.AUTOSHUTDOWN, UserProp.AUTOSHUTDOWN_DEFAULT);
+        final String action;
+        switch (property) {
+            case UserProp.AUTOSHUTDOWN_CLOSE:
+                action = "shutdownQuitAction";
+                break;
+            case UserProp.AUTOSHUTDOWN_HIBERNATE:
+                action = "shutdownHibernateAction";
+                break;
+            case UserProp.AUTOSHUTDOWN_REBOOT:
+                action = "shutdownRebootAction";
+                break;
+            case UserProp.AUTOSHUTDOWN_SHUTDOWN:
+                action = "shutdownShutdownAction";
+                break;
+            case UserProp.AUTOSHUTDOWN_STANDBY:
+                action = "shutdownStandByAction";
+                break;
+            default:
+                action = "shutdownDisabledAction";
+                break;
+        }
+        return action;
+    }
+
+    private void disableOnLinux(ApplicationActionMap map, String... actions) {
+        final boolean b = Utils.isWindows();
+        if (b)
+            return;
+        for (String action : actions) {
+            map.get(action).setEnabled(false);
+        }
     }
 
     private JMenu createConnectionsMenu() {

@@ -12,7 +12,10 @@ import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.application.AbstractBean;
 import org.jdesktop.application.Action;
 
+import javax.swing.*;
 import java.util.logging.Logger;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 
 /**
  * @author Vity
@@ -33,6 +36,18 @@ public class ViewActions extends AbstractBean {
         app = MainApp.getInstance(MainApp.class);
         setShowCompleted(AppPrefs.getProperty(UserProp.SHOW_COMPLETED, true));
         setClipboardMonitoringSelected(AppPrefs.getProperty(UserProp.CLIPBOARD_MONITORING, UserProp.CLIPBOARD_MONITORING_DEFAULT));
+        AppPrefs.getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
+            public void preferenceChange(PreferenceChangeEvent evt) {
+                if (UserProp.AUTOSHUTDOWN.equals(evt.getKey())) {
+                    updateSelectedAction();
+                }
+            }
+        });
+    }
+
+    private void updateSelectedAction() {
+        final String action = app.getManagerDirector().getMenuManager().getSelectedShutDownAction();
+        app.getContext().getActionMap().get(action).putValue(AbstractAction.SELECTED_KEY, Boolean.TRUE);
     }
 
     @Action
@@ -130,4 +145,40 @@ public class ViewActions extends AbstractBean {
         this.clipboardMonitoringSelected = clipboardMonitoringSelected;
         firePropertyChange("clipboardMonitoringSelected", oldValue, clipboardMonitoringSelected);
     }
+
+    @Action
+    public void shutdownDisabledAction() {
+        shutdown(UserProp.AUTOSHUTDOWN_DISABLED);
+    }
+
+    private void shutdown(final int autoshutdownType) {
+        AppPrefs.storeProperty(UserProp.AUTOSHUTDOWN, autoshutdownType);
+    }
+
+    @Action
+    public void shutdownQuitAction() {
+        shutdown(UserProp.AUTOSHUTDOWN_CLOSE);
+    }
+
+    @Action
+    public void shutdownHibernateAction() {
+        shutdown(UserProp.AUTOSHUTDOWN_HIBERNATE);
+    }
+
+    @Action
+    public void shutdownShutdownAction() {
+        shutdown(UserProp.AUTOSHUTDOWN_SHUTDOWN);
+    }
+
+    @Action
+    public void shutdownStandByAction() {
+        shutdown(UserProp.AUTOSHUTDOWN_STANDBY);
+    }
+
+    @Action
+    public void shutdownRebootAction() {
+        shutdown(UserProp.AUTOSHUTDOWN_REBOOT);
+    }
+
+
 }

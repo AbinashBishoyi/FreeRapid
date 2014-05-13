@@ -36,7 +36,10 @@ public final class AppPrefs {
         AppPrefs.properties = loadProperties();
         if (!properties.isEmpty()) {
             for (Map.Entry<String, String> entry : properties.entrySet()) {
-                AppPrefs.properties.put(entry.getKey(), entry.getValue());
+                final String value = entry.getValue();
+                if ("default".equals(value))
+                    AppPrefs.properties.remove(entry.getKey());
+                else AppPrefs.properties.put(entry.getKey(), value);
             }
         }
     }

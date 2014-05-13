@@ -3,7 +3,10 @@ package cz.vity.freerapid.core.tasks;
 import cz.vity.freerapid.core.application.GlobalEDTExceptionHandler;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.ResourceMap;
+import org.jdesktop.application.SingleFrameApplication;
 import org.jdesktop.application.Task;
+
+import javax.swing.*;
 
 /**
  * @author Vity
@@ -32,6 +35,10 @@ public abstract class CoreTask<T, V> extends Task<T, V> {
     protected void failed(Throwable cause) {
         super.failed(cause);
         handleRuntimeException(cause);
+    }
+
+    protected JFrame getMainFrame() {
+        return ((SingleFrameApplication) getApplication()).getMainFrame();
     }
 
     /**

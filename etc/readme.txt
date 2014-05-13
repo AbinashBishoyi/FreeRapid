@@ -1,24 +1,25 @@
 **************************************************************
 *   FreeRapid Downloader                                     *
 *      by Ladislav Vitasek aka Vity                          *
-*   Mail: info@wordrider.net - questions/suggestions         *
 *   Website/Forum/Bugtracker: http://wordrider.net/freerapid *
-*   Last change: 5th October 2008                            *
+*   Mail: info@wordrider.net - suggestions                   *
+*   Last change: 10th October 2008                           *
 **************************************************************
 
 =======================================
 Content:
-  I.   What is FreeRapid Downloader
- II.   System requirements
-III.   How to run FreeRapid
- IV.   Known problems and limitations
-  V.   Bug report
- VI.   Donate
-VII.   FAQ
+   I.   What is FreeRapid Downloader
+  II.   System requirements
+ III.   How to run FreeRapid
+  IV.   Known problems and limitations
+   V.   Troubleshooting
+  VI.   Bug report
+ VII.   Donate
+VIII.   FAQ
 =======================================
 
 
-I.   What is FreeRapid Downloader
+I.    What is FreeRapid Downloader
 =======================================
 
 FreeRapid downloader is a simple Java downloader for support downloading from Rapidshare and other file share archives.
@@ -42,11 +43,15 @@ Currently supported services are:
  -  MegaUpload.com (=megarotic.com = sexuploader.com)
  -  DepositFiles.com
  -  NetLoad.in
- -  ..others are coming
+ -  Megarotic.com and Sexuploader.com
+ -  Share-online.biz
+ -  Egoshare.com
+ -  Easy-share.com
+ -  Letibit.net
 
 
-II. System requirements
-============================
+ II.    System requirements
+=======================================
 
 Recommended configuration:
     * Windows 2000/XP/Linux(core 2.4)* or higher operating system
@@ -59,7 +64,7 @@ Recommended configuration:
 Application needs at least Java 6.0 to start (http://java.sun.com/javase/downloads/index.jsp , JRE 6).
 
 
-III.  How to run FreeRapid Downloader
+III.   How to run FreeRapid Downloader
 =======================================
 
 Installation
@@ -96,13 +101,24 @@ options
   -d (--debug)        print debugging information
   -Dproperty=value    Passes properties and values to the application (mostly for debug or testing purposes)
    
+Example - running application in debug mode:
+  Windows OS: frd.exe --debug
+  Linux/MacOS: java -jar frd.jar --debug
 
-IV.   Known bugs and Limitations
+
+More Info:
+  - Unofficial tutorial for Linux users - How to configure FreeRapid Downloader on Linux (in Spanish)
+    http://manualinux.my-place.us/freerapid.html
+    
+
+IV.    Known bugs and Limitations
 =======================================
 - Application will not start if it's placed on the path with special characters like '+' or '%'
   - X please move application to another location without such characters
-
-- Selection from "top to bottom" in the main table during dragging while downloading partly disappears
+- ESET "Smart" Antivirus on Windows OS blocks FRD to start
+  - X make correct settings of your antivirus program or run FRD this way: frd.exe -Doneinstance=false
+- Always close FRD properly otherwise you can loose your file list (eg. Windows shutdown with force option...)          
+- Selection from "top to bottom" in the main table during dragging while downloading partly disappears :-(
     X select table rows by ctrl+mouse click or select items from bottom to top
 - Substance look and feel throws org.jvnet.substance.api.UiThreadingViolationException:
                                                      Component creation must be done on Event Dispatch Thread
@@ -115,18 +131,36 @@ IV.   Known bugs and Limitations
     X the only one known solution for this problem could be an upgrade JRE to version 1.6.0_10-rc or higher
 
 
-V.    Bug report
+IV.    Troubleshooting
+=======================================
+1. Check section IV - for already known bugs and limitations first
+2. Have you tried to application turn off and on again? :-)
+3. Check homepage http://wordrider.net/freerapid and/or issue tracker at http://bugtracker.wordrider.net/
+   for possible new known bug
+4. You can try to delete configuration files - its location is described in Installation section  
+5. Run application in debug mode:
+   Windows OS: frd.exe --debug
+   Linux/MacOS: java -jar frd.jar --debug
+6. Report problem with app.log as described in Bug report section
+
+
+VI.    Bug report
 =======================================
 If you see a bug, please do not assume that i know about it. Let me know as soon as possible so that i can fix it before
 the next release. Since my resources are limited, i can not backport bug fixes to earlier releases.
 To report a bug, you can use the issue tracker (preferred), project forums or my personal e-mail.
 
-Please report your JRE version and attach file app.log. It can help us to recognize a problem.
-http://bugtracker.wordrider.net/
-bugs@wordrider.net
+Please report your JRE and OS version and attach file app.log (which is located in FreeRapid's folder).
+It can help us to recognize a problem. You can also help us if you run application with --debug parameter.
+We ignore simple reports like "I cannot run FRD. What should I do?". Describe your situation and application behaviour.
 
 
-VI.    Donate
+issue tracker: http://bugtracker.wordrider.net/
+forum: http://wordrider.net/forum/list.php?7
+mail: bugs@wordrider.net (your mail can be caught by spam filter, so this way is NOT preffered!)
+
+
+VII.    Donate
 =======================================
 FreeRapid downloader is distributed as freeware, but if you wish to express your appreciation for the time and resources
 the author has spent developing, we do accept and appreciate monetary donations.
@@ -137,7 +171,7 @@ PayPal: http://wordrider.net/freerapid/paypal
 use bank account described on the homepage http://wordrider.net/freerapid/
 
 
-VII.   FAQ
+VIII.   FAQ
 =======================================
 
 Q: Why did you create another "RapidShare Downloader"?

@@ -147,6 +147,7 @@ class ScreenltInputBlocker extends Task.InputBlocker {
          */
         recreateOptionPaneMessage(optionPane);
         dialog.pack();
+        dialog.setMinimumSize(new Dimension(150, 130));
         return dialog;
     }
 
@@ -160,6 +161,7 @@ class ScreenltInputBlocker extends Task.InputBlocker {
         Object message = optionPane.getMessage();
         if (message instanceof String) {
             final JLabel label = new JLabel((String) message);
+            label.setText("                                                                                                  \n\n\n\n\n");
             JPanel panel = new JPanel(new BorderLayout());
             panel.add(label, BorderLayout.CENTER);
             final JProgressBar progressBar = new JProgressBar();

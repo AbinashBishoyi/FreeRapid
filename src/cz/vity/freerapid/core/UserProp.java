@@ -131,4 +131,23 @@ final public class UserProp {
 
     public static final String SHOW_PROGRESS_IN_PROGRESSBAR = "showPercentProgress";
     public static final boolean SHOW_PROGRESS_IN_PROGRESSBAR_DEFAULT = false;
+
+    public static final String AUTOSHUTDOWN = "autoshutdown";
+    public static final int AUTOSHUTDOWN_DISABLED = 0;
+    public static final int AUTOSHUTDOWN_DEFAULT = AUTOSHUTDOWN_DISABLED;
+    public static final int AUTOSHUTDOWN_CLOSE = 1;
+    public static final int AUTOSHUTDOWN_STANDBY = 2;
+    public static final int AUTOSHUTDOWN_REBOOT = 3;
+    public static final int AUTOSHUTDOWN_SHUTDOWN = 4;
+    public static final int AUTOSHUTDOWN_HIBERNATE = 5;
+
+    public static final String AUTOSHUTDOWN_WITH_ERRORS = "autoshutdownWithErrors";
+    public static final boolean AUTOSHUTDOWN_WITH_ERRORS_DEFAULT = false;
+
+    public static final String AUTOSHUTDOWN_DISABLED_WHEN_EXECUTED = "autoshutdownDisabledWhenExecuted";
+    public static final boolean AUTOSHUTDOWN_DISABLED_WHEN_EXECUTED_DEFAULT = true;
+
+    public static final String AUTOSHUTDOWN_FORCE = "autoshutdownForce";
+    public static final boolean AUTOSHUTDOWN_FORCE_DEFAULT = true;
+
 }

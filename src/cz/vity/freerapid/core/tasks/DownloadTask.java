@@ -9,18 +9,20 @@ import cz.vity.freerapid.plugins.exceptions.*;
 import cz.vity.freerapid.plugins.webclient.*;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.FileUtils;
+import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Sound;
 import org.apache.commons.httpclient.SimpleHttpConnectionManager;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.jdesktop.application.Application;
-import org.jdesktop.application.SingleFrameApplication;
 import org.jdesktop.application.TaskEvent;
 import org.jdesktop.application.TaskListener;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.NoRouteToHostException;
 import java.net.UnknownHostException;
 import java.util.TimerTask;
@@ -52,6 +54,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     private static final int OUTPUT_FILE_BUFFER_SIZE = 600000;
     private volatile boolean connectionTimeOut;
     private final static Object captchaLock = new Object();
+    private int fileAlreadyExists;
 
     public DownloadTask(Application application, HttpDownloadClient client, DownloadFile downloadFile, ShareDownloadService service) {
         super(application);
@@ -65,7 +68,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         this.connectionTimeOut = false;
         this.speedInBytes = 0;
         this.averageSpeed = 0;
-
+        fileAlreadyExists = -2;
     }
 
     protected Void doInBackground() throws Exception {
@@ -125,6 +128,14 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         final String fileName = downloadFile.getFileName();
         outputFile = downloadFile.getOutputFile();
         //outputFile = new File("d:/vystup.pdf");
+        if (temporary) {
+            this.fileAlreadyExists = checkExists();
+            if (this.fileAlreadyExists == UserProp.SKIP) {
+                this.cancel(true);
+                return;
+            }
+        }
+
         final File saveToDirectory = downloadFile.getSaveToDirectory();
         if (!saveToDirectory.exists())
             saveToDirectory.mkdirs();
@@ -322,7 +333,12 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
             this.youHaveToSleepSecondsTime = waitException.getHowManySecondsToWait();
             setServiceError(DownloadTaskError.YOU_HAVE_TO_WAIT_ERROR);
         }
-
+        if (getServiceError() == DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR)
+            downloadFile.setErrorAttemptsCount(0);
+        final Application app = getApplication();
+        if (isAllComplete(app)) {
+            checkShutDown(app);
+        }
     }
 
     private void error(Throwable cause) {
@@ -358,9 +374,13 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
             if (outputFile.exists()) {
                 //Rename/Overwrite/Skip/Ask
 
-                int property = AppPrefs.getProperty(UserProp.FILE_ALREADY_EXISTS, UserProp.FILE_ALREADY_EXISTS_DEFAULT);
-                if (property == UserProp.ASK) {
-                    property = Swinger.showOptionDialog(getResourceMap(), JOptionPane.QUESTION_MESSAGE, "fileAlreadyExists", new String[]{"renameFile", "overWriteFile", "skipFile"}, outputFile);
+                int property = UserProp.RENAME;
+                try {
+                    property = fileAlreadyExistsProperty();
+                } catch (InvocationTargetException e) {
+                    LogUtils.processException(logger, e);
+                } catch (InterruptedException e) {
+                    LogUtils.processException(logger, e);
                 }
                 switch (property) {
                     case UserProp.OVERWRITE:
@@ -383,6 +403,34 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         }
     }
 
+    private int checkExists() throws InvocationTargetException, InterruptedException {
+        if (!outputFile.exists())
+            return -2;
+        return fileAlreadyExistsProperty();
+    }
+
+    private int fileAlreadyExistsProperty() throws InvocationTargetException, InterruptedException {
+        if (fileAlreadyExists != -2)
+            return fileAlreadyExists;
+        final int[] property = new int[]{AppPrefs.getProperty(UserProp.FILE_ALREADY_EXISTS, UserProp.FILE_ALREADY_EXISTS_DEFAULT)};
+        if (property[0] == UserProp.ASK) {
+            synchronized (DownloadTask.class) {
+                if (!EventQueue.isDispatchThread()) {
+                    SwingUtilities.invokeAndWait(new Runnable() {
+                        public void run() {
+                            property[0] = showFileAlreadyExistsDialog();
+                        }
+                    });
+                } else return showFileAlreadyExistsDialog();
+            }
+        }
+        return property[0];
+    }
+
+    private int showFileAlreadyExistsDialog() {
+        return Swinger.showOptionDialog(getResourceMap(), JOptionPane.QUESTION_MESSAGE, "fileAlreadyExists", new String[]{"renameFile", "overWriteFile", "skipFile"}, outputFile);
+    }
+
     private void setCompleted() {
         downloadFile.setCompleteTaskDuration(this.getExecutionDuration(TimeUnit.SECONDS));
         downloadFile.setState(DownloadState.COMPLETED);
@@ -395,18 +443,9 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 
             @Override
             public void finished(TaskEvent<Void> event) {
-                super.succeeded(event);
+                super.succeeded(event); //???
                 if (succeeded) {
-                    final Application app = getApplication();
-                    final boolean allComplete = ((MainApp) app).getManagerDirector().getDataManager().checkComplete();
-                    if (allComplete) {
-                        final boolean sound = AppPrefs.getProperty(UserProp.PLAY_SOUNDS_OK, true);
-                        if (sound)
-                            Sound.playSound(getContext().getResourceMap().getString("doneWav"));
-                        if (AppPrefs.getProperty(UserProp.CLOSE_WHEN_COMPLETED, false)) {
-                            app.getContext().getTaskService().execute(new CloseInTimeTask(app));
-                        }
-                    }
+                    doAllSucceededActions();
                 }
             }
 
@@ -438,6 +477,27 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         final MainApp app = (MainApp) this.getApplication();
         final TaskServiceManager serviceManager = app.getManagerDirector().getTaskServiceManager();
         serviceManager.getTaskService(TaskServiceManager.MOVE_FILE_SERVICE).execute(moveFileTask);
+    }
+
+    private void doAllSucceededActions() {
+        final Application app = getApplication();
+        final boolean allComplete = isAllComplete(app);
+        if (allComplete) {
+            final boolean sound = AppPrefs.getProperty(UserProp.PLAY_SOUNDS_OK, true);
+            if (sound)
+                Sound.playSound(getContext().getResourceMap().getString("doneWav"));
+            checkShutDown(app);
+        }
+    }
+
+    private void checkShutDown(Application app) {
+        if (AppPrefs.getProperty(UserProp.AUTOSHUTDOWN, UserProp.AUTOSHUTDOWN_DEFAULT) != UserProp.AUTOSHUTDOWN_DISABLED) {
+            app.getContext().getTaskService().execute(new CloseInTimeTask(app));
+        }
+    }
+
+    private boolean isAllComplete(Application app) {
+        return ((MainApp) app).getManagerDirector().getDataManager().checkComplete();
     }
 
     public void sleep(int seconds) throws InterruptedException {
@@ -488,7 +548,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
             SwingUtilities.invokeAndWait(new Runnable() {
                 public void run() {
                     if (AppPrefs.getProperty(UserProp.ACTIVATE_WHEN_CAPTCHA, UserProp.ACTIVATE_WHEN_CAPTCHA_DEFAULT))
-                        Swinger.bringToFront(((SingleFrameApplication) getApplication()).getMainFrame(), true);
+                        Swinger.bringToFront(getMainFrame(), true);
                     captchaResult = "";
 
                     while (captchaResult.isEmpty()) {

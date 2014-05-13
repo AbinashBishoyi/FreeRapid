@@ -12,8 +12,9 @@ Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
 20th October 2008 - FreeRapid Downloader 0.66 released
-  Added : new download state WAIT! to show user "you have to wait XX minutes"
-  Changed : remapped selection keys - HOME - first row , END - last row, ctrl+HOME - first column, ctrl+END - last column
+  Added : new download state WAIT! to show to user "you have to wait XX minutes"
+  Added : table scrolls to new position of selection [requested by Pavel]
+  Changed : remapped selection shortcuts - HOME-first row , END-last row, ctrl+HOME-first column, ctrl+END-last column
   Changed : updated czech translation
   Fixed : PAUSED state sometimes runs another download
 
