@@ -141,8 +141,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         setAction(btnResetDefaultPluginServer, "btnResetDefaultPluginServerAction");
         setAction(btnUpdatePlugins, "btnUpdatePluginsAction");
 
-
-        btnApplyLookAndFeel.setVisible(false);
+        //btnApplyLookAndFeel.setVisible(false);
 
         initPluginTable();
 

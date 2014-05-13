@@ -11,13 +11,15 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
-XX YYYY 2009 - FreeRapid Downloader 0.81 released
+16th January 2009 - FreeRapid Downloader 0.81 released
   Added : Russian translation [thanks to Vdm17!]
   Added : Brazilian portuguese translation [thanks to Tiago Hillebrandt!]
+  Added : Turkish translation [thanks to ukrman!]
   Added : Windows - open directory selects file if the file exists
   Changed : UI - User preferences dialog - languages are sorted based on the current locale
   Fixed : Linux - commands from syscmd.properties are not loaded properly [reported by Andre Grott]
   Fixed : clipboard monitoring merged some URL into one at special cases [reported by Alex]
+  Fixed : RejectedException - problem solved?
 
 21st December 2008 - FreeRapid Downloader 0.8 released
   Added : new plugin - usercash.com (crypter) [thanks to me! ;-)]

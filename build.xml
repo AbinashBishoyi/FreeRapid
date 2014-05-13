@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <project name="FreeRapid Downloader" default="all" basedir=".">
     <property name="application" value="FreeRapid"/>
-    <property name="version" value="0.8"/>
+    <property name="version" value="0.81"/>
     <property name="version.name" value="${application}-${version}"/>
     <property name="mainclass" value="cz.vity.freerapid.core.MainApp"/>
     <property name="mainjar.file" value="frd.jar"/>
@@ -269,18 +269,18 @@
                 <!--<exclude name="${build.dir}/${mainjar-packed.file}"/>-->
             </fileset>
         </zip>
-        <zip destfile="${dist.dir}/${version.name}-src.zip">
-            <fileset dir=".">
-                <include name="${lib.dir}/"/>
-                <include name="${lib-src.dir}/"/>
-                <include name="${etc.dir}/"/>
-                <include name="${src.dir}/"/>
-                <include name="${dev.dir}/"/>
-                <include name="${plugins.dir}/"/>
-                <include name="${doc.dir}/"/>
-                <include name="build.xml"/>
-            </fileset>
-        </zip>
+        <!--<zip destfile="${dist.dir}/${version.name}-src.zip">-->
+        <!--<fileset dir=".">-->
+        <!--<include name="${lib.dir}/"/>-->
+        <!--<include name="${lib-src.dir}/"/>-->
+        <!--<include name="${etc.dir}/"/>-->
+        <!--<include name="${src.dir}/"/>-->
+        <!--<include name="${dev.dir}/"/>-->
+        <!--<include name="${plugins.dir}/"/>-->
+        <!--<include name="${doc.dir}/"/>-->
+        <!--<include name="build.xml"/>-->
+        <!--</fileset>-->
+        <!--</zip>-->
     </target>
 
 </project>

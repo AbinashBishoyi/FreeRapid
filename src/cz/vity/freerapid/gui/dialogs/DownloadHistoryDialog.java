@@ -708,12 +708,12 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
 
     @org.jdesktop.application.Action
     public void clearHistoryBtnAction() {
-//        if (Swinger.getChoiceYesNo(getApp().getContext().getResourceMap().getString("confirmClearHistory")) == Swinger.RESULT_YES) {
-        final ListSelectionModel selectionModel = table.getSelectionModel();
-        selectionModel.setValueIsAdjusting(true);
-        manager.clearHistory();
-        selectionModel.setValueIsAdjusting(false);
-//        }
+        if (Swinger.getChoiceYesNo(getApp().getContext().getResourceMap().getString("confirmClearHistory")) == Swinger.RESULT_YES) {
+            final ListSelectionModel selectionModel = table.getSelectionModel();
+            selectionModel.setValueIsAdjusting(true);
+            manager.clearHistory();
+            selectionModel.setValueIsAdjusting(false);
+        }
     }
 
     private void updateFilters() {

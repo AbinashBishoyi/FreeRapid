@@ -15,7 +15,7 @@ public class Consts {
     /**
      * Version
      */
-    public static final String VERSION = "0.8";
+    public static final String VERSION = "0.81";
 
     /**
      * verze a jmeno programu
@@ -66,7 +66,7 @@ public class Consts {
     // hodnoty pro defaultni hodnoty pripojeni
 
     public static final String APP_CODE = "frd";
-    public static final String AUTHORS = "Authors (c) 2008 Vity";
+    public static final String AUTHORS = "Authors (c) 2008/09 Vity";
 
     public static final String LINUX_SHELL_SCRIPT = APP_CODE + ".sh";
     public static final String LINUX_ICON_NAME = APP_CODE + ".png";
@@ -83,7 +83,7 @@ public class Consts {
     /**
      * version of API
      */
-    public static final String APIVERSION = "0.8";
+    public static final String APIVERSION = "0.81";
 
     /**
      * Od teto tridy se nebudou delat zadne instance
