@@ -7,44 +7,44 @@
 **************************************************************
 
 =======================================
-Content:
-   I.   What is FreeRapid Downloader
-  II.   System requirements
- III.   How to run FreeRapid
-  IV.   Known problems and limitations
-   V.   Troubleshooting
-  VI.   Bug report
- VII.   Donate
-VIII.   FAQ
+Obsah:
+   I.   Co je FreeRapid Downloader
+  II.   Systémové poadavky
+ III.   Jak spustit FreeRapid
+  IV.   Známé problémy a omezení
+   V.   Øešení problémù
+  VI.   Hlášení chyb
+ VII.   Jak podpoøit FreeRapid
+VIII.   Èasto kladené otázky a odpovìdi
 =======================================
 
 
-I.    What is FreeRapid Downloader
+I.    Co je FreeRapid Downloader
 =======================================
 
-FreeRapid downloader is a simple Java downloader for support downloading from Rapidshare and other file share archives.
+FreeRapid downloader je jednoduchá aplikace napsaná v jazyku Java, která umoòuje pohodlné stahování souborù z datového uloištì Rapidshare a mnoha dalších slueb.
 
-Main features:
- - support for concurrent downloading from multiple services
- - downloading using proxy list
- - download history
- - clipboard monitoring 
- - programming interface (API) for adding other services like plugins
- - auto shutdown 
- - works on Linux and MacOS
+Hlavní vlastnosti:
+ - stahování souborù z více slueb najednou
+ - monost pouítí seznamu proxy serverù
+ - historie stahování
+ - sledování schránky
+ - rozhraní pro programování aplikací (API) pro pøidání dalších slueb jako pluginy
+ - automatické ukonèení
+ - monost spuštìní pod operaèními systémy Windows, Linux a MacOS
 
 
-Misc.:
- - Drag&Drop URLs
+Rùzné:
+ - Drag&Drop URL adres
 
-Currently supported services are:
- -  Rapidshare.com (for Premium account see Homepage for more details)
+V souèasné dobì jsou podporovány následující sluby:
+ -  Rapidshare.com (chcete-li stahovat pøes premium ùèet, navštivte prosím domovskou stránku pro více informací)
  -  FileFactory.com
  -  Uploaded.to
  -  MegaUpload.com
  -  DepositFiles.com
  -  NetLoad.in
- -  Megarotic.com and Sexuploader.com
+ -  Megarotic.com a Sexuploader.com
  -  Share-online.biz
  -  Egoshare.com
  -  Easy-share.com
@@ -55,140 +55,139 @@ Currently supported services are:
  -  Iskladka.cz
  -  Uloz.to
 
- II.    System requirements
+ II.    Systémové poadavky
 =======================================
 
-Recommended configuration:
-    * Windows 2000/XP/Linux(core 2.4)* or higher operating system
-    * Pentium 800MHz processor
-    * min 1024x768 screen resolution
-    * 40 MB of free RAM
-    * 10 MB free disk space
-    * Java 2 Platform - version at least 1.6 (Java SE 6 Runtime) installed
+Doporuèená konfigurace
+    * Windows 2000/XP/Linux(jádro 2.4)* nebo vyšší operaèní systém
+    * procesor Pentium 800MHz
+    * minimální rozlišení obrazovky 1024x768
+    * 40 MB volné operaèní pamìti
+    * 10 MB volného prostoru na pevném disku
+    * Java 2 Platform - nainstalovaná alespoò verze 1.6 (Java SE 6 Runtime)
 
-Application needs at least Java 6.0 to start (http://java.sun.com/javase/downloads/index.jsp , JRE 6).
+Aplikace pro své spuštìní vyaduje mít nainstalovanou alespoò Javu 6.0 (http://java.sun.com/javase/downloads/index.jsp , JRE 6).
 
 
-III.   How to run FreeRapid Downloader
+III.   Jak spustit FreeRapid
 =======================================
 
-Installation
+Instalace
 ------------
-Unzip files to any of your directory, but beware special characters (like '+' or '!') on the path.
-If you make an upgrade to higher version, you can delete previous folder. All user
-settings are preserved. All user settings are saved in home directories:
+Rozbalte archiv se soubory do libovolného adresáøe na pevném disku (cesta k aplikaci by nemìla obsahovat speciální znaky typu '+', '!').
+V pøípadì pøechodu na novìjší verzi smate pøedchozí sloku aplikace. Veškerá uivatelská nastavení jsou
+zachována. Uloená uivatelská nastavení naleznete:
 MS Windows: c:\Documents and Settings\YOUR_USER_NAME\application data\VitySoft\FRD
             and in registry HKEY_CURRENT_USER\Software\JavaSoft\Prefs\vitysoft\frd
 Linux: ~/.FRD
 
-DO NOT copy new version over older one.
+NEKOPÍRUJTE novou verzi programu pøes starou.
 
 
-Launching
+Spuštìní
 -----------
 Windows
- Simply launch frd.exe
+ Spuste jednoduše frd.exe
 
 Linux
- Run command ./frd.sh
+ Spuste pøíkazem ./frd.sh
 
 All platforms
- Run command java -jar frd.jar
+ Spuste pøíkazem java -jar frd.jar
 
 
-additional parameters for launching are:
+volitelné parametry pøi spuštìní:
 
 java -jar frd.jar [-h -v -d -D<property>=<value>]
 
-options
-  -h (--help,-?)      print this message
-  -v (--version)      print the version information and exit
-  -d (--debug)        print debugging information
-  -r (--reset)        reset user properties to default values  
-  -Dproperty=value    Passes properties and values to the application (mostly for debug or testing purposes)
+volby
+  -h (--help,-?)      tisk této zprávy
+  -v (--version)      tisk informací o verzi a ukonèení
+  -d (--debug)        tisk podrobnìjších informací o bìhu programu
+  -r (--reset)        reset uivatelskıch nastavení do vıchozího stavu
+  -Dproperty=value    Nastavení interních hodnot vlastností (vìtšinou pro úèely ladìní, testování)
 
-If value of option -D is set 'default' (without ') default value will be used.
+Pokud je hodnota volby -D nastavena na 'default' (bez '), pouije se vıchozí hodnota.
 
-Example - running application in debug mode:
+Pøíklad - spuštìní aplikace v ladícím módu:
   Windows OS: frd.exe --debug
   Linux/MacOS: java -jar frd.jar --debug
 
 
-More Info:
-  - Unofficial tutorial for Linux users - How to configure FreeRapid Downloader on Linux (in Spanish)
+Více informací:
+  - Neoficiální tutoriál pro uivatele Linuxu - Jak nakonfigurovat FreeRapid Downloader na Linuxu (ve španìlštinì)
     http://manualinux.my-place.us/freerapid.html
-    
 
-IV.    Known bugs and Limitations
+
+IV.    Známé problémy a omezení
 =======================================
-- Application will not start if it's placed on the path with special characters like '+' or '%'
-  - X please move application to another location without such characters
-- ESET "Smart" Antivirus on Windows OS blocks FRD to start
-  - X make correct settings of your antivirus program or run FRD this way: frd.exe -Doneinstance=false
-- Always close FRD properly otherwise you can loose your file list (eg. Windows shutdown with force option...)          
-- Selection from "top to bottom" in the main table during dragging while downloading partly disappears :-(
-    X select table rows by ctrl+mouse click or select items from bottom to top
-- Substance look and feel throws org.jvnet.substance.api.UiThreadingViolationException:
+- Aplikace se nespustí, jestlie cesta k ní obsahuje speciální znaky typu '+', '%'
+  - X zmìòte prosím umístìní aplikace tak, aby cesta k ní neobsahovala speciální znaky
+- ESET "Smart" Antivirus na operaèním systému Windows blokuje spuštìní FRD
+  - X proveïte správné nastavení vašeho antivirového programu nebo spouštìjte FRD tímto zpùsobem: frd.exe -Doneinstance=false
+- Vdy øádnì ukonèete FRD, jinak mùe dojít ke ztrátì Vašeho seznamu souborù (eg. Windows shutdown with force option...)          
+- Vıbìr stahovanıch souborù taením myší od shora dolù z nìjakého dùvodu zlobí :-(
+    X vybírejte øádky v tabulce pomocí ctrl+kliknutí myší nebo vybírejte poloky taením od sdola nahoru
+- Substance look and feel vyhazuje vıjimku org.jvnet.substance.api.UiThreadingViolationException:
                                                      Component creation must be done on Event Dispatch Thread
-    X ignore this exception in the app.log
-- java.lang.UnsupportedClassVersionError exception
-    X You are using old Java version, you should use version Sun Java version 6 or newer
-- DirectoryChooser throws java.lang.InternalError or freezes on Win Vista (64bit)
-    X ignore this exception in the app.log
+    X ignorujte tuto vıjimku v souboru app.log
+- Vıjimka java.lang.UnsupportedClassVersionError
+    X pravdìpodobnì pouíváte starší verzi Javy (aplikace vyaduje Sun Java verze 6 èi novìjší)
+- DirectoryChooser vyhazuje vıjimku java.lang.InternalError nebo zamrzá na Windows Vista (64bit)
+    X ignorujte tuto vıjimku v souboru app.log
 - java.lang.ClassCastException: java.awt.TrayIcon cannot be cast to java.awt.Component
-    X ignore this exception in the app.log    
-- Linux users reported not showing icon in tray on Linux
-    X the only one known solution for this problem could be an upgrade JRE to version 1.6.0_10-rc or higher
+    X ignorujte tuto vıjimku v souboru app.log    
+- Uivatelùm Linuxu se nezobrazuje ikona v oznamovací oblasti
+    X jedinım øešením tohoto problému by mohl bıt pøechod JRE na verzi 1.6.0_10-rc èi novìjší
 
 
-IV.    Troubleshooting
+V.    Øešení problémù
 =======================================
-1. Check section IV - for already known bugs and limitations first
-2. Have you tried to application turn off and on again? :-)
-3. Check homepage http://wordrider.net/freerapid and/or issue tracker at http://bugtracker.wordrider.net/
-   for possible new known bug
-4. You can try to delete configuration files - its location is described in Installation section  
-5. Run application in debug mode:
+1. Nejprve si projdìte sekci IV kvùli známım chybám a omezením
+2. Pokusil(a) jste se ji aplikaci ukonèit a opìt spustit? :-)
+3. Navštivte domovskou stránku http://wordrider.net/freerapid a/nebo issue tracker na adrese http://bugtracker.wordrider.net/
+   pro vloení oznámení o nalezené chybì
+4. Mùete se pokusit odstranit konfiguraèní soubory (jejich umístìní naleznete v sekci III - Instalace)
+5. Spuste aplikaci v ladícím módu:
    Windows OS: frd.exe --debug
    Linux/MacOS: java -jar frd.jar --debug
-6. Report problem with app.log as described in Bug report section
+6. Nahlašte problém dle pokynù v sekci VI
 
 
-VI.    Bug report
+VI.    Hlášení chyb
 =======================================
-If you see a bug, please do not assume that i know about it. Let me know as soon as possible so that i can fix it before
-the next release. Since my resources are limited, i can not backport bug fixes to earlier releases.
-To report a bug, you can use the issue tracker (preferred), project forums or my personal e-mail.
+Pokud objevíte chybu, nahlašte mi ji co nejdøíve, aby mohla bıt opravena pøed vydáním další verze.
+K nahlášení chyby  mùete pouít issue tracker (preferováno), fóra projektu èi mùj osobní e-mail.
 
-Please report your JRE and OS version and attach file app.log (which is located in FreeRapid's folder).
-It can help us to recognize a problem. You can also help us if you run application with --debug parameter.
-We ignore simple reports like "I cannot run FRD. What should I do?". Describe your situation and application behaviour.
+Napište prosím Vaši verzi JRE a operaèního systému a pøilote soubor app.log (naleznete jej ve sloce aplikace).
+Usnadní nám to práci pøi identifikaci problému. Také nám velmi pomùe, pokud spustíte aplikaci s parametrem --debug.
+Ignorujeme jednoduchá hlášení typu "Nejde mi spustit FRD. Co mám dìlat?". Popište Vaši situaci a chování aplikace.
 
 
 issue tracker: http://bugtracker.wordrider.net/
-forum: http://wordrider.net/forum/list.php?7
-mail: bugs@wordrider.net (your mail can be caught by spam filter, so this way is NOT preffered!)
+fórum: http://wordrider.net/forum/list.php?7
+e-mail: bugs@wordrider.net (Vaše zpráva mùe bıt odchycena spamovım filtrem, proto tento zpùsob NEdoporuèuji!)
 
 
-VII.    Donate
+VII.    Jak podpoøit FreeRapid
 =======================================
-FreeRapid downloader is distributed as freeware, but if you wish to express your appreciation for the time and resources
-the author has spent developing, we do accept and appreciate monetary donations.
-We are students and we must pay for webhosting, bills for our girlfriends etc...
+FreeRapid downloader je distribuován jako freeware. Pokud se Vám aplikace líbí a rádi byste chtìli ocenit tvùrce
+nìjakou finanèní èástkou za èas a zdroje vynaloené do vıvoje , velmi nás to potìší.
+Jsme obyèejní studenti, kteøí musí platit webhosting, úèty za naše pøítelkynì atd...
 
 PayPal: http://wordrider.net/freerapid/paypal
-   or
-use bank account described on the homepage http://wordrider.net/freerapid/
+   nebo
+pouijte bankovní úèet, jak je popsáno na domovské stránce http://wordrider.net/freerapid/
 
 
-VIII.   FAQ
+VIII.   Èasto kladené otázky a odpovìdi
 =======================================
 
-Q: Why did you create another "RapidShare Downloader"?
-A: 1) Because I don't want to be dependant on the russian software, which is probably full of malware and spyware.
-   2) Because I can simply fix automatic downloading myself.
-   3) Because other existing downloaders have unintuitive user interface and missing important features.
-   4) Because I can.
+Q: Proè jsi vytvoøil další "RapidShare Downloader"?
+A: 1) Protoe nechci pouívat ruskı software, kterı je pravdìpodobnì plnı malwaru a spywaru.
+   2) Protoe si mùu sám jednoduše opravit automatické stahování.
+   3) Protoe ostatní existující aplikace jsou uivatelsky nepøívìtivé a èasto postrádají dùleite funkce.
+   4) Protoe mùu.
 
-Q: How to enable a support for shutdown commands on Linux and MacOS?
-A: Please see 'syscmd.properties' configuration file in application directory for more details.
+Q: Jak zapnout podporu pøíkazù pro vypínání na Linuxu a MacOS?
+A: Pro více informací nahlédnìte prosím do konfiguraèního souboru 'syscmd.properties', kterı naleznete ve sloce aplikace.

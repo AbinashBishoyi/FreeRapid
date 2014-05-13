@@ -147,11 +147,11 @@ IV.    Troubleshooting
 2. Have you tried to application turn off and on again? :-)
 3. Check homepage http://wordrider.net/freerapid and/or issue tracker at http://bugtracker.wordrider.net/
    for possible new known bug
-4. You can try to delete configuration files - its location is described in Installation section  
+4. You can try to delete configuration files (its location is described in section VI - Installation )  
 5. Run application in debug mode:
    Windows OS: frd.exe --debug
    Linux/MacOS: java -jar frd.jar --debug
-6. Report problem with app.log as described in Bug report section
+6. Report problem with app.log as described in section VI
 
 
 VI.    Bug report
