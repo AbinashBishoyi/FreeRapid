@@ -1,7 +1,5 @@
 package cz.vity.freerapid.utilities;
 
-import cz.vity.freerapid.core.MainApp;
-
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -292,7 +290,7 @@ public final class Utils {
         if (appPath != null)
             return appPath;
         try {
-            final URI uri = MainApp.class.getProtectionDomain().getCodeSource().getLocation().toURI();
+            final URI uri = LogUtils.class.getProtectionDomain().getCodeSource().getLocation().toURI();
             if (!"file".equalsIgnoreCase(uri.getScheme())) {
                 logger.info("Running Webstart application");
                 return appPath = "";

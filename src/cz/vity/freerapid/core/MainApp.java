@@ -44,7 +44,7 @@ public class MainApp extends SingleXFrameApplication {
         final CmdLine line = new CmdLine(this);
         final List<String> fileList = line.processCommandLine(args);
 
-        LogUtils.initLogging(debug);//logovani nejdrive    
+        LogUtils.initLogging((debug) ? Consts.LOGDEBUG : Consts.LOGDEFAULT);//logovani nejdrive    
 
         minimizeOnStart = line.isMinimize();
 
