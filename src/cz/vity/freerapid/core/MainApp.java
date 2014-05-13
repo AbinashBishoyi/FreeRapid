@@ -68,6 +68,12 @@ public class MainApp extends SingleXFrameApplication {
             logger.severe("Application cannot be started on the path containing '+' or '!' characters ('" + path.substring(0, index + 1) + "'...)\nExiting.");
             System.exit(-1);
         }
+        if (!Utils.isWindows() && Utils.isJVMVersion("1.6.0_0")) {
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainApp.class.getName());
+            logger.severe("Application cannot be started on JRE 1.6.0_0 on Linux - this version is buggy and FRD wouldn't work properly.\nUpgrade to newer version.");
+            System.exit(-1);
+        }
+
 
         System.getProperties().put("arguments", args);
 
