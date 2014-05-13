@@ -55,7 +55,7 @@ public final class PlugUtils {
         if (index > 0) {
             value = value.substring(0, index);
         }
-        value = value.trim().replaceAll(" ", "").replaceAll(",", ".");
+        value = value.replaceAll("(\\s|\u00A0)*", "").replace(',', '.');
         if (value.indexOf('.') > 0)
             return new BigDecimal(value).multiply(BigDecimal.valueOf(constant)).setScale(0, RoundingMode.UP).longValue();
         else
@@ -113,7 +113,7 @@ public final class PlugUtils {
         try {
             StringWriter writer = new StringWriter((int) (str.length() * 1.5));
             Entities.HTML40.unescape(writer, str);
-            return writer.toString();
+            return writer.toString().replaceAll("\u00A0", " ");
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Cannot unescape HTML", e);
             return null;
@@ -203,4 +203,9 @@ public final class PlugUtils {
         }
     }
 
+//    public static void main(String[] args) {
+//        final long fileSizeFromString = PlugUtils.getFileSizeFromString("95    505 MB");
+//        System.out.println("fileSizeFromString = " + fileSizeFromString);
+//    }
+//
 }
