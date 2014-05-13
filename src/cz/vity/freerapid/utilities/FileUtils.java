@@ -10,6 +10,8 @@ import java.util.logging.Logger;
  */
 public class FileUtils {
     private final static Logger logger = Logger.getLogger(FileUtils.class.getName());
+    public static final String BACKUP_EXTENSION = ".backup";
+
 
     private FileUtils() {
     }
@@ -78,4 +80,76 @@ public class FileUtils {
 //        return new FileOutputStream(new RandomAccessFile(f, "rw").getFD());
 //    }
 
+
+    public static void makeBackup(final File srcFile) throws IOException {
+        final File backupFile = getBackupFile(srcFile);
+
+        if (backupFile.exists()) {
+            final boolean result = backupFile.delete();
+            if (!result) {
+                logger.warning("Deleting backup file " + backupFile + " failed.");
+            }
+        }
+        final boolean result = srcFile.renameTo(backupFile);
+        if (!result) {
+            logger.warning("Making backup of file " + srcFile + " to backup file " + backupFile + " failed.");
+        }
+    }
+
+    public static void renewBackup(final File srcFile) throws IOException {
+        final File backupFile = getBackupFile(srcFile);
+        try {
+            if (!backupFile.exists())
+                throw new FileNotFoundException("Backup file does not exists");
+            copyfile(backupFile, srcFile);
+        } catch (IOException e) {
+            logger.warning("Renewing file " + srcFile + " from backup file " + backupFile + " failed.");
+            throw e;
+        }
+    }
+
+    public static File getBackupFile(final File srcFile) {
+        return new File(srcFile.getParentFile(), srcFile.getName() + BACKUP_EXTENSION);
+    }
+
+    public static void copyfile(final File srcFile, final File dstFile) throws IOException {
+        if (!srcFile.exists() || !srcFile.isFile())
+            return;
+        InputStream in = null;
+        OutputStream out = null;
+        try {
+            final File parentFile = dstFile.getParentFile();
+            if (!parentFile.exists()) {
+                final boolean result = parentFile.mkdirs();
+                if (!result)
+                    logger.warning("Creating path " + parentFile + " failed");
+            }
+            in = new FileInputStream(srcFile);
+            out = new FileOutputStream(dstFile);
+
+            final byte[] buf = new byte[8 * 1024];
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+        } catch (IOException e) {
+            LogUtils.processException(logger, e);
+            throw e;
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e1) {
+                    LogUtils.processException(logger, e1);
+                }
+            }
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e1) {
+                    LogUtils.processException(logger, e1);
+                }
+            }
+        }
+    }
 }

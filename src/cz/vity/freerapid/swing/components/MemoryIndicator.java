@@ -6,6 +6,8 @@ import cz.vity.freerapid.swing.Swinger;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
  * @author Vity
@@ -35,11 +37,23 @@ public class MemoryIndicator extends JPanel {
         progressBar.setStringPainted(true);
 
         updateInfo();
-        new Timer(2500, new ActionListener() {
+        final Timer timer = new Timer(2500, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 updateInfo();
             }
-        }).start();
+        });
+        timer.start();
+
+        this.addPropertyChangeListener("visible", new PropertyChangeListener() {
+
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (Boolean.TRUE.equals(evt.getNewValue())) {
+                    timer.start();
+                } else
+                    timer.stop();
+            }
+        });
+
     }
 
     private void updateInfo() {

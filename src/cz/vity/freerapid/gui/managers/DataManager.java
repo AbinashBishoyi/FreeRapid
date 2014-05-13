@@ -12,8 +12,9 @@ import cz.vity.freerapid.plugins.exceptions.NotSupportedDownloadServiceException
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.swing.Swinger;
-import cz.vity.freerapid.utilities.LogUtils;
-import org.jdesktop.application.*;
+import org.jdesktop.application.AbstractBean;
+import org.jdesktop.application.Application;
+import org.jdesktop.application.ApplicationContext;
 
 import javax.swing.*;
 import javax.swing.event.ListDataEvent;
@@ -22,22 +23,19 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
-import java.util.logging.Logger;
 
 /**
  * @author Vity
  */
 public class DataManager extends AbstractBean implements PropertyChangeListener, ListDataListener {
-    private final static Logger logger = Logger.getLogger(DataManager.class.getName());
+    //private final static Logger logger = Logger.getLogger(DataManager.class.getName());
 
     private final ArrayListModel<DownloadFile> downloadFiles = new ArrayListModel<DownloadFile>();
 
     private ProcessManager processManager;
     private final ManagerDirector director;
     private final ApplicationContext context;
-    private static final String FILES_LIST_XML = "filesList.xml";
 
     private final Object lock = new Object();
     private int completed;
@@ -46,11 +44,12 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
     private int speed = 0;
 
     private int dataChanged = 0;
-    private final Object saveFileLock = new Object();
+    private FileListMaintainer fileListMaintainer;
 
     public DataManager(ManagerDirector director, ApplicationContext context) {
         this.director = director;
         this.context = context;
+        fileListMaintainer = new FileListMaintainer(context, director);
         pluginsManager = director.getPluginsManager();
         context.getApplication().addExitListener(new Application.ExitListener() {
             public boolean canExit(EventObject event) {
@@ -101,73 +100,13 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
     }
 
     private void saveListToBeanImmediately() {
-        saveToFile(downloadFiles);
+        fileListMaintainer.saveToFile(downloadFiles);
     }
 
-    private void saveToFile(ArrayListModel<DownloadFile> downloadFiles) {
-        synchronized (saveFileLock) {
-            logger.info("=====Saving queue into the XML file=====");
-            final LocalStorage localStorage = context.getLocalStorage();
-            try {
-                localStorage.save(downloadFiles, FILES_LIST_XML);
-            } catch (IOException e) {
-                LogUtils.processException(logger, e);
-            } finally {
-                logger.info("=====Finishing saving queue into the XML file=====");
-            }
-
-        }
-    }
-
-    @SuppressWarnings({"unchecked"})
-    private void loadListToBean() {
-        final LocalStorage localStorage = context.getLocalStorage();
-        final boolean downloadOnStart = AppPrefs.getProperty(UserProp.DOWNLOAD_ON_APPLICATION_START, UserProp.DOWNLOAD_ON_APPLICATION_START_DEFAULT);
-        if (new File(localStorage.getDirectory(), FILES_LIST_XML).exists()) {
-            final boolean removeCompleted = AppPrefs.getProperty(UserProp.REMOVE_COMPLETED_DOWNLOADS, UserProp.REMOVE_COMPLETED_DOWNLOADS_DEFAULT) == UserProp.REMOVE_COMPLETED_DOWNLOADS_AT_STARTUP;
-            try {
-                final Object o = localStorage.load(FILES_LIST_XML);
-                if (o instanceof ArrayListModel) {
-                    for (DownloadFile file : (ArrayListModel<DownloadFile>) o) {
-                        final DownloadState state = file.getState();
-                        if (state == DownloadState.DELETED)
-                            continue;
-                        if (state == DownloadState.COMPLETED && removeCompleted) {
-                            continue;
-                        }
-                        if (state != DownloadState.COMPLETED) {
-                            file.setDownloaded(0);
-                        }
-                        if (state == DownloadState.ERROR || state == DownloadState.SLEEPING) {
-                            file.setDownloaded(0);
-                            if (downloadOnStart && file.getTimeToQueued() > 0) {
-                                file.setTimeToQueued(-1);
-                                file.setTimeToQueuedMax(-1);
-                                file.setState(DownloadState.QUEUED);
-                            }
-                        }
-                        if (DownloadState.isProcessState(state)) {
-                            if (downloadOnStart) {
-                                file.setState(DownloadState.QUEUED);
-                            } else
-                                file.setState(DownloadState.PAUSED);
-                        }
-                        file.resetSpeed();
-                        file.setTimeToQueued(-1);
-                        file.addPropertyChangeListener(this);
-                        this.downloadFiles.add(file);
-                    }
-                }
-            } catch (Exception e) {
-                LogUtils.processException(logger, e);
-            }
-
-        }
-    }
 
     public void initProcessManager() {
         synchronized (lock) {
-            loadListToBean();
+            fileListMaintainer.loadListToBean(downloadFiles);
         }
         processManager = new ProcessManager(director, context);
         processManager.start();
@@ -181,7 +120,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
             delayedReadValueModel.addValueChangeListener(new PropertyChangeListener() {
 
                 public void propertyChange(PropertyChangeEvent evt) {
-                    saveListToFileOnBackground();
+                    fileListMaintainer.saveListToFileOnBackground(downloadFiles);
                 }
             });
         }
@@ -321,29 +260,6 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
 
     }
 
-    private void saveListToFileOnBackground() {
-        logger.info("--------saveListToBeansOnBackground------");
-        final TaskService service = director.getTaskServiceManager().getTaskService(TaskServiceManager.WORK_WITH_FILE_SERVICE);
-        service.execute(new Task(context.getApplication()) {
-            protected Object doInBackground() throws Exception {
-                Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-                final ArrayListModel<DownloadFile> files;
-                synchronized (lock) {
-                    files = new ArrayListModel<DownloadFile>(downloadFiles);
-                }
-
-                saveToFile(files);
-
-                return null;
-            }
-
-            @Override
-            protected void failed(Throwable cause) {
-                LogUtils.processException(logger, cause);
-            }
-        });
-
-    }
 
     public void resumeSelected(final int[] indexes) {
         //predpoklada se, ze alespon jeden soubor splni vnitrni podminku

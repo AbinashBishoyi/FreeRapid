@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  * @author Ladislav Vitasek
  */
 class LinuxCmdUtils implements SystemCommander {
-    public static final String SYSTEM_COMMAND_PROPERTIES_FILE = "syscmd.properties";
+    private static final String SYSTEM_COMMAND_PROPERTIES_FILE = "syscmd.properties";
     private final static Logger logger = Logger.getLogger(LinuxCmdUtils.class.getName());
 
 

@@ -43,6 +43,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
     private TrayIconSupport trayIconSupport;
 
     private JLabel clipboardMonitoring;
+    private MemoryIndicator indicator;
 
     /**
      * Konstruktor
@@ -58,11 +59,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
         app = (MainApp) context.getApplication();
     }
 
-    /**
-     * Vraci komponentu statusbaru
-     *
-     * @return
-     */
+
     public JXStatusBar getStatusBar() {
         if (statusbar == null) {
             statusbar = new JXStatusBar();
@@ -102,7 +99,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
             infoLabel = new JLabel();
             progress = new JProgressBar();
             //  progress.setStringPainted(false);
-            final MemoryIndicator indicator = new MemoryIndicator();
+            indicator = new MemoryIndicator();
             indicator.setPreferredSize(new Dimension(100, 15));
             infoLabel.setPreferredSize(new Dimension(330, 15));
             clipboardMonitoring.setPreferredSize(new Dimension(17, 15));
@@ -113,7 +110,6 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
             statusbar.add(progress, JXStatusBar.Constraint.ResizeBehavior.FIXED);
             statusbar.add(clipboardMonitoring, JXStatusBar.Constraint.ResizeBehavior.FIXED);
             statusbar.add(Box.createGlue(), JXStatusBar.Constraint.ResizeBehavior.FILL);
-            statusbar.add(indicator, JXStatusBar.Constraint.ResizeBehavior.FIXED);
             //statusbar.add(Box.createGlue(), JXStatusBar.Constraint.ResizeBehavior.FILL);
             context.getTaskMonitor().addPropertyChangeListener(this);
 
@@ -137,14 +133,26 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
                             updateIconAnimation();
                     } else if (UserProp.CLIPBOARD_MONITORING.equals(key)) {
                         updateClipboardMonitoring();
+                    } else if (UserProp.SHOW_MEMORY_INDICATOR.equals(key)) {
+                        updateMemoryIndicator();
                     }
                 }
             });
             //final ContentPanel panel = director.getDockingManager().getContentPanel();
             updateInfoStatus();
             updateClipboardMonitoring();
+            updateMemoryIndicator();
         }
         return statusbar;
+    }
+
+    private void updateMemoryIndicator() {
+        final boolean memoryIndicator = AppPrefs.getProperty(UserProp.SHOW_MEMORY_INDICATOR, UserProp.SHOW_MEMORY_INDICATOR_DEFAULT);
+        indicator.setVisible(memoryIndicator);
+        if (memoryIndicator)
+            statusbar.add(indicator, JXStatusBar.Constraint.ResizeBehavior.FIXED);
+        else
+            statusbar.remove(indicator);
     }
 
     private void updateClipboardMonitoring() {
