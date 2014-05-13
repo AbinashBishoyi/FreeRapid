@@ -213,8 +213,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         final int min = getArrayMin(indexes);
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                final int count = table.getRowCount();
-                if (table.getRowCount() > 0) {
+                final int count = table.getVisibleRowCount();
+                if (count > 0) {
                     int index = Math.min(count - 1, min);
                     index = table.convertRowIndexToView(index);
                     selectionModel.addSelectionInterval(index, index);
