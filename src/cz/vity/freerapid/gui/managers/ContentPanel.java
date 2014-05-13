@@ -595,8 +595,11 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         }
     }
 
-    public void selectAdded(java.util.List<DownloadFile> files) {
-        table.getSelectionModel().setSelectionInterval(0, files.size() - 1);
+    public void selectAdded(final java.util.List<DownloadFile> files) {
+        final ListSelectionModel selectionModel = table.getSelectionModel();
+        final int index = manager.getDownloadFiles().indexOf(files.get(0));
+        final int viewIndex = table.convertRowIndexToView(index);
+        selectionModel.setSelectionInterval(viewIndex, viewIndex + files.size() - 1);
     }
 
     public void lostOwnership(Clipboard clipboard, Transferable contents) {
@@ -869,7 +872,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         min = min - hours * 60;
         seconds = seconds - min * 60 - hours * 3600;
         if (hours > 0) {
-            return String.format("%02dh:%02dm:%02ds", hours, min, seconds);
+            return String.format("%02dh:%02dm", hours, min);
         } else if (min > 0) {
             return String.format("%02dm:%02ds", min, seconds);
         } else

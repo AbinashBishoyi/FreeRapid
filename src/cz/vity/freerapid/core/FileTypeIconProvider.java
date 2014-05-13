@@ -59,7 +59,7 @@ public class FileTypeIconProvider {
         } else {
             fileType = DEFAULT_EXTENSION;
         }
-        logger.info("Found file type for file " + fileName + " (" + fileType + ")");
+        //logger.info("Found file type for file " + fileName + " (" + fileType + ")");
         return fileType;
     }
 

@@ -19,9 +19,6 @@ import org.jdesktop.application.TaskService;
 
 import javax.swing.*;
 import java.util.*;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
@@ -42,6 +39,8 @@ public class ProcessManager extends Thread {
     private List<ConnectionSettings> availableConnections;
     private final java.util.Timer errorTimer = new java.util.Timer();
     private PluginsManager pluginsManager;
+    private volatile int downloading;
+    private TaskService taskService;
 
 
     public ProcessManager(ManagerDirector director, ApplicationContext context) {
@@ -49,22 +48,13 @@ public class ProcessManager extends Thread {
         pluginsManager = director.getPluginsManager();
         //  queueLock = dataManager.getLock();
         this.context = context;
+        taskService = director.getTaskServiceManager().getTaskService(TaskServiceManager.DOWNLOAD_SERVICE);
         final ClientManager clientManager = director.getClientManager();
         availableConnections = clientManager.getAvailableConnections();
         this.workingClients = new Stack<HttpDownloadClient>();
         this.workingClients.addAll(clientManager.getClients());
         this.setName("ProcessManagerThread");
-        initTaskService(context);
-    }
-
-    private void initTaskService(ApplicationContext context) {
-        final ThreadPoolExecutor threadPool = new ThreadPoolExecutor(
-                AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT),   // corePool size
-                10,  // maximumPool size
-                5L, TimeUnit.SECONDS,  // non-core threads time to live
-                new LinkedBlockingQueue<Runnable>(10));
-        final TaskService service = new TaskService("downloadService", threadPool);
-        context.addTaskService(service);
+        downloading = 0;
     }
 
 
@@ -177,10 +167,19 @@ public class ProcessManager extends Thread {
         final List<DownloadFile> queued = new LinkedList<DownloadFile>();
 
         final DownloadFile[] f = files.toArray(new DownloadFile[files.size()]);
-        for (int i = f.length - 1; i >= 0; i--) {
-            DownloadFile downloadFile = f[i];
-            if (downloadFile.getState() == DownloadState.QUEUED) {
-                queued.add(downloadFile);
+        final boolean startFromTop = AppPrefs.getProperty(UserProp.START_FROM_FROM_TOP, UserProp.START_FROM_FROM_TOP_DEFAULT);
+        if (startFromTop) {
+            for (DownloadFile downloadFile : f) {
+                if (downloadFile.getState() == DownloadState.QUEUED) {
+                    queued.add(downloadFile);
+                }
+            }
+        } else {
+            for (int i = f.length - 1; i >= 0; i--) {
+                DownloadFile downloadFile = f[i];
+                if (downloadFile.getState() == DownloadState.QUEUED) {
+                    queued.add(downloadFile);
+                }
             }
         }
         return queued;
@@ -188,6 +187,7 @@ public class ProcessManager extends Thread {
     }
 
     private void startDownload(final DownloadFile downloadFile, final HttpDownloadClient client, ShareDownloadService service) {
+        ++downloading;
         final DownloadState s = downloadFile.getState();
         logger.info("starting download in state s = " + s);
         try {
@@ -200,14 +200,16 @@ public class ProcessManager extends Thread {
                     finishedDownloading(downloadFile, client, task);
                     downloadFile.setTask(null);
                 }
+
             });
-            this.context.getTaskService("downloadService").execute(task);
+            taskService.execute(task);
         } catch (NotSupportedDownloadServiceException e) {
             LogUtils.processException(logger, e);
         }
     }
 
     private void finishedDownloading(final DownloadFile file, final HttpDownloadClient client, final DownloadTask task) {
+        --downloading;
         synchronized (manipulation) {
             final String serviceName = file.getShareDownloadServiceID();
             final DownloadService service = services.get(serviceName);
@@ -290,4 +292,7 @@ public class ProcessManager extends Thread {
         }
     }
 
+    public int getDownloading() {
+        return downloading;
+    }
 }

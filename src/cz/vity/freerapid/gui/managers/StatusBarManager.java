@@ -1,10 +1,13 @@
 package cz.vity.freerapid.gui.managers;
 
+import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.MainApp;
+import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.MoveFileTask;
 import cz.vity.freerapid.swing.TrayIconSupport;
 import cz.vity.freerapid.swing.components.MemoryIndicator;
 import org.jdesktop.application.ApplicationContext;
+import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.Task;
 import org.jdesktop.swingx.JXStatusBar;
 
@@ -14,6 +17,8 @@ import javax.swing.event.ListDataListener;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 
 /**
  * Sprava a vytvoreni Statusbaru
@@ -27,6 +32,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
     private final ApplicationContext context;
     private JProgressBar progress;
     private MainApp app;
+    private ResourceMap resourceMap;
 
     /**
      * Konstruktor
@@ -37,6 +43,8 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
     public StatusBarManager(ManagerDirector director, ApplicationContext context) {
         this.director = director;
         this.context = context;
+        resourceMap = context.getResourceMap();
+
         app = (MainApp) context.getApplication();
     }
 
@@ -75,9 +83,18 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
             statusbar.add(indicator, JXStatusBar.Constraint.ResizeBehavior.FIXED);
             //statusbar.add(Box.createGlue(), JXStatusBar.Constraint.ResizeBehavior.FILL);
             context.getTaskMonitor().addPropertyChangeListener(this);
-            director.getDataManager().getDownloadFiles().addListDataListener(this);
-            director.getDataManager().addPropertyChangeListener("speed", this);
-            director.getDataManager().addPropertyChangeListener("completed", this);
+            final DataManager dataManager = director.getDataManager();
+            dataManager.getDownloadFiles().addListDataListener(this);
+            dataManager.addPropertyChangeListener("speed", this);
+            dataManager.addPropertyChangeListener("completed", this);
+            dataManager.addPropertyChangeListener("state", this);
+            AppPrefs.getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
+                public void preferenceChange(PreferenceChangeEvent evt) {
+                    if (UserProp.SHOWINFO_IN_TITLE.equals(evt.getKey())) {
+                        updateInfoStatus();
+                    }
+                }
+            });
             //final ContentPanel panel = director.getDockingManager().getContentPanel();
             updateInfoStatus();
         }
@@ -135,13 +152,28 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
         final int size = dataManager.getDownloadFiles().size();
         final int speed = dataManager.getCurrentAllSpeed();
         final TrayIconSupport trayIconSupport = app.getTrayIconSupport();
-        if (size >= 0) {
-            final String speedFormatted = ContentPanel.bytesToAnother(speed);
-            trayIconSupport.setToolTip(String.format("FreeRapid Downloader\n\nComplete downloads %d of %d\nCurrent speed: %s/s\n", completed, size, speedFormatted));
-            infoLabel.setText(String.format("Complete downloads %d of %d - Current speed: %s/s", completed, size, speedFormatted));
+        final boolean showInFrameTitle = AppPrefs.getProperty(UserProp.SHOWINFO_IN_TITLE, UserProp.SHOWINFO_IN_TITLE_DEFAULT);
+        final String speedFormatted = ContentPanel.bytesToAnother(speed);
+        int downloading = dataManager.getDownloading();
+        if (showInFrameTitle) {
+            final String s;
+            if (downloading == 0) {
+                s = resourceMap.getString("frameTitleInfoNoDownloads", completed, size);
+            } else {
+                s = resourceMap.getString("frameTitleInfo", completed, size, speedFormatted);
+            }
+
+            app.getMainFrame().setTitle(s);
         } else {
-            trayIconSupport.setToolTip(app.getMainFrame().getTitle());
-            infoLabel.setText("Ready");
+            app.getMainFrame().setTitle(resourceMap.getString("Application.title"));
+        }
+
+        if (size >= 0) {
+            trayIconSupport.setToolTip(resourceMap.getString("tooltipTrayInfo", completed, size, speedFormatted));
+            infoLabel.setText(resourceMap.getString("statusBarInfo", completed, size, speedFormatted));
+        } else {
+            trayIconSupport.setToolTip(resourceMap.getString("Application.title"));
+            infoLabel.setText(resourceMap.getString("statusBarInfoIdle"));
         }
 
     }

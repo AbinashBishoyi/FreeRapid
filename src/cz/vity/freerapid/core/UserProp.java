@@ -14,6 +14,8 @@ public class UserProp {
     public static final String USE_TEMPORARY_FILES = "useTemporaryFiles";
 
     public static final String DOWNLOAD_ON_APPLICATION_START = "downloadOnStart";
+    public static final boolean DOWNLOAD_ON_APPLICATION_START_DEFAULT = true;
+
     public static final String FILE_ALREADY_EXISTS = "whatToDoIfFileAlreadyExists";
 
     public static final int RENAME = 0;
@@ -61,4 +63,18 @@ public class UserProp {
 
     public static final String ERROR_SLEEP_TIME = "firstSleepTime";
     public static final int ERROR_SLEEP_TIME_DEFAULT = 4;
+
+    public static final String START_FROM_FROM_TOP = "startDownloadFromTheTop";
+    public static final boolean START_FROM_FROM_TOP_DEFAULT = true;
+
+    public static final String SHOWINFO_IN_TITLE = "showInfoInFrameTitle";
+    public static final boolean SHOWINFO_IN_TITLE_DEFAULT = true;
+
+    //ukladani fronty pro pripad padu programu atd.
+    public static final String AUTOSAVE_ENABLED = "autosaveEnabled";
+    public static final boolean AUTOSAVE_ENABLED_DEFAULT = true;
+
+    public static final String AUTOSAVE_TIME = "autosaveTime";
+    public static final int AUTOSAVE_TIME_DEFAULT = 10;//sekundy
+
 }

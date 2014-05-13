@@ -1,6 +1,8 @@
 package cz.vity.freerapid.gui.managers;
 
+import com.jgoodies.binding.beans.PropertyAdapter;
 import com.jgoodies.binding.list.ArrayListModel;
+import com.jgoodies.binding.value.DelayedReadValueModel;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.DownloadTask;
@@ -10,10 +12,7 @@ import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.LogUtils;
-import org.jdesktop.application.AbstractBean;
-import org.jdesktop.application.Application;
-import org.jdesktop.application.ApplicationContext;
-import org.jdesktop.application.LocalStorage;
+import org.jdesktop.application.*;
 
 import javax.swing.*;
 import javax.swing.event.ListDataEvent;
@@ -43,6 +42,9 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
     private PluginsManager pluginsManager;
     private float averageSpeed;
 
+    private int dataChanged = 0;
+    private final Object saveFileLock = new Object();
+
     public DataManager(ManagerDirector director, ApplicationContext context) {
         this.director = director;
         this.context = context;
@@ -58,7 +60,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
 
             public void willExit(EventObject event) {
                 exitDownloading();
-                saveListToBeans();
+                saveListToBeanImmediately();
             }
         });
         updateCompleted();
@@ -74,7 +76,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                 if (task != null && !task.isTerminated()) {
                     task.cancel(true);
                     foundRunning = true;
-                    if (AppPrefs.getProperty(UserProp.DOWNLOAD_ON_APPLICATION_START, true)) {
+                    if (AppPrefs.getProperty(UserProp.DOWNLOAD_ON_APPLICATION_START, UserProp.DOWNLOAD_ON_APPLICATION_START_DEFAULT)) {
                         file.setState(DownloadState.QUEUED);
                     } else
                         file.setState(DownloadState.PAUSED);
@@ -91,26 +93,47 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         }
     }
 
-    private void saveListToBeans() {
-        final LocalStorage localStorage = context.getLocalStorage();
-        try {
-            localStorage.save(downloadFiles, FILES_LIST_XML);
-        } catch (IOException e) {
-            LogUtils.processException(logger, e);
+    private void saveListToBeanImmediately() {
+        saveToFile(downloadFiles);
+    }
+
+    private void saveToFile(ArrayListModel<DownloadFile> downloadFiles) {
+        synchronized (saveFileLock) {
+            logger.info("=====Saving queue into the XML file=====");
+            final LocalStorage localStorage = context.getLocalStorage();
+            try {
+                localStorage.save(downloadFiles, FILES_LIST_XML);
+            } catch (IOException e) {
+                LogUtils.processException(logger, e);
+            } finally {
+                logger.info("=====Finishing saving queue into the XML file=====");
+            }
+
         }
     }
 
     @SuppressWarnings({"unchecked"})
     private void loadListToBean() {
         final LocalStorage localStorage = context.getLocalStorage();
+        final boolean downloadOnStart = AppPrefs.getProperty(UserProp.DOWNLOAD_ON_APPLICATION_START, UserProp.DOWNLOAD_ON_APPLICATION_START_DEFAULT);
         if (new File(localStorage.getDirectory(), FILES_LIST_XML).exists()) {
             try {
                 final Object o = localStorage.load(FILES_LIST_XML);
                 if (o instanceof ArrayListModel) {
                     for (DownloadFile file : (ArrayListModel<DownloadFile>) o) {
-                        if (file.getState() != DownloadState.COMPLETED) {
+                        final DownloadState state = file.getState();
+                        if (state == DownloadState.DELETED)
+                            continue;
+                        if (state != DownloadState.COMPLETED) {
                             file.setDownloaded(0);
                         }
+                        if (DownloadState.isProcessState(state)) {
+                            if (downloadOnStart) {
+                                file.setState(DownloadState.QUEUED);
+                            } else
+                                file.setState(DownloadState.PAUSED);
+                        }
+                        file.resetSpeed();
                         file.setTimeToQueued(-1);
                         file.addPropertyChangeListener(this);
                         this.downloadFiles.add(file);
@@ -128,6 +151,20 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         }
         processManager = new ProcessManager(director, context);
         processManager.start();
+        if (AppPrefs.getProperty(UserProp.AUTOSAVE_ENABLED, UserProp.AUTOSAVE_ENABLED_DEFAULT)) {
+
+            PropertyAdapter<DataManager> adapter = new PropertyAdapter<DataManager>(this, "dataChanged", true);
+
+            final int time = AppPrefs.getProperty(UserProp.AUTOSAVE_TIME, UserProp.AUTOSAVE_TIME_DEFAULT);
+
+            DelayedReadValueModel delayedReadValueModel = new DelayedReadValueModel(adapter, time * 1000, true);
+            delayedReadValueModel.addValueChangeListener(new PropertyChangeListener() {
+
+                public void propertyChange(PropertyChangeEvent evt) {
+                    saveListToFileOnBackground();
+                }
+            });
+        }
     }
 
     public void addToQueue(List<DownloadFile> files) {
@@ -146,6 +183,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
     }
 
     private void addOnList(List<DownloadFile> files) {
+        final boolean startFromTop = AppPrefs.getProperty(UserProp.START_FROM_FROM_TOP, UserProp.START_FROM_FROM_TOP_DEFAULT);
         for (DownloadFile file : files) {
             try {
                 file.setShareDownloadServiceID(pluginsManager.getServiceIDForURL(file.getFileUrl()));
@@ -154,7 +192,10 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                 file.setErrorMessage("NotSupportedDownloadServiceException");
             }
             file.addPropertyChangeListener(this);
-            this.downloadFiles.add(0, file);
+            if (startFromTop)
+                this.downloadFiles.add(file);
+            else
+                this.downloadFiles.add(0, file);
         }
     }
 
@@ -177,6 +218,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                     downloadFiles.fireContentsChanged(getIndex(evt.getSource()));
                     if ("state".equals(s)) {
                         firePropertyChange(s, evt.getOldValue(), evt.getNewValue());
+                        fireDataChanged();
                     } else if ("speed".equals(s)) {
                         firePropertyChange(s, -1, getCurrentAllSpeed());
                         firePropertyChange("averageSpeed", -1, getAverageSpeed());
@@ -228,6 +270,29 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
             }
         }
         processManager.queueUpdated();
+
+    }
+
+    private void saveListToFileOnBackground() {
+        logger.info("--------saveListToBeansOnBackground------");
+        final TaskService service = director.getTaskServiceManager().getTaskService(TaskServiceManager.WORK_WITH_FILE_SERVICE);
+        service.execute(new Task(context.getApplication()) {
+            protected Object doInBackground() throws Exception {
+                final ArrayListModel<DownloadFile> files;
+                synchronized (lock) {
+                    files = new ArrayListModel<DownloadFile>(downloadFiles);
+                }
+
+                saveToFile(files);
+
+                return null;
+            }
+
+            @Override
+            protected void failed(Throwable cause) {
+                LogUtils.processException(logger, cause);
+            }
+        });
 
     }
 
@@ -299,11 +364,12 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
 
     public void intervalAdded(ListDataEvent e) {
         contentsChanged(e);
-
+        fireDataChanged();
     }
 
     public void intervalRemoved(ListDataEvent e) {
         contentsChanged(e);
+        fireDataChanged();
     }
 
     public void contentsChanged(ListDataEvent e) {
@@ -454,6 +520,10 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         return false;
     }
 
+    public int getDownloading() {
+        return processManager.getDownloading();
+    }
+
     public void forceDownload(final ConnectionSettings settings, final int[] indexes) {
         List<DownloadFile> forceDownloadList;
         synchronized (this.lock) {
@@ -465,4 +535,13 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
     public void checkQueue() {
         processManager.queueUpdated();
     }
+
+    public int getDataChanged() {
+        return dataChanged;
+    }
+
+    private void fireDataChanged() {
+        firePropertyChange("dataChanged", this.dataChanged, ++this.dataChanged);
+    }
+
 }

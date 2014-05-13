@@ -151,7 +151,6 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
     }
 
     public void propertyChange(PropertyChangeEvent evt) {
-        //System.out.println("evt.getPropertyName() = " + evt.getPropertyName());
         if ("downloaded".equals(evt.getPropertyName())) {
             this.setDownloaded((Long) evt.getNewValue());
         } else if ("sleep".equals(evt.getPropertyName())) {
@@ -281,5 +280,10 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
 
     public void setTimeToQueuedMax(int timeToQueuedMax) {
         this.timeToQueuedMax = timeToQueuedMax;
+    }
+
+    public void resetSpeed() {
+        setSpeed(0);
+        setAverageSpeed(0);
     }
 }

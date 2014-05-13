@@ -54,6 +54,8 @@ public class ManagerDirector {
     private PluginsManager pluginsManager;
 
     private FileHistoryManager fileHistoryManager;
+    private ClipboardMonitorManager clipboardMonitorManager;
+    private TaskServiceManager taskServiceManager;
 
     /**
      * Konstruktor
@@ -73,9 +75,10 @@ public class ManagerDirector {
         this.rootContainer = new JPanel();
         this.rootContainer.setPreferredSize(new Dimension(700, 550));
 
+        taskServiceManager = new TaskServiceManager(context);
         this.clientManager = new ClientManager();
 
-        this.fileHistoryManager = new FileHistoryManager(context);
+        this.fileHistoryManager = new FileHistoryManager(this, context);
 
         this.pluginsManager = new PluginsManager(context);
 
@@ -92,6 +95,8 @@ public class ManagerDirector {
 
 
         this.inputDataManager.initProcessManager();
+
+        this.clipboardMonitorManager = new ClipboardMonitorManager(context, this);
 
         rootContainer.add(getToolbarManager().getComponent(), BorderLayout.NORTH);
         rootContainer.add(getContentManager().getComponent(), BorderLayout.CENTER);
@@ -159,5 +164,13 @@ public class ManagerDirector {
 
     public FileHistoryManager getFileHistoryManager() {
         return fileHistoryManager;
+    }
+
+    public ClipboardMonitorManager getClipboardMonitorManager() {
+        return clipboardMonitorManager;
+    }
+
+    public TaskServiceManager getTaskServiceManager() {
+        return taskServiceManager;
     }
 }

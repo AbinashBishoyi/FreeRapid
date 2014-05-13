@@ -1,12 +1,18 @@
 package cz.vity.freerapid.gui.managers;
 
+import com.jgoodies.binding.beans.PropertyAdapter;
 import com.jgoodies.binding.list.ArrayListModel;
+import com.jgoodies.binding.value.DelayedReadValueModel;
+import cz.vity.freerapid.core.AppPrefs;
+import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.utilities.LogUtils;
-import org.jdesktop.application.Application;
-import org.jdesktop.application.ApplicationContext;
-import org.jdesktop.application.LocalStorage;
+import org.jdesktop.application.*;
 
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,9 +23,10 @@ import java.util.logging.Logger;
 /**
  * @author Ladislav Vitasek
  */
-public class FileHistoryManager implements Application.ExitListener {
+public class FileHistoryManager extends AbstractBean implements Application.ExitListener {
     private final static Logger logger = Logger.getLogger(FileHistoryManager.class.getName());
 
+    private final ManagerDirector director;
     private final ApplicationContext context;
 
     private final ArrayListModel<FileHistoryItem> items = new ArrayListModel<FileHistoryItem>();
@@ -27,9 +34,58 @@ public class FileHistoryManager implements Application.ExitListener {
     private boolean loaded = false;
     private static final String FILES_LIST_XML = "history.xml";
 
-    public FileHistoryManager(ApplicationContext context) {
+    private int dataChanged = 0;
+    private final Object saveFileLock = new Object();
+
+
+    public FileHistoryManager(ManagerDirector director, ApplicationContext context) {
+        this.director = director;
         this.context = context;
         this.context.getApplication().addExitListener(this);
+        init();
+    }
+
+    private void init() {
+        if (AppPrefs.getProperty(UserProp.AUTOSAVE_ENABLED, UserProp.AUTOSAVE_ENABLED_DEFAULT)) {
+
+            PropertyAdapter<FileHistoryManager> adapter = new PropertyAdapter<FileHistoryManager>(this, "dataChanged", true);
+
+            final int time = AppPrefs.getProperty(UserProp.AUTOSAVE_TIME, UserProp.AUTOSAVE_TIME_DEFAULT);
+
+            DelayedReadValueModel delayedReadValueModel = new DelayedReadValueModel(adapter, time * 1000, true);
+            delayedReadValueModel.addValueChangeListener(new PropertyChangeListener() {
+
+                public void propertyChange(PropertyChangeEvent evt) {
+                    saveListToFileOnBackground();
+                }
+            });
+        }
+
+    }
+
+    private void saveListToFileOnBackground() {
+        synchronized (this) {
+            if (!loaded)
+                return;
+        }
+        final TaskService service = director.getTaskServiceManager().getTaskService(TaskServiceManager.WORK_WITH_FILE_SERVICE);
+        service.execute(new Task(context.getApplication()) {
+            protected Object doInBackground() throws Exception {
+                final ArrayListModel<FileHistoryItem> files;
+
+                files = new ArrayListModel<FileHistoryItem>(getItems());//getItems je synchronizovana
+
+                saveToFile(files);
+
+                return null;
+            }
+
+            @Override
+            protected void failed(Throwable cause) {
+                LogUtils.processException(logger, cause);
+            }
+        });
+
     }
 
     public boolean canExit(EventObject event) {
@@ -37,17 +93,24 @@ public class FileHistoryManager implements Application.ExitListener {
     }
 
     public void willExit(EventObject event) {
-        saveList();
+        synchronized (this) {
+            if (!loaded) // pokud to neni loaded, tak to znamena, ze jsem s tim seznamem nemanipuloval
+                return;
+            saveToFile(items);
+        }
     }
 
-    private synchronized void saveList() {
-        if (!loaded) // pokud to neni loaded, tak to znamena, ze jsem s tim seznamem nemanipuloval
-            return;
-        final LocalStorage localStorage = context.getLocalStorage();
-        try {
-            localStorage.save(getItems(), FILES_LIST_XML);
-        } catch (IOException e) {
-            LogUtils.processException(logger, e);
+    private void saveToFile(ArrayListModel<FileHistoryItem> files) {
+        synchronized (saveFileLock) {
+            logger.info("=====Saving download history into XML file=====");
+            final LocalStorage localStorage = context.getLocalStorage();
+            try {
+                localStorage.save(files, FILES_LIST_XML);
+            } catch (IOException e) {
+                LogUtils.processException(logger, e);
+            } finally {
+                logger.info("=====Saving download history finished =====");
+            }
         }
     }
 
@@ -63,24 +126,30 @@ public class FileHistoryManager implements Application.ExitListener {
                         this.items.add(file);
                     }
                 }
+                this.items.addListDataListener(new ListDataListener() {
+                    public void intervalAdded(ListDataEvent e) {
+                        fireDataChanged();
+                    }
+
+                    public void intervalRemoved(ListDataEvent e) {
+                        fireDataChanged();
+                    }
+
+                    public void contentsChanged(ListDataEvent e) {
+
+                    }
+                });
             } catch (IOException e) {
                 LogUtils.processException(logger, e);
             }
         }
-//        try {
-//            DownloadFile df = new DownloadFile(new URL("http://pokus.cz/kjhggfhg.rar"), new File("c:\\"), "popis");
-//            items.add(new FileHistoryItem(df, new File("c:\\test.txt")));
-//            df = new DownloadFile(new URL("http://pokus2.cz/hghghg.zip"), new File("c:\\"), "popisa asd asdasd ");
-//            items.add(new FileHistoryItem(df, new File("c:\\test2.txt")));
-//        } catch (MalformedURLException e) {
-//            e.printStackTrace();
-//        }
-        this.loaded = true;
     }
 
     public synchronized ArrayListModel<FileHistoryItem> getItems() {
-        if (!loaded)
+        if (!loaded) {
             loadList();
+            this.loaded = true;
+        }
         return items;
     }
 
@@ -114,11 +183,20 @@ public class FileHistoryManager implements Application.ExitListener {
         return list;
     }
 
-    public void removeSelected(int[] indexes) {
+    public synchronized void removeSelected(int[] indexes) {
         final ArrayListModel<FileHistoryItem> items = getItems();
         final List<FileHistoryItem> toRemoveList = getSelectionToList(indexes);
         for (FileHistoryItem file : toRemoveList) {
             items.remove(file);
         }
     }
+
+    private void fireDataChanged() {
+        firePropertyChange("dataChanged", this.dataChanged, ++this.dataChanged);
+    }
+
+    public int getDataChanged() {
+        return dataChanged;
+    }
+
 }

@@ -3,25 +3,24 @@ package cz.vity.freerapid.core.tasks;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
+import cz.vity.freerapid.gui.managers.TaskServiceManager;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.exceptions.*;
 import cz.vity.freerapid.plugins.webclient.*;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.Sound;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.jdesktop.application.*;
+import org.jdesktop.application.Application;
+import org.jdesktop.application.TaskEvent;
+import org.jdesktop.application.TaskListener;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.NoRouteToHostException;
 import java.net.UnknownHostException;
 import java.util.TimerTask;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,7 +37,6 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     private Integer sleep = 0;
     private File outputFile;
     private File storeFile;
-    private static final String MOVE_FILE_SERVICE = "moveFile";
     private static java.util.Timer timer = new java.util.Timer(true);
     private DownloadTaskError serviceError;
 
@@ -236,6 +234,8 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         } else
             downloadFile.setState(DownloadState.CANCELLED);
         downloadFile.setDownloaded(0);
+        setSpeed(0);
+        setAverageSpeed(0);
     }
 
     protected void setSpeed(final long speedInBytes) {
@@ -386,21 +386,9 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                 downloadFile.setState(DownloadState.CANCELLED);
             }
         });
-        final ApplicationContext context = getApplication().getContext();
-        TaskService service;
-        synchronized (getApplication().getContext()) {
-            service = context.getTaskService(MOVE_FILE_SERVICE);
-            if (service == null) {
-                service = new TaskService(MOVE_FILE_SERVICE, new ThreadPoolExecutor(
-                        1,   // corePool size
-                        1,  // maximumPool size
-                        1L, TimeUnit.SECONDS,  // non-core threads time to live
-                        new LinkedBlockingQueue<Runnable>()));
-                context.addTaskService(service);
-            }
-        }
-        service.execute(moveFileTask);
-
+        final MainApp app = (MainApp) this.getApplication();
+        final TaskServiceManager serviceManager = app.getManagerDirector().getTaskServiceManager();
+        serviceManager.getTaskService(TaskServiceManager.MOVE_FILE_SERVICE).execute(moveFileTask);
     }
 
     public void sleep(int seconds) throws InterruptedException {
@@ -451,7 +439,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
             public void run() {
                 captchaResult = "";
                 while (captchaResult.isEmpty()) {
-                    captchaResult = (String) JOptionPane.showInputDialog(Frame.getFrames()[0], "Insert what you see", "Insert Captcha", JOptionPane.PLAIN_MESSAGE, new ImageIcon(image), null, null);
+                    captchaResult = (String) JOptionPane.showInputDialog(null, "Insert what you see", "Insert Captcha", JOptionPane.PLAIN_MESSAGE, new ImageIcon(image), null, null);
                     if (captchaResult == null)
                         break;
                 }
