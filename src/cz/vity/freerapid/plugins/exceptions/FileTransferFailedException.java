@@ -12,4 +12,9 @@ public class FileTransferFailedException extends NotRecoverableDownloadException
     public FileTransferFailedException(String s) {
         super(s);
     }
+
+    @Override
+    public String getLocalizedMessage() {
+        return "FileTransferFailedException";
+    }
 }

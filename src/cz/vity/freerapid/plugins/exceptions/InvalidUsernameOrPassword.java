@@ -40,4 +40,9 @@ public class InvalidUsernameOrPassword extends NotRecoverableDownloadException {
     public InvalidUsernameOrPassword(Throwable cause) {
         super(cause);
     }
+
+    @Override
+    public String getLocalizedMessage() {
+        return "InvalidUsernameOrPassword";
+    }
 }

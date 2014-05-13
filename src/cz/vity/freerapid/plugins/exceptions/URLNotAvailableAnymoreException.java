@@ -12,4 +12,9 @@ public class URLNotAvailableAnymoreException extends NotRecoverableDownloadExcep
     public URLNotAvailableAnymoreException(String message) {
         super(message);
     }
+
+    @Override
+    public String getLocalizedMessage() {
+        return "URLNotAvailableAnymore";
+    }
 }

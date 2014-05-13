@@ -12,4 +12,21 @@ public class ServiceConnectionProblemException extends ErrorDuringDownloadingExc
     public ServiceConnectionProblemException(String message) {
         super(message);
     }
+
+    public ServiceConnectionProblemException() {
+        super();
+    }
+
+    public ServiceConnectionProblemException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public ServiceConnectionProblemException(Throwable cause) {
+        super(cause);
+    }
+
+    @Override
+    public String getLocalizedMessage() {
+        return "ServiceConnectionProblemException";
+    }
 }

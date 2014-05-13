@@ -11,7 +11,7 @@ public class CaptchaEntryInputMismatchException extends NotRecoverableDownloadEx
      * Constructs a new CaptchaEntryInputMismatchException.
      */
     public CaptchaEntryInputMismatchException() {
-        super("CaptchaEntryInputMismatch");
+        super();
     }
 
     /**
@@ -35,4 +35,8 @@ public class CaptchaEntryInputMismatchException extends NotRecoverableDownloadEx
         super(cause);
     }
 
+    @Override
+    public String getLocalizedMessage() {
+        return "CaptchaEntryInputMismatch";
+    }
 }

@@ -401,11 +401,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     }
 
     protected void setFileErrorMessage(Throwable cause) {
-        final String errorMessage = cause.getMessage();
-        if (errorMessage != null && getResourceMap().containsKey(errorMessage))
-            downloadFile.setErrorMessage(getResourceMap().getString(errorMessage));
-        else
-            downloadFile.setErrorMessage(errorMessage);
+        downloadFile.setErrorMessage(Swinger.getMessageFromException(getResourceMap(), cause));
     }
 
     @Override

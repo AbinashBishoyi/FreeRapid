@@ -152,7 +152,11 @@ public class Swinger {
     }
 
     public static void showErrorMessage(ResourceMap map, final String message, final Object... args) {
-        JOptionPane.showMessageDialog(getActiveFrame(), map.getString(message, args), getResourceMap().getString("errorMessage", args), JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(getActiveFrame(), map.getString(message, args), getResourceMap().getString("errorMessage"), JOptionPane.ERROR_MESSAGE);
+    }
+
+    public static void showErrorMessage(ResourceMap map, final Throwable cause) {
+        JOptionPane.showMessageDialog(getActiveFrame(), getMessageFromException(map, cause), getResourceMap().getString("errorMessage"), JOptionPane.ERROR_MESSAGE);
     }
 
     public static int showOptionDialog(ResourceMap map, final int messageType, final String titleCode, final String messageCode, final String[] buttons, final Object... args) {
@@ -393,4 +397,21 @@ public class Swinger {
     }
 
 
+    public static String getMessageFromException(ResourceMap map, Throwable cause) {
+        final String localizedMessage = cause.getLocalizedMessage();
+        final String msg;
+        if (localizedMessage != null) {
+            if (map.containsKey(localizedMessage))
+                msg = map.getString(localizedMessage);
+            else
+                msg = localizedMessage;
+        } else {
+            final String errorMessage = cause.getMessage();
+            if (errorMessage != null && map.containsKey(errorMessage))
+                msg = map.getString(errorMessage);
+            else
+                msg = errorMessage;
+        }
+        return msg;
+    }
 }

@@ -11,7 +11,7 @@ public class FailedToLoadCaptchaPictureException extends ErrorDuringDownloadingE
      * @see ErrorDuringDownloadingException#ErrorDuringDownloadingException()
      */
     public FailedToLoadCaptchaPictureException() {
-        super("Failed to load captcha picture");
+        super();
     }
 
     /**
@@ -33,5 +33,10 @@ public class FailedToLoadCaptchaPictureException extends ErrorDuringDownloadingE
      */
     public FailedToLoadCaptchaPictureException(Throwable cause) {
         super(cause);
+    }
+
+    @Override
+    public String getLocalizedMessage() {
+        return "FailedToLoadCaptchaPicture";
     }
 }

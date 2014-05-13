@@ -7,7 +7,7 @@ package cz.vity.freerapid.plugins.exceptions;
  */
 public class YouHaveToWaitException extends ErrorDuringDownloadingException {
     /**
-     * Field howManySecondsToWait
+     * Field howManySecondsToWait - how many second user has to wait
      */
     private int howManySecondsToWait;
 
@@ -29,5 +29,15 @@ public class YouHaveToWaitException extends ErrorDuringDownloadingException {
      */
     public int getHowManySecondsToWait() {
         return howManySecondsToWait;
+    }
+
+
+    /**
+     * Setter for property 'howManySecondsToWait'.
+     *
+     * @param howManySecondsToWait Value to set for property 'howManySecondsToWait'.
+     */
+    public void setHowManySecondsToWait(int howManySecondsToWait) {
+        this.howManySecondsToWait = howManySecondsToWait;
     }
 }

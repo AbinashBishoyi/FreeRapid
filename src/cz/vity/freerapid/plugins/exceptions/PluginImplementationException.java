@@ -13,4 +13,9 @@ public class PluginImplementationException extends NotRecoverableDownloadExcepti
     public PluginImplementationException(String message) {
         super(message);
     }
+
+    @Override
+    public String getLocalizedMessage() {
+        return "PluginImplementationException";
+    }
 }

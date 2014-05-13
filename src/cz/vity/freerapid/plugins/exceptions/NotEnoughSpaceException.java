@@ -10,6 +10,11 @@ public class NotEnoughSpaceException extends ErrorDuringDownloadingException {
      * Constructs a new ErrorDuringDownloadingException.
      */
     public NotEnoughSpaceException() {
-        super("NotEnoughSpaceException");
+        super();
+    }
+
+    @Override
+    public String getLocalizedMessage() {
+        return "NotEnoughSpaceException";
     }
 }
