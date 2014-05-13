@@ -16,11 +16,11 @@ import java.util.*;
 /**
  * @author Vity
  */
-public class CmdLine {
+final class CmdLine {
     private final MainApp app;
     private Map<String, String> properties = new HashMap<String, String>(2);
 
-    public CmdLine(MainApp app) {
+    CmdLine(MainApp app) {
         this.app = app;
     }
 

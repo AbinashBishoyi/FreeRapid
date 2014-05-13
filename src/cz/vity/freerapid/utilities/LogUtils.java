@@ -25,9 +25,10 @@ public class LogUtils {
     public static void initLogging(final boolean debug) {
         InputStream inputStream = null;
         try {
-            inputStream = LogUtils.class.getClassLoader().getResourceAsStream((debug) ? Consts.LOGDEBUG : Consts.LOGDEFAULT);
+            final String file = (debug) ? Consts.LOGDEBUG : Consts.LOGDEFAULT;
+            inputStream = LogUtils.class.getClassLoader().getResourceAsStream(file);
             if (inputStream == null)
-                throw new IOException("Log properties file was not found");
+                throw new IOException("Log properties file was not found: " + file);
             LogManager.getLogManager().readConfiguration(inputStream);
         } catch (IOException e) {
             e.printStackTrace();

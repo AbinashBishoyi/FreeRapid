@@ -27,10 +27,10 @@ public final class AppPrefs {
     private final ApplicationContext context;
     private String userNode;
 
-    public AppPrefs(ApplicationContext context, Map<String, String> properties) {
+    AppPrefs(ApplicationContext context, Map<String, String> properties) {
         this.context = context;
         final String id = context.getResourceMap().getString("Application.id");
-        if (id.isEmpty())
+        if (id == null || id.isEmpty())
             throw new IllegalStateException("Config property Application.ID is empty!");
         this.propertiesFileName = id.toLowerCase() + ".xml";
         AppPrefs.properties = loadProperties();
@@ -110,6 +110,7 @@ public final class AppPrefs {
      *
      * @param key          hodnota klice
      * @param defaultValue hodnota uzivatelskeho nastaveni
+     * @return String value
      */
     public static String getProperty(final String key, final String defaultValue) {
         return getPreferences().get(key, defaultValue);
@@ -169,6 +170,8 @@ public final class AppPrefs {
     /**
      * Provede nacteni properties ze souboru definovaneho systemem. Pokud nacteni selze, vraci prazdne getPreferences().
      * Properties se nacitaji z XML.
+     *
+     * @return User Preferences instance
      */
     private Preferences loadProperties() {
         final LocalStorage localStorage = context.getLocalStorage();

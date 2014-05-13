@@ -26,8 +26,10 @@ Main features:
  - support for concurrent downloading from multiple services
  - downloading using proxy list
  - download history
+ - clipboard monitoring 
  - programming interface (API) for adding other services like plugins
- - works on Linux
+ - works on Linux and MacOS
+
 
 Misc.:
  - Drag&Drop URLs
@@ -61,12 +63,13 @@ III.  How to run FreeRapid Downloader
 
 Installation
 ------------
-Unzip files to any of your directory, but beware special characters (like '+') on the path.
+Unzip files to any of your directory, but beware special characters (like '+' or '!') on the path.
 If you make an upgrade to higher version, you can delete previous folder. All user
-settings are preserved. All use settings are saved in home directories:
+settings are preserved. All user settings are saved in home directories:
 MS Windows: c:\Documents and Settings\YOUR_USER_NAME\application data\VitySoft\FRD
-            + registry HKEY_CURRENT_USER\Software\JavaSoft\Prefs\vitysoft\frd
+            and in registry HKEY_CURRENT_USER\Software\JavaSoft\Prefs\vitysoft\frd
 Linux: ~/.FRD
+
 DO NOT copy new version over older one.
 
 
@@ -84,13 +87,14 @@ All platforms
 
 additional parameters for launching are:
 
-java -jar frd.jar [-h -v -d]
+java -jar frd.jar [-h -v -d -D<property>=<value>]
 
 options
-  -h (--help,-?)    print this message
-  -v (--version)    print the version information and exit
-  -d (--debug)      print debugging information
-
+  -h (--help,-?)      print this message
+  -v (--version)      print the version information and exit
+  -d (--debug)        print debugging information
+  -Dproperty=value    Passes properties and values to the application (mostly for debug or testing purposes)
+   
 
 IV.   Known bugs and Limitations
 =======================================
