@@ -4,7 +4,6 @@ import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.gui.actions.HelpActions;
 import cz.vity.freerapid.swing.SwingUtils;
 import cz.vity.freerapid.swing.Swinger;
-import cz.vity.freerapid.swing.models.NaiiveComboModel;
 import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.ApplicationContext;
@@ -173,14 +172,13 @@ abstract class AppFrame extends JFrame {
                 (int) ((screenSize.height - paneSize.height) * 0.45));
     }
 
-    protected String[] getList(String key) {
-        return (String[]) getResourceMap().getObject(key + "_list", String[].class);
-    }
-
-    protected void setComboModelFromResource(JComboBox comboBox) {
-        final String name = comboBox.getName();
-        assert name != null && name.length() > 0;
-        comboBox.setModel(new NaiiveComboModel(getList(name)));
+    protected String[] getList(final String key, final int valueCount) {
+        final ResourceMap resourceMap = getResourceMap();
+        final String[] list = new String[valueCount];
+        for (int i = 0; i < valueCount; i++) {
+            list[i] = resourceMap.getString(key + "_" + i);
+        }
+        return list;
     }
 
     protected boolean validateNonEmpty(final JTextComponent component) {

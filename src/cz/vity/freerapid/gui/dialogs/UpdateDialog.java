@@ -139,7 +139,7 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
 
     private void initTable() {
         table.setName("updatePluginsTable");
-        table.setModel(new CustomTableModel(listModel, getList("columns")));
+        table.setModel(new CustomTableModel(listModel, getList("columns", 7)));
         table.setAutoCreateColumnsFromModel(false);
         table.setEditable(true);
         table.setColumnControlVisible(true);

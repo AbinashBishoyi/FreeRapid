@@ -80,7 +80,7 @@ public class PluginsTab extends UserPreferencesTab implements ClipboardOwner {
         buildPopmenuButton(popmenuButton.getPopupMenu());
 
         final ArrayListModel<PluginMetaData> plugins = new ArrayListModel<PluginMetaData>(managerDirector.getPluginsManager().getSupportedPlugins());
-        pluginTable.setModel(new PluginMetaDataTableModel(plugins, dialog.getList("pluginTableColumns")));
+        pluginTable.setModel(new PluginMetaDataTableModel(plugins, dialog.getList("pluginTableColumns", 10)));
         if (!plugins.isEmpty()) { //select first row in plugin table
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
@@ -93,7 +93,7 @@ public class PluginsTab extends UserPreferencesTab implements ClipboardOwner {
         bind(spinnerUpdateHour, UserProp.PLUGIN_UPDATE_CHECK_INTERVAL, UserProp.PLUGIN_UPDATE_CHECK_INTERVAL_DEFAULT, 1, 1000, 1);
         bind(check4PluginUpdatesAutomatically, UserProp.CHECK4_PLUGIN_UPDATES_AUTOMATICALLY, UserProp.CHECK4_PLUGIN_UPDATES_AUTOMATICALLY_DEFAULT);
         bind(checkDownloadNotExistingPlugins, UserProp.DOWNLOAD_NOT_EXISTING_PLUGINS, UserProp.DOWNLOAD_NOT_EXISTING_PLUGINS_DEFAULT);
-        bindCombobox(comboHowToUpdate, UserProp.PLUGIN_UPDATE_METHOD, UserProp.PLUGIN_UPDATE_METHOD_DEFAULT, "comboHowToUpdate");
+        bindCombobox(comboHowToUpdate, UserProp.PLUGIN_UPDATE_METHOD, UserProp.PLUGIN_UPDATE_METHOD_DEFAULT, "comboHowToUpdate", 4);
         comboHowToUpdate.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {

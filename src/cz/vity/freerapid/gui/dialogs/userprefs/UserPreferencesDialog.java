@@ -62,8 +62,8 @@ public class UserPreferencesDialog extends AppDialog {
     }
 
     @Override
-    public String[] getList(String key) {
-        return super.getList(key);
+    public String[] getList(final String key, final int valueCount) {
+        return super.getList(key, valueCount);
     }
 
     @Override
@@ -152,7 +152,7 @@ public class UserPreferencesDialog extends AppDialog {
             tab.init();
             tab.setInitialized(true);
         }
-        
+
         final CardLayout cardLayout = (CardLayout) panelCard.getLayout();
         cardLayout.show(panelCard, card.toString());
         AppPrefs.storeProperty(FWProp.USER_SETTINGS_SELECTED_CARD, card.toString());

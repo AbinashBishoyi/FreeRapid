@@ -63,10 +63,8 @@ public abstract class UserPreferencesTab extends JPanel {
         return action;
     }
 
-    protected void bindCombobox(final JComboBox combobox, final String key, final Object defaultValue, final String propertyResourceMap) {
-        final String[] stringList = dialog.getList(propertyResourceMap);
-        if (stringList == null)
-            throw new IllegalArgumentException("Property '" + propertyResourceMap + "' does not provide any string list from resource map.");
+    protected void bindCombobox(final JComboBox combobox, final String key, final Object defaultValue, final String resourceKey, final int valueCount) {
+        final String[] stringList = dialog.getList(resourceKey, valueCount);
         bindCombobox(combobox, key, defaultValue, stringList);
     }
 
@@ -110,10 +108,8 @@ public abstract class UserPreferencesTab extends JPanel {
         Bindings.bind(field, dialog.getModel().getBufferedPreferences(key, defaultValue), false);
     }
 
-    protected void bind(final JComboBox combobox, final String key, final Object defaultValue, final String propertyResourceMap) {
-        final String[] stringList = dialog.getList(propertyResourceMap);
-        if (stringList == null)
-            throw new IllegalArgumentException("Property '" + propertyResourceMap + "' does not provide any string list from resource map.");
+    protected void bind(final JComboBox combobox, final String key, final Object defaultValue, final String resourceKey, final int valueCount) {
+        final String[] stringList = dialog.getList(resourceKey, valueCount);
         bind(combobox, key, defaultValue, stringList);
     }
 

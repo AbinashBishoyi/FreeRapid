@@ -127,7 +127,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
 
     private void initTable() {
         table.setName("historyTable");
-        table.setModel(new CustomTableModel(new ArrayListModel<FileHistoryItem>(manager.getItems()), getList("columns")));
+        table.setModel(new CustomTableModel(new ArrayListModel<FileHistoryItem>(manager.getItems()), getList("columns", 5)));
         table.setAutoCreateColumnsFromModel(false);
         table.setEditable(false);
         table.setColumnControlVisible(true);
@@ -327,7 +327,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         Bindings.bind(fieldFilter, delayedReadValueModel);
         //combobox.setModel(new DefaultComboBoxModel(getList("datesFilter")));
 
-        bindCombobox(combobox, UserProp.SELECTED_DOWNLOADS_FILTER, DownloadsFilters.ALL_DOWNLOADS.ordinal(), "datesFilter");
+        bindCombobox(combobox, UserProp.SELECTED_DOWNLOADS_FILTER, DownloadsFilters.ALL_DOWNLOADS.ordinal(), "datesFilter", 6);
 
         combobox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -356,10 +356,8 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         return Swinger.getSelectedRows(table);
     }
 
-    private void bindCombobox(final JComboBox combobox, final String key, final Object defaultValue, final String propertyResourceMap) {
-        final String[] stringList = getList(propertyResourceMap);
-        if (stringList == null)
-            throw new IllegalArgumentException("Property '" + propertyResourceMap + "' does not provide any string list from resource map.");
+    private void bindCombobox(final JComboBox combobox, final String key, final Object defaultValue, final String resourceKey, final int valueCount) {
+        final String[] stringList = getList(resourceKey, valueCount);
         bindCombobox(combobox, key, defaultValue, stringList);
     }
 
