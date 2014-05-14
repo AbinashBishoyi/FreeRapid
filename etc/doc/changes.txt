@@ -15,6 +15,8 @@ Fixed - indicates a bug fix
             - DownloadClientConsts class with constants for DownloadClient parameters
   Changed : Removed obsolete entries for sorting downloads from dropdown menu, as the table can now be sorted by clicking the headings
   Changed : Show amount of downloaded data instead of "unknown" if file size is not known while downloading
+  Changed : Removed Kunstoff and PGS LookAndFeel (too old and not updated), upgraded Substance LaF to version 6.0
+  Changed : Default FRD Look And Feel is set to JTattoo AERO
   Fixed : Wrong file is deleted when cancelling a download in some cases, see http://bugtracker.wordrider.net/task/1306
   Fixed: Regression: Look and Feel reverts to Quaqua on every startup
 

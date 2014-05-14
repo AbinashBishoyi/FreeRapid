@@ -26,7 +26,7 @@ import java.util.logging.Logger;
  * @author Vity
  */
 public final class LookAndFeels {
-    private final static String DEFAULT_LAF = "com.pagosoft.plaf.PgsLookAndFeel";
+    private final static String DEFAULT_LAF = "com.jtattoo.plaf.aero.AeroLookAndFeel";
     private final static String DEFAULT_THEME = "";
     /**
      * Trida Kunstoffu

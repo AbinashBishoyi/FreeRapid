@@ -40,7 +40,6 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
@@ -748,7 +747,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
                 rowFilter = textFilter;
             }
         }
-        ((TableRowSorter) table.getRowSorter()).setRowFilter(rowFilter);
+        ((DefaultRowSorter) table.getRowSorter()).setRowFilter(rowFilter);
     }
 
 //    /**
