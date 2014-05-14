@@ -13,49 +13,53 @@
         <yguard>
             <inoutpair in="swingx.jar" out="swingx-ob.jar"/>
             <shrink logfile="${shrinklog}">
-                <keep linenumbertable="true" sourcefile="true">
-                    <class classes="private" methods="private" fields="private">
-                        <patternset>
-                            <include name="org.jdesktop.swingx.plaf.*"/>
-                            <include name="org.jdesktop.swingx.painter.*"/>
-                        </patternset>
+                <keep>
+                    <class classes="private" methods="protected" fields="protected">
+
                     </class>
-                    <class name="org.jdesktop.swingx.JXTable" classes="private" methods="private" fields="private"/>
-                    <class name="org.jdesktop.swingx.JXList" classes="private" methods="private" fields="private"/>
-                    <class name="org.jdesktop.swingx.table.TableColumnExt" classes="private" methods="private"
-                           fields="private"/>
-                    <class name="org.jdesktop.swingx.JXFrame" classes="private" methods="private" fields="private"/>
-                    <class name="org.jdesktop.swingx.decorator.ColorHighlighter" classes="private" methods="private"
-                           fields="private"/>
-                    <class name="org.jdesktop.swingx.sort.SortController" classes="private" methods="private"
-                           fields="private"/>
-                    <class name="org.jdesktop.swingx.decorator.ComponentAdapter" classes="private" methods="private"
-                           fields="private"/>
-                    <class name="org.jdesktop.swingx.hyperlink.LinkModel" classes="private" methods="private"
-                           fields="private"/>
-                    <class name="org.jdesktop.swingx.hyperlink.LinkModelAction" classes="private" methods="private"
-                           fields="private"/>
-                    <class name="org.jdesktop.swingx.renderer.DefaultTableRenderer" classes="private" methods="private"
-                           fields="private"/>
-                    <class name="org.jdesktop.swingx.renderer.HyperlinkProvider" classes="private" methods="private"
-                           fields="private"/>
-                    <class name="org.jdesktop.swingx.decorator.HighlighterFactory" classes="private" methods="private"
-                           fields="private"/>
-                    <class name="org.jdesktop.swingx.error.ErrorInfo" classes="private" methods="private"
-                           fields="private"/>
-                    <class name="org.jdesktop.swingx.error.ErrorReporter" classes="private" methods="private"
-                           fields="private"/>
-                    <class classes="private" methods="private" fields="private">
-                        <patternset>
-                            <include name="org.jdesktop.swingx.JXStatusBar**"/>
-                        </patternset>
-                    </class>
-                    <class name="org.jdesktop.swingx.JXErrorPane" classes="private" methods="private" fields="private"/>
-                    <class name="org.jdesktop.swingx.JXCollapsiblePane" classes="private" methods="private"
-                           fields="private"/>
-                    <class name="org.jdesktop.swingx.SwingXUtilities" classes="private" methods="private"
-                           fields="private"/>
                 </keep>
+
+                <!--<keep linenumbertable="true" sourcefile="true">-->
+
+                <!--<class classes="private" methods="private" fields="private">-->
+                <!--<patternset>-->
+                <!--<include name="org.jdesktop.swingx.plaf.*"/>-->
+                <!--<include name="org.jdesktop.swingx.painter.*"/>-->
+                <!--<include name="org.jdesktop.swingx.renderer.*"/>-->
+                <!--</patternset>-->
+                <!--</class>-->
+                <!--<class name="org.jdesktop.swingx.JXTable" classes="private" methods="private" fields="private"/>-->
+                <!--<class name="org.jdesktop.swingx.JXList" classes="private" methods="private" fields="private"/>-->
+                <!--<class name="org.jdesktop.swingx.table.TableColumnExt" classes="private" methods="private"-->
+                <!--fields="private"/>-->
+                <!--<class name="org.jdesktop.swingx.JXFrame" classes="private" methods="private" fields="private"/>-->
+                <!--<class name="org.jdesktop.swingx.decorator.ColorHighlighter" classes="private" methods="private"-->
+                <!--fields="private"/>-->
+                <!--<class name="org.jdesktop.swingx.sort.SortController" classes="private" methods="private"-->
+                <!--fields="private"/>-->
+                <!--<class name="org.jdesktop.swingx.decorator.ComponentAdapter" classes="private" methods="private"-->
+                <!--fields="private"/>-->
+                <!--<class name="org.jdesktop.swingx.hyperlink.LinkModel" classes="private" methods="private"-->
+                <!--fields="private"/>-->
+                <!--<class name="org.jdesktop.swingx.hyperlink.LinkModelAction" classes="private" methods="private"-->
+                <!--fields="private"/>-->
+                <!--<class name="org.jdesktop.swingx.decorator.HighlighterFactory" classes="private" methods="private"-->
+                <!--fields="private"/>-->
+                <!--<class name="org.jdesktop.swingx.error.ErrorInfo" classes="private" methods="private"-->
+                <!--fields="private"/>-->
+                <!--<class name="org.jdesktop.swingx.error.ErrorReporter" classes="private" methods="private"-->
+                <!--fields="private"/>-->
+                <!--<class classes="private" methods="private" fields="private">-->
+                <!--<patternset>-->
+                <!--<include name="org.jdesktop.swingx.JXStatusBar**"/>-->
+                <!--</patternset>-->
+                <!--</class>-->
+                <!--<class name="org.jdesktop.swingx.JXErrorPane" classes="private" methods="private" fields="private"/>-->
+                <!--<class name="org.jdesktop.swingx.JXCollapsiblePane" classes="private" methods="private"-->
+                <!--fields="private"/>-->
+                <!--<class name="org.jdesktop.swingx.SwingXUtilities" classes="private" methods="private"-->
+                <!--fields="private"/>-->
+                <!--</keep>-->
             </shrink>
         </yguard>
     </target>
