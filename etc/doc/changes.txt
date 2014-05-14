@@ -13,6 +13,7 @@ Fixed - indicates a bug fix
 
   Added : Plugin API
             - FileStreamRecognizer interface and accompanying methods for setting it
+            - Added support for <input type="image"> in setActionFromForm methods in MethodBuilder
   Changed : SwingApplication framework (SAF) was updated to BetterSwingApplication framework (BSAF), which fixes some bugs
   Changed : "Confirm deleting files" dialog is truncated to 20 files to avoid overly tall dialog which overflows screen
   Changed : Empty temporary files are deleted if there isn't enough disk space for download

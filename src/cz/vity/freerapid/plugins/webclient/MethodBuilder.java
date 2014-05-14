@@ -42,28 +42,33 @@ import java.util.regex.Pattern;
  */
 public final class MethodBuilder {
     private final static Logger logger = Logger.getLogger(MethodBuilder.class.getName());
+    private final static Random random = new Random();
 
-    private final Map<String, String> parameters = new LinkedHashMap<String, String>(4);
+    private static final int FORM_MATCHER_TITLE_GROUP = 1;
+    private static final int FORM_MATCHER_FORM_CONTENT = 2;
+
     private final String content;
     private HttpDownloadClient client;
+
+    private final Map<String, String> parameters = new LinkedHashMap<String, String>(4);
     private String referer;
-    private static Pattern formPattern;
     private String action;
-    private static Pattern parameterPatterns;
-    private static Pattern parameterInputPattern;
     private HttpMethodEnum postMethod = HttpMethodEnum.POST;
-    private static final int FORM_MATCHER_TITLE_GROUP = 1;
     private String baseURL;
-    private static Pattern aHrefPattern;
-    private static final int FORM_MATCHER_FORM_CONTENT = 2;
-    private static Pattern parameterNamePattern;
     private boolean encodeParameters = false;
     private String encoding = "UTF-8";
     private boolean autoReplaceEntities = true;
-    private static Pattern imgPattern;
-    private static Pattern parameterValuePattern;
     private boolean encodePathAndQuery;
-    private Pattern iframePattern = null;
+
+    private static Pattern formPattern;
+    private static Pattern parameterPatterns;
+    private static Pattern parameterInputPattern;
+    private static Pattern parameterTypePattern;
+    private static Pattern parameterNamePattern;
+    private static Pattern parameterValuePattern;
+    private static Pattern aHrefPattern;
+    private static Pattern imgPattern;
+    private static Pattern iframePattern;
 
     /**
      * Returns actual set POST or GET method extracted from result. <br /> Its value is used in <code>toMethod()</code> method.<br/>
@@ -660,24 +665,34 @@ public final class MethodBuilder {
     private void populateParameters(final String content) {
         if (parameterInputPattern == null)
             parameterInputPattern = Pattern.compile("<input (.+?>)", Pattern.DOTALL | Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+        if (parameterTypePattern == null)
+            parameterTypePattern = Pattern.compile("type\\s?=\\s?(?:\"|')?(.*?)(?:\"|'|\\s|>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         if (parameterNamePattern == null)
             parameterNamePattern = Pattern.compile("name\\s?=\\s?(?:\"|')?(.*?)(?:\"|'|\\s|>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         if (parameterValuePattern == null)
             parameterValuePattern = Pattern.compile("value\\s?=\\s?(?:\"|')?(.*?)(?:\"|'|\\s|>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
-        int start = 0;
-        Matcher matcher = parameterInputPattern.matcher(content);
-        while (matcher.find(start)) {
+        final Matcher matcher = parameterInputPattern.matcher(content);
+        while (matcher.find()) {
             final String input = matcher.group(1);
             final Matcher matchName = parameterNamePattern.matcher(input);
             if (matchName.find()) {
-                String paramName = matchName.group(1);
-                final Matcher matchValue = parameterValuePattern.matcher(input);
-                if (matchValue.find()) {
-                    parameters.put(paramName, matchValue.group(1));
-                } else
-                    parameters.put(paramName, "");
+                final String paramName = matchName.group(1);
+                String paramType = null;
+                final Matcher matchType = parameterTypePattern.matcher(input);
+                if (matchType.find()) {
+                    paramType = matchType.group(1);
+                }
+                if ("image".equals(paramType)) {
+                    parameters.put(paramName + ".x", String.valueOf(random.nextInt(100)));
+                    parameters.put(paramName + ".y", String.valueOf(random.nextInt(100)));
+                } else {
+                    final Matcher matchValue = parameterValuePattern.matcher(input);
+                    if (matchValue.find()) {
+                        parameters.put(paramName, matchValue.group(1));
+                    } else
+                        parameters.put(paramName, "");
+                }
             }
-            start = matcher.end();
         }
     }
 

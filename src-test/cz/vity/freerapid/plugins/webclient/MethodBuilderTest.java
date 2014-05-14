@@ -6,7 +6,6 @@ import cz.vity.freerapid.utilities.Utils;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.URIException;
 import org.junit.Assert;
-import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,6 +15,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Locale;
 import java.util.Map;
+
+import static org.junit.Assert.fail;
 
 
 /**
@@ -124,6 +125,9 @@ public class MethodBuilderTest {
         Assert.assertEquals("Correct parameter value", "269200932", params.get("cap_id"));
         Assert.assertEquals("Correct parameter value", "281f3fe24cc4894a5bb61e4a6b12a3b7", params.get("cap_secret"));
         Assert.assertEquals("Correct parameter value", "", params.get("user_code")); //parametr nema hodnotu
+
+        Assert.assertEquals("Correct input image parsing", Boolean.TRUE, params.containsKey("download.x"));
+        Assert.assertEquals("Correct input image parsing", Boolean.TRUE, params.containsKey("download.y"));
 
         methodBuilder = getMethodBuilder();
         action = methodBuilder.setActionFromFormByName("f", true).getAction();
