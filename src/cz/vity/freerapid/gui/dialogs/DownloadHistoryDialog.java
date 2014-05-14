@@ -55,6 +55,7 @@ import java.util.regex.Pattern;
 /**
  * @author Vity
  */
+@SuppressWarnings("UnusedDeclaration")
 public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, ListSelectionListener {
     private final static Logger logger = Logger.getLogger(DownloadHistoryDialog.class.getName());
     private FileHistoryManager manager;
@@ -123,7 +124,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
 
     private void initTable() {
         table.setName("historyTable");
-        table.setModel(new CustomTableModel(manager.getItems(), getList("columns")));
+        table.setModel(new CustomTableModel(new ArrayListModel<FileHistoryItem>(manager.getItems()), getList("columns")));
         table.setAutoCreateColumnsFromModel(false);
         table.setEditable(false);
         table.setColumnControlVisible(true);
@@ -218,7 +219,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
 
     @Action
     public void copyURL() {
-        final java.util.List<FileHistoryItem> files = manager.getSelectionToList(getSelectedRows());
+        final java.util.List<FileHistoryItem> files = getSelectionToList(getSelectedRows());
         StringBuilder builder = new StringBuilder();
         for (FileHistoryItem file : files) {
             builder.append(file.getUrl().toExternalForm()).append('\n');
@@ -229,7 +230,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
     @org.jdesktop.application.Action(enabledProperty = FILE_EXISTS_ENABLED_PROPERTY)
     public void openFileAction() {
         final int[] indexes = getSelectedRows();
-        final java.util.List<FileHistoryItem> files = manager.getSelectionToList(indexes);
+        final java.util.List<FileHistoryItem> files = getSelectionToList(indexes);
         for (FileHistoryItem file : files) {
             OSDesktop.openFile(file.getOutputFile());
         }
@@ -237,7 +238,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
 
     @org.jdesktop.application.Action(enabledProperty = DownloadHistoryDialog.SELECTED_ACTION_ENABLED_PROPERTY)
     public void openInBrowser() {
-        final java.util.List<FileHistoryItem> files = manager.getSelectionToList(getSelectedRows());
+        final java.util.List<FileHistoryItem> files = getSelectionToList(getSelectedRows());
         for (FileHistoryItem file : files) {
             Browser.openBrowser(file.getUrl().toExternalForm().replaceAll("%23", "#"));
         }
@@ -246,7 +247,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
     @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
     public void openDirectoryAction() {
         final int[] indexes = getSelectedRows();
-        final java.util.List<FileHistoryItem> files = manager.getSelectionToList(indexes);
+        final java.util.List<FileHistoryItem> files = getSelectionToList(indexes);
         for (FileHistoryItem file : files) {
             OSDesktop.openDirectoryForFile(file.getOutputFile());
         }
@@ -267,7 +268,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
     private void buildGUI() {
         initTable();
 
-        if (AppPrefs.getProperty(UserProp.CONTAIN_DOWNLOADS_FILTER, "").equals("Search..."))//hack for 0.6 and older
+        if ("Search...".equals(AppPrefs.getProperty(UserProp.CONTAIN_DOWNLOADS_FILTER, "")))//hack for 0.6 and older
             AppPrefs.storeProperty(UserProp.CONTAIN_DOWNLOADS_FILTER, "");
 
         if ("".equals(AppPrefs.getProperty(UserProp.CONTAIN_DOWNLOADS_FILTER, "")))
@@ -482,7 +483,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         final int[] indexes = getSelectedRows();
         setSelectedEnabled(indexes.length > 0);
         boolean valid = true;
-        final java.util.List<FileHistoryItem> items = this.manager.getSelectionToList(indexes);
+        final java.util.List<FileHistoryItem> items = getSelectionToList(indexes);
         for (FileHistoryItem item : items) {
             if (!item.getOutputFile().exists()) {
                 valid = false;
@@ -515,7 +516,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
     @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
     public void deleteFileAction() {
         final int[] indexes = getSelectedRows();
-        final java.util.List<FileHistoryItem> files = manager.getSelectionToList(indexes);
+        final java.util.List<FileHistoryItem> files = getSelectionToList(indexes);
         final String s = getFileList(files);
         final int result;
         final boolean confirm = AppPrefs.getProperty(UserProp.CONFIRM_FILE_DELETE, UserProp.CONFIRM_FILE_DELETE_DEFAULT);
@@ -571,7 +572,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
 
         final ListSelectionModel selectionModel = table.getSelectionModel();
         selectionModel.setValueIsAdjusting(true);
-        manager.removeSelected(indexes);
+        removeSelected(indexes);
         selectionModel.setValueIsAdjusting(false);
         final int min = getArrayMin(indexes);
         SwingUtilities.invokeLater(new Runnable() {
@@ -587,6 +588,34 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         });
 
     }
+
+
+    public java.util.List<FileHistoryItem> getSelectionToList(int[] selectedRows) {
+        return selectionToList(selectedRows);
+    }
+
+    private java.util.List<FileHistoryItem> selectionToList(int[] indexes) {
+        java.util.List<FileHistoryItem> list = new ArrayList<FileHistoryItem>();
+        final ArrayListModel<FileHistoryItem> items = getItems();
+        for (int index : indexes) {
+            list.add(items.get(index));
+        }
+        return list;
+    }
+
+    private ArrayListModel<FileHistoryItem> getItems() {
+        return ((CustomTableModel) table.getModel()).model;
+    }
+
+    public void removeSelected(int[] indexes) {
+        final ArrayListModel<FileHistoryItem> items = getItems();
+        final java.util.List<FileHistoryItem> toRemoveList = getSelectionToList(indexes);
+        manager.removeItems(toRemoveList);
+        for (FileHistoryItem file : toRemoveList) {
+            items.remove(file);
+        }
+    }
+
 
     private void scrollToVisible(final boolean up) {
         final int[] rows = table.getSelectedRows();

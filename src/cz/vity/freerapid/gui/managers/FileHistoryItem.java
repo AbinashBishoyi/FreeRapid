@@ -2,12 +2,14 @@ package cz.vity.freerapid.gui.managers;
 
 import cz.vity.freerapid.model.DownloadFile;
 
+import javax.persistence.Entity;
 import java.io.File;
 import java.net.URL;
 
 /**
  * @author Vity
  */
+@Entity
 final public class FileHistoryItem {
     private URL url;
     private long finishedTime;

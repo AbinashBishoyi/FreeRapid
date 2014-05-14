@@ -1,25 +1,18 @@
 package cz.vity.freerapid.gui.managers;
 
-import com.jgoodies.binding.beans.PropertyAdapter;
 import com.jgoodies.binding.list.ArrayListModel;
-import com.jgoodies.binding.value.DelayedReadValueModel;
-import cz.vity.freerapid.core.AppPrefs;
-import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.utilities.FileUtils;
 import cz.vity.freerapid.utilities.LogUtils;
-import org.jdesktop.application.*;
+import org.jdesktop.application.AbstractBean;
+import org.jdesktop.application.ApplicationContext;
+import org.jdesktop.application.LocalStorage;
 
-import javax.swing.*;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.EventObject;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -27,96 +20,62 @@ import java.util.logging.Logger;
 /**
  * @author Vity
  */
-public class FileHistoryManager extends AbstractBean implements Application.ExitListener {
+public class FileHistoryManager extends AbstractBean {
     private final static Logger logger = Logger.getLogger(FileHistoryManager.class.getName());
 
     private final ManagerDirector director;
     private final ApplicationContext context;
 
-    private final ArrayListModel<FileHistoryItem> items = new ArrayListModel<FileHistoryItem>();
-
-    private boolean loaded = false;
+//    private boolean loaded = false;
     private static final String FILES_LIST_XML = "history.xml";
 
-    private int dataChanged = 0;
-    private final Object saveFileLock = new Object();
-
+ //   private int dataChanged = 0;
 
     public FileHistoryManager(ManagerDirector director, ApplicationContext context) {
         this.director = director;
         this.context = context;
-        this.context.getApplication().addExitListener(this);
         init();
     }
 
     private void init() {
-        if (AppPrefs.getProperty(UserProp.AUTOSAVE_ENABLED, UserProp.AUTOSAVE_ENABLED_DEFAULT)) {
-            PropertyAdapter<FileHistoryManager> adapter = new PropertyAdapter<FileHistoryManager>(this, "dataChanged", true);
-
-            final int time = AppPrefs.getProperty(UserProp.AUTOSAVE_TIME, UserProp.AUTOSAVE_TIME_DEFAULT);
-
-            DelayedReadValueModel delayedReadValueModel = new DelayedReadValueModel(adapter, time * 1000, true);
-            delayedReadValueModel.addValueChangeListener(new PropertyChangeListener() {
-
-                public void propertyChange(PropertyChangeEvent evt) {
-                    saveListToFileOnBackground();
-                }
-            });
-        }
-
-    }
-
-    private void saveListToFileOnBackground() {
-        //assert loaded;
-        final TaskService service = director.getTaskServiceManager().getTaskService(TaskServiceManager.WORK_WITH_FILE_SERVICE);
-        service.execute(new Task(context.getApplication()) {
-            protected Object doInBackground() throws Exception {
-                Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-                final ArrayListModel<FileHistoryItem> files;
-
-                files = new ArrayListModel<FileHistoryItem>(getItems());//getItems je synchronizovana
-
-                saveToFile(files);
-
-                return null;
-            }
-
-            @Override
-            protected void failed(Throwable cause) {
-                LogUtils.processException(logger, cause);
-            }
-        });
+//        if (AppPrefs.getProperty(UserProp.AUTOSAVE_ENABLED, UserProp.AUTOSAVE_ENABLED_DEFAULT)) {
+//            PropertyAdapter<FileHistoryManager> adapter = new PropertyAdapter<FileHistoryManager>(this, "dataChanged", true);
+//
+//            final int time = AppPrefs.getProperty(UserProp.AUTOSAVE_TIME, UserProp.AUTOSAVE_TIME_DEFAULT);
+//
+//            DelayedReadValueModel delayedReadValueModel = new DelayedReadValueModel(adapter, time * 1000, true);
+//            delayedReadValueModel.addValueChangeListener(new PropertyChangeListener() {
+//
+//                public void propertyChange(PropertyChangeEvent evt) {
+//                    saveListToFileOnBackground();
+//                }
+//            });
+//        }
 
     }
 
-    public boolean canExit(EventObject event) {
-        return true;
-    }
-
-    public void willExit(EventObject event) {
-        synchronized (this) {
-            if (!loaded) // pokud to neni loaded, tak to znamena, ze jsem s tim seznamem nemanipuloval
-                return;
-            saveToFile(items);
-        }
-    }
-
-    private void saveToFile(ArrayListModel<FileHistoryItem> files) {
-        synchronized (saveFileLock) {
-            logger.info("=====Saving download history into XML file=====");
-            final LocalStorage localStorage = context.getLocalStorage();
-            File dstFile = new File(localStorage.getDirectory(), FILES_LIST_XML);
-            try {
-                if (AppPrefs.getProperty(UserProp.MAKE_FILE_BACKUPS, UserProp.MAKE_FILE_BACKUPS_DEFAULT))
-                    FileUtils.makeBackup(dstFile);
-                localStorage.save(files, FILES_LIST_XML);
-            } catch (IOException e) {
-                LogUtils.processException(logger, e);
-            } finally {
-                logger.info("=====Saving download history finished =====");
-            }
-        }
-    }
+//    private void saveListToFileOnBackground() {
+//        //assert loaded;
+//        final TaskService service = director.getTaskServiceManager().getTaskService(TaskServiceManager.WORK_WITH_FILE_SERVICE);
+//        service.execute(new Task(context.getApplication()) {
+//            protected Object doInBackground() throws Exception {
+//                Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+//                final ArrayListModel<FileHistoryItem> files;
+//
+//                files = new ArrayListModel<FileHistoryItem>(getItems());//getItems je synchronizovana
+//
+//                saveToFile(files);
+//
+//                return null;
+//            }
+//
+//            @Override
+//            protected void failed(Throwable cause) {
+//                LogUtils.processException(logger, cause);
+//            }
+//        });
+//
+//    }
 
 
     @SuppressWarnings({"unchecked"})
@@ -135,15 +94,11 @@ public class FileHistoryManager extends AbstractBean implements Application.Exit
         return list;
     }
 
-    public synchronized ArrayListModel<FileHistoryItem> getItems() {
-        if (!loaded) {
-            loadFileHistoryList();
-            this.loaded = true;
-        }
-        return items;
+    public List<FileHistoryItem> getItems() {
+        return loadFileHistoryList();
     }
 
-    private void loadFileHistoryList() {
+    private List<FileHistoryItem> loadFileHistoryList() {
         List<FileHistoryItem> result = null;
         final File srcFile = new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML);
         if (srcFile.exists()) {
@@ -161,77 +116,36 @@ public class FileHistoryManager extends AbstractBean implements Application.Exit
                     LogUtils.processException(logger, e);
                 }
             }
-            if (result != null)
-                this.items.addAll(result);
-        }
-        this.items.addListDataListener(new ListDataListener() {
-            public void intervalAdded(ListDataEvent e) {
-                fireDataChanged();
-            }
-
-            public void intervalRemoved(ListDataEvent e) {
-                fireDataChanged();
-            }
-
-            public void contentsChanged(ListDataEvent e) {
-
-            }
-        });
-
-    }
-
-    public synchronized void addHistoryItem(final DownloadFile file, final File savedAs) {
-        if (AppPrefs.getProperty(UserProp.USE_HISTORY, UserProp.USE_HISTORY_DEFAULT)) {
-            final ArrayListModel<FileHistoryItem> historyItems = getItems();
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    historyItems.add(new FileHistoryItem(file, savedAs));
-                }
-            });
-        }
-
-    }
-
-    public synchronized void clearHistory() {
-        getItems().clear();
-    }
-
-    public synchronized void removeItem(FileHistoryItem item) {
-        getItems().remove(item);
-    }
-
-    public synchronized void removeItemByIndex(int index) {
-        getItems().remove(index);
-    }
-
-
-    public List<FileHistoryItem> getSelectionToList(int[] selectedRows) {
-        return selectionToList(selectedRows);
-    }
-
-    private List<FileHistoryItem> selectionToList(int[] indexes) {
-        List<FileHistoryItem> list = new ArrayList<FileHistoryItem>();
-        final ArrayListModel<FileHistoryItem> items = getItems();
-        for (int index : indexes) {
-            list.add(items.get(index));
-        }
-        return list;
-    }
-
-    public synchronized void removeSelected(int[] indexes) {
-        final ArrayListModel<FileHistoryItem> items = getItems();
-        final List<FileHistoryItem> toRemoveList = getSelectionToList(indexes);
-        for (FileHistoryItem file : toRemoveList) {
-            items.remove(file);
+            if (result != null) {
+                director.getDatabaseManager().saveCollection(result);
+            } else result = new ArrayList<FileHistoryItem>();
+            //noinspection ResultOfMethodCallIgnored
+            srcFile.renameTo(new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML + ".imported"));
+            return result;
+        } else {
+            return director.getDatabaseManager().loadAll(FileHistoryItem.class);
         }
     }
 
-    private void fireDataChanged() {
-        firePropertyChange("dataChanged", this.dataChanged, ++this.dataChanged);
+    public void addHistoryItem(final DownloadFile file, final File savedAs) {
+        final FileHistoryItem item = new FileHistoryItem(file, savedAs);
+        director.getDatabaseManager().saveOrUpdate(item);
     }
 
-    public int getDataChanged() {
-        return dataChanged;
+    public void clearHistory() {
+        director.getDatabaseManager().removeAll(FileHistoryItem.class);
     }
 
+
+    public void removeItems(Collection<FileHistoryItem> items) {
+        director.getDatabaseManager().removeCollection(items);
+    }
+
+
+
+//    private void fireDataChanged() {
+//        firePropertyChange("dataChanged", this.dataChanged, ++this.dataChanged);
+//    }
+//
+//
 }

@@ -73,6 +73,7 @@ public class ManagerDirector {
     private SearchManager searchManager;
     private SystemManager systemManager;
     private CountDownLatch countDownLatch = new CountDownLatch(1); //only one purpose barrier simulation
+    private DatabaseManager databaseManager;
 
     static {
         // Fix for JDK 6 bug ICO vs WBMP
@@ -108,6 +109,9 @@ public class ManagerDirector {
 
         taskServiceManager = new TaskServiceManager(context);
         this.clientManager = new ClientManager(this);
+
+
+        this.databaseManager = new DatabaseManager(this);
 
         this.fileHistoryManager = new FileHistoryManager(this, context);
 
@@ -202,6 +206,9 @@ public class ManagerDirector {
         return contentManager;
     }
 
+    public DatabaseManager getDatabaseManager() {
+        return databaseManager;
+    }
 
     public ApplicationContext getContext() {
         return context;

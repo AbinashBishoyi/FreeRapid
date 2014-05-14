@@ -25,6 +25,7 @@ import java.util.logging.Logger;
  *
  * @author Vity
  */
+
 public class DownloadFile extends AbstractBean implements PropertyChangeListener, HttpFile {
     private final static Logger logger = Logger.getLogger(DownloadFile.class.getName());
 
@@ -66,7 +67,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
                     info.getPropertyDescriptors();
             for (PropertyDescriptor pd : propertyDescriptors) {
                 final Object name = pd.getName();
-                if ("task".equals(name) || "speed".equals(name) || "shortTimeAvgSpeed".equals(name) || "connectionSettings".equals(name) || "tokens".equals(name) || "takenTokens".equals(name) || "storeFileDrive".equals(name)) {
+                if ("task".equals(name) || "speed".equals(name) || "shortTimeAvgSpeed".equals(name) || "connectionSettings".equals(name) || "tokens".equals(name) || "takenTokens".equals(name)) {
                     pd.setValue("transient", Boolean.TRUE);
                 }
             }
