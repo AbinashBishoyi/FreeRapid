@@ -115,8 +115,6 @@ public class ToolbarManager implements PropertyChangeListener {
         toolbar.add(Box.createGlue());
         searchField = new SearchField(context);
 
-        searchField.setMinimumSize(new Dimension(260, 50));
-        searchField.setPreferredSize(new Dimension(260, 55));
         searchField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
