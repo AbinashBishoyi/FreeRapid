@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <languages>
     <!-- alternative flags for different countries: | is separator, 2 character ISO country code -->
-    <!-- language can be country specific, flag indicates this -->
+    <!-- language can be country specific, flag indicates this  -->
     <!-- to add a new language, you have to add a new flag icon to
      freerapid/src/cz/vity/freerapid/core/resources/icons/flags/
      from freerapid/dev/flags.zip -->
