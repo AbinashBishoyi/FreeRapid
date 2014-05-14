@@ -3,6 +3,7 @@ package cz.vity.freerapid.plugins.webclient;
 import cz.vity.freerapid.plugins.exceptions.BuildMethodException;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
 import cz.vity.freerapid.plugins.webclient.utils.PlugUtils;
+import cz.vity.freerapid.utilities.Utils;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -115,7 +116,7 @@ public final class MethodBuilder {
         final Matcher formMatcher = getFormMatcher();
         int start = 0;
         boolean found = false;
-        final Pattern namePattern = Pattern.compile("(?:name|id)=(?:\"|')?" + formIDOrName + "(?:\"|'|\\s|>|$)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+        final Pattern namePattern = Pattern.compile("(?:name|id)\\s?=\\s?(?:\"|')?" + formIDOrName + "(?:\"|'|\\s|>|$)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         while (formMatcher.find(start)) {
             final String title = formMatcher.group(FORM_MATCHER_TITLE_GROUP);
             if (namePattern.matcher(title).find()) {
@@ -216,7 +217,7 @@ public final class MethodBuilder {
             throw new IllegalArgumentException("The text before the searched string cannot be null");
         if (textAfter == null)
             throw new IllegalArgumentException("The text after the searched string cannot be null");
-        final Matcher matcher = Pattern.compile(Pattern.quote(textBefore) + "(.+?)" + Pattern.quote(textAfter), Pattern.MULTILINE | Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(this.content);
+        final Matcher matcher = Pattern.compile(Pattern.quote(Utils.rtrim(textBefore)) + "\\s*(.+?)\\s*" + Pattern.quote(Utils.ltrim(textAfter)), Pattern.MULTILINE | Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(this.content);
         if (matcher.find()) {
             this.action = matcher.group(1).trim();
         } else
@@ -283,7 +284,7 @@ public final class MethodBuilder {
      */
     public MethodBuilder setActionFromImgSrcWhereTagContains(final String text) throws BuildMethodException {
         if (imgPattern == null)
-            imgPattern = Pattern.compile("(<img(?:.*?)src=(?:\"|')(.+?)(?:\"|')(?:.*?)>)", Pattern.DOTALL | Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+            imgPattern = Pattern.compile("(<img(?:.*?)src\\s?=\\s?(?:\"|')(.+?)(?:\"|')(?:.*?)>)", Pattern.DOTALL | Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
         final Matcher matcher = imgPattern.matcher(content);
         boolean found = false;
         int start = 0;
@@ -347,7 +348,7 @@ public final class MethodBuilder {
     }
 
     private HttpMethodEnum extractMethod(String title) {
-        final Pattern actionPattern = Pattern.compile("method=(?:\"|')?\"(POST|GET)(?:\"|'|\\s*>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+        final Pattern actionPattern = Pattern.compile("method\\s?=\\s?(?:\"|')?\"(POST|GET)(?:\"|'|\\s*>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         final Matcher matcher = actionPattern.matcher(title);
         if (matcher.find()) {
             if ("POST".equalsIgnoreCase(matcher.group(1)))
@@ -406,7 +407,7 @@ public final class MethodBuilder {
         final Set<String> set = new HashSet<String>(parameters.length);
         set.addAll(Arrays.asList(parameters));
         if (parameterPatterns == null)
-            parameterPatterns = Pattern.compile("name=(?:\"|')?(.*?)(?:\"|'|\\s).*?value=(?:\"|')?(.*?)(?:\"|'|\\s*>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+            parameterPatterns = Pattern.compile("name\\s?=\\s?(?:\"|')?(.*?)(?:\"|'|\\s).*?value\\s?=\\s?(?:\"|')?(.*?)(?:\"|'|\\s*>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 
         final Matcher matcher = parameterPatterns.matcher(content);
         int start = 0;
@@ -598,9 +599,9 @@ public final class MethodBuilder {
         if (parameterInputPattern == null)
             parameterInputPattern = Pattern.compile("<input (.+?>)", Pattern.DOTALL | Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         if (parameterNamePattern == null)
-            parameterNamePattern = Pattern.compile("name=(?:\"|')?(.*?)(?:\"|'|\\s|>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+            parameterNamePattern = Pattern.compile("name\\s?=\\s?(?:\"|')?(.*?)(?:\"|'|\\s|>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         if (parameterValuePattern == null)
-            parameterValuePattern = Pattern.compile("value=(?:\"|')?(.*?)(?:\"|'|\\s|>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+            parameterValuePattern = Pattern.compile("value\\s?=\\s?(?:\"|')?(.*?)(?:\"|'|\\s|>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         int start = 0;
         Matcher matcher = parameterInputPattern.matcher(content);
         while (matcher.find(start)) {
@@ -619,7 +620,7 @@ public final class MethodBuilder {
     }
 
     private String extractAction(String title) {
-        final Pattern actionPattern = Pattern.compile("action=(?:\"|')?\"(.+?)(?:\"|'|\\s*>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+        final Pattern actionPattern = Pattern.compile("action\\s?=\\s?(?:\"|')?\"(.+?)(?:\"|'|\\s*>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         final Matcher matcher = actionPattern.matcher(title);
         if (matcher.find()) {
             return matcher.group(1);
@@ -687,7 +688,7 @@ public final class MethodBuilder {
      */
     private Matcher getAHrefMatcher() {
         if (aHrefPattern == null)
-            aHrefPattern = Pattern.compile("<a(?:.*?)href=(?:\"|')(.+?)(?:\"|')(?:.*?)>(.*?)</a>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+            aHrefPattern = Pattern.compile("<a(?:.*?)href\\s?=\\s?(?:\"|')(.+?)(?:\"|')(?:.*?)>(.*?)</a>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
         return aHrefPattern.matcher(content);
     }
 

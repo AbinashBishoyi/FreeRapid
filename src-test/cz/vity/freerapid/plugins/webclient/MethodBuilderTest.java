@@ -116,6 +116,11 @@ public class MethodBuilderTest {
         methodBuilder = getMethodBuilder();
         action = methodBuilder.setActionFromFormByName("f", true).getAction();
         Assert.assertEquals("Simple Form name", "/dl/12662/9832a7e/P_hpaf.rar.html", action);
+
+        methodBuilder = getMethodBuilder();
+        action = methodBuilder.setActionFromFormByName("formular", true).getAction();
+        Assert.assertEquals("Simple Form name with ' = '", "/getfile.php?152686", action);
+        Assert.assertEquals("Parameters size", methodBuilder.getParameters().size(), 4);
     }
 
     private MethodBuilder getMethodBuilder() {

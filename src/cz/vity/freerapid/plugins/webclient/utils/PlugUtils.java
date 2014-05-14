@@ -220,9 +220,9 @@ public final class PlugUtils {
         if (parameterInputPattern == null)
             parameterInputPattern = Pattern.compile("<input (.+?)>", Pattern.DOTALL | Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         if (parameterNamePattern == null)
-            parameterNamePattern = Pattern.compile("name=(?:\"|')?(.*?)(?:\"|'|\\s|$)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+            parameterNamePattern = Pattern.compile("name\\s?=\\s?(?:\"|')?(.*?)(?:\"|'|\\s|$)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         if (parameterValuePattern == null)
-            parameterValuePattern = Pattern.compile("value=(?:\"|')?(.*?)(?:\"|'|\\s|$)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+            parameterValuePattern = Pattern.compile("value\\s?=\\s?(?:\"|')?(.*?)(?:\"|'|\\s|$)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
     }
 
     /**
@@ -316,7 +316,7 @@ public final class PlugUtils {
      * @param content      searched content
      * @param stringBefore string before searched string  - without white space characters on the RIGHT side
      * @param stringAfter  string after searched string  - without white space characters on the LEFT side
-     * @return found string
+     * @return found string - result is trimmed
      * @throws PluginImplementationException No string between stringBefore and stringAfter
      */
     public static String getStringBetween(String content, String stringBefore, String stringAfter) throws PluginImplementationException {
@@ -327,6 +327,26 @@ public final class PlugUtils {
             return matcher.group(1);
         } else {
             throw new PluginImplementationException(String.format("No string between '%s' and '%s' was found", stringBefore, stringAfter));
+        }
+    }
+
+    /**
+     * Returns number between 2 other strings.
+     *
+     * @param content      searched content
+     * @param stringBefore string before searched string  - without white space characters on the RIGHT side
+     * @param stringAfter  string after searched string  - without white space characters on the LEFT side
+     * @return found number
+     * @throws PluginImplementationException No number between stringBefore and stringAfter
+     */
+    public static int getNumberBetween(String content, String stringBefore, String stringAfter) throws PluginImplementationException {
+        final String before = Pattern.quote(Utils.rtrim(stringBefore));
+        final String after = Pattern.quote(Utils.ltrim(stringAfter));
+        final Matcher matcher = matcher(before + "\\s*([0-9]+?)\\s*" + after, content);
+        if (matcher.find()) {
+            return Integer.parseInt(matcher.group(1));
+        } else {
+            throw new PluginImplementationException(String.format("No number between '%s' and '%s' was found", stringBefore, stringAfter));
         }
     }
 

@@ -121,6 +121,10 @@ public class PlugUtilsTest {
         postMethod.removeParameter("par");
         PlugUtils.addParameters(postMethod, "<input type=\"hidden\" value=\"val\" name=par   >", new String[]{"par"});
         assertEquals(postMethod.getParameter("par").getValue(), "val");
+
+        postMethod.removeParameter("par");
+        PlugUtils.addParameters(postMethod, "<input type=\"hidden\" value = \"val\" name = par   >", new String[]{"par"});
+        assertEquals(postMethod.getParameter("par").getValue(), "val");
     }
 
     @Test
@@ -171,4 +175,11 @@ public class PlugUtilsTest {
         PlugUtils.checkFileSize(httpFile, this.content, "File size:</b></td>\n<td align=left>", "</td>");
         assertEquals(httpFile.getFileSize(), 18 * 1024 * 1024);
     }
+
+    @Test
+    public void testGetNumberBetween() throws PluginImplementationException {
+        final int between = PlugUtils.getNumberBetween("http://uloz.to/   1386350    /quickshare.frp", "uloz.to/  ", "/quickshare.frp");
+        assertEquals("Result number", between, 1386350);
+    }
+
 }
