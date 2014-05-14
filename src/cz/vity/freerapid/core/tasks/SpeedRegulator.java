@@ -234,7 +234,7 @@ public final class SpeedRegulator implements PropertyChangeListener {
         private final DownloadTask task;
         private final long startTime;
         private int avgSpeedMeasuredSeconds;
-        private static final int NO_DATA_TIMEOUT_LIMIT = 100;
+        private static final int NO_DATA_TIMEOUT_LIMIT = 120;
         private float avgSpeed;
         private final static int[] bufferSizes = {1024, 2 * 1024, 5 * 1024, 10 * 1024, 25 * 1024, 50 * 1024};
         private byte buffers[][] = new byte[bufferSizes.length][];
