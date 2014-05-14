@@ -13,6 +13,7 @@ Fixed - indicates a bug fix
 
 16th November 2010 - FreeRapid Downloader 0.85 build 555
   Changed: UA translation is now available
+  Fixed: plugin updates glitch
 
 15th November 2010 - FreeRapid Downloader 0.85 build 550
   Changed: Turn off debug logging
