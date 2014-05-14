@@ -302,6 +302,7 @@
     </target>
 
     <taskdef name="jarbundler"
+             classpath="./dev/ant-tasks/jarbundler.jar"
              classname="net.sourceforge.jarbundler.JarBundler"/>
 
     <!--todo chali you have to call target "dist" before this target-->
