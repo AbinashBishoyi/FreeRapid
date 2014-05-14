@@ -434,6 +434,9 @@ public final class Utils {
     }
 
     private static void removeCryptographyRestrictions() {
+        if (!isRestrictedCryptography()) {
+            return;
+        }
         try {
             java.lang.reflect.Field isRestricted;
             try {
@@ -453,6 +456,10 @@ public final class Utils {
         } catch (final Throwable e) {
             logger.log(Level.WARNING, "Failed to remove cryptography restrictions", e);
         }
+    }
+
+    private static boolean isRestrictedCryptography() {
+        return "Java(TM) SE Runtime Environment".equals(System.getProperty("java.runtime.name"));
     }
 
 }
