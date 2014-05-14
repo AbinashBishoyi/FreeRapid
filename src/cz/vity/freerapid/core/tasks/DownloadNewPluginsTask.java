@@ -73,7 +73,9 @@ public class DownloadNewPluginsTask extends DownloadTask {
         }
 
         boolean success = false;
+        int counter = 0;
         for (WrappedPluginData data : fileList) {
+            setProgress(counter++, 0, fileList.size());
             if (isCancelled())
                 break;
             final DownloadFile file = data.getHttpFile();
