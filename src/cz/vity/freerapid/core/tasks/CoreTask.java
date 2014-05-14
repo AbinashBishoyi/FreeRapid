@@ -20,7 +20,7 @@ public abstract class CoreTask<T, V> extends Task<T, V> {
 
     public CoreTask(Application application) {
         super(application);
-        //     setDefaultInputBlocker();
+        //setDefaultInputBlocker();
     }
 
     public ResourceMap getTaskResourceMap() {

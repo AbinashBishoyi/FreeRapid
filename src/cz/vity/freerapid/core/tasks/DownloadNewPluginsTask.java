@@ -52,6 +52,8 @@ public class DownloadNewPluginsTask extends DownloadTask {
         final File dir = director.getPluginsManager().getPluginsDir();
         boolean success = false;
         for (DownloadFile file : fileList) {
+            if (isCancelled())
+                break;
             try {
                 setDownloadFile(file);
                 downloadFile.setSaveToDirectory(dir);
@@ -71,9 +73,13 @@ public class DownloadNewPluginsTask extends DownloadTask {
     private void processFile(final DownloadFile file) throws Exception {
         final GetMethod getMethod = client.getGetMethod(file.getFileUrl().toExternalForm());
         final InputStream inputStream = client.makeRequestForFile(getMethod);
+        if (isCancelled())
+            return;
         if (inputStream != null) {
             saveToFile(inputStream);
             checkRewrite(file);
+            if (isCancelled())
+                return;
             file.setState(DownloadState.COMPLETED);
         } else {
             throw new IOException("FileWasNotFoundOnServer");
@@ -94,9 +100,12 @@ public class DownloadNewPluginsTask extends DownloadTask {
         if (out.exists()) {
             out.delete();
         }
-        final boolean b = downloadFile.getStoreFile().renameTo(out);
-        if (!b) {
-            throw new IOException("Renaming target file failed " + downloadFile.getStoreFile() + " ->" + out);
+        final File storeFile = downloadFile.getStoreFile();
+        if (storeFile != null) {
+            final boolean b = storeFile.renameTo(out);
+            if (!b) {
+                throw new IOException("Renaming target file failed " + downloadFile.getStoreFile() + " ->" + out);
+            }
         }
     }
 

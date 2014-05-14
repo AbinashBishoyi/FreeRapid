@@ -27,12 +27,15 @@ public final class RecentsFilesComboModel extends DefaultComboBoxModel {
         this.keyProperties = keyProperties;
         this.autosave = autosave;
         final String[] values = AppPrefs.getProperty(keyProperties, "").split("\\|");
+        int counter = 0;
         for (String value : values) {
             final File file = new File(value);
-            if (!file.exists())
+            if (!file.exists() || !file.isDirectory())
                 continue;
             if (value.length() > 0) {
                 stack.add(0, FileUtils.getAbsolutPath(file));
+                if (++counter == this.maxRecentPhrasesCount)
+                    break;
 //                System.out.println("Loading :" + searched);
                 //       AppPrefs.removeProperty(key);
             }
@@ -61,7 +64,8 @@ public final class RecentsFilesComboModel extends DefaultComboBoxModel {
                 if (!getNormalizedFiles(stack).contains(new File(s))) {
                     super.insertElementAt(anObject, 0);
                     if (stack.size() > maxRecentPhrasesCount) {
-                        this.remove(stack.size() - 1);
+                        final int last = stack.size() - 1;
+                        this.remove(last);
                         if (autosave)
                             storeFiles();
                     }
@@ -77,7 +81,7 @@ public final class RecentsFilesComboModel extends DefaultComboBoxModel {
 
     private void remove(int index) {
         setSelectedItem(getElementAt(0));
-        stack.removeElementAt(index);
+        stack.remove(index);
         fireIntervalRemoved(this, index, index);
     }
 
@@ -89,7 +93,7 @@ public final class RecentsFilesComboModel extends DefaultComboBoxModel {
         AppPrefs.removeProperty(keyProperties);
     }
 
-    Set<File> getNormalizedFiles(Collection<String> col) {
+    private Set<File> getNormalizedFiles(Collection<String> col) {
         final Set<File> set = new HashSet<File>(col.size());
         final boolean isWindows = Utils.isWindows();
         for (String str : col) {

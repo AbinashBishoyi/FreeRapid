@@ -197,9 +197,9 @@ public final class SpeedRegulator implements PropertyChangeListener {
             downloading.remove(file);
             file.removePropertyChangeListener("state", this);
             file.setSpeed(0);
-            file.setAverageSpeed(0);
+//            file.setAverageSpeed(0);
             if (timer != null && downloading.isEmpty()) {
-                fireAvgSpeed(0);
+//                fireAvgSpeed(0);
                 fireSpeed(0);
                 timer.cancel();
                 timer = null;

@@ -70,7 +70,7 @@ public class Swinger {
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null, new Object[]{map.getString(MESSAGE_BTN_YES_CODE), map.getString(MESSAGE_BTN_NO_CODE),
-                        map.getString(MESSAGE_BTN_CANCEL_CODE)},
+                map.getString(MESSAGE_BTN_CANCEL_CODE)},
                 map.getString(MESSAGE_BTN_YES_CODE));
     }
 
@@ -324,7 +324,7 @@ public class Swinger {
         frame.setExtendedState(state);
     }
 
-    private static Frame getActiveFrame() {
+    public static Frame getActiveFrame() {
         final Frame[] frames = Frame.getFrames();
         for (Frame frame : frames) {
             if (frame.isActive())

@@ -46,6 +46,10 @@ public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
         quietMode = quiet;
         logger.info("Starting to check for a new plugins version");
         setTaskToForeground();
+        if (!quiet)
+            setInputBlocker(new ScreenInputBlocker(this, BlockingScope.APPLICATION, Swinger.getActiveFrame(), null));
+        else
+            setInputBlocker(null);
     }
 
 

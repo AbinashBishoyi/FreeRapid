@@ -679,10 +679,13 @@ public final class MethodBuilder {
     }
 
     private String extractAction(String title) {
-        final Pattern actionPattern = Pattern.compile("action\\s?=\\s?(?:\"|')?\"(.+?)(?:\"|'|\\s*>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+        final Pattern actionPattern = Pattern.compile("action\\s?=\\s?(?:\"|')?(.*?)(?:\"|'|\\s*>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         final Matcher matcher = actionPattern.matcher(title);
         if (matcher.find()) {
-            return matcher.group(1);
+            final String s = matcher.group(1);
+            if (s.isEmpty())
+                return null;
+            else return s;
         } else {
             //logger.info("No action find");
             return null;

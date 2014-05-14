@@ -100,7 +100,9 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     }
 
     private CountingOutputStream getFileOutputStream(final File f, final long fileSize, final long startPosition) throws NotEnoughSpaceException, IOException {
-        if (f.getParentFile().getFreeSpace() < fileSize + 30 * 1024 * 1024) { //+ 30MB
+        final long freeSpace = f.getUsableSpace();
+        logger.info("Free space on disk: " + freeSpace);
+        if (freeSpace < fileSize + (30 * 1024 * 1024)) { //+ 30MB
             throw new NotEnoughSpaceException();
         }
 
@@ -323,7 +325,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
             LogUtils.processException(logger, cause);
         }
         if (cause instanceof NotEnoughSpaceException) {
-            Swinger.showErrorMessage(getResourceMap(), "NotEnoughSpaceException", (downloadFile.getStoreFile() != null) ? downloadFile.getStoreFile() : "");
+            downloadFile.setErrorMessage(getResourceMap().getString("NotEnoughSpaceException"));
             setServiceError(DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR);
         } else if (cause instanceof UnknownHostException) {
             downloadFile.setErrorMessage(getResourceMap().getString("UnknownHostError"));

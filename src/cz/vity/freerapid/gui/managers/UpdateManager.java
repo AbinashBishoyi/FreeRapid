@@ -99,8 +99,12 @@ public class UpdateManager {
 
         final CheckPluginUpdateTask pluginUpdateTask = new CheckPluginUpdateTask(director, context, quiet);
         pluginUpdateTask.addTaskListener(new TaskListener.Adapter<List<Plugin>, Void>() {
-            public void succeeded(TaskEvent<List<Plugin>> event) {
-                updateDetected(event.getValue(), quiet);
+            public void succeeded(final TaskEvent<List<Plugin>> event) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        updateDetected(event.getValue(), quiet);
+                    }
+                });
             }
         });
         context.getTaskService().execute(pluginUpdateTask);

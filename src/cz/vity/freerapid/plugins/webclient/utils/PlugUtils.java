@@ -40,6 +40,7 @@ public final class PlugUtils {
      * <code>1.35 Gb, 0.5 Mb 5 465kB, 45654 6544 bytes, 54654654, 280B, also buggy 280BB</code> - default value is B<br />
      * Function is not case sensitive. Spaces among numbers are not important (they are removed).<br />
      * All ',' are converted to '.'<br />
+     * Since version 0.83 there is additional replacement for characters in Russian alphabet (azbuka).<br />
      *
      * @param value input string parsed from page
      * @return filesize in bytes
@@ -47,7 +48,12 @@ public final class PlugUtils {
     public static long getFileSizeFromString(String value) {
         if (value == null)
             throw new NullPointerException("Input value cannot be null");
-
+        value = value.replace('\u041C', 'M');//azbuka
+        value = value.replace('\u0431', 'B');
+        value = value.replace('\u043A', 'K');
+        value = value.replace('\u041A', 'K');
+        value = value.replace('\u0433', 'G');
+        value = value.replace('\u0413', 'G');
         value = value.toUpperCase();
         int constant = 1;
         int index = value.lastIndexOf("KB");

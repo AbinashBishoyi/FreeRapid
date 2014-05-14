@@ -23,7 +23,7 @@ class GOCR {
 
     private final BufferedImage image;
     private final String commandLineOptions;
-    private final static String PATH_WINDOWS = "tools/gocr/gocr046.exe";
+    private final static String PATH_WINDOWS = "tools/gocr/gocr.exe";
     private final static String PATH_LINUX = "gocr";
 
     /**

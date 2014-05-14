@@ -11,7 +11,17 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
-19th July 2009 - - FreeRapid Downloader 0.83 beta released
+
+9th August 2009 - FreeRapid Downloader 0.83 beta 2 released
+  Changed : support for speed limit from menu (additional support will come back with 0.84) 
+  Changed : upgraded GOCR to version 0.48
+  Changed : internal - upgraded SwingX components to version 1.0
+  Changed : updated default plugins to their latest versions in 0.83beta
+  Changed : removed error message dialog for ERROR when there is not enough space on disk 
+  Fixed : regression - avg. speed disappeared from information dialog [thanks to user from forum]
+  Fixed : "checking... dialog" when updating plugins lies over dialog "checking finished"
+
+19th July 2009 - FreeRapid Downloader 0.83 beta released
   Added : support for resuming files for hostings which support it (eg. HotFile, but not Rapidshare free!)
   Added : quick search (incremental search) for searching in the main queue table and plugins table (ctrl+F)  
   Added : MS Windows - windows key for popmenu emulates a click with right mouse button on content panel with links

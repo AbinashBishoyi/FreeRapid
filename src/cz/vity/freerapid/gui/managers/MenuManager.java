@@ -125,7 +125,7 @@ public class MenuManager {
                 "options",
                 MENU_SEPARATOR,
                 CHECKED + "monitorClipboardAction",
-                CHECKED + "globalLimitSpeedAction",
+                //      CHECKED + "globalLimitSpeedAction",
                 MENU_SEPARATOR,
                 createConnectionsMenu(),
                 MENU_SEPARATOR,

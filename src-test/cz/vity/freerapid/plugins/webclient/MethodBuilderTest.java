@@ -101,7 +101,7 @@ public class MethodBuilderTest {
     }
 
     @Test
-    public void testSetActionFromFormByName() throws BuildMethodException {
+    public void testSetActionFromFormByName() throws BuildMethodException, URIException {
         MethodBuilder methodBuilder = getMethodBuilder();
         String action = methodBuilder.setActionFromFormByName("test", true).getAction();
         Assert.assertEquals("Parsing Form tag", "/login/", action);
@@ -129,6 +129,15 @@ public class MethodBuilderTest {
         action = methodBuilder.setActionFromFormByName("formular", true).getAction();
         Assert.assertEquals("Simple Form name with ' = '", "/getfile.php?152686", action);
         Assert.assertEquals("Parameters size", methodBuilder.getParameters().size(), 4);
+
+        methodBuilder = getMethodBuilder();
+        action = methodBuilder.setActionFromFormByName("emptyAction", true).setAction("http://myAction").getAction();
+        Assert.assertEquals("Test empty action name", "http://myAction", action);
+
+        methodBuilder = getMethodBuilder();
+        action = methodBuilder.setActionFromFormByName("emptyAction", true).setBaseURL("http://myAction").toHttpMethod().getURI().toString();
+        Assert.assertEquals("Test empty action name2", "http://myAction/", action);
+
 
         methodBuilder = getMethodBuilder();
         methodBuilder.setActionFromFormByName("noActionForm", true);

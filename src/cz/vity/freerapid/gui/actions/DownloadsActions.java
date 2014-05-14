@@ -41,6 +41,7 @@ final public class DownloadsActions {
      */
     public static EnumSet<DownloadState> completedStates = EnumSet.of(COMPLETED);
 
+
     /**
      * Checks whether state download state means "working"
      *
