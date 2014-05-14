@@ -67,8 +67,11 @@ final class ServiceCellRenderer extends DefaultTableCellRenderer {
             } catch (NotSupportedDownloadServiceException e) {
                 //do nothing
             }
-            if (faviconImage == null)
+            if (faviconImage == null) {
                 faviconImage = iconCache.get("default");
+                //put default image into cache for this plugin which has no icon, so it can be used
+                iconCache.put(pluginId, faviconImage);
+            }
         }
         if (faviconImage != null) {
             this.setIcon(faviconImage);

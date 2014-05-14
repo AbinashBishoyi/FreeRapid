@@ -6,6 +6,7 @@ import cz.vity.freerapid.utilities.Utils;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.URIException;
 import org.junit.Assert;
+import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,8 +16,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Locale;
 import java.util.Map;
-
-import static org.junit.Assert.fail;
 
 
 /**
@@ -172,6 +171,33 @@ public class MethodBuilderTest {
         Assert.assertEquals("Searched IMG tag text in the tag", resultLink, action);
         Assert.assertEquals("Get Method", MethodBuilder.HttpMethodEnum.GET, methodBuilder.getMethodAction());
     }
+
+
+    @Test
+    public void testSetWww() throws BuildMethodException, URIException {
+        MethodBuilder methodBuilder;
+        methodBuilder = getMethodBuilder();
+        String action = methodBuilder.setAction("http://www.withwww.com").setWww(true).toHttpMethod().getURI().toString();
+        String resultLink = "http://www.withwww.com";
+        Assert.assertEquals("URL with www", resultLink, action);
+
+        methodBuilder = getMethodBuilder();
+        action = methodBuilder.setAction("http://www.withoutwww.com").setWww(false).toHttpMethod().getURI().toString();
+        resultLink = "http://withwww.com";
+        Assert.assertEquals("URL without www", resultLink, action);
+
+        methodBuilder = getMethodBuilder();
+        action = methodBuilder.setAction("http://addWwwToMe.com").setWww(true).toHttpMethod().getURI().toString();
+        resultLink = "http://www.addWwwToMe.com";
+        Assert.assertEquals("URL with www", resultLink, action);
+
+        methodBuilder = getMethodBuilder();
+        action = methodBuilder.setAction("http://removeWwwToMe.com").setWww(false).toHttpMethod().getURI().toString();
+        resultLink = "http://removeWwwToMe.com";
+        Assert.assertEquals("URL without www", resultLink, action);
+
+    }
+
 
     @Test
     public void testEncodePathAndQuery() throws BuildMethodException, URIException {

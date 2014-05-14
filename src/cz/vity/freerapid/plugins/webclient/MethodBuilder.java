@@ -59,6 +59,7 @@ public final class MethodBuilder {
     private String encoding = "UTF-8";
     private boolean autoReplaceEntities = true;
     private boolean encodePathAndQuery;
+    private boolean addWww = false;
 
     private static Pattern formPattern;
     private static Pattern parameterPatterns;
@@ -69,6 +70,7 @@ public final class MethodBuilder {
     private static Pattern aHrefPattern;
     private static Pattern imgPattern;
     private static Pattern iframePattern;
+    private boolean updateWww = false;
 
     /**
      * Returns actual set POST or GET method extracted from result. <br /> Its value is used in <code>toMethod()</code> method.<br/>
@@ -207,6 +209,19 @@ public final class MethodBuilder {
         }
         if (!found)
             throw new BuildMethodException("Tag <Form> containing '" + text + "' in the title was not found!");
+        return this;
+    }
+
+
+    /**
+     * Checks for generating 'www' or removing int
+     * @param shouldContainWww  if value is TRUE - 'www' for result URL is checked for URL and added, for FALSE 'www' is removed
+     * @return builder instance
+     * @since 0.85a4
+     */
+    public MethodBuilder setWww(boolean shouldContainWww) {
+        this.updateWww = true;
+        this.addWww = shouldContainWww;
         return this;
     }
 
@@ -711,6 +726,27 @@ public final class MethodBuilder {
     }
 
     private String generateURL() throws BuildMethodException {
+        String result = buildUrl();
+        if (updateWww) {
+            final String lowercase = result.toLowerCase(Locale.ENGLISH);
+            if (lowercase.startsWith("http://")) {
+                if (lowercase.startsWith("http://www.")) {
+                    if (!addWww) {
+                        result = "http://" + result.substring(11);
+                        logger.info("Removing WWW " + result);
+                    }
+                } else {
+                    if (addWww) {
+                        result = "http://www." + result.substring(7);
+                        logger.info("Adding WWW " + result);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    private String buildUrl() throws BuildMethodException {
         if (baseURL == null && action == null)
             throw new BuildMethodException("Both action and base url has to be not null");
         if (action != null) {
@@ -921,9 +957,11 @@ public final class MethodBuilder {
      * Setter for property 'autoReplaceEntities'.
      *
      * @param autoReplaceEntities Value to set for property 'autoReplaceEntities'.
+     * @since 0.85a4 return value of method builder
      */
-    public void setAutoReplaceEntities(boolean autoReplaceEntities) {
+    public MethodBuilder setAutoReplaceEntities(boolean autoReplaceEntities) {
         this.autoReplaceEntities = autoReplaceEntities;
+        return this;
     }
 
     /**
