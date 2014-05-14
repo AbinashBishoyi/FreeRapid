@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  * </code>
  * @author Vity
  * @since 0.85
- * @see cz.vity.freerapid.plugins.webclient.AbstractHttpRunner#setFileStreamContentTypes(String[])
+ * @see AbstractRunner#setFileStreamContentTypes(String[])
  */
 public class DefaultFileStreamRecognizer implements FileStreamRecognizer {
     private final static Logger logger = Logger.getLogger(DefaultFileStreamRecognizer.class.getName());

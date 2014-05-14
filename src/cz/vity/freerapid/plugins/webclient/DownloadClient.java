@@ -130,7 +130,7 @@ public class DownloadClient implements HttpDownloadClient {
      * @param method
      */
     protected void setDefaultsForMethod(HttpMethod method) {
-        if (client.getParams().isParameterTrue(DownloadClientConsts.USER_AGENT)) {
+        if (client.getParams().isParameterSet(DownloadClientConsts.USER_AGENT)) {
             method.setRequestHeader("User-Agent", client.getParams().getParameter(DownloadClientConsts.USER_AGENT).toString());
         } else
             method.setRequestHeader("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.2.3) Gecko/20100401 Firefox/3.6.3");
