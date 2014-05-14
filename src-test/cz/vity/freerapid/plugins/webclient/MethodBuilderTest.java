@@ -178,22 +178,22 @@ public class MethodBuilderTest {
         MethodBuilder methodBuilder;
         methodBuilder = getMethodBuilder();
         String action = methodBuilder.setAction("http://www.withwww.com").setWww(true).toHttpMethod().getURI().toString();
-        String resultLink = "http://www.withwww.com";
+        String resultLink = "http://www.withwww.com/";
         Assert.assertEquals("URL with www", resultLink, action);
 
         methodBuilder = getMethodBuilder();
         action = methodBuilder.setAction("http://www.withoutwww.com").setWww(false).toHttpMethod().getURI().toString();
-        resultLink = "http://withwww.com";
+        resultLink = "http://withoutwww.com/";
         Assert.assertEquals("URL without www", resultLink, action);
 
         methodBuilder = getMethodBuilder();
         action = methodBuilder.setAction("http://addWwwToMe.com").setWww(true).toHttpMethod().getURI().toString();
-        resultLink = "http://www.addWwwToMe.com";
+        resultLink = "http://www.addWwwToMe.com/";
         Assert.assertEquals("URL with www", resultLink, action);
 
         methodBuilder = getMethodBuilder();
         action = methodBuilder.setAction("http://removeWwwToMe.com").setWww(false).toHttpMethod().getURI().toString();
-        resultLink = "http://removeWwwToMe.com";
+        resultLink = "http://removeWwwToMe.com/";
         Assert.assertEquals("URL without www", resultLink, action);
 
     }
