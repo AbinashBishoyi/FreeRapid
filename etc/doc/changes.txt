@@ -11,6 +11,8 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
+  Fixed : Problem with downloading txt files + using description, see http://wordrider.net/forum/read.php?7,4681,4696
+
  29th October 2009 - FreeRapid Downloader 0.83 Update 1
   Added : Romanian language [thanks to de-a dura lex]
   Added : Experimental: new -DtableSortable boolean internal property to enable sorting in the main table

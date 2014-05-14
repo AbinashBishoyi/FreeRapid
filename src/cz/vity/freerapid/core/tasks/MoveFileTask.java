@@ -168,8 +168,8 @@ public class MoveFileTask extends CoreTask<Void, Void> {
         final boolean descriptionFile = AppPrefs.getProperty(UserProp.GENERATE_DESCRIPTION_BY_FILENAME, UserProp.GENERATE_DESCRIPTION_BY_FILENAME_DEFAULT);
         if (descriptionFile) {
             File descTxtFile = new File(to.getParentFile(), getNameForFile(Utils.getPureFilenameWithDots(to) + ".txt"));
-            if (descTxtFile.exists() && descTxtFile.isHidden()) { //na Windows FileWriter haze vyjimku, pokud je hidden
-                if (!descTxtFile.delete()) { //txt vztazeny k souboru muzeme klidne smazat, protoze vytvorime novy
+            if (descTxtFile.exists() && descTxtFile.isHidden()) { // Windows OS + FileWriter throws exception, if file is marked as hidden and we want overwrite it
+                if (!descTxtFile.delete()) { //txt file linked to a file can be deleted without harm, because we create a new one
                     logger.warning("Deletion of file " + descTxtFile.getAbsolutePath() + " failed");
                 }
             }

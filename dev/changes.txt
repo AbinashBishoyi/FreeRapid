@@ -1,3 +1,11 @@
+Version 0.83->
+DownloadNewPluginsTask.properties
+====================================
+New:
+pluginsDirectoryIsNotWriteable=Target plugins directory is not writable.You cannot download plugins.\nIf FreeRapid's directory is placed in 'Program files' directory then run FRD as an administrator or place FreeRapid into another directory.
+
+
+
 Version 0.82->0.83
 MainApp.properties
 ==============================
