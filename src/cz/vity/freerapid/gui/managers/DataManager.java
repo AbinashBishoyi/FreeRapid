@@ -361,10 +361,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                 downloadFile.setState(DELETED);
                 toRemoveList.add(downloadFile);
             }
-            for (DownloadFile file : toRemoveList) {
-                downloadFiles.remove(file);
-            }
-            //downloadFiles.removeAll(toRemoveList);
+            removeFromList(toRemoveList);
             for (DownloadFile file : toRemoveList) {
                 final DownloadTask task = file.getTask();
                 if (task != null && !task.isTerminated()) {
@@ -983,7 +980,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
             final int placeIndex = indexes[0];
             final int length = indexes.length;
             for (int i = length - 1; i >= 0; --i) {
-                downloadFiles.remove(indexes[i]);
+                downloadFiles.remove(indexes[i]);//it does not generate event to database
             }
             downloadFiles.addAll(placeIndex, Arrays.asList(sorted));
             return placeIndex;
