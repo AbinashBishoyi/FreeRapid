@@ -1,17 +1,16 @@
 package cz.vity.freerapid.gui.managers.search;
 
-import jlibs.xml.sax.binding.Attr;
-import jlibs.xml.sax.binding.Binding;
-import jlibs.xml.sax.binding.Relation;
+import jlibs.xml.sax.binding.*;
 import org.xml.sax.SAXException;
 
 /**
  * @author Vity
  */
 @SuppressWarnings({"UnusedDeclaration"})
-//@NamespaceContext({
-//    @Entry(prefix="", uri="http://a9.com/-/spec/opensearch/1.1/")
-//})
+@NamespaceContext({
+    @Entry(prefix = "", uri = "http://a9.com/-/spec/opensearch/1.1/")
+        //@Entry(prefix="", uri="")
+        })
 
 @Binding("OpenSearchDescription")
 public class OpenSearchDescriptionBinding {

@@ -21,7 +21,7 @@ import java.util.logging.Logger;
  */
 class EmailErrorReporter implements ErrorReporter {
     private final static Logger logger = Logger.getLogger(EmailErrorReporter.class.getName());
-    private final static String MAIL_FOR_ERRORS = "vitywap@seznam.cz";
+    private final static String MAIL_FOR_ERRORS = "info@wordrider.net";
 
     public void reportError(ErrorInfo info) throws NullPointerException {
         if (!Desktop.isDesktopSupported() || !Desktop.getDesktop().isSupported(Desktop.Action.MAIL))

@@ -4,6 +4,7 @@ package cz.vity.freerapid.core;
  * @author Vity
  */
 final public class UserProp {
+
     private UserProp() {
     }
 
@@ -113,7 +114,7 @@ final public class UserProp {
     public static final boolean ACTIVATE_WHEN_CAPTCHA_DEFAULT = true;
 
     public static final String PAYPAL = "paypal";
-    public static final String PAYPAL_DEFAULT = "http://wordrider.net/freerapid/paypal";
+    public static final String PAYPAL_DEFAULT = "http://vity.cz/freerapid/paypal";
     public static final String DEMO_URL = "demoURL";
 
     public static final String BRING_TO_FRONT_WHEN_PASTED = "bringToFrontWhenPasted";
@@ -323,6 +324,7 @@ final public class UserProp {
     public static final int SEARCH_FIELD_WIDTH_DEFAULT = 165;
 
 
+    public static final String SHOW_PAYPAL_REQUEST = "showPaypalRequest";
 }
 
 

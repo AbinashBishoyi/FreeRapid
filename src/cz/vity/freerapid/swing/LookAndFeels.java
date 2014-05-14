@@ -49,7 +49,7 @@ public final class LookAndFeels {
     /**
      * default MacOS LaF
      */
-    private static final String AQUA = "apple.laf.AquaLookAndFeel";
+    private static final String AQUA = "ch.randelshofer.quaqua.QuaquaLookAndFeel";
 
     /**
      * Classloader pro look and feely

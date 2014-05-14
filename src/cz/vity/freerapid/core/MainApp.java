@@ -7,6 +7,7 @@ import cz.vity.freerapid.gui.managers.ManagerDirector;
 import cz.vity.freerapid.swing.LookAndFeels;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.swing.TrayIconSupport;
+import cz.vity.freerapid.utilities.Browser;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
 import org.jdesktop.appframework.swingx.SingleXFrameApplication;
@@ -168,8 +169,27 @@ public class MainApp extends SingleXFrameApplication {
         getTrayIconSupport().setVisibleByDefault();
         setGlobalEDTExceptionHandler();
 
-        if (minimizeOnStart)
+        if (minimizeOnStart) {
             Swinger.minimize(mainFrame);
+        }
+
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                paypalRequest();
+            }
+        });
+
+
+    }
+
+    private void paypalRequest() {
+        if (AppPrefs.getProperty(UserProp.SHOW_PAYPAL_REQUEST, 1) != 2) {
+            int res = Swinger.getChoiceYesNo(this.getContext().getResourceMap().getString("paypalSupportAction.Action.shortDescription"));
+            AppPrefs.storeProperty(UserProp.SHOW_PAYPAL_REQUEST, 2);
+            if (res == Swinger.RESULT_YES) {
+                Browser.openBrowser(AppPrefs.getProperty(UserProp.PAYPAL, UserProp.PAYPAL_DEFAULT));
+            }
+        }
     }
 
     private void initMainFrame() {

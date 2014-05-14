@@ -210,6 +210,7 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
         JLabel labelEstimateTime = new JLabel();
         estTimeLabel = new JLabel();
         JLabel labelCurrentSpeed = new JLabel();
+        labelCurrentSpeed.setPreferredSize(new Dimension(90, 20));
         currentSpeedLabel = new JLabel();
         JLabel labelAverageSpeed = new JLabel();
         avgSpeedLabel = new JLabel();
@@ -334,8 +335,8 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
                             RowSpec.decodeSpecs("default")),
                             connectionPanel);
 
-                     connectionPanelBuilder.add(connectionLabel, cc.xy(1, 1));
-                     connectionPanelBuilder.add(connectionField, cc.xy(3, 1));
+                    connectionPanelBuilder.add(connectionLabel, cc.xy(1, 1));
+                    connectionPanelBuilder.add(connectionField, cc.xy(3, 1));
                 }
 
                 //---- avgSpeedLabel ----

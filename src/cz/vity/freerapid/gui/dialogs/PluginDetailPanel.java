@@ -35,6 +35,8 @@ public class PluginDetailPanel extends JPanel {
         checkboxUpdatePlugins = new JCheckBox();
         checkboxClipboardMonitoring = new JCheckBox();
         JLabel labelMaxConnections = new JLabel();
+        labelMaxConnections.setPreferredSize(new Dimension(80, 20));
+        labelMaxConnections.setMinimumSize(new Dimension(80, 20));
         spinnerMaxPluginConnections = new JSpinner();
         JLabel labelPriority = new JLabel();
         spinnerPluginPriority = new JSpinner();

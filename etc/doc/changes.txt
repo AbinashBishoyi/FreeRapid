@@ -11,8 +11,11 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid Downloader
 Fixed - indicates a bug fix
 
-FreeRapid Downloader 0.85
+14th November 2010 - FreeRapid Downloader 0.85 Final version
   Fixed : JDK 6 bug where the built-in WBMP reader tries to read ICO files and fails
+  Fixed : OpenSearchDescription files requires namespace http://a9.com/-/spec/opensearch/1.1/
+
+  Note: support for other translations and languages will come with a new language pack
 
 31th October 2010 - FreeRapid Downloader 0.85 Alpha 4
   Added : Support for direct downloads (enable this feature in Preferences)

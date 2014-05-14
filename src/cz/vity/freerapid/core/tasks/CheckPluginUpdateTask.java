@@ -9,6 +9,7 @@ import cz.vity.freerapid.gui.managers.ManagerDirector;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadClient;
 import cz.vity.freerapid.swing.Swinger;
+import cz.vity.freerapid.utilities.Browser;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.xmlimport.XMLBind;
 import cz.vity.freerapid.xmlimport.ver1.Plugin;
@@ -21,6 +22,7 @@ import org.jdesktop.application.ApplicationContext;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -36,12 +38,15 @@ public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
     private static final String PRODUCT_PARAM = "product";
     private static final String APIVERSION_PARAM = "apiversion";
     private static int failed = 0;
+    private String newVersionURL;
+    private ConnectResult result;
 
 
     public CheckPluginUpdateTask(ManagerDirector director, ApplicationContext context, boolean quiet) {
         super(context.getApplication());
         this.director = director;
         quietMode = quiet;
+        result = ConnectResult.SAME_VERSION;
         logger.info("Starting to check for a new plugins version");
         setTaskToForeground();
         if (!quiet)
@@ -80,8 +85,32 @@ public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
         message("message.checkingData");
         if (isCancelled())
             throw new InterruptedException();
-        final Plugins rootPlugins = new XMLBind().loadPluginList(client.getContentAsString());
-        return rootPlugins.getPlugin();
+        final String line = client.getContentAsString();
+
+        if ((line != null)) {
+            //   return CONNECT_SAME_VERSION;
+            final String lineL = line.toLowerCase();
+            if (lineL.contains("required")) {
+                final int i = lineL.indexOf("http://");
+                if (i != -1) {
+                    newVersionURL = line.substring(i).trim();
+                } else {
+                    newVersionURL = Consts.WEBURL;
+                }
+                result = ConnectResult.NEW_VERSION_REQUIRED;
+            }
+            if (lineL.contains("yes"))
+                //   return CONNECT_SAME_VERSION;
+                result = ConnectResult.CONNECT_NEW_VERSION;
+            else
+                result = ConnectResult.SAME_VERSION;
+        } else
+            result = ConnectResult.SAME_VERSION;
+
+        if (result == ConnectResult.SAME_VERSION) {
+            final Plugins rootPlugins = new XMLBind().loadPluginList(line);
+            return rootPlugins.getPlugin();
+        } else return Collections.emptyList();
         //return newPlugins;
     }
 
@@ -90,6 +119,7 @@ public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
         LogUtils.processException(logger, cause);
 //        if (handleRuntimeException(cause))
 //            return;
+
         ++failed;
         if (quietMode) {
             AppPrefs.storeProperty(UserProp.PLUGIN_LAST_UPDATE_TIMESTAMP_CHECK, -1);
@@ -104,8 +134,18 @@ public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
     }
 
     @Override
-    protected void succeeded(List<Plugin> result) {
-        for (Plugin plugin : result) {
+    protected void succeeded(List<Plugin> plugins) {
+        switch (this.result) {
+            case NEW_VERSION_REQUIRED:
+                Swinger.showInformationDialog(getResourceMap().getString("message.connect.newVersionRequired"));
+                Browser.openBrowser(newVersionURL);
+                getApplication().exit();
+                return;
+            default:
+                assert false;
+        }
+
+        for (Plugin plugin : plugins) {
             logger.info("plugin update from server: " + plugin.getId());
         }
     }

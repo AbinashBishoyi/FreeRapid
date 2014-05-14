@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <project name="FreeRapid Downloader" default="all" basedir=".">
     <property name="application" value="FreeRapid"/>
-    <property name="version" value="0.85alpha4"/>
+    <property name="version" value="0.85"/>
     <property name="version.name" value="${application}-${version}"/>
     <property name="mainclass" value="cz.vity.freerapid.core.MainApp"/>
     <property name="mainjar.file" value="frd.jar"/>
@@ -114,7 +114,7 @@
                 <attribute name="SplashScreen-Image" value="${splash}"/>
             </manifest>
             <fileset dir="${classes.dir}" includes="**/*"
-                     excludes="**/services/**,**/sandbox/**, **/**/?*.properties"/>
+                     excludes="**/services/**,**/sandbox/**, **/**/?*.properties,**/**/?*.java"/>
         </jar>
         <mkdir dir="${build.dir}/${lib.dir}"/>
         <!--<mkdir dir="${build.dir}/help"/>-->

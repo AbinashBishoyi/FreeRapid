@@ -31,6 +31,7 @@ public class CheckForNewVersionTask extends CoreTask<ConnectResult, Void> {
 
     private final boolean showInfoMessages;
     private static int counter = 0;
+    private String newVersionURL;
 
     public CheckForNewVersionTask(final boolean showInfoMessages) {
         super(Application.getInstance());
@@ -72,10 +73,24 @@ public class CheckForNewVersionTask extends CoreTask<ConnectResult, Void> {
         logger.info("disconnecting");
         message("message.connect.status.disconnect");
         final String line = client.getContentAsString();
-        if (line != null && line.toLowerCase().contains("yes"))
+        if ((line != null)) {
             //   return CONNECT_SAME_VERSION;
-            return ConnectResult.CONNECT_NEW_VERSION;
-        else
+            final String lineL = line.toLowerCase();
+            if (lineL.contains("required")) {
+                final int i = lineL.indexOf("http://");
+                if (i != -1) {
+                    newVersionURL = line.substring(i).trim();
+                } else {
+                    newVersionURL = Consts.WEBURL;
+                }
+                return ConnectResult.NEW_VERSION_REQUIRED;
+            }
+            if (lineL.contains("yes"))
+                //   return CONNECT_SAME_VERSION;
+                return ConnectResult.CONNECT_NEW_VERSION;
+            else
+                return ConnectResult.SAME_VERSION;
+        } else
             return ConnectResult.SAME_VERSION;
     }
 
@@ -87,6 +102,11 @@ public class CheckForNewVersionTask extends CoreTask<ConnectResult, Void> {
                 if (showInfoMessages)
                     Swinger.showInformationDialog(getResourceMap().getString("message.connect.sameVersion"));
                 break;
+            case NEW_VERSION_REQUIRED:
+                Swinger.showInformationDialog(getResourceMap().getString("message.connect.newVersionRequired"));
+                Browser.openBrowser(newVersionURL);
+                getApplication().exit();
+                return;
             case CONNECT_NEW_VERSION:
                 int res = Swinger.getChoiceYesNo(this.getResourceMap().getString("message.connect.newVersion"));
                 if (res == Swinger.RESULT_YES)
