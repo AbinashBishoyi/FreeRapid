@@ -21,13 +21,13 @@ public class TaskServiceManager {
     public static final String WORK_WITH_FILE_SERVICE = "workWithFile";
     public static final String DATABASE_SERVICE = "databaseService";
 
-    private ApplicationContext context;
+    private final ApplicationContext context;
 
-    public TaskServiceManager(ApplicationContext context) {
+    public TaskServiceManager(final ApplicationContext context) {
         this.context = context;
     }
 
-    public synchronized TaskService getTaskService(String name) {
+    public synchronized TaskService getTaskService(final String name) {
         final TaskService service = context.getTaskService(name);
         if (service == null) {
             if (DOWNLOAD_SERVICE.equals(name)) {
@@ -46,33 +46,35 @@ public class TaskServiceManager {
     }
 
     private TaskService initDownloadTaskService() {
-        return initTaskService(0, Integer.MAX_VALUE, 60L, DOWNLOAD_SERVICE, new SynchronousQueue<Runnable>());
+        return initTaskService(DOWNLOAD_SERVICE, Executors.newCachedThreadPool());
     }
 
     private TaskService initRunCheckTaskService() {
         final int max = AppPrefs.getProperty(UserProp.MAX_SIMULTANEOUS_RUN_CHECK, UserProp.MAX_SIMULTANEOUS_RUN_CHECK_DEFAULT);
-        return initTaskService(0, max, 60L, RUN_CHECK_SERVICE, new LinkedBlockingQueue<Runnable>());
+        return initTaskService(RUN_CHECK_SERVICE, newExecutorService(max));
     }
 
     private TaskService initMoveFileTaskService() {
-        return initTaskService(0, 1, 60L, MOVE_FILE_SERVICE, new LinkedBlockingQueue<Runnable>());
+        return initTaskService(MOVE_FILE_SERVICE, newExecutorService(1));
     }
 
     private TaskService initWorkWithFileTaskService() {
-        return initTaskService(0, 1, 60L, WORK_WITH_FILE_SERVICE, new LinkedBlockingQueue<Runnable>());
+        return initTaskService(WORK_WITH_FILE_SERVICE, newExecutorService(1));
     }
 
     private TaskService initWorkWithDatabaseTaskService() {
-        return initTaskService(1, 1, 60L, DATABASE_SERVICE, new LinkedBlockingQueue<Runnable>());
+        return initTaskService(DATABASE_SERVICE, Executors.newSingleThreadExecutor());
     }
 
-    private TaskService initTaskService(int corePoolSize, int maximumPoolSize, long keepAliveTime, String name, BlockingQueue<Runnable> runnables) {
-        final ThreadPoolExecutor threadPool = new ThreadPoolExecutor(
-                corePoolSize,   // corePool size
-                maximumPoolSize,  // maximumPool size
-                keepAliveTime, TimeUnit.SECONDS,  // non-core threads time to live
-                runnables);
-        final TaskService service = new TaskService(name, threadPool);
+    private static ExecutorService newExecutorService(final int numThreads) {
+        final ThreadPoolExecutor executor = new ThreadPoolExecutor(
+                numThreads, numThreads, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+        executor.allowCoreThreadTimeOut(true);
+        return executor;
+    }
+
+    private TaskService initTaskService(final String name, final ExecutorService executor) {
+        final TaskService service = new TaskService(name, executor);
         context.addTaskService(service);
         logger.info("Creating pool " + name);
         return service;
@@ -81,4 +83,5 @@ public class TaskServiceManager {
     public void runTask(String taskServiceName, Task task) {
         this.getTaskService(taskServiceName).execute(task);
     }
+
 }
