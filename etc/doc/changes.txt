@@ -14,7 +14,8 @@ Fixed - indicates a bug fix
   Added : internal - plugin API - support for using SSL in plugins 
   Added : French version of readme.txt [thanks to Jean-François]
   Changed : support for viewing info about >GB long files 
-  Changed : upgraded Substance L&F to version 5.1, upgraded SwingX library to the newest devel version
+  Changed : internal - upgraded Substance L&F to version 5.1, upgraded SwingX library to the newest devel version
+  Changed : internal - upgraded SwingX components to version 0.96 
   Changed : this file and readme.txt files were moved to 'doc' folder
   Changed : improved clipboard monitoring for URLs violating with RFC
   Fixed : support for only X bytes long files (eg. 515B)
