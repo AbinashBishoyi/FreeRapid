@@ -1,10 +1,13 @@
 package cz.vity.freerapid.gui;
 
 import cz.vity.freerapid.core.AppPrefs;
+import cz.vity.freerapid.core.Consts;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.gui.managers.search.SearchItem;
 import cz.vity.freerapid.swing.ComponentFactory;
 import cz.vity.freerapid.swing.Swinger;
+import cz.vity.freerapid.utilities.Browser;
+import org.jdesktop.application.ApplicationContext;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -25,7 +28,7 @@ public class SearchField extends JTextField implements FocusListener, PopupMenuL
     private SearchItem selectedItem = null;
     private java.util.List<SearchItem> searchItemList = Collections.emptyList();
 
-    public SearchField() {
+    public SearchField(ApplicationContext context) {
         super();
         this.addFocusListener(this);
         emptyString = "";
@@ -60,6 +63,13 @@ public class SearchField extends JTextField implements FocusListener, PopupMenuL
                 }
             }
         });
+        Swinger.initActions(this, context);
+    }
+
+    @org.jdesktop.application.Action
+    public void manageSearchEngines() {
+        Swinger.showInformationDialog(Swinger.getResourceMap().getString("howToManageSearchEngines"));
+        Browser.openBrowser(Consts.SEARCH_ENGINES_URL);
     }
 
     private void doPopmenu() {
@@ -70,6 +80,10 @@ public class SearchField extends JTextField implements FocusListener, PopupMenuL
         for (SearchItem item : searchItemList) {
             popmenu.add(new SelectSearchEngineAction(item));
         }
+        if (!searchItemList.isEmpty()) {
+            popmenu.addSeparator();
+        }
+        popmenu.add(Swinger.getAction("manageSearchEngines"));
         popmenu.show(getParent(), getLocation().x, getLocation().y + getHeight());
     }
 

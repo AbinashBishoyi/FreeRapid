@@ -30,6 +30,8 @@ public class SearchManager {
     private final static String SEARCH_DIR = "search";
     private final static Logger logger = Logger.getLogger(SearchManager.class.getName());
     private List<SearchItem> searchItems;
+    private int filesCount = -1;
+    private long lastModified = -1;
 
     public SearchManager(ApplicationContext context, ManagerDirector managerDirector) {
         this.context = context;
@@ -37,18 +39,18 @@ public class SearchManager {
     }
 
     public void loadSearchData() {
-        final File dir = new File(Utils.getAppPath(), SEARCH_DIR);
-        if (!(dir.exists() && dir.isDirectory())) {
-            searchItems = new LinkedList<SearchItem>();
+        final File dir = getDirectory();
+        if (dir == null) {
+            searchItems = Collections.emptyList();
             return;
         }
-        final File[] files = dir.listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return name.toLowerCase(Locale.ENGLISH).endsWith(".xml");
-            }
-        });
+        final File[] files = getFiles(dir);
         searchItems = new ArrayList<SearchItem>(files.length);
 
+        filesCount = -1;
+        lastModified = -1;
+
+        filesCount = files.length;
         Arrays.sort(files);
         final BindingHandler handler = new BindingHandler(OpenSearchDescriptionBinding.class);
         handler.setPopulateNamespaces(true);
@@ -59,7 +61,9 @@ public class SearchManager {
             }
         });
         for (File f : files) {
-
+            final long lm = f.lastModified();
+            if (lm > lastModified)
+                lastModified = lm;
             logger.info("Parsing search.xml file " + f.getAbsolutePath());
             try {
                 final OpenSearchDescription searchDescription = (OpenSearchDescription) handler.parse(new InputSource(new FileInputStream(f)));
@@ -77,6 +81,40 @@ public class SearchManager {
             }
 
         }
+    }
+
+    private File getDirectory() {
+        final File dir = new File(Utils.getAppPath(), SEARCH_DIR);
+        if (!(dir.exists() && dir.isDirectory())) {
+            return null;
+        }
+        return dir;
+    }
+
+
+    public boolean checkForDirChange() {
+        final File directory = getDirectory();
+        if (directory == null) {
+            return false;
+        }
+        final File[] files = getFiles(directory);
+        if (files.length != filesCount) {
+            return true;
+        }
+        for (File file : files) {
+            if (file.lastModified() > lastModified) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private File[] getFiles(File dir) {
+        return dir.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return name.toLowerCase(Locale.ENGLISH).endsWith(".xml");
+            }
+        });
     }
 
     public void openBrowser(SearchItem item, String searchText) {

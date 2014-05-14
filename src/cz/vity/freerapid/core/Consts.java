@@ -85,6 +85,7 @@ public class Consts {
      */
     public static final String APIVERSION = "0.849";
     public static final String PLUGINSSTATUS_URL = "http://wordrider.net/freerapid/plugins.html";
+    public static final String SEARCH_ENGINES_URL = "https://addons.mozilla.org/en-US/firefox/search-engines/";
 
     /**
      * Od teto tridy se nebudou delat zadne instance

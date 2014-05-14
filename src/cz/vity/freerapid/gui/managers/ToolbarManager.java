@@ -17,6 +17,8 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
@@ -56,6 +58,7 @@ public class ToolbarManager implements PropertyChangeListener {
     private float fontSize;
     private SearchField searchField;
     private final ManagerDirector directorManager;
+    private final ApplicationContext context;
 
     /**
      * Konstruktor - naplni toolbar buttony
@@ -63,6 +66,7 @@ public class ToolbarManager implements PropertyChangeListener {
 
     public ToolbarManager(ManagerDirector directorManager, ApplicationContext context) {
         this.directorManager = directorManager;
+        this.context = context;
         toolbarPanel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
         final Action action = context.getActionMap().get("showToolbar");
 
@@ -105,8 +109,8 @@ public class ToolbarManager implements PropertyChangeListener {
         toolbar.add(getButton(Swinger.getAction("upAction")));
         toolbar.add(getButton(Swinger.getAction("downAction")));
         toolbar.add(getButton(Swinger.getAction("bottomAction")));
-        toolbar.add(new ToolbarSeparator());
-        searchField = new SearchField();
+        toolbar.add(Box.createGlue());
+        searchField = new SearchField(context);
         searchField.setSearchItemList(directorManager.getSearchManager().getSearchItems());
         searchField.addKeyListener(new KeyAdapter() {
             @Override
@@ -128,12 +132,21 @@ public class ToolbarManager implements PropertyChangeListener {
         valueModel = BindUtils.getPrefsValueModel(UserProp.SEARCH_FIELD_VISIBLE, UserProp.SEARCH_FIELD_VISIBLE_DEFAULT);
         PropertyConnector.connectAndUpdate(valueModel, searchField, "visible");
 
-        if (!searchField.getSearchItemList().isEmpty())
-            toolbar.add(searchField);
+        //if (!searchField.getSearchItemList().isEmpty())
+        searchField.addFocusListener(new FocusAdapter() {
+            public void focusGained(FocusEvent e) {
+                if (directorManager.getSearchManager().checkForDirChange()) {
+                    directorManager.getSearchManager().loadSearchData();
+                    searchField.setSearchItemList(directorManager.getSearchManager().getSearchItems());
+                }
+            }
+        });
+
+        toolbar.add(searchField);
 
 //        toolbar.add(new ToolbarSeparator());
 //        toolbar.add(getButton(Swinger.getAction("quit")));
-        toolbar.add(Box.createGlue());
+        //    toolbar.add(Box.createGlue());
         AbstractButton btn = getButton(Swinger.getAction("paypalSupportAction"));
         btn.putClientProperty("noChange", true);
         btn.setOpaque(false);
@@ -266,4 +279,7 @@ public class ToolbarManager implements PropertyChangeListener {
 //    }
 
 
+    public SearchField getSearchField() {
+        return searchField;
+    }
 }

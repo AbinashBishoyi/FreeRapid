@@ -3,6 +3,7 @@ package cz.vity.freerapid.gui.content;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
+import cz.vity.freerapid.gui.SearchField;
 import cz.vity.freerapid.gui.actions.DownloadsActions;
 import cz.vity.freerapid.gui.actions.URLTransferHandler;
 import cz.vity.freerapid.gui.content.comparators.*;
@@ -847,6 +848,16 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
         final InputMap inputMap = table.getInputMap();
         final ActionMap actionMap = table.getActionMap();
+
+        inputMap.put(SwingUtils.getCtrlKeyStroke(KeyEvent.VK_K), "searchFieldAction");
+        actionMap.put("searchFieldAction", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                final SearchField field = director.getToolbarManager().getSearchField();
+                if (field.isVisible()) {
+                    Swinger.inputFocus(field);
+                }
+            }
+        });
 
         inputMap.put(SwingUtils.getCtrlKeyStroke(KeyEvent.VK_C), "copy");
         inputMap.put(SwingUtils.getCtrlAltKeyStroke(KeyEvent.VK_C), "copy");
