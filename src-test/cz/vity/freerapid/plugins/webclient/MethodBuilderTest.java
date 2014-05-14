@@ -26,7 +26,7 @@ public class MethodBuilderTest {
     @Before
     public void before() throws URISyntaxException {
         final URI uri = MethodBuilderTest.class.getResource("resources/MethodBuilderTest.html").toURI();
-        content = Utils.loadFile(new File(uri));
+        content = Utils.loadFile(new File(uri), "Windows-1250");
         client = new DownloadClient();
         client.initClient(new ConnectionSettings());
         Locale.setDefault(new Locale("CS", "CZ"));
