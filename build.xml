@@ -80,7 +80,7 @@
         <map from="${lib.prefix}" to="${lib.dir}"/>
     </pathconvert>
 
-    <target name="build" depends="compile" description="building">
+    <target name="build" depends="compile, tests" description="building">
         <buildnumber file="build.txt"/>
 
         <!--copying properties files-->
