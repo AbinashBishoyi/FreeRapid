@@ -258,7 +258,7 @@ public class ProcessManager extends Thread {
             logger.info("QUEUED not found - found " + downloadFile.getState());
             return;
         }
-        if (!runCheck && AppPrefs.getProperty(UserProp.COMBINED_DOWNLOADING, UserProp.COMBINED_DOWNLOADING_DEFAULT)) {
+        if (!runCheck && AppPrefs.getProperty(UserProp.SKIP_DUPLICATE_FILES, UserProp.SKIP_DUPLICATE_FILES_DEFAULT)) {
             if (dataManager.isSameDownloading(downloadFile)) {
                 downloadFile.setState(DownloadState.SKIPPED);
                 downloadFile.setErrorMessage(context.getResourceMap().getString("fileIsBeingAlreadyDownloading"));

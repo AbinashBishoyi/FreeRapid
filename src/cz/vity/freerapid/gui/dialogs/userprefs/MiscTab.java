@@ -25,6 +25,8 @@ public class MiscTab extends UserPreferencesTab {
         bind(checkGenerateHidden, UserProp.GENERATE_DESCRIPTION_FILES_HIDDEN, UserProp.GENERATE_DESCRIPTION_FILES_HIDDEN_DEFAULT);
         bind(checkPrepareFile, UserProp.ANTI_FRAGMENT_FILES, UserProp.ANTI_FRAGMENT_FILES_DEFAULT);
         bind(checkUseRecycleBin, UserProp.USE_RECYCLE_BIN, UserProp.USE_RECYCLE_BIN_DEFAULT);
+        bind(checkOpenIncompleteFiles, UserProp.OPEN_INCOMPLETE_FILES, UserProp.OPEN_INCOMPLETE_FILES_DEFAULT);
+        bind(checkUseTemporaryFiles, UserProp.USE_TEMPORARY_FILES, UserProp.USE_TEMPORARY_FILES_DEFAULT);
     }
 
     @Override
@@ -43,6 +45,10 @@ public class MiscTab extends UserPreferencesTab {
         checkUseRecycleBin = new JCheckBox();
         checkUseRecycleBin.setName("checkUseRecycleBin");
         checkUseRecycleBin.setEnabled(FileUtils.supportsRecycleBin());
+        checkOpenIncompleteFiles = new JCheckBox();
+        checkOpenIncompleteFiles.setName("checkOpenIncompleteFiles");
+        checkUseTemporaryFiles = new JCheckBox();
+        checkUseTemporaryFiles.setName("checkUseTemporaryFiles");
 
         this.setBorder(Borders.TABBED_DIALOG);
 
@@ -73,10 +79,12 @@ public class MiscTab extends UserPreferencesTab {
                             FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                             FormSpecs.DEFAULT_COLSPEC
                     },
-                    RowSpec.decodeSpecs("default, default")), panelAdvancedSettings);
+                    RowSpec.decodeSpecs("default, default, default, default")), panelAdvancedSettings);
 
-            panelDescBuilder.add(checkUseRecycleBin, cc.xy(3, 1));
-            panelDescBuilder.add(checkPrepareFile, cc.xy(3, 2));
+            panelDescBuilder.add(checkPrepareFile, cc.xy(3, 1));
+            panelDescBuilder.add(checkUseRecycleBin, cc.xy(3, 2));
+            panelDescBuilder.add(checkOpenIncompleteFiles, cc.xy(3, 3));
+            panelDescBuilder.add(checkUseTemporaryFiles, cc.xy(3, 4));
         }
 
         PanelBuilder thisBuilder = new PanelBuilder(new FormLayout(
@@ -98,5 +106,7 @@ public class MiscTab extends UserPreferencesTab {
     private JCheckBox checkGenerateHidden;
     private JCheckBox checkPrepareFile;
     private JCheckBox checkUseRecycleBin;
+    private JCheckBox checkOpenIncompleteFiles;
+    private JCheckBox checkUseTemporaryFiles;
 
 }

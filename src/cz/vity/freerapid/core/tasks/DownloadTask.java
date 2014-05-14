@@ -290,7 +290,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     }
 
     protected boolean useTemporaryFiles() {
-        return AppPrefs.getProperty(UserProp.USE_TEMPORARY_FILES, true);
+        return AppPrefs.getProperty(UserProp.USE_TEMPORARY_FILES, UserProp.USE_TEMPORARY_FILES_DEFAULT);
     }
 
     private void closeFileStream(OutputStream fileOutputStream) {

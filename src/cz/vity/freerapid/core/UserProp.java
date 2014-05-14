@@ -19,6 +19,7 @@ final public class UserProp {
     public static final String LAST_USED_FOLDER_EXPORT = "lastUsedFolderExport";
 
     public static final String USE_TEMPORARY_FILES = "useTemporaryFiles";
+    public static final boolean USE_TEMPORARY_FILES_DEFAULT = true;
 
     public static final String DOWNLOAD_ON_APPLICATION_START = "downloadOnStart";
     public static final boolean DOWNLOAD_ON_APPLICATION_START_DEFAULT = true;
@@ -335,9 +336,6 @@ final public class UserProp {
     public static final String RECONNECT_SCRIPT_ENABLED = "reconnectScriptEnabled";
     public static final boolean RECONNECT_SCRIPT_ENABLED_DEFAULT = true;
 
-    public static final String COMBINED_DOWNLOADING = "combinedDownloading";
-    public static final boolean COMBINED_DOWNLOADING_DEFAULT = true;
-
     public static final String QUIET_MODE_ENABLED = "quietModeEnabled";
     public static final boolean QUIET_MODE_ENABLED_DEFAULT = false;
     public static final String QUIET_MODE_ACTIVATION_MODE = "quietModeActivationMode";
@@ -385,6 +383,8 @@ final public class UserProp {
 
     public static final String CONTENT_TABLE_DATE_FORMAT = "contentTableDateFormat";
 
+    public static final String SKIP_DUPLICATE_FILES = "skipDuplicateFiles";
+    public static final boolean SKIP_DUPLICATE_FILES_DEFAULT = false;
 
 }
 

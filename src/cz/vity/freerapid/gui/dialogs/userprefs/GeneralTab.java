@@ -46,6 +46,7 @@ public class GeneralTab extends UserPreferencesTab {
         bind(checkProcessFromTop, UserProp.START_FROM_TOP, UserProp.START_FROM_TOP_DEFAULT);
         bind(checkAutoStartDownloadsFromDecrypter, UserProp.AUTO_START_DOWNLOADS_FROM_DECRYPTER, UserProp.AUTO_START_DOWNLOADS_FROM_DECRYPTER_DEFAULT);
         bind(checkEnableDirectDownloads, UserProp.ENABLE_DIRECT_DOWNLOADS, UserProp.ENABLE_DIRECT_DOWNLOADS_DEFAULT);
+        bind(checkSkipDuplicateFiles, UserProp.SKIP_DUPLICATE_FILES, UserProp.SKIP_DUPLICATE_FILES_DEFAULT);
         bind(checkForFileExistenceBeforeDownload, UserProp.TEST_FILE, UserProp.TEST_FILE_DEFAULT);
         bind(checkRecheckFilesOnStart, UserProp.RECHECK_FILES_ON_START, UserProp.RECHECK_FILES_ON_START_DEFAULT);
         bind(checkPreventStandbyWhileDownloading, UserProp.PREVENT_STANDBY_WHILE_DOWNLOADING, UserProp.PREVENT_STANDBY_WHILE_DOWNLOADING_DEFAULT);
@@ -151,6 +152,8 @@ public class GeneralTab extends UserPreferencesTab {
         checkAutoStartDownloadsFromDecrypter.setName("checkAutoStartDownloadsFromDecrypter");
         checkEnableDirectDownloads = new JCheckBox();
         checkEnableDirectDownloads.setName("checkEnableDirectDownloads");
+        checkSkipDuplicateFiles = new JCheckBox();
+        checkSkipDuplicateFiles.setName("checkSkipDuplicateFiles");
         checkAutoShutDownDisabledWhenExecuted = new JCheckBox();
         checkAutoShutDownDisabledWhenExecuted.setName("checkAutoShutDownDisabledWhenExecuted");
         checkPreventStandbyWhileDownloading = new JCheckBox();
@@ -249,6 +252,7 @@ public class GeneralTab extends UserPreferencesTab {
                             FormSpecs.DEFAULT_ROWSPEC,
                             FormSpecs.DEFAULT_ROWSPEC,
                             FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC,
                             FormSpecs.LINE_GAP_ROWSPEC,
                             FormSpecs.DEFAULT_ROWSPEC,
                             FormSpecs.LINE_GAP_ROWSPEC,
@@ -260,12 +264,13 @@ public class GeneralTab extends UserPreferencesTab {
             panelDownloadsSettingsBuilder.add(checkProcessFromTop, cc.xywh(3, 4, 7, 1));
             panelDownloadsSettingsBuilder.add(checkAutoStartDownloadsFromDecrypter, cc.xywh(3, 5, 7, 1));
             panelDownloadsSettingsBuilder.add(checkEnableDirectDownloads, cc.xywh(3, 6, 7, 1));
-            panelDownloadsSettingsBuilder.add(checkAutoShutDownDisabledWhenExecuted, cc.xywh(3, 7, 7, 1));
-            panelDownloadsSettingsBuilder.add(checkPreventStandbyWhileDownloading, cc.xywh(3, 8, 7, 1));
-            panelDownloadsSettingsBuilder.add(labelIfFilenameExists, cc.xywh(3, 10, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
-            panelDownloadsSettingsBuilder.add(comboFileExists, cc.xy(5, 10));
-            panelDownloadsSettingsBuilder.add(labelRemoveCompleted, cc.xywh(7, 10, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
-            panelDownloadsSettingsBuilder.add(comboRemoveCompleted, cc.xy(9, 10));
+            panelDownloadsSettingsBuilder.add(checkSkipDuplicateFiles, cc.xywh(3, 7, 7, 1));
+            panelDownloadsSettingsBuilder.add(checkAutoShutDownDisabledWhenExecuted, cc.xywh(3, 8, 7, 1));
+            panelDownloadsSettingsBuilder.add(checkPreventStandbyWhileDownloading, cc.xywh(3, 9, 7, 1));
+            panelDownloadsSettingsBuilder.add(labelIfFilenameExists, cc.xywh(3, 11, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
+            panelDownloadsSettingsBuilder.add(comboFileExists, cc.xy(5, 11));
+            panelDownloadsSettingsBuilder.add(labelRemoveCompleted, cc.xywh(7, 11, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
+            panelDownloadsSettingsBuilder.add(comboRemoveCompleted, cc.xy(9, 11));
         }
 
         PanelBuilder thisBuilder = new PanelBuilder(new FormLayout(
@@ -301,6 +306,7 @@ public class GeneralTab extends UserPreferencesTab {
     private JCheckBox checkProcessFromTop;
     private JCheckBox checkAutoStartDownloadsFromDecrypter;
     private JCheckBox checkEnableDirectDownloads;
+    private JCheckBox checkSkipDuplicateFiles;
     private JCheckBox checkAutoShutDownDisabledWhenExecuted;
     private JCheckBox checkPreventStandbyWhileDownloading;
     private JComboBox comboFileExists;
