@@ -154,6 +154,7 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
         super.doClose();
         if (getModalResult() == RESULT_OK) {
             comboPath.addItem(comboPath.getSelectedItem());
+            ((RecentsFilesComboModel) comboPath.getModel()).setAsMRU(comboPath.getSelectedItem());
         }
     }
 

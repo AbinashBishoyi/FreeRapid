@@ -77,9 +77,17 @@ public final class RecentsFilesComboModel extends DefaultComboBoxModel {
             if (autosave)
                 storeFiles();
         }
-
     }
 
+    public void setAsMRU(Object anObject) {
+        int index = getIndexOf(anObject);
+        if (index > 0) { //element exists and not the first element: rearrange, set the element as MRU
+            super.insertElementAt(anObject, 0);
+            this.remove(index + 1);
+            if (autosave)
+                storeFiles();
+        }
+    }
 
     private void remove(int index) {
         setSelectedItem(getElementAt(0));
@@ -120,6 +128,5 @@ public final class RecentsFilesComboModel extends DefaultComboBoxModel {
         }
 
         AppPrefs.storeProperty(keyProperties, builder.toString());
-
     }
 }

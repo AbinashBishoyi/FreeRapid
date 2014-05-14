@@ -13,6 +13,7 @@ import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.swing.ComponentFactory;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.swing.models.RecentsFilesComboModel;
+import cz.vity.freerapid.utilities.FileUtils;
 import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.swinghelper.buttonpanel.JXButtonPanel;
 
@@ -100,7 +101,7 @@ public class MultipleSettingsDialog extends AppFrame implements PropertyChangeLi
         comboPath.setModel(new RecentsFilesComboModel(UserProp.LAST_USED_SAVED_PATH, true));
         //AutoCompleteDecorator.decorate(comboPath);
 
-        comboPath.setSelectedItem(file.getSaveToDirectory().getAbsolutePath());
+        comboPath.setSelectedItem(FileUtils.getAbsolutFile(file.getSaveToDirectory()).toString());
         Swinger.inputFocus(descriptionArea);
 
         descriptionArea.setText(file.getDescription());
@@ -150,6 +151,7 @@ public class MultipleSettingsDialog extends AppFrame implements PropertyChangeLi
 
         if (getModalResult() == RESULT_OK) {
             comboPath.addItem(comboPath.getSelectedItem());
+            ((RecentsFilesComboModel) comboPath.getModel()).setAsMRU(comboPath.getSelectedItem());
         }
     }
 
