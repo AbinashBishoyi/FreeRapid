@@ -1,9 +1,20 @@
 **************************************************************
+ _____              ____             _     _                 *
+|  ___| __ ___  ___|  _ \ __ _ _ __ (_) __| |                *
+| |_ | '__/ _ \/ _ \ |_) / _` | '_ \| |/ _` |                *
+|  _|| | |  __/  __/  _ < (_| | |_) | | (_| |                *
+|_|  |_|  \___|\___|_| \_\__,_| .__/|_|\__,_|                *
+ ____                      _  |_|            _               *
+|  _ \  _____      ___ __ | | ___   __ _  __| | ___ _ __     *
+| | | |/ _ \ \ /\ / / '_ \| |/ _ \ / _` |/ _` |/ _ \ '__|    *
+| |_| | (_) \ V  V /| | | | | (_) | (_| | (_| |  __/ |       *
+|____/ \___/ \_/\_/ |_| |_|_|\___/ \__,_|\__,_|\___|_|       *
+*                                                            *
 *   FreeRapid Downloader - readme.txt - English version      *
 *      by Ladislav Vitasek aka Vity                          *
 *   Website/Forum/Bugtracker: http://wordrider.net/freerapid *
 *   Mail: info@wordrider.net - suggestions                   *
-*   Last change: 14th April 2009                             *
+*   Last change: 18th October 2009                           *
 **************************************************************
 
 =======================================
@@ -92,6 +103,8 @@ Application needs at least Sun Java 6.0 to start (http://java.sun.com/javase/dow
 
 Linux Debian like users can use this command to intall Java:
    sudo apt-get install sun-java6-jre
+  - sometimes Linux users need to uninstall their other versions of Java -
+    see http://wordrider.net/freerapid/faq.html#ubuntu-install for more details.
 
 III.   How to run FreeRapid Downloader
 =======================================
@@ -152,6 +165,8 @@ Example - running application in debug mode:
   Windows OS: frd.exe --debug
   Linux/MacOS: java -jar frd.jar --debug
 
+For setting properties you can also use file startup.properties, which is placed in FRD's directory. See its header for
+ more information about content of this file.
 
 More Info:
   - Unofficial tutorial for Linux users - How to configure FreeRapid Downloader on Linux (in Spanish)
@@ -162,36 +177,53 @@ More Info:
 
 IV.    Known bugs and Limitations
 =======================================
+Always close FRD properly otherwise you can loose your file list (eg. Windows shutdown with force option...)
+
 - Application will not start if it's placed on the path with special characters like '+' or '%'
   - X please move application to another location without such characters
+
 - ESET "Smart" Antivirus on Windows OS blocks FRD to start
   - X make correct settings of your antivirus program or run FRD this way: frd.exe -Doneinstance=false
-- Always close FRD properly otherwise you can loose your file list (eg. Windows shutdown with force option...)          
-- Selection from "top to bottom" in the main table during dragging while downloading partly disappears :-(
-    X select table rows by ctrl+mouse click or select items from bottom to top
+
 - Substance look and feel throws org.jvnet.substance.api.UiThreadingViolationException:
                                                      Component creation must be done on Event Dispatch Thread
     X ignore this exception in the app.log
+
 - java.lang.UnsupportedClassVersionError exception
     X You are using old Java version, you should use Sun Java version 6 or newer
+
 - IllegalArgumentException: 53687091 incompatible with Text-specific LCD contrast key
     X Fix your registry settings, please see forum thread (http://wordrider.net/forum/read.php?7,713,713#msg-713)
+
 - DirectoryChooser throws java.lang.InternalError or freezes on Win Vista (64bit)
     X ignore this exception in the app.log
+
 - IllegalStateException - Cannot open system clipboard
     X ignore this exception in the app.log
+
 - java.lang.ClassCastException: java.awt.TrayIcon cannot be cast to java.awt.Component
     X ignore this exception in the app.log    
+
 - Linux users reported not showing icon in tray on Linux
     X the only one known solution for this problem could be an upgrade JRE to version 1.6.0_10-rc or higher
+
 - limitation: version 0.7x is not usable once you are using version 0.8 or newer (the only possible solution is to remove configuration files)
+
+- FRD can't update plugins - Access denied on Windows Vista/7 if FRD's directory is placed in 'Program files' directory
+    X Either move FRD to another directory or run FRD as administrator (right click->Properties->Run as administrator).
+
+- Windows tray icon disappear when explorer.exe crashes
+    X solution is unknown at this time
+
+- Splash screen blinks for some time on start - Windows
+    X Solution is unknown at this time      
 
 IV.    Troubleshooting
 =======================================
 1. Check section IV - for already known bugs and limitations first
 2. Have you tried to application turn off and on again? :-)
-3. Check homepage http://wordrider.net/freerapid and/or issue tracker at http://bugtracker.wordrider.net/
-   for possible new known bug
+3. Check homepage http://wordrider.net/freerapid (specifically http://wordrider.net/freerapid/bugs-and-features.html)
+   -  and/or issue tracker at http://bugtracker.wordrider.net/ or forum for possible new known bug
 4. You can try to delete configuration files (its location is described in section VI - Installation )  
 5. Run application in debug mode:
    Windows OS: frd.exe --debug

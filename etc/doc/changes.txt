@@ -11,6 +11,11 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
+18th October 2009 - FreeRapid Downloader 0.83
+  Changed : updated chinese translation
+  Changed : minor internal changes in plugins API  
+  Changed : updated plugins to their latest versions
+
 4th October 2009 - FreeRapid Downloader 0.83 Release Candidate 2
   Changed : minor internal changes in plugins API 
   Changed : optimizations: minimized size of SwingX library

@@ -15,7 +15,7 @@
 *      - Ladislav Vitásek alias Vity (c) 2009                *
 *Dom.stránka/Forum/Bugtracker: http://wordrider.net/freerapid*
 *E-Mail: info@wordrider.net - návrhy                         *
-*Poslední zmìna: 2009-04-14                                  *
+*Poslední zmìna: 2009-10-18                                  *
 **************************************************************
 
 Dùleité - ne zaènete èíst dále!!!:
@@ -112,6 +112,7 @@ Aplikace pro své spuštìní vyaduje mít nainstalovanou alespoò Sun Javu 6.0 (http
 Uivatelé Linuxu (Debian) like mohou pouít tento pøíkaz k instalaci Javy:
      sudo apt-get install sun-java6-jre
 
+
 III.   Jak spustit FreeRapid
 =======================================
 
@@ -199,15 +200,20 @@ IV.    Známé problémy a omezení
     X ignorujte tuto vıjimku v souboru app.log    
 - Uivatelùm Linuxu se nezobrazuje ikona v oznamovací oblasti
     X jedinım øešením tohoto problému by mohl bıt pøechod JRE na verzi 1.6.0_10-rc èi novìjší
+- Splash screen pøi startu na pár sekund bliká
+    X øesení je prozatím neznámé
+- Nelze updatovat pluginy na Windows Vista/7 pokud je FRD adresáø umístìn v adresáøi 'Program files'
+    X pøesuòte adresáø FRD do jiného adresáøe nebo spuste frd.exe s administrátorskımi právy
+      (pravé tlaèítko->vlastnosti->Spustit jako administrátor)
 
-Pozn.: Tento seznam nemusí bıt vdy aktuální - aktuální seznam lze nalézt na http://wordrider.net/freerapid
+Pozn.: Tento seznam nemusí bıt vdy aktuální - aktuální seznam lze nalézt na http://wordrider.net/freerapid/bugs-and-features.html
 
 V.    Øešení problémù
 =======================================
 1. Nejprve si projdìte sekci IV kvùli známım chybám a omezením
 2. Pokusil(a) jste se ji aplikaci ukonèit a opìt spustit? :-)
-3. Navštivte domovskou stránku http://wordrider.net/freerapid a/nebo issue tracker na adrese http://bugtracker.wordrider.net/
-   pro vloení oznámení o nalezené chybì
+3. Navštivte domovskou stránku http://wordrider.net/freerapid/bugs-and-features.html a/nebo fórum a/nebo
+   issue tracker na adrese http://bugtracker.wordrider.net/ pro vloení oznámení o nalezené chybì
 4. Mùete se pokusit odstranit konfiguraèní soubory (jejich umístìní naleznete v sekci III - Instalace)
 5. Spuste aplikaci v ladícím módu:
    Windows OS: frd.exe --debug
@@ -222,7 +228,8 @@ K nahlášení chyby  mùete pouít issue tracker (preferováno), fóra projektu èi m
 
 Napište prosím Vaši verzi JRE a operaèního systému a pøilote soubor app.log (naleznete jej ve sloce aplikace).
 Usnadní nám to práci pøi identifikaci problému. Také nám velmi pomùe, pokud spustíte aplikaci s parametrem --debug.
-Ignorujeme jednoduchá hlášení typu "Nejde mi spustit FRD. Co mám dìlat?". Popište Vaši situaci a chování aplikace.
+Ignorujeme jednoduchá hlášení typu "Nejde mi spustit FRD. Co mám dìlat?". Popište Vaši situaci a chování aplikace,
+jedinì tak Vám jsme schopni pomoci.
 
 
 issue tracker: http://bugtracker.wordrider.net/
@@ -240,9 +247,12 @@ PayPal: http://wordrider.net/freerapid/paypal
    nebo
 pouijte bankovní úèet, jak je popsáno na domovské stránce http://wordrider.net/freerapid/donation.html
 
+Dìkujeme.
 
 VIII.   Èasto kladené otázky a odpovìdi
 =======================================
+Aktuální seznam FAQ lze nalézt zde: http://wordrider.net/freerapid/faq.html
+
 
 Q: Proè jsi vytvoøil další "RapidShare Downloader"?
 A: 1) Protoe nechci pouívat ruskı software, kterı je pravdìpodobnì plnı malwaru a spywaru.
