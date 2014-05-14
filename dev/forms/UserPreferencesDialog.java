@@ -50,7 +50,7 @@ public class UserPreferencesDialog extends JDialog {
 		pluginTable = new JXTable();
 		JXButtonPanel pluginsButtonPanel = new JXButtonPanel();
 		JLabel labelPluginInfo = new JLabel();
-		popmenuButton = ComponentFactory.getPopdownButton()
+		popmenuButton = ComponentFactory.getPopdownButton();
 		btnPluginOptions = new JButton();
 		JPanel pluginPanelUpdates = new JPanel();
 		check4PluginUpdatesAutomatically = new JCheckBox();
