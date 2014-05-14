@@ -12,13 +12,13 @@ Changed - indicates a change in using/behavior FreeRapid Downloader
 Fixed - indicates a bug fix
 Internal - indicates an internal change - information for FRD developers - nothing important for users
 
-FreeRapid Downloader 0.86 Update 1
+13th November 2011 - FreeRapid Downloader 0.86 Update 1
   Added : Support for Slovakian, Bulgarian and Hungarian languages - thanks to all translators!
   Added : New internal property - -DpopWindowWithoutMainFrame in quiet mode, default value is false,
           see startup.properties file for more details
   Added : New internal property - -DcharEncodingForPropertiesFiles defines character encoding for properties files,
           see startup.properties file for more details
-  Added : New internal property - -DopenIncompleteFiles  - makes possible to open .part files while downloading from GUI
+  Added : New internal property - -DopenIncompleteFiles - makes possible to open .part files from GUI while downloading
   Added : New file start.bat in FRD directory to allow launch FRD without frd.exe
   Changed : User preferences dialog opens faster
   Thanks to all bug reporters:
