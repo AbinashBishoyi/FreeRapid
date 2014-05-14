@@ -59,7 +59,7 @@ final class WindowsCommander extends AbstractSystemCommander {
     }
 
     private boolean createShortCut(final String folder, final String arguments) {
-        final String shortcutFile = folder + "\\" + Consts.APPVERSION + ".lnk";
+        final String shortcutFile = Utils.addFileSeparator(folder) + Consts.APPVERSION + ".lnk";
         final String appPath = Utils.addFileSeparator(Utils.getAppPath());
         final String exe = appPath + Consts.WINDOWS_EXE_NAME;
         final String icon = appPath + Consts.WINDOWS_ICON_NAME;
