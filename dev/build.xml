@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <project name="FreeRapid Downloader" default="shrink" basedir=".">
     <property name="application" value="FreeRapid"/>
-    <property name="minajar" value="mina-core-2.0.1.jar"/>
-    <property name="destjar" value="mina-core-2.0.1-sh.jar"/>
+    <property name="minajar" value="mina-core-2.0.4.jar"/>
+    <property name="destjar" value="mina-core-2.0.4-sh.jar"/>
     <property name="shrinklog" value="${application}_mina_shrinklog.xml"/>
 
     <target name="shrink">

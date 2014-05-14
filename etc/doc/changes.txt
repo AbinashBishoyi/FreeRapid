@@ -14,10 +14,11 @@ Internal - indicates an internal change - information for FRD developers - nothi
 
 FreeRapid Downloader 0.86
   Added : Support for Portuguese language - thanks to all translators!
-  Added : feature for combined downloading of same file from multiple sources - duplicates are not downloaded
+  Added : If the same file is downloaded from multiple sources, duplicates are automatically skipped
   Changed : Internal - NirCmd is not used anymore for native Windows actions
-  Changed : Internal - upgrade to BetterSwingApplicationFramework 1.9.3 snapshot
-  Fixed : problems related to Java 7
+  Changed : Internal - Updated BetterSwingApplicationFramework to v1.9.3 snapshot
+  Changed : Internal - Updated jna, mina, and commons-codec libraries to their latest versions
+  Fixed : Java 7 compatibility issues
 
 1st January 2011 - FreeRapid Downloader 0.85 Update 1
   Added : Support for Polish, Bulgarian, Korean, Portuguese (Brasil), Finnish and Hebrew languages - thanks to all translators!
