@@ -114,6 +114,11 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         logger.info("Free space on disk: " + freeSpace);
         final int minDiskSpace = AppPrefs.getProperty(UserProp.MIN_DISK_SPACE, UserProp.MIN_DISK_SPACE_DEFAULT);
         if (freeSpace < fileSize + (minDiskSpace * 1024 * 1024L)) { //+ 30MB
+            if (f.exists() && f.length() == 0) {
+                if (!f.delete()) {
+                    logger.warning("Cannot delete temporary file");
+                }
+            }
             throw new NotEnoughSpaceException();
         }
 
@@ -171,8 +176,11 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         CountingOutputStream cos = null;
         OutputStream fileOutputStream = null;
         try {
-            if (!saveToDirectory.exists())
-                saveToDirectory.mkdirs();
+            if (!saveToDirectory.exists()) {
+                if (!saveToDirectory.mkdirs()) {
+                    throw new IOException("Cannot create directory");
+                }
+            }
             File storeFile = downloadFile.getStoreFile();
             if (downloadFile.getStoreFile() == null || !downloadFile.getStoreFile().exists()) {
                 //createTempFile needs at least 3 chars as prefix
@@ -526,6 +534,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
             }
 
             @Override
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             public void failed(TaskEvent<Throwable> event) {
                 downloadFile.setState(DownloadState.ERROR);
                 downloadFile.setErrorMessage(getResourceMap().getString("transferFailed", event.getValue().getMessage()));
