@@ -395,14 +395,58 @@ public final class PlugUtils {
      * @throws PluginImplementationException No wait time value between stringBefore and stringAfter
      */
     public static int getWaitTimeBetween(String content, String stringBefore, String stringAfter, TimeUnit srcTimeUnit) throws PluginImplementationException {
-        final String before = Pattern.quote(Utils.rtrim(stringBefore));
-        final String after = Pattern.quote(Utils.ltrim(stringAfter));
+        final String replace = "\\\\E\\\\s*\\\\Q";
+        final String before = Pattern.quote(Utils.rtrim(stringBefore)).replaceAll("\n", replace);
+        ;
+        final String after = Pattern.quote(Utils.ltrim(stringAfter)).replaceAll("\n", replace);
+        ;
         final Matcher matcher = matcher(before + "\\s*([0-9]+?)\\s*" + after, content);
         if (matcher.find()) {
             final long i = Long.parseLong(matcher.group(1));
             return new Long(srcTimeUnit.toSeconds(i)).intValue();
         } else
             throw new PluginImplementationException(String.format("No wait time value between '%s' and '%s' was found", stringBefore, stringAfter));
+    }
+
+    //(Or wait 5 minutes, 24 seconds)</font>
+    public static int extractComplexWaitTime(String content, String pattern, TimeUnit greaterTimeUnit) {
+        final Matcher matcher = PlugUtils.matcher(".*?([0-9]+?)?.+?([0-9]+?)", pattern);
+        if (matcher.find()) {
+            final int i1 = matcher.start(1);
+            final int i2 = matcher.end(1);
+            if (matcher.groupCount() == 1) {
+                try {
+                    return getWaitTimeBetween(content, pattern.substring(0, i1), pattern.substring(i2), greaterTimeUnit);
+                } catch (PluginImplementationException e) {
+                    return -1;
+                }
+            } else {
+                final int i3 = matcher.start(2);
+                final int i4 = matcher.end(2);
+                final String middle = pattern.substring(i2, i3);
+                int timeBetween1;
+                try {
+                    timeBetween1 = getWaitTimeBetween(content, pattern.substring(0, i1), middle, greaterTimeUnit);
+                } catch (PluginImplementationException e) {
+                    timeBetween1 = -1;
+                }
+
+                int timeBetween2;
+                try {
+                    final TimeUnit secondTimeUnit = (TimeUnit.HOURS == greaterTimeUnit) ? TimeUnit.MINUTES : TimeUnit.SECONDS;
+                    timeBetween2 = getWaitTimeBetween(content, middle, pattern.substring(i4), secondTimeUnit);
+                } catch (PluginImplementationException e) {
+                    timeBetween2 = -1;
+                }
+                if (timeBetween1 >= 0 && timeBetween2 >= 0) {
+                    return timeBetween1 + timeBetween2;
+                } else if (timeBetween1 >= 0) {
+                    return timeBetween1;
+                } else if (timeBetween2 >= 0) {
+                    return timeBetween2;
+                } else return -1;
+            }
+        } else return -1;
     }
 
 

@@ -17,11 +17,14 @@ class PluginMetaDataTableModel extends AbstractTableModel implements ListDataLis
     private final String[] columns;
     static final int COLUMN_ACTIVE = 0;
     static final int COLUMN_UPDATE = 1;
-    static final int COLUMN_ID = 2;
-    static final int COLUMN_VERSION = 3;
-    static final int COLUMN_SERVICES = 4;
-    static final int COLUMN_AUTHOR = 5;
-    static final int COLUMN_WWW = 6;
+    static final int COLUMN_CLIPBOARD_MONITORED = 2;
+    static final int COLUMN_ID = 3;
+    static final int COLUMN_VERSION = 4;
+    static final int COLUMN_SERVICES = 5;
+    static final int COLUMN_AUTHOR = 6;
+    static final int COLUMN_MAX_DOWNLOADS = 7;
+    static final int COLUMN_PRIORITY = 8;
+    static final int COLUMN_WWW = 9;
 
 
     public PluginMetaDataTableModel(ArrayListModel<PluginMetaData> model, String[] columns) {
@@ -38,7 +41,7 @@ class PluginMetaDataTableModel extends AbstractTableModel implements ListDataLis
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columnIndex == COLUMN_ACTIVE || columnIndex == COLUMN_UPDATE;
+        return columnIndex == COLUMN_ACTIVE || columnIndex == COLUMN_UPDATE || columnIndex == COLUMN_PRIORITY || columnIndex == COLUMN_MAX_DOWNLOADS || columnIndex == COLUMN_CLIPBOARD_MONITORED;
     }
 
     @Override
@@ -53,9 +56,11 @@ class PluginMetaDataTableModel extends AbstractTableModel implements ListDataLis
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        if (columnIndex == COLUMN_ACTIVE || columnIndex == COLUMN_UPDATE) {
+        if (columnIndex == COLUMN_ACTIVE || columnIndex == COLUMN_UPDATE || columnIndex == COLUMN_CLIPBOARD_MONITORED) {
             return Boolean.class;
-        } else if (columnIndex == COLUMN_WWW)
+        } else if (columnIndex == COLUMN_PRIORITY || columnIndex == COLUMN_MAX_DOWNLOADS)
+            return Integer.class;
+        else if (columnIndex == COLUMN_WWW)
             return LinkModel.class;
         else return Object.class;
     }
@@ -68,6 +73,8 @@ class PluginMetaDataTableModel extends AbstractTableModel implements ListDataLis
                 return data.isEnabled();
             case COLUMN_UPDATE:
                 return data.isUpdatesEnabled();
+            case COLUMN_CLIPBOARD_MONITORED:
+                return data.isClipboardMonitored();
             case COLUMN_ID:
                 return data.getId();
             case COLUMN_VERSION:
@@ -76,6 +83,10 @@ class PluginMetaDataTableModel extends AbstractTableModel implements ListDataLis
                 return data.getServices();
             case COLUMN_AUTHOR:
                 return data.getVendor();
+            case COLUMN_MAX_DOWNLOADS:
+                return data.getMaxAllowedDownloads();
+            case COLUMN_PRIORITY:
+                return data.getPriority();
             case COLUMN_WWW:
                 return SwingXUtils.createLink(data.getWWW());
             default:
@@ -90,14 +101,17 @@ class PluginMetaDataTableModel extends AbstractTableModel implements ListDataLis
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        final PluginMetaData data = model.get(rowIndex);
         if (columnIndex == COLUMN_ACTIVE) {
-            model.get(rowIndex).setEnabled((Boolean) aValue);
-            this.fireTableCellUpdated(rowIndex, columnIndex);
+            data.setEnabled((Boolean) aValue);
+        } else if (columnIndex == COLUMN_UPDATE) {
+            data.setUpdatesEnabled((Boolean) aValue);
+        } else if (columnIndex == COLUMN_PRIORITY) {
+            data.setPriority((Integer) aValue);
+        } else if (columnIndex == COLUMN_MAX_DOWNLOADS) {
+            data.setMaxAllowedDownloads((Integer) aValue);
         }
-        if (columnIndex == COLUMN_UPDATE) {
-            model.get(rowIndex).setUpdatesEnabled((Boolean) aValue);
-            this.fireTableCellUpdated(rowIndex, columnIndex);
-        }
+        this.fireTableCellUpdated(rowIndex, columnIndex);
     }
 
     @Override
@@ -113,5 +127,9 @@ class PluginMetaDataTableModel extends AbstractTableModel implements ListDataLis
     @Override
     public void contentsChanged(ListDataEvent e) {
         fireTableRowsUpdated(e.getIndex0(), e.getIndex1());
+    }
+
+    public PluginMetaData getMetaValueAt(int row) {
+        return model.get(row);
     }
 }

@@ -1,8 +1,7 @@
 /*
-* Copyright (C) 2006 Sun Microsystems, Inc. All rights reserved. Use is
+* Copyright (C) 2006-2009 Sun Microsystems, Inc. All rights reserved. Use is
 * subject to license terms.
 */
-
 package org.jdesktop.application;
 
 import javax.swing.*;
@@ -17,9 +16,10 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-
 final class DefaultInputBlocker extends Task.InputBlocker {
+
     private static final Logger logger = Logger.getLogger(DefaultInputBlocker.class.getName());
+    private static final String PB_STRING_FORMAT_KEY = "progressBarStringFormat";
     private JDialog modalDialog = null;
 
     DefaultInputBlocker(Task task, Task.BlockingScope scope, Object target, ApplicationAction action) {
@@ -106,6 +106,8 @@ final class DefaultInputBlocker extends Task.InputBlocker {
             JButton cancelButton = new JButton();
             cancelButton.setName("BlockingDialog.cancelButton");
             ActionListener doCancelTask = new ActionListener() {
+
+                @Override
                 public void actionPerformed(ActionEvent ignore) {
                     getTask().cancel(true);
                 }
@@ -126,6 +128,8 @@ final class DefaultInputBlocker extends Task.InputBlocker {
         dialog.setName("BlockingDialog");
         dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         WindowListener dialogCloseListener = new WindowAdapter() {
+
+            @Override
             public void windowClosing(WindowEvent e) {
                 if (getTask().getUserCanCancel()) {
                     getTask().cancel(true);
@@ -168,6 +172,8 @@ final class DefaultInputBlocker extends Task.InputBlocker {
             progressBar.setName("BlockingDialog.progressBar");
             progressBar.setIndeterminate(true);
             PropertyChangeListener taskPCL = new PropertyChangeListener() {
+
+                @Override
                 public void propertyChange(PropertyChangeEvent e) {
                     if ("progress".equals(e.getPropertyName())) {
                         progressBar.setIndeterminate(false);
@@ -181,6 +187,20 @@ final class DefaultInputBlocker extends Task.InputBlocker {
             getTask().addPropertyChangeListener(taskPCL);
             panel.add(progressBar, BorderLayout.SOUTH);
             injectBlockingDialogComponents(panel);
+
+            /* The initial value of the progressBar string is the format.
+             * We save the format string in a client property.  The format
+             * String will be applied four values (see below).  The default
+             * format String is in resources/Application.properties, it's:
+             * "%02d:%02d, %02d:%02d remaining"
+             * FIXED: BSAF-12
+             */
+
+            if (progressBar.getClientProperty(PB_STRING_FORMAT_KEY) == null) {
+                progressBar.putClientProperty(PB_STRING_FORMAT_KEY, progressBar.getString());
+            }
+            progressBar.setString("");
+
             optionPane.setMessage(panel);
         }
     }
@@ -189,17 +209,7 @@ final class DefaultInputBlocker extends Task.InputBlocker {
         if (!progressBar.isStringPainted()) {
             return;
         }
-        /* The initial value of the progressBar string is the format.
-         * We save the format string in a client property.  The format
-         * String will be applied four values (see below).  The default 
-         * format String is in resources/Application.properties, it's:
-         * "%02d:%02d, %02d:%02d remaining"
-         */
-        String key = "progressBarStringFormat";
-        if (progressBar.getClientProperty(key) == null) {
-            progressBar.putClientProperty(key, progressBar.getString());
-        }
-        String fmt = (String) progressBar.getClientProperty(key);
+        final String fmt = (String) progressBar.getClientProperty(PB_STRING_FORMAT_KEY);
         if (progressBar.getValue() <= 0) {
             progressBar.setString("");
         } else if (fmt == null) {
@@ -228,22 +238,35 @@ final class DefaultInputBlocker extends Task.InputBlocker {
             root = root.getParent();
         }
         if (rpc != null) {
-            String oldGPKey = "OldGlassPane";
             if (f) {
+                JMenuBar menuBar = rpc.getRootPane().getJMenuBar();
+                if (menuBar != null) {
+                    menuBar.putClientProperty(this, menuBar.isEnabled());
+                    menuBar.setEnabled(false);
+                }
                 JComponent glassPane = new BusyGlassPane();
                 InputVerifier retainFocusWhileVisible = new InputVerifier() {
+
+                    @Override
                     public boolean verify(JComponent c) {
                         return !c.isVisible();
                     }
                 };
                 glassPane.setInputVerifier(retainFocusWhileVisible);
                 Component oldGlassPane = rpc.getGlassPane();
-                rpc.getRootPane().putClientProperty(oldGPKey, oldGlassPane);
+                rpc.getRootPane().putClientProperty(this, oldGlassPane);
                 rpc.setGlassPane(glassPane);
                 glassPane.setVisible(true);
                 glassPane.revalidate();
             } else {
-                Component oldGlassPane = (Component) rpc.getRootPane().getClientProperty(oldGPKey);
+                JMenuBar menuBar = rpc.getRootPane().getJMenuBar();
+                if (menuBar != null) {
+                    boolean enabled = (Boolean) menuBar.getClientProperty(this);
+                    menuBar.putClientProperty(this, null);
+                    menuBar.setEnabled(enabled);
+                }
+                Component oldGlassPane = (Component) rpc.getRootPane().getClientProperty(this);
+                rpc.getRootPane().putClientProperty(this, null);
                 if (!oldGlassPane.isVisible()) {
                     rpc.getGlassPane().setVisible(false);
                 }
@@ -256,6 +279,7 @@ final class DefaultInputBlocker extends Task.InputBlocker {
      * dialog is shown.
      */
     private static class BusyGlassPane extends JPanel {
+
         BusyGlassPane() {
             super(null, false);
             setVisible(false);
@@ -287,7 +311,7 @@ final class DefaultInputBlocker extends Task.InputBlocker {
         if ((delay == null) && (taskResourceMap != null)) {
             delay = taskResourceMap.getInteger(key);
         }
-        return (delay == null) ? 0 : delay;
+        return (delay == null) ? 0 : delay.intValue();
     }
 
     private void showBlockingDialog(boolean f) {
@@ -299,6 +323,8 @@ final class DefaultInputBlocker extends Task.InputBlocker {
             }
             modalDialog = createBlockingDialog();
             ActionListener showModalDialog = new ActionListener() {
+
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     if (modalDialog != null) { // already dismissed
                         modalDialog.setVisible(true);

@@ -39,7 +39,7 @@ public abstract class URLTransferHandler extends TransferHandler {
         pluginsManager = director.getPluginsManager();
     }
 
-    public static List<URL> textURIListToFileList(String data, final PluginsManager pluginsManager) {
+    public static List<URL> textURIListToFileList(String data, final PluginsManager pluginsManager, boolean clipboardMonitoring) {
         final Set<URI> list = new HashSet<URI>();
         final LinkedList<URL> result = new LinkedList<URL>();
 //        final String[] strings = data.split("\\p{Space}");
@@ -74,7 +74,7 @@ public abstract class URLTransferHandler extends TransferHandler {
                     spec = spec.substring(0, spec.length() - 1);
                 }
                 final URL url = new URL(spec);
-                if (pluginsManager.isSupported(url)) {
+                if (pluginsManager.isSupported(url, clipboardMonitoring)) {
                     final String urlS = url.toExternalForm();
                     final int i = urlS.indexOf("...");
                     Pattern patternMatcher = null;
@@ -186,12 +186,12 @@ public abstract class URLTransferHandler extends TransferHandler {
                     final Object transferData = transferable.getTransferData(urlFlavor);
                     if (transferData instanceof URL) {
                         final URL url = (URL) transferData;
-                        if (pluginsManager.isSupported(url))
+                        if (pluginsManager.isSupported(url, true))
                             urls.add(url);
                         else { //search for our URLs as text
                             try {
                                 final String s = URLDecoder.decode(url.toExternalForm(), "UTF-8");
-                                urls.addAll(textURIListToFileList(s, pluginsManager));
+                                urls.addAll(textURIListToFileList(s, pluginsManager, true));
                             } catch (UnsupportedEncodingException e) {
                                 //ignore
                             } catch (IllegalArgumentException e) {
@@ -217,7 +217,7 @@ public abstract class URLTransferHandler extends TransferHandler {
                 }
                 if (xhtmlFavor != null && transferable.isDataFlavorSupported(xhtmlFavor)) {
                     String data = (String) transferable.getTransferData(xhtmlFavor);
-                    urls = textURIListToFileList(data, pluginsManager);
+                    urls = textURIListToFileList(data, pluginsManager, true);
                 } else {
                     DataFlavor htmlFavor = null;
                     try {
@@ -230,12 +230,12 @@ public abstract class URLTransferHandler extends TransferHandler {
                         if (!Pattern.compile("<a\\s", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE).matcher(data).find()) {
                             if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                                 data = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-                                urls = textURIListToFileList(data, pluginsManager);
-                            } else urls = textURIListToFileList(data, pluginsManager);
-                        } else urls = textURIListToFileList(data, pluginsManager);
+                                urls = textURIListToFileList(data, pluginsManager, true);
+                            } else urls = textURIListToFileList(data, pluginsManager, true);
+                        } else urls = textURIListToFileList(data, pluginsManager, true);
                     } else if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                         String data = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-                        urls = textURIListToFileList(data, pluginsManager);
+                        urls = textURIListToFileList(data, pluginsManager, true);
                     }
                 }
             }

@@ -139,12 +139,10 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
 
             initSpeedBar(speedBarPanel, resourceMap);
 
-            speedBarPanel.setVisible(false);
-
             PropertyConnector.connectAndUpdate(BindUtils.getPrefsValueModel(UserProp.CLIPBOARD_MONITORING, UserProp.CLIPBOARD_MONITORING_DEFAULT), clipboardMonitoring, "enabled");
 
             statusbar.add(clipboardMonitoring, JXStatusBar.Constraint.ResizeBehavior.FIXED);
-            //statusbar.add(speedBarPanel, JXStatusBar.Constraint.ResizeBehavior.FIXED);
+            statusbar.add(speedBarPanel, JXStatusBar.Constraint.ResizeBehavior.FIXED);
             statusbar.add(progress, JXStatusBar.Constraint.ResizeBehavior.FIXED);
 
             statusbar.add(Box.createGlue(), JXStatusBar.Constraint.ResizeBehavior.FILL);

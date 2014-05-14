@@ -201,14 +201,27 @@ public class PluginsManager {
      * Overuje, zda je dane URL podporovane mezi pluginy
      *
      * @param url
+     * @param monitoring if should count with user settings of clipboard monitoring
      * @return vraci v pripade, ze nejaky plugin podporuje dane URL, jinak false
      */
     public boolean isSupported(final URL url) {
+        return isSupported(url, false);
+    }
+
+
+    /**
+     * Overuje, zda je dane URL podporovane mezi pluginy
+     *
+     * @param url
+     * @param monitoring if should count with user settings of clipboard monitoring 
+     * @return vraci v pripade, ze nejaky plugin podporuje dane URL, jinak false
+     */
+    public boolean isSupported(final URL url, boolean monitoring) {
         final String s = url.toExternalForm();
         synchronized (lock) {
             for (PluginMetaData pluginMetaData : supportedPlugins.values()) {
                 if (pluginMetaData.isSupported(s) && pluginMetaData.isEnabled())
-                    return true;
+                    return !monitoring || pluginMetaData.isClipboardMonitored();
             }
             return false;
         }
@@ -223,16 +236,14 @@ public class PluginsManager {
      *          pokud zadna zapnuta sluzba neni nalezena
      */
     public String getServiceIDForURL(URL url) throws NotSupportedDownloadServiceException {
-        final Set<Map.Entry<String, PluginMetaData>> entries = this.supportedPlugins.entrySet();
         final String s = url.toExternalForm();
         PluginMetaData disabledPlugin = null;
-        for (Map.Entry<String, PluginMetaData> entry : entries) {
-            final PluginMetaData value = entry.getValue();
+        for (PluginMetaData value : this.supportedPlugins.values()) {
             if (value.isSupported(s)) {
                 if (!value.isEnabled()) {
                     disabledPlugin = value;
                 } else
-                    return entry.getKey();
+                    return value.getId();
             }
         }
         if (disabledPlugin != null)

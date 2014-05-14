@@ -174,7 +174,8 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                 saveToDirectory.mkdirs();
             File storeFile = downloadFile.getStoreFile();
             if (downloadFile.getStoreFile() == null || !downloadFile.getStoreFile().exists()) {
-                storeFile = (temporary) ? File.createTempFile(fileName + ".", ".part", saveToDirectory) : outputFile;
+                //createTempFile needs at least 3 chars as prefix
+                storeFile = (temporary) ? File.createTempFile(fileName + "." + ((fileName.length() < 3) ? "xx" : ""), ".part", saveToDirectory) : outputFile;
                 //workaround http://wordrider.net/forum/read.php?7,2732
                 if (!System.getProperties().containsKey("exePath")) {
                     downloadFile.setStoreFile(useRelativeStoreFileIfPossible ? FRDUtils.getAbsRelPath(storeFile) : storeFile);

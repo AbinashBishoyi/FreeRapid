@@ -322,6 +322,14 @@ public class ProcessManager extends Thread {
             downloadFile.setTask(task);
             updateResumable(downloadFile);
             task.addTaskListener(new TaskListener.Adapter<Void, Long>() {
+
+
+                @Override
+                public void doInBackground(TaskEvent<Void> event) {
+                    super.doInBackground(event);
+                }
+
+
                 @Override
                 public void finished(TaskEvent<Void> event) {
                     finishedDownloading(downloadFile, client, downloadService, task, runCheck);
@@ -334,7 +342,10 @@ public class ProcessManager extends Thread {
             } catch (RejectedExecutionException e) {
                 logger.severe("downloading = " + downloading);
                 throw e;
+            } catch (Exception e) {
+                logger.severe("downloading2 = " + downloading);
             }
+
         } catch (NotSupportedDownloadServiceException e) {
             LogUtils.processException(logger, e);
         }

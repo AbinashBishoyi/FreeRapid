@@ -99,6 +99,8 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
         Swinger.inputFocus(btnCancel);
         final UpdateManager updateManager = managerDirector.getUpdateManager();
         final Task task = updateManager.getDownloadPluginsTask(new LinkedList<WrappedPluginData>(listModel));
+        if (task == null)
+            return;
         updateManager.executeUpdateTask(task);
     }
 

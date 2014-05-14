@@ -987,7 +987,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         popup.add(removeMenu);
         popup.addSeparator();
         popup.add(map.get("validateLinksAction"));
-        //   popup.add(speedLimitMenu);
+        popup.add(speedLimitMenu);
         popup.addSeparator();
         popup.add(map.get("selectAllAction"));
         popup.add(map.get("invertSelectionAction"));
@@ -1059,7 +1059,9 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     private void initComponents() {
 
         JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setName("contentScrollPane");
         table = new JXTable();
+        table.setName("mainTable");
 
         //======== this ========
         setLayout(new BorderLayout());

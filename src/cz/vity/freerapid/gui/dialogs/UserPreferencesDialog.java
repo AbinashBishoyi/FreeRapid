@@ -51,8 +51,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.*;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
+import javax.swing.table.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
@@ -63,6 +62,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
+import java.util.EventObject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -214,6 +214,9 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         pluginTable.setHorizontalScrollEnabled(true);
 
         pluginTable.setSortable(true);
+        pluginTable.setSortsOnUpdates(true);
+        pluginTable.setUpdateSelectionOnSort(true);
+
         pluginTable.setColumnMargin(10);
         pluginTable.setRolloverEnabled(true);
 
@@ -270,13 +273,28 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         tableColumn = Swinger.updateColumn(pluginTable, "U", PluginMetaDataTableModel.COLUMN_UPDATE, 22, 22, null);
         tableColumn.setWidth(22);
         tableColumn.setMaxWidth(22);
+
+        tableColumn = Swinger.updateColumn(pluginTable, "C", PluginMetaDataTableModel.COLUMN_CLIPBOARD_MONITORED, 22, 22, null);
+        tableColumn.setWidth(22);
+        tableColumn.setMaxWidth(22);
+
         pluginTable.setRolloverEnabled(true);
 
         Swinger.updateColumn(pluginTable, "ID", PluginMetaDataTableModel.COLUMN_ID, -1, 70, null);
         Swinger.updateColumn(pluginTable, "Version", PluginMetaDataTableModel.COLUMN_VERSION, -1, 40, null);
         Swinger.updateColumn(pluginTable, "Services", PluginMetaDataTableModel.COLUMN_SERVICES, -1, 100, null);
         Swinger.updateColumn(pluginTable, "Author", PluginMetaDataTableModel.COLUMN_AUTHOR, -1, -1, null);
+        Swinger.updateColumn(pluginTable, "MaxDownloads", PluginMetaDataTableModel.COLUMN_MAX_DOWNLOADS, -1, -1, new PluginConnectionAllowedRenderer());
+        Swinger.updateColumn(pluginTable, "Priority", PluginMetaDataTableModel.COLUMN_PRIORITY, -1, -1, null);
         Swinger.updateColumn(pluginTable, "WWW", PluginMetaDataTableModel.COLUMN_WWW, -1, -1, SwingXUtils.getHyperLinkTableCellRenderer());
+
+        final TableColumnModel tableColumnModel = pluginTable.getColumnModel();
+        final SpinnerEditor spinnerEditor = new SpinnerEditor();
+        tableColumnModel.getColumn(PluginMetaDataTableModel.COLUMN_MAX_DOWNLOADS).setCellEditor(spinnerEditor);
+        tableColumnModel.getColumn(PluginMetaDataTableModel.COLUMN_PRIORITY).setCellEditor(spinnerEditor);
+
+        //pluginTable.getColumnExt(PluginMetaDataTableModel.COLUMN_AUTHOR).setVisible(false);
+        pluginTable.getColumnExt(PluginMetaDataTableModel.COLUMN_WWW).setVisible(false);
 
         pluginTable.addMouseListener(new MouseAdapter() {
             @Override
@@ -1014,6 +1032,8 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         labelLanguage.setName("language");
 
         comboLng = new JComboBox();
+        pluginDetailPanel = new PluginDetailPanel();
+        getResourceMap().injectComponents(pluginDetailPanel);
 
         labelLanguage.setLabelFor(comboLng);
         comboRemoveCompleted = new JComboBox();
@@ -1426,6 +1446,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                                     scrollPane1.setViewportView(pluginTable);
                                 }
                                 pluginPanelSettings.add(scrollPane1, BorderLayout.CENTER);
+                                pluginPanelSettings.add(pluginDetailPanel, BorderLayout.EAST);
 
                                 //======== pluginsButtonPanel ========
                                 {
@@ -1826,6 +1847,8 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
     private JButton btnCreateStartupShortcut;
 
     private JPanel panelCard;
+    private JPanel pluginDetailPanel;
+
 
     private JCheckBox checkForNewVersion;
     private JCheckBox checkAllowOnlyOneInstance;
@@ -1944,5 +1967,61 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
     public void lostOwnership(Clipboard clipboard, Transferable contents) {
 
     }
+
+    private static class PluginConnectionAllowedRenderer extends DefaultTableCellRenderer {
+        // implements javax.swing.table.TableCellRenderer
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            if (value == null) {
+                value = table.getValueAt(row, column);
+            }
+            this.setHorizontalAlignment(RIGHT);
+            final PluginMetaData data = ((PluginMetaDataTableModel) table.getModel()).getMetaValueAt(row);
+            if (data.getMaxAllowedDownloads() < data.getMaxParallelDownloads()) {
+                this.setForeground(Color.GREEN);
+            }
+            return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        }
+    }
+
+
+    private static class SpinnerEditor extends AbstractCellEditor
+            implements TableCellEditor {
+        private final JSpinner spinner = new JSpinner();
+
+        // Initializes the spinner.
+        public SpinnerEditor() {
+            final SpinnerNumberModel model = new SpinnerNumberModel();
+            spinner.setModel(model);
+            spinner.setEditor(new JSpinner.NumberEditor(spinner));
+            model.setMinimum(1);
+        }
+
+        // Prepares the spinner component and returns it.
+        public Component getTableCellEditorComponent(JTable table, Object value,
+                                                     boolean isSelected, int row, int column) {
+            final PluginMetaData data = ((PluginMetaDataTableModel) table.getModel()).getMetaValueAt(row);
+            final SpinnerNumberModel model = (SpinnerNumberModel) spinner.getModel();
+            if (column == PluginMetaDataTableModel.COLUMN_PRIORITY) {
+                model.setMaximum(data.getMaxParallelDownloads());
+            } else {
+                model.setMaximum(1000);
+            }
+            spinner.setValue(value);
+            return spinner;
+        }
+
+        // Enables the editor only for double-clicks.
+        public boolean isCellEditable(EventObject evt) {
+            //return !(evt instanceof MouseEvent) || ((MouseEvent) evt).getClickCount() >= 1;
+            return true;
+        }
+
+        // Returns the spinners current value.
+        public Object getCellEditorValue() {
+            return spinner.getValue();
+        }
+    }
+
 
 }

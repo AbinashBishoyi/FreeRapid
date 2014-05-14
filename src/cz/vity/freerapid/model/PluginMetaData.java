@@ -32,6 +32,10 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
     private boolean favicon;
     private boolean removeCompleted;
     private boolean resumeSupported;
+    private int maxParallelDownloads;
+    private int priority;
+    private int maxAllowedDownloads;
+    private boolean clipboardMonitored;
 
     static {
         try {
@@ -40,7 +44,7 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
                     info.getPropertyDescriptors();
             for (PropertyDescriptor pd : propertyDescriptors) {
                 final Object name = pd.getName();
-                if ("supportedURL".equals(name) || "descriptor".equals(name) || "www".equals(name) || "services".equals(name) || "hasOptions".equals(name) || "premium".equals(name) || "favicon".equals(name) || "resumeSupported".equals(name)) {
+                if ("supportedURL".equals(name) || "descriptor".equals(name) || "www".equals(name) || "services".equals(name) || "hasOptions".equals(name) || "premium".equals(name) || "favicon".equals(name) || "resumeSupported".equals(name) || "maxParallelDownloads".equals(name)) {
                     pd.setValue("transient", Boolean.TRUE);
                 }
             }
@@ -57,7 +61,10 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
         this.descriptor = descriptor;
         this.id = descriptor.getId();
         this.enabled = true;
+        this.clipboardMonitored = true;
         this.updatesEnabled = true;
+        this.priority = -1;
+        this.maxAllowedDownloads = -1;
         setPluginDescriptor(descriptor);
     }
 
@@ -70,6 +77,13 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
         premium = DescriptorUtils.getAttribute("premium", false, descriptor);
         favicon = DescriptorUtils.getAttribute("faviconImage", null, descriptor) != null;
         removeCompleted = DescriptorUtils.getAttribute("removeCompleted", false, descriptor);
+        maxParallelDownloads = DescriptorUtils.getAttribute("maxParallelDownloads", 1, descriptor);
+        if (priority == -1)
+            priority = DescriptorUtils.getAttribute("priority", (premium) ? 1000 : 100, descriptor);
+        if (maxAllowedDownloads > 1)
+            maxAllowedDownloads = Math.min(maxParallelDownloads, maxAllowedDownloads);
+        else if (maxAllowedDownloads == -1) maxAllowedDownloads = maxParallelDownloads;
+
         resumeSupported = DescriptorUtils.getAttribute("resumeSupported", true, descriptor);
     }
 
@@ -179,5 +193,30 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
 
     public boolean isResumeSupported() {
         return resumeSupported;
+    }
+
+
+    public int getMaxParallelDownloads() {
+        return maxParallelDownloads;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public int getMaxAllowedDownloads() {
+        return maxAllowedDownloads;
+    }
+
+    public boolean isClipboardMonitored() {
+        return clipboardMonitored;
+    }
+
+    public void setPriority(Integer value) {
+        this.priority = value;
+    }
+
+    public void setMaxAllowedDownloads(int maxAllowedDownloads) {
+        this.maxAllowedDownloads = maxAllowedDownloads;
     }
 }
