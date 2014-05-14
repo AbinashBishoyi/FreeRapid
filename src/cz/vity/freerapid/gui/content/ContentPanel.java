@@ -807,7 +807,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
 //        table.setHorizontalScrollEnabled(false);
         table.setAutoResizeMode(AppPrefs.getProperty(UserProp.TABLE_COLUMNS_RESIZE, UserProp.TABLE_COLUMNS_RESIZE_DEFAULT));
-        table.setEditable(true);
+        table.setEditable(false);
         table.setColumnControlVisible(true);
         table.setColumnSelectionAllowed(false);
         final DefaultRowSorter sorter = (DefaultRowSorter) table.getRowSorter();
@@ -1033,7 +1033,9 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         final String backup = valueAt.getFileName();
         final File originalOuputFile = valueAt.getOutputFile();
         final boolean wasExisting = originalOuputFile.exists();
+        table.setEditable(true);
         final boolean result = table.editCellAt(selectedRow, COLUMN_NAME);//takes UI rows, not model
+        table.setEditable(false);
         if (!result)
             return;
         final TableCellEditor cellEditor = table.getCellEditor();
@@ -1070,7 +1072,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         if (out.exists()) {
             final int answer = Swinger.showOptionDialog(context.getResourceMap(), true, JOptionPane.QUESTION_MESSAGE, "confirmMessage", "targetFileAlreadyExists", new String[]{"message.button.overwrite", Swinger.MESSAGE_BTN_CANCEL_CODE}, out);
             if (answer == 0) {
-                succeeded = out.delete();
+                succeeded = FileUtils.deleteFileWithRecycleBin(out);
                 if (succeeded) {
                     succeeded = originalOuputFile.renameTo(out);
                 }

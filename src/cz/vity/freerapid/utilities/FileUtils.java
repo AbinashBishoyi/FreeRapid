@@ -280,9 +280,10 @@ public class FileUtils {
         return com.sun.jna.platform.FileUtils.getInstance().hasTrash();
     }
 
-    public static void deleteFileWithRecycleBin(final File... filesToDelete) {
+    public static boolean deleteFileWithRecycleBin(final File... filesToDelete) {
         if (AppPrefs.getProperty(UserProp.USE_RECYCLE_BIN, UserProp.USE_RECYCLE_BIN_DEFAULT) && supportsRecycleBin()) {
             final com.sun.jna.platform.FileUtils fileUtils = com.sun.jna.platform.FileUtils.getInstance();
+            boolean failed = false;
             for (final File file : filesToDelete) {
                 if (!file.exists()) {
                     continue;
@@ -291,23 +292,28 @@ public class FileUtils {
                     fileUtils.moveToTrash(new File[]{file});
                 } catch (final Exception e) {
                     logger.log(Level.WARNING, "Failed to delete file via recycle bin: " + file, e);
+                    failed = true;
                 }
             }
+            return !failed;
         } else {
-            deleteFile(filesToDelete);
+            return deleteFile(filesToDelete);
         }
     }
 
-    public static void deleteFile(final File... filesToDelete) {
+    public static boolean deleteFile(final File... filesToDelete) {
+        boolean failed = false;
         for (final File file : filesToDelete) {
             if (!file.exists()) {
                 continue;
             }
             final boolean delete = file.delete();
             if (!delete) {
+                failed = true;
                 logger.warning("Failed to delete file " + file);
             }
         }
+        return !failed;
     }
 
 }
