@@ -74,9 +74,12 @@ public class DownloadClient implements HttpDownloadClient {
         final HttpClientParams clientParams = client.getParams();
         clientParams.setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
         clientParams.setParameter(HttpMethodParams.SINGLE_COOKIE_HEADER, true);
+        clientParams.setSoTimeout(60 * 1000);
+        clientParams.setConnectionManagerTimeout(60 * 1000);
 
         clientParams.setHttpElementCharset("UTF-8");
         this.client.setHttpConnectionManager(new SimpleHttpConnectionManager(true));
+        this.client.getHttpConnectionManager().getParams().setConnectionTimeout(60 * 1000);
 
         HttpState initialState = new HttpState();
         if (settings.isProxySet()) {
@@ -363,7 +366,7 @@ public class DownloadClient implements HttpDownloadClient {
             logger.severe("Status code > 500:" + statuscode);
         }
 
-
+        //TODO overeni, ze 
         if (allowRedirect && isRedirect && redirect != 1) {
             redirect = 1;
             Header header = method.getResponseHeader("location");

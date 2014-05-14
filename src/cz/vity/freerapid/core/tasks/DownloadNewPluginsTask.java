@@ -35,6 +35,7 @@ public class DownloadNewPluginsTask extends DownloadTask {
         this.director = director;
         this.fileList = fileList;
         this.setInputBlocker(new ScreenInputBlocker(this, BlockingScope.APPLICATION, getMainFrame(), null));
+        setUseRelativeStoreFileIfPossible(false);
     }
 
 
@@ -88,12 +89,15 @@ public class DownloadNewPluginsTask extends DownloadTask {
         }
     }
 
-    private void checkRewrite(DownloadFile downloadFile) {
+    private void checkRewrite(DownloadFile downloadFile) throws IOException {
         final File out = downloadFile.getOutputFile();
         if (out.exists()) {
             out.delete();
         }
-        downloadFile.getStoreFile().renameTo(out);
+        final boolean b = downloadFile.getStoreFile().renameTo(out);
+        if (!b) {
+            throw new IOException("Renaming target file failed " + downloadFile.getStoreFile() + " ->" + out);
+        }
     }
 
     @Override

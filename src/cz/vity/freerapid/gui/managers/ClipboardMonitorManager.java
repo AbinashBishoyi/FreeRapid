@@ -97,9 +97,11 @@ public class ClipboardMonitorManager extends Thread implements ClipboardOwner {
                     }
                 }
             } catch (IllegalStateException e) {
-                //ignore
+                LogUtils.processException(logger, e);
             } catch (ArrayIndexOutOfBoundsException e) {
-                //ignore
+                LogUtils.processException(logger, e);
+            } catch (NullPointerException e) {
+                LogUtils.processException(logger, e);
             }
 
 
@@ -206,6 +208,8 @@ public class ClipboardMonitorManager extends Thread implements ClipboardOwner {
             }
         } catch (IllegalStateException e) {
             //ignore
+        } catch (AbstractMethodError e) {
+            LogUtils.processException(logger, e);
         }
 
     }

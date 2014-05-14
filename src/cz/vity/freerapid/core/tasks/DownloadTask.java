@@ -3,6 +3,7 @@ package cz.vity.freerapid.core.tasks;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
+import cz.vity.freerapid.gui.FRDUtils;
 import cz.vity.freerapid.gui.managers.TaskServiceManager;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.exceptions.*;
@@ -50,6 +51,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     private volatile boolean connectionTimeOut;
     private int fileAlreadyExists;
     private volatile byte[] buffer;
+    private boolean useRelativeStoreFileIfPossible = true;
 
     public DownloadTask(Application application) {
         super(application);
@@ -163,7 +165,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
             File storeFile = downloadFile.getStoreFile();
             if (downloadFile.getStoreFile() == null || !downloadFile.getStoreFile().exists()) {
                 storeFile = (temporary) ? File.createTempFile(fileName + ".", ".part", saveToDirectory) : outputFile;
-                downloadFile.setStoreFile(storeFile);
+                downloadFile.setStoreFile(useRelativeStoreFileIfPossible ? FRDUtils.getAbsRelPath(storeFile) : storeFile);
                 downloadFile.setDownloaded(0);
             }
             final long fileSize = downloadFile.getFileSize();
@@ -488,7 +490,6 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
             @Override
             public void failed(TaskEvent<Throwable> event) {
                 downloadFile.setState(DownloadState.ERROR);
-                //noinspection ThrowableResultOfMethodCallIgnored
                 downloadFile.setErrorMessage(getResourceMap().getString("transferFailed", event.getValue().getMessage()));
                 Sound.playSound(getContext().getResourceMap().getString("errorWav"));
             }
@@ -578,5 +579,10 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 
     byte[] getBuffer() {
         return this.buffer;
+    }
+
+
+    protected void setUseRelativeStoreFileIfPossible(boolean useRelativeStoreFileIfPossible) {
+        this.useRelativeStoreFileIfPossible = useRelativeStoreFileIfPossible;
     }
 }

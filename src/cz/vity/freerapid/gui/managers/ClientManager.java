@@ -96,7 +96,12 @@ public class ClientManager {
         if (AppPrefs.getProperty(FWProp.PROXY_USE, Boolean.valueOf(proxySetSystemDefault))) {
 
             final String url = AppPrefs.getProperty(FWProp.PROXY_URL, System.getProperty("proxyHost", "localhost"));
-            final int port = Integer.valueOf(AppPrefs.getProperty(FWProp.PROXY_PORT, System.getProperty("proxyPort", "8080")));
+            int port;
+            try {
+                port = Integer.valueOf(AppPrefs.getProperty(FWProp.PROXY_PORT, System.getProperty("proxyPort", "8080")));
+            } catch (NumberFormatException e) {
+                port = 8080;
+            }
 
             if (AppPrefs.getProperty(FWProp.PROXY_LOGIN, false)) {
                 final String userName = AppPrefs.getProperty(FWProp.PROXY_USERNAME, "");

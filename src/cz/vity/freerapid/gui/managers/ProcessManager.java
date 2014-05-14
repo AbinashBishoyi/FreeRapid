@@ -320,7 +320,7 @@ public class ProcessManager extends Thread {
             } else
                 task = new DownloadTask(context.getApplication(), client, downloadFile, service);
             downloadFile.setTask(task);
-            updateResumable(service, downloadFile);
+            updateResumable(downloadFile);
             task.addTaskListener(new TaskListener.Adapter<Void, Long>() {
                 @Override
                 public void finished(TaskEvent<Void> event) {
@@ -340,7 +340,7 @@ public class ProcessManager extends Thread {
         }
     }
 
-    private void updateResumable(ShareDownloadService downloadService, DownloadFile downloadFile) {
+    private void updateResumable(DownloadFile downloadFile) {
         if (downloadFile.isResumeSupported()) {
             try {
                 final boolean supportsResume = pluginsManager.getPluginMetadata(downloadFile.getPluginID()).isResumeSupported();
