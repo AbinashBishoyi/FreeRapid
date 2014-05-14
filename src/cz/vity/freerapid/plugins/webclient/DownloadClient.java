@@ -175,13 +175,13 @@ public class DownloadClient implements HttpDownloadClient {
 
     private InputStream makeRequestFile(final HttpMethod method, final HttpFile file, final int deep, boolean allowRedirect) throws IOException {
         asString = "";
-        toString(method);
-
 
         if (allowRedirect && method instanceof GetMethod) {
             method.setFollowRedirects(true); //autoredirects for GetMethod, it's not working for PostMethod
         }
         addRangeHeader(file, method);
+
+        toString(method);
 
         //client.executeMethod(method);
         processHttpMethod(method);
@@ -237,14 +237,18 @@ public class DownloadClient implements HttpDownloadClient {
     }
 
     private void addRangeHeader(HttpFile file, HttpMethod method) {
-        if (!file.isResumeSupported())
+        if (!file.isResumeSupported()) {
+            logger.info("Resume is not supported");
             return;
+        }
         final File storeFile = file.getStoreFile();
         if (storeFile != null && storeFile.exists()) {
             //velikost souboru muze byt preddelana, proto bereme minimum
             final long l = Math.max(file.getRealDownload(), 0);
             if (l != 0) {
-                method.addRequestHeader("Range", "bytes=" + l + "-");
+                final String range = "bytes=" + l + "-";
+                method.addRequestHeader("Range", range);
+                logger.info("Setting range to " + range);
             }
         }
     }

@@ -88,15 +88,10 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
             downloadingIconImage = resourceMap.getImageIcon("downloadingIconImage").getImage();
 
             final Action action = context.getActionMap().get("showStatusBar");
-            action.putValue(Action.SELECTED_KEY, true); //defaultni hodnota
-            action.addPropertyChangeListener(new PropertyChangeListener() {
-                //odchyt udalosti z akce pro zmenu viditelnosti statusbaru
-                public void propertyChange(PropertyChangeEvent evt) {
-                    if (Action.SELECTED_KEY.equals(evt.getPropertyName())) {
-                        setStatusBarVisible((Boolean) evt.getNewValue());
-                    }
-                }
-            });
+            final ValueModel valueModel = BindUtils.getPrefsValueModel(UserProp.SHOW_STATUSBAR, UserProp.SHOW_STATUSBAR_DEFAULT);
+            action.putValue(Action.SELECTED_KEY, valueModel.getValue());
+            PropertyConnector.connectAndUpdate(valueModel, getStatusBar(), "visible");
+
 
             JLabel clipboardMonitoring = new JLabel();
             clipboardMonitoring.addMouseListener(new MouseAdapter() {

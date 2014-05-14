@@ -1,11 +1,14 @@
 package cz.vity.freerapid.gui.managers;
 
+import com.jgoodies.binding.beans.PropertyConnector;
+import com.jgoodies.binding.value.ValueModel;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.swing.SwingUtils;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.swing.ToolbarSeparator;
+import cz.vity.freerapid.swing.binding.BindUtils;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.swingx.JXFrame;
 
@@ -56,15 +59,12 @@ public class ToolbarManager implements PropertyChangeListener {
     public ToolbarManager(ManagerDirector directorManager, ApplicationContext context) {
         toolbarPanel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
         final Action action = context.getActionMap().get("showToolbar");
-        action.putValue(Action.SELECTED_KEY, true); //defaultni hodnota
-        //odchyt udalosti z akce pro zmenu viditelnosti toolbaru
-        action.addPropertyChangeListener(new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent evt) {
-                if (Action.SELECTED_KEY.equals(evt.getPropertyName())) {
-                    setToolBarVisible((Boolean) evt.getNewValue());
-                }
-            }
-        });
+
+        final ValueModel valueModel = BindUtils.getPrefsValueModel(UserProp.SHOW_TOOLBAR, UserProp.SHOW_TOOLBAR_DEFAULT);
+        action.putValue(Action.SELECTED_KEY, valueModel.getValue());
+        PropertyConnector.connectAndUpdate(valueModel, toolbarPanel, "visible");
+
+
         fontSize = context.getResourceMap().getFloat("buttonBarFontSize");
         createToolbar();
     }

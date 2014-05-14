@@ -718,7 +718,9 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         table.addMouseListener(w);
         table.addMouseMotionListener(w);
         table.setUpdateSelectionOnSort(false);
-        table.setSortsOnUpdates(false);
+        table.setSortsOnUpdates(true);
+
+//        table.getRowSorter().
 
 
         table.setTransferHandler(new URLTransferHandler(director) {

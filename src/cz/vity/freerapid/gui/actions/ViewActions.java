@@ -53,12 +53,12 @@ public class ViewActions extends AbstractBean {
 
     @Action
     public void showStatusBar() {
-        //final boolean selected = ((AbstractButton) e.getSource()).isSelected();
+        AppPrefs.negateProperty(UserProp.SHOW_STATUSBAR, UserProp.SHOW_STATUSBAR_DEFAULT);
     }
 
     @Action
     public void showToolbar() {
-
+        AppPrefs.negateProperty(UserProp.SHOW_TOOLBAR, UserProp.SHOW_TOOLBAR_DEFAULT);
     }
 
     protected MainApp getApp() {

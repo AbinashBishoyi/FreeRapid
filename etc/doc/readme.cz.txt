@@ -120,7 +120,8 @@ Instalace
 ------------
 Rozbalte archiv se soubory do libovolného adresáøe na pevném disku (cesta k aplikaci by nemìla obsahovat speciální znaky typu '+', '!').
 V pøípadì pøechodu na novìjší verzi smažte pøedchozí složku aplikace. Veškerá uživatelská nastavení jsou
-zachována. Uložená uživatelská nastavení naleznete:
+zachována. Pokud však již pøedchozí verzi používáte, je doporuèeno si konfiguraèní data zazálohovat pro pøípad vrácení ke starší verzi.
+Uložená uživatelská nastavení naleznete:
 MS Windows: c:\Dokumenty a nastavení\Vaše_uživatelské_jméno\Data aplikací\VitySoft\FRD
 
 Linux: ~/.FRD

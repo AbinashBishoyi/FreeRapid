@@ -60,10 +60,14 @@ public final class LinksAddedTask extends CoreTask<Void, Void> {
     }
 
     public String getStringRepresentation() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         final String time = new SimpleDateFormat("yyyy-MM-dd HH:mm ").format(Calendar.getInstance().getTime());
         final String lineSeparator = Utils.getSystemLineSeparator();
         for (DownloadFile downloadFile : list) {
+            final String desc = downloadFile.getDescription();
+            if (desc != null && !downloadFile.getDescription().isEmpty()) {
+                builder.append(" [").append(desc).append("]");
+            }
             builder.append(time).append(downloadFile.getFileUrl().toExternalForm());
             builder.append(lineSeparator);
         }
