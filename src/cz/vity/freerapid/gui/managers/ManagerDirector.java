@@ -3,6 +3,7 @@ package cz.vity.freerapid.gui.managers;
 import cz.vity.freerapid.core.Consts;
 import cz.vity.freerapid.core.FileTypeIconProvider;
 import cz.vity.freerapid.core.MainApp;
+import cz.vity.freerapid.core.tasks.SpeedRegulator;
 import cz.vity.freerapid.swing.TextComponentContextMenuListener;
 import org.jdesktop.application.ApplicationContext;
 
@@ -64,6 +65,7 @@ public class ManagerDirector {
     private ClipboardMonitorManager clipboardMonitorManager;
     private TaskServiceManager taskServiceManager;
     private UpdateManager updateManager;
+    private SpeedRegulator speedRegulator;
 
     /**
      * Konstruktor
@@ -187,5 +189,12 @@ public class ManagerDirector {
 
     public UpdateManager getUpdateManager() {
         return updateManager;
+    }
+
+    public SpeedRegulator getSpeedRegulator() {
+        if (speedRegulator == null) {
+            speedRegulator = new SpeedRegulator();
+        }
+        return speedRegulator;
     }
 }

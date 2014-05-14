@@ -3,10 +3,8 @@ package cz.vity.freerapid.gui.managers;
 import com.jgoodies.binding.adapter.Bindings;
 import com.jgoodies.binding.adapter.BoundedRangeAdapter;
 import com.jgoodies.binding.adapter.PreferencesAdapter;
-import com.jgoodies.binding.beans.PropertyAdapter;
 import com.jgoodies.binding.beans.PropertyConnector;
 import com.jgoodies.binding.value.ConverterFactory;
-import com.jgoodies.binding.value.DelayedReadValueModel;
 import com.jgoodies.binding.value.ValueModel;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.MainApp;
@@ -193,23 +191,8 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
 
             dataManager.getProcessManager().addPropertyChangeListener("downloading", this);
 
-            final DelayedReadValueModel delayedReadValueModel = new DelayedReadValueModel(new PropertyAdapter<DataManager>(dataManager, "speed"), 50, true);
-            delayedReadValueModel.addPropertyChangeListener(new PropertyChangeListener() {
-                public void propertyChange(PropertyChangeEvent evt) {
-                    final String s = evt.getPropertyName();
-                    System.out.println("s2 = " + s);
-                }
-            });
-            delayedReadValueModel.addValueChangeListener(new PropertyChangeListener() {
+            director.getSpeedRegulator().addPropertyChangeListener("speed", this);
 
-                public void propertyChange(PropertyChangeEvent evt) {
-                    final String s = evt.getPropertyName();
-                    System.out.println("s = " + s);
-                }
-            });
-
-            //dataManager.addPropertyChangeListener("speed", this);
-            //dataManager.addPropertyChangeListener("speed", this);
             dataManager.addPropertyChangeListener("completed", this);
             dataManager.addPropertyChangeListener("state", this);
 
@@ -271,7 +254,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
 
     public void propertyChange(PropertyChangeEvent evt) {
         final String propertyName = evt.getPropertyName();
-        if ("value".equals(propertyName) || "completed".equals(propertyName)) {
+        if ("speed".equals(propertyName) || "completed".equals(propertyName)) {
             updateInfoStatus();
         } else if ("started".equals(propertyName) || "done".equals(propertyName) || "message".equals(propertyName)) {
             //final Task task = (Task) evt.getSource();
@@ -321,7 +304,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
     private void updateInfoStatus() {
         final int completed = dataManager.getCompleted();
         final int size = dataManager.getDownloadFiles().size();
-        final int speed = dataManager.getCurrentSpeed();
+        final long speed = director.getSpeedRegulator().getSpeed();
         final TrayIconSupport trayIconSupport = app.getTrayIconSupport();
         final boolean showInFrameTitle = AppPrefs.getProperty(UserProp.SHOWINFO_IN_TITLE, UserProp.SHOWINFO_IN_TITLE_DEFAULT);
         final String speedFormatted = ContentPanel.bytesToAnother(speed);

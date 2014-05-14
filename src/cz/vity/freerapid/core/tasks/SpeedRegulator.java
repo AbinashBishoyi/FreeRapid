@@ -3,7 +3,11 @@ package cz.vity.freerapid.core.tasks;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.model.DownloadFile;
+import cz.vity.freerapid.plugins.webclient.DownloadState;
 
+import javax.swing.event.SwingPropertyChangeSupport;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
@@ -12,7 +16,7 @@ import java.util.prefs.PreferenceChangeListener;
 /**
  * @author Vity
  */
-class SpeedRegulator {
+public final class SpeedRegulator implements PropertyChangeListener {
     private final static Logger logger = Logger.getLogger(SpeedRegulator.class.getName());
 
     private Map<DownloadFile, DownloadFileInfo> downloading = new Hashtable<DownloadFile, DownloadFileInfo>(10);
@@ -21,9 +25,15 @@ class SpeedRegulator {
     private final Object lock = new Object();
     private Timer timer;
     private static final int SPEED_MINIMUM_HOLDED = 10;
+    private SwingPropertyChangeSupport pcs = new SwingPropertyChangeSupport(this, true);
+    private volatile long speed;
+    private volatile float averageSpeed;
+
 
     public SpeedRegulator() {
         timer = null;
+        speed = 0;
+        averageSpeed = 0;
         initProperties();
         initSpeeds();
     }
@@ -124,11 +134,19 @@ class SpeedRegulator {
     private void tick() {
         synchronized (lock) {
             assignTokensToFiles();
-        }
-        for (DownloadFileInfo info : downloading.values()) {
-            synchronized (info) {
+
+            long speed = 0;
+            float avgSpeed = 0;
+            final int size = downloading.size();
+            for (DownloadFileInfo info : downloading.values()) {
+                if (info.file.getState() != DownloadState.DOWNLOADING)
+                    continue;
                 info.tick();
+                speed += info.speed;
+                avgSpeed += info.averageSpeed;
             }
+            fireSpeed(speed);
+            fireAvgSpeed(avgSpeed / (float) size);
         }
     }
 
@@ -140,45 +158,72 @@ class SpeedRegulator {
      * @param o    kolik token soubor pri stahovani zada
      * @return true ma dostatek tokenu, jinak false
      */
-    public boolean takeTokens(DownloadFile file, final int bytes) {
+    public final boolean takeTokens(DownloadFile file, final int bytes) {
         int kilobytes = (int) Math.round(bytes / 1024.0);
-        final DownloadFileInfo info = downloading.get(file);
-        synchronized (info) {
+        synchronized (lock) {
+            final DownloadFileInfo info = downloading.get(file);
             info.counter += bytes;
-            synchronized (lock) {
-                final int taken = file.getTakenTokens();
-                file.setTakenTokens((taken == -1) ? kilobytes : taken + kilobytes);
-                return file.getTokensLimit() > file.getTakenTokens();
-            }
+            final int taken = file.getTakenTokens();
+            file.setTakenTokens((taken == -1) ? kilobytes : taken + kilobytes);
+            return file.getTokensLimit() > file.getTakenTokens();
         }
     }
 
 
-    public void addDownloading(final DownloadFile file, final DownloadTask task) {
+    public final void addDownloading(final DownloadFile file, final DownloadTask task) {
         synchronized (lock) {
             file.setTakenTokens(-1);
+            file.addPropertyChangeListener("state", this);
             file.setTokensLimit(Integer.MAX_VALUE);
+            file.setSpeed(0);
+            file.setAverageSpeed(0);
             downloading.put(file, new DownloadFileInfo(task));
             if (timer == null) {
                 timer = new Timer("SpeedRegulatorTimer");
                 timer.schedule(new TimerTask() {
                     public void run() {
+                        final long nano = System.nanoTime();
                         tick();
+                        final long nano2 = System.nanoTime();
+                        final long dif = (nano2 - nano);
+                        System.out.println("dif = " + dif);
                     }
                 }, 0, 1000);
             }
-
         }
     }
 
-    public void removeDownloading(DownloadFile file) {
+    public final void removeDownloading(DownloadFile file) {
         synchronized (lock) {
             downloading.remove(file);
+            file.removePropertyChangeListener("state", this);
+            file.setSpeed(0);
+            file.setAverageSpeed(0);
             if (timer != null && downloading.isEmpty()) {
+                fireAvgSpeed(0);
+                fireSpeed(0);
                 timer.cancel();
                 timer = null;
             }
         }
+    }
+
+    private void fireSpeed(final long newSpeed) {
+        final long oldValue = this.speed;
+        this.speed = newSpeed;
+        pcs.firePropertyChange("speed", oldValue, this.speed);
+    }
+
+    private void fireAvgSpeed(final float newSpeed) {
+        final float oldValue = this.averageSpeed;
+        this.averageSpeed = newSpeed;
+        pcs.firePropertyChange("averageSpeed", oldValue, this.averageSpeed);
+    }
+
+    public void propertyChange(PropertyChangeEvent evt) {
+        final DownloadFile downloadFile = (DownloadFile) evt.getSource();
+        if (downloadFile.getState() != DownloadState.DOWNLOADING)
+            removeDownloading(downloadFile);
     }
 
     private static class DownloadFileInfo {
@@ -195,6 +240,8 @@ class SpeedRegulator {
         private final static int[] bufferSizes = {1024, 2 * 1024, 5 * 1024, 10 * 1024, 25 * 1024, 50 * 1024};
         private byte buffers[][] = new byte[bufferSizes.length][];
         private DownloadFile file;
+        private long speed;
+        private float averageSpeed;
 
         DownloadFileInfo(DownloadTask task) {
             this.task = task;
@@ -204,6 +251,8 @@ class SpeedRegulator {
             Arrays.fill(avgSpeedArray, -1);
             startTime = System.currentTimeMillis();
             avgSpeed = 0;
+            speed = 0;
+            averageSpeed = 0;
         }
 
         private void updateShortAvgSpeed() {
@@ -221,13 +270,14 @@ class SpeedRegulator {
 
         void tick() {
             final long localCounter = counter;
-            final long speed = localCounter - lastSize;
+            speed = localCounter - lastSize;
 
-            task.setSpeed(speed);
-
+            // task.setSpeed(speed);
+            file.setSpeed(speed);
             if (speed == 0) {
                 if (++noDataTimeOut >= NO_DATA_TIMEOUT_LIMIT) { //X seconds with no data
                     logger.info("Cancelling download - no downloaded data during " + NO_DATA_TIMEOUT_LIMIT + " seconds");
+                    averageSpeed = 0;
                     task.setConnectionTimeOut(true);
                     task.cancel(true);
                     return;
@@ -239,13 +289,11 @@ class SpeedRegulator {
             }
 
             final long time = System.currentTimeMillis() - startTime;
-            System.out.println("time = " + time);
+            //System.out.println("time = " + time);
             final float l = time / 1000.0F;
 
-            if (Float.compare(l, 0) == 0) {
-                task.setAverageSpeed(0.0F);
-            } else
-                task.setAverageSpeed((float) localCounter / l);
+            averageSpeed = (Float.compare(l, 0) == 0) ? 0.0F : (float) localCounter / l;
+            file.setAverageSpeed(averageSpeed);
             if (indexer == avgSpeedMeasuredSeconds)
                 indexer = 0;
             avgSpeedArray[indexer++] = speed;
@@ -288,4 +336,27 @@ class SpeedRegulator {
         }
     }
 
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(listener);
+    }
+
+    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(propertyName, listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        pcs.removePropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+        pcs.removePropertyChangeListener(propertyName, listener);
+    }
+
+    public float getAverageSpeed() {
+        return averageSpeed;
+    }
+
+    public long getSpeed() {
+        return speed;
+    }
 }

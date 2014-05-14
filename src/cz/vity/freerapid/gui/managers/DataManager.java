@@ -52,9 +52,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
     private int notFound;
 
     private PluginsManager pluginsManager;
-    private float averageSpeed = 0;
 
-    private int speed = 0;
     private int dataChanged = 0;
     private FileListMaintainer fileListMaintainer;
 
@@ -201,17 +199,18 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                 if ("state".equals(s)) {
                     firePropertyChange(s, evt.getOldValue(), evt.getNewValue());
                     fireDataChanged();
-                } else if ("averageSpeed".equals(s)) {
-                    final float oldValue = averageSpeed;
-                    averageSpeed -= (Float) evt.getOldValue();
-                    averageSpeed += (Float) evt.getNewValue();
-                    firePropertyChange(s, oldValue, averageSpeed);
-                } else if ("speed".equals(s)) {
-                    final int oldValue = speed;
-                    speed -= (Long) evt.getOldValue();
-                    speed += (Long) evt.getNewValue();
-                    firePropertyChange(s, oldValue, speed);
                 }
+//                else if ("averageSpeed".equals(s)) {
+//                    final float oldValue = averageSpeed;
+//                    averageSpeed -= (Float) evt.getOldValue();
+//                    averageSpeed += (Float) evt.getNewValue();
+//                    firePropertyChange(s, oldValue, averageSpeed);
+//                } else if ("speed".equals(s)) {
+//                    final int oldValue = speed;
+//                    speed -= (Long) evt.getOldValue();
+//                    speed += (Long) evt.getNewValue();
+//                    firePropertyChange(s, oldValue, speed);
+//                }
 //                    } else if ("speed".equals(s)) {
 //                        firePropertyChange(s, -1, getCurrentAllSpeed());
 //                        firePropertyChange("averageSpeed", -1, getAverageSpeed());
@@ -466,10 +465,6 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
 //    }
 
 
-    public float getAverageSpeed() {
-        return averageSpeed;
-    }
-
     public void moveTop(int[] indexes) {
         synchronized (lock) {
             if (indexes.length > 1)
@@ -568,10 +563,6 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
 
     public ProcessManager getProcessManager() {
         return processManager;
-    }
-
-    public int getCurrentSpeed() {
-        return speed;
     }
 
     /**
@@ -685,10 +676,6 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                 file.setSpeedLimit(speed);
             }
         }
-    }
-
-    public int getSpeed() {
-        return speed;
     }
 
 }

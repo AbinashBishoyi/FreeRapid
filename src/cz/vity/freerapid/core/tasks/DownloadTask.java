@@ -39,8 +39,6 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     protected HttpDownloadClient client;
     protected DownloadFile downloadFile;
     protected ShareDownloadService service;
-    private long speedInBytes;
-    private float averageSpeed;
     private Integer sleep = 0;
     protected File outputFile;
     protected File storeFile;
@@ -52,7 +50,6 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     private static final int OUTPUT_FILE_BUFFER_SIZE = 600000;
     private volatile boolean connectionTimeOut;
     private int fileAlreadyExists;
-    private final static SpeedRegulator speedRegulator = new SpeedRegulator();
     private volatile byte[] buffer;
 
     public DownloadTask(Application application) {
@@ -75,8 +72,6 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         this.setUserCanCancel(true);
         this.youHaveToSleepSecondsTime = 0;
         this.connectionTimeOut = false;
-        this.speedInBytes = 0;
-        this.averageSpeed = 0;
         fileAlreadyExists = -2;
     }
 
@@ -152,6 +147,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
             }
         }
 
+        final SpeedRegulator speedRegulator = ((MainApp) this.getApplication()).getManagerDirector().getSpeedRegulator();
         final File saveToDirectory = downloadFile.getSaveToDirectory();
         try {
             if (!saveToDirectory.exists())
@@ -172,7 +168,6 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                 int len;
                 long counter = 0;
                 downloadFile.setState(DownloadState.DOWNLOADING);
-                setSpeed(0);
 
                 speedRegulator.addDownloading(downloadFile, this);
                 //data downloading-------------------------------
@@ -192,7 +187,6 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                     buf = getBuffer();
                 }
                 //-----------------------------------------------
-
                 if (!isTerminated()) {
                     if (counter != fileSize)
                         throw new IOException("ErrorDuringDownload");
@@ -220,14 +214,14 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 //                } catch (IOException e) {
 //                    LogUtils.processException(logger, e);
 //                }
-                speedRegulator.removeDownloading(downloadFile);
+                //speedRegulator.removeDownloading(downloadFile);
                 closeFileStream(fileOutputStream);
                 //fileOutputStream = null;
                 checkDeleteTempFile();
             }
         }
         finally {
-            setSpeed(0);
+            //setSpeed(0);
             checkDeleteTempFile();
         }
 
@@ -265,20 +259,18 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
             } else
                 downloadFile.setState(DownloadState.CANCELLED);
             downloadFile.setDownloaded(0);
-            setSpeed(0);
-            setAverageSpeed(0);
         }
     }
 
-    protected void setSpeed(final long speedInBytes) {
-        Long oldValue, newValue;
-        synchronized (this) {
-            oldValue = this.speedInBytes;
-            this.speedInBytes = speedInBytes;
-            newValue = this.speedInBytes;
-        }
-        firePropertyChange("speed", oldValue, newValue);
-    }
+//    protected void setSpeed(final long speedInBytes) {
+//        Long oldValue, newValue;
+//        synchronized (this) {
+//            oldValue = this.speedInBytes;
+//            this.speedInBytes = speedInBytes;
+//            newValue = this.speedInBytes;
+//        }
+//        firePropertyChange("speed", oldValue, newValue);
+//    }
 
 
     public void setConnectionTimeOut(boolean connectionTimeOut) {
@@ -300,15 +292,15 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         //firePropertyChange("downloaded", 0, counter);
     }
 
-    protected void setAverageSpeed(float avgSpeed) {
-        final float oldValue, newValue;
-        synchronized (this) {
-            oldValue = this.averageSpeed;
-            this.averageSpeed = avgSpeed;
-            newValue = this.averageSpeed;
-        }
-        firePropertyChange("averageSpeed", oldValue, newValue);
-    }
+//    protected void setAverageSpeed(float avgSpeed) {
+//        final float oldValue, newValue;
+//        synchronized (this) {
+//            oldValue = this.averageSpeed;
+//            this.averageSpeed = avgSpeed;
+//            newValue = this.averageSpeed;
+//        }
+//        firePropertyChange("averageSpeed", oldValue, newValue);
+//    }
 
     @Override
     protected void failed(Throwable cause) {

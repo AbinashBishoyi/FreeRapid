@@ -63,7 +63,7 @@ public class SpeedMeterDialog extends AppFrame implements PropertyChangeListener
         java.util.Timer timer = new java.util.Timer();
         task = new TimerTask() {
             public void run() {
-                comp.setCurrentSpeed(director.getDataManager().getAverageSpeed());
+                //   comp.setCurrentSpeed(director.getDataManager().getAverageSpeed());
             }
         };
         timer.schedule(task, 300, 1000);
