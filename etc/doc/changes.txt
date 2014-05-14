@@ -12,7 +12,7 @@ Changed - indicates a change in usage or behavior of FreeRapid Downloader
 Fixed - indicates a bug fix
 Internal - indicates an internal change - information for FRD developers - nothing important for users
 
-23rd June 2013 - FreeRapid Downloader 0.9 Update 3
+15th September 2013 - FreeRapid Downloader 0.9 Update 3
   Added : Icons for file types .apk (Android APK), .srt & .sub (subtitles), mp4 (video)
   Added : System icons are now shown for all file types, not just a few predefined types
   Changed : Updated internal ObjectDB database, can resolve some exceptions
