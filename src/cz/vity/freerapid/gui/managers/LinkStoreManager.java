@@ -1,6 +1,7 @@
 package cz.vity.freerapid.gui.managers;
 
 import cz.vity.freerapid.core.tasks.LinksAddedTask;
+import cz.vity.freerapid.gui.managers.interfaces.UrlListDataListener;
 import cz.vity.freerapid.model.DownloadFile;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.Task;

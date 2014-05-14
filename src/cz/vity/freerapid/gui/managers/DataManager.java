@@ -10,6 +10,8 @@ import cz.vity.freerapid.core.tasks.DownloadTask;
 import cz.vity.freerapid.gui.actions.DownloadsActions;
 import cz.vity.freerapid.gui.actions.URLTransferHandler;
 import cz.vity.freerapid.gui.managers.exceptions.NotSupportedDownloadServiceException;
+import cz.vity.freerapid.gui.managers.interfaces.FileStateChangeListener;
+import cz.vity.freerapid.gui.managers.interfaces.UrlListDataListener;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.container.FileInfo;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;

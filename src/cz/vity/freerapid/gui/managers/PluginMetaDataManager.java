@@ -1,19 +1,17 @@
 package cz.vity.freerapid.gui.managers;
 
-import cz.vity.freerapid.core.AppPrefs;
-import cz.vity.freerapid.core.UserProp;
+import cz.vity.freerapid.core.tasks.CoreTask;
 import cz.vity.freerapid.model.PluginMetaData;
 import cz.vity.freerapid.utilities.FileUtils;
 import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.LocalStorage;
+import org.jdesktop.application.TaskService;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -25,75 +23,64 @@ public class PluginMetaDataManager {
     //private final ManagerDirector director;
     private final ApplicationContext context;
 
-    private final Set<PluginMetaData> items = new HashSet<PluginMetaData>();
-
     //private boolean loaded = false;
     private static final String FILES_LIST_XML = "plugins.xml";
 
-    private final Object saveFileLock = new Object();
-
+    private ManagerDirector director;
 
     @SuppressWarnings({"UnusedDeclaration"})
-    public PluginMetaDataManager(ApplicationContext context) {
-        //  this.director = director;
-        this.context = context;
-//        this.context.getApplication().addExitListener(this);
+    public PluginMetaDataManager(ManagerDirector director) {
+        this.director = director;
+        this.context = director.getContext();
+
     }
 
-//    private void saveListToFileOnBackground() {
-//        //assert loaded;
-//        final TaskService service = director.getTaskServiceManager().getTaskService(TaskServiceManager.WORK_WITH_FILE_SERVICE);
-//        service.execute(new Task(context.getApplication()) {
-//            protected Object doInBackground() throws Exception {
-//                Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-//                final Set<PluginMetaData> files;
-//
-//                files = new ArraySet<PluginMetaData>(getItems());//getItems je synchronizovana
-//
-//                saveToFile(files);
-//
-//                return null;
-//            }
-//
-//            @Override
-//            protected void failed(Throwable cause) {
-//                LogUtils.processException(logger, cause);
-//            }
-//        });
-//
-//    }
-
-//    public boolean canExit(EventObject event) {
-//        return true;
-//    }
-//
-//    public void willExit(EventObject event) {
-//        synchronized (this) {
-//            if (!loaded) // pokud to neni loaded, tak to znamena, ze jsem s tim seznamem nemanipuloval
-//                return;
-//            saveToFile(items);
-//        }
-//    }
-
-    //
-
-    public void saveToFile(Set<PluginMetaData> files) {
-        synchronized (saveFileLock) {
-            logger.info("=====Saving PluginMetaData list into XML file=====");
-            final LocalStorage localStorage = context.getLocalStorage();
-            File dstFile = new File(localStorage.getDirectory(), FILES_LIST_XML);
-            try {
-                if (AppPrefs.getProperty(UserProp.MAKE_FILE_BACKUPS, UserProp.MAKE_FILE_BACKUPS_DEFAULT))
-                    FileUtils.makeBackup(dstFile);
-                localStorage.save(files, FILES_LIST_XML);
-            } catch (IOException e) {
-                LogUtils.processException(logger, e);
-            } finally {
-                logger.info("=====Saving PluginMetaData list finished =====");
+    public void saveToFile(final Set<PluginMetaData> files) {
+        final TaskService service = director.getTaskServiceManager().getTaskService(TaskServiceManager.WORK_WITH_FILE_SERVICE);
+        service.execute(new CoreTask<Void, Void>(context.getApplication()) {
+            @Override
+            protected Void doInBackground() throws Exception {
+                director.getDatabaseManager().saveCollection(files);
+                return null;
             }
-        }
+        });
     }
 
+    public Collection<PluginMetaData> getItems() {
+        return Collections.unmodifiableCollection(loadData());
+    }
+
+    private Collection<PluginMetaData> loadData() {
+          Set<PluginMetaData> result = null;
+          final File srcFile = new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML);
+          if (srcFile.exists()) { //extract from old file
+              try {
+                  result = loadList(srcFile);
+              } catch (Exception e) {
+                  LogUtils.processException(logger, e);
+                  logger.info("Trying to renew file from backup");
+                  try {
+                      FileUtils.renewBackup(srcFile);
+                      result = loadList(srcFile);
+                  } catch (FileNotFoundException ex) {
+                      //ignore
+                  } catch (Exception e1) {
+                      LogUtils.processException(logger, e);
+                  }
+              }
+              if (result != null) {
+                  //re-save into database
+                  director.getDatabaseManager().saveCollection(result);
+              } else result = new HashSet<PluginMetaData>();
+              //rename old file history file into another one, so we won't import it again next time
+              //noinspection ResultOfMethodCallIgnored
+              srcFile.renameTo(new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML + ".imported"));
+              return result;
+          } else {
+              //load from database
+              return director.getDatabaseManager().loadAll(PluginMetaData.class);
+          }
+      }
 
     @SuppressWarnings({"unchecked"})
     private Set<PluginMetaData> loadList(final File srcFile) throws IOException {
@@ -111,31 +98,4 @@ public class PluginMetaDataManager {
         return set;
     }
 
-    public synchronized Set<PluginMetaData> getItems() {
-        loadData();
-        return Collections.unmodifiableSet(items);
-    }
-
-    private void loadData() {
-        Set<PluginMetaData> result = null;
-        final File srcFile = new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML);
-        if (srcFile.exists()) {
-            try {
-                result = loadList(srcFile);
-            } catch (Exception e) {
-                LogUtils.processException(logger, e);
-                logger.info("Trying to renew file from backup");
-                try {
-                    FileUtils.renewBackup(srcFile);
-                    result = loadList(srcFile);
-                } catch (FileNotFoundException ex) {
-                    //ignore
-                } catch (Exception e1) {
-                    LogUtils.processException(logger, e);
-                }
-            }
-            if (result != null)
-                this.items.addAll(result);
-        }
-    }
 }

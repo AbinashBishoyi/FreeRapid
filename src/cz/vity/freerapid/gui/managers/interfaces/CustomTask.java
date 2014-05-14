@@ -1,9 +1,11 @@
-package cz.vity.freerapid.gui.managers;
+package cz.vity.freerapid.gui.managers.interfaces;
+
+import cz.vity.freerapid.gui.managers.ManagerDirector;
 
 /**
  * @author Vity
  */
-interface CustomTask {
+public interface CustomTask {
     public String getHumanReadableName();
     public void setEnabled(boolean enabled);
     public boolean isEnabled();

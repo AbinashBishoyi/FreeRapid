@@ -17,6 +17,7 @@ import org.jdesktop.application.TaskService;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,49 +43,66 @@ class FileListMaintainer {
     }
 
 
+    private List<DownloadFile> loadFileHistoryList() {
+          List<DownloadFile> result = null;
+          final File srcFile = new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML);
+          if (srcFile.exists()) { //extract from old file, we ignore existence of backup file in case the main file does not exist
+              try {
+                  result = loadList(srcFile);
+              } catch (Exception e) {
+                  LogUtils.processException(logger, e);
+                  logger.info("Trying to renew file from backup");
+                  try {
+                      FileUtils.renewBackup(srcFile);
+                      result = loadList(srcFile);
+                  } catch (FileNotFoundException ex) {
+                      //ignore
+                  } catch (Exception e1) {
+                      LogUtils.processException(logger, e);
+                  }
+              }
+              if (result != null) {
+                  //re-save into database
+                  director.getDatabaseManager().saveCollection(result);
+              } else result = new ArrayList<DownloadFile>();
+              //rename old file history file into another one, so we won't import it again next time
+              //noinspection ResultOfMethodCallIgnored
+              srcFile.renameTo(new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML + ".imported"));
+              return result;
+          } else {
+              //load from database
+              return director.getDatabaseManager().loadAll(DownloadFile.class);
+          }
+      }
+
     void loadListToBean(Collection<DownloadFile> downloadFiles) {
-        final LocalStorage localStorage = context.getLocalStorage();
-        final File srcFile = new File(localStorage.getDirectory(), FILES_LIST_XML);
-        if (!srcFile.exists()) {
-            logger.info("Src list file does not exists from some reason. Trying to renew file from backup");
-            try {
-                FileUtils.renewBackup(srcFile);
-                logger.info("Backup copy was found and copied succesfuly");
-            } catch (FileNotFoundException e) {
-                logger.info("Cannot renew src file, because backup file does not exist");
-            } catch (IOException e) {
-                LogUtils.processException(logger, e);
-            }
-        }
-        final boolean downloadOnStart = AppPrefs.getProperty(UserProp.DOWNLOAD_ON_APPLICATION_START, UserProp.DOWNLOAD_ON_APPLICATION_START_DEFAULT);
-        final boolean removeCompleted = AppPrefs.getProperty(UserProp.REMOVE_COMPLETED_DOWNLOADS, UserProp.REMOVE_COMPLETED_DOWNLOADS_DEFAULT) == UserProp.REMOVE_COMPLETED_DOWNLOADS_AT_STARTUP;
-        final boolean recheckOnStart = AppPrefs.getProperty(UserProp.RECHECK_FILES_ON_START, UserProp.RECHECK_FILES_ON_START_DEFAULT);
-        List<DownloadFile> result = null;
-        try {
-            result = loadListFromFile(srcFile, downloadOnStart, removeCompleted, recheckOnStart);
-        } catch (Exception e) {
-            LogUtils.processException(logger, e);
-            logger.info("Trying to renew file from backup");
-            try {
-                FileUtils.renewBackup(srcFile);
-                result = loadListFromFile(srcFile, downloadOnStart, removeCompleted, recheckOnStart);
-            } catch (FileNotFoundException ex) {
-                logger.info("Cannot renew src file, because backup file does not exist");
-            } catch (Exception e1) {
-                LogUtils.processException(logger, e);
-            }
-        }
-        if (result != null)
-            downloadFiles.addAll(result);
+        final List<DownloadFile> result = loadFileHistoryList();
+        initDownloadFiles(downloadFiles, result);
     }
 
     @SuppressWarnings({"unchecked"})
-    List<DownloadFile> loadListFromFile(final File srcFile, final boolean downloadOnStart, final boolean removeCompleted, boolean recheckOnStart) throws IOException {
-        LinkedList<DownloadFile> list = new LinkedList<DownloadFile>();
-        final Object o = context.getLocalStorage().load(srcFile.getName());
-        if (!(o instanceof ArrayListModel))
+    private List<DownloadFile> loadList(final File srcFile) throws IOException {
+        final List<DownloadFile> list = new LinkedList<DownloadFile>();
+        final LocalStorage localStorage = context.getLocalStorage();
+        if (!srcFile.exists()) {
             return list;
-        for (DownloadFile file : (ArrayListModel<DownloadFile>) o) {
+        }
+
+        final Object o = localStorage.load(FILES_LIST_XML);
+
+        if (o instanceof ArrayListModel) {
+            return (ArrayListModel<DownloadFile>) o;
+        }
+        return list;
+    }
+
+
+    private void initDownloadFiles(Collection<DownloadFile> list, Collection<DownloadFile> o) {
+        final boolean downloadOnStart = AppPrefs.getProperty(UserProp.DOWNLOAD_ON_APPLICATION_START, UserProp.DOWNLOAD_ON_APPLICATION_START_DEFAULT);
+        final boolean removeCompleted = AppPrefs.getProperty(UserProp.REMOVE_COMPLETED_DOWNLOADS, UserProp.REMOVE_COMPLETED_DOWNLOADS_DEFAULT) == UserProp.REMOVE_COMPLETED_DOWNLOADS_AT_STARTUP;
+        final boolean recheckOnStart = AppPrefs.getProperty(UserProp.RECHECK_FILES_ON_START, UserProp.RECHECK_FILES_ON_START_DEFAULT);
+
+        for (DownloadFile file : o) {
             final DownloadState state = file.getState();
             if (state == DownloadState.DELETED)
                 continue;
@@ -120,24 +138,18 @@ class FileListMaintainer {
             file.addPropertyChangeListener(dataManager);
             list.add(file);
         }
-        return list;
     }
 
-    void saveToFile(ArrayListModel<DownloadFile> downloadFiles) {
+    void saveToFile(Collection<DownloadFile> downloadFiles) {
         synchronized (saveFileLock) {
             logger.info("=====Saving queue into the XML file=====");
-            final LocalStorage localStorage = context.getLocalStorage();
-            File dstFile = new File(localStorage.getDirectory(), FILES_LIST_XML);
             try {
-                if (AppPrefs.getProperty(UserProp.MAKE_FILE_BACKUPS, UserProp.MAKE_FILE_BACKUPS_DEFAULT))
-                    FileUtils.makeBackup(dstFile);
-                localStorage.save(downloadFiles, FILES_LIST_XML);
-            } catch (IOException e) {
+                director.getDatabaseManager().saveCollection(downloadFiles);
+            } catch (Exception e) {
                 LogUtils.processException(logger, e);
             } finally {
                 logger.info("=====Finishing saving queue into the XML file=====");
             }
-
         }
     }
 
@@ -147,9 +159,9 @@ class FileListMaintainer {
             protected Object doInBackground() throws Exception {
                 Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
                 logger.info("--------saveListToBeansOnBackground------");
-                final ArrayListModel<DownloadFile> files;
+                final Collection<DownloadFile> files;
                 synchronized (dataManager.getLock()) {
-                    files = new ArrayListModel<DownloadFile>(downloadFiles);
+                    files = new ArrayList<DownloadFile>(downloadFiles);
                 }
 
                 saveToFile(files);

@@ -32,7 +32,8 @@ import org.java.plugin.util.IoUtil;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.ApplicationContext;
 
-import java.io.*;
+import java.io.File;
+import java.io.FilenameFilter;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -68,7 +69,7 @@ public class PluginsManager {
     public PluginsManager(ApplicationContext context, ManagerDirector director, final CountDownLatch countDownLatch) {
         this.context = context;
         this.director = director;
-        pluginMetaDataManager = new PluginMetaDataManager(context);
+        pluginMetaDataManager = new PluginMetaDataManager(director);
 
         this.context.getApplication().addExitListener(new Application.ExitListener() {
             @Override
@@ -216,7 +217,7 @@ public class PluginsManager {
 
             pluginManager.publishPlugins(getPluginLocations(plugins));
 
-            final Set<PluginMetaData> datas = pluginMetaDataManager.getItems();
+            final Collection<PluginMetaData> datas = pluginMetaDataManager.getItems();
             final Map<String, PluginMetaData> datasId = new HashMap<String, PluginMetaData>(datas.size());
             for (PluginMetaData data : datas) {
                 datasId.put(data.getId(), data);
@@ -268,7 +269,7 @@ public class PluginsManager {
     private File[] searchExistingPlugins() {
         final File pluginsDir = getPluginsDir();
         logger.info("Plugins dir: " + pluginsDir.getAbsolutePath());
-
+        initiatePluginsIfNeccessary(pluginsDir);
         return pluginsDir.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
@@ -291,66 +292,42 @@ public class PluginsManager {
                 logger.severe("Failed to delete file with same name as plugin directory: " + pluginsDir);
             }
         }
+
         if (!pluginsDir.exists()) {
             if (!pluginsDir.mkdirs()) {
                 logger.severe("Failed to create plugin directory: " + pluginsDir);
             }
         }
-        if (!isPluginsDirForCorrectVersion(pluginsDir)) {
-            logger.info("Deleting old plugins");
-            if (!IoUtil.emptyFolder(pluginsDir)) {
-                logger.severe("Failed to empty plugin directory");
-            }
-        }
-        // If the plugin directory is empty, extract the dist plugins there.
-        final String[] files = pluginsDir.list();
-        if (files != null && files.length == 0) {
-            logger.info("Extracting dist plugins");
-            final File pluginsDistFile = new File(Utils.getAppPath(), Consts.PLUGINS_DIST_FILE_NAME);
-            FileUtils.extractZipFileInto(pluginsDistFile, pluginsDir);
-            writePluginsDirVersionFile(pluginsDir);
-        }
         return pluginsDir;
     }
 
-    private boolean isPluginsDirForCorrectVersion(final File pluginsDir) {
-        BufferedReader reader = null;
-        try {
-            final File versionFile = new File(pluginsDir, Consts.PLUGINS_VERSION_FILE_NAME);
-            reader = new BufferedReader(new FileReader(versionFile));
-            final int version = Integer.parseInt(reader.readLine());
-            return version == MainApp.BUILD_REQUEST;
-        } catch (final Exception e) {
-            logger.warning("Failed to read plugin version file: " + e);
-            return false;
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (final Exception e) {
-                    LogUtils.processException(logger, e);
-                }
+    private void initiatePluginsIfNeccessary(final File pluginsDir) {
+        boolean extractPlugins = true;
+        if (isPluginsDirForCorrectVersion(pluginsDir)) {
+            extractPlugins = false;
+        } else {
+            logger.info("Deleting old plugins");
+            if (!IoUtil.emptyFolder(pluginsDir)) {
+                logger.severe("Failed to empty plugin directory");//never mind, we give a chance to rewrite plugins
             }
+        }
+        if (extractPlugins) {
+            logger.info("Extracting dist plugins");
+            final File pluginsDistFile = new File(Utils.getAppPath(), Consts.PLUGINS_DIST_FILE_NAME);
+            FileUtils.extractZipFileInto(pluginsDistFile, pluginsDir);
+            final File file = new File(pluginsDir, Consts.PLUGINS_VERSION_FILE_NAME);
+            //write plugins dir Version file
+            FileUtils.writeFileWithValue(file, String.valueOf(MainApp.BUILD_REQUEST));
         }
     }
 
-    private void writePluginsDirVersionFile(final File pluginsDir) {
-        OutputStream os = null;
-        try {
-            final File versionFile = new File(pluginsDir, Consts.PLUGINS_VERSION_FILE_NAME);
-            os = new FileOutputStream(versionFile);
-            os.write(String.valueOf(MainApp.BUILD_REQUEST).getBytes("UTF-8"));
-        } catch (final Exception e) {
-            logger.warning("Failed to write plugin version file: " + e);
-        } finally {
-            if (os != null) {
-                try {
-                    os.close();
-                } catch (final Exception e) {
-                    LogUtils.processException(logger, e);
-                }
-            }
+    @SuppressWarnings("SimplifiableIfStatement")
+    private boolean isPluginsDirForCorrectVersion(final File pluginsDir) {
+        final File versionFile = new File(pluginsDir, Consts.PLUGINS_VERSION_FILE_NAME);
+        if (!versionFile.exists() || versionFile.length() <= 0) {
+            return false;
         }
+        return Integer.valueOf(MainApp.BUILD_REQUEST).equals(Integer.valueOf(Utils.loadFile(versionFile)));
     }
 
     private void disablePluginsInConflict() {

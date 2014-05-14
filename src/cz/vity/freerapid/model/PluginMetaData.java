@@ -1,15 +1,15 @@
 package cz.vity.freerapid.model;
 
 import cz.vity.freerapid.core.Consts;
+import cz.vity.freerapid.gui.managers.interfaces.Identifiable;
 import cz.vity.freerapid.utilities.DescriptorUtils;
-import cz.vity.freerapid.utilities.LogUtils;
 import org.java.plugin.registry.PluginDescriptor;
 import org.jdesktop.application.AbstractBean;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.util.Locale;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -17,44 +17,60 @@ import java.util.regex.Pattern;
 /**
  * @author Ladislav Vitasek
  */
-final public class PluginMetaData extends AbstractBean implements Comparable<PluginMetaData> {
+@Entity
+final public class PluginMetaData extends AbstractBean implements Identifiable<Long>, Comparable<PluginMetaData> {
     private final static Logger logger = Logger.getLogger(PluginMetaData.class.getName());
     private final static Pattern NOPE_URL_MATCHER = Pattern.compile("&&&XXX&&&");
 
+    @Id
+    @GeneratedValue
+    private Long dbId;
+
+    //persisted info
     private String id;
     private boolean updatesEnabled;
     private boolean enabled;
-    private Pattern supportedURL;
-    private PluginDescriptor descriptor;
-    private boolean hasOptions;
-    private String services;
-    private String www;
-    private boolean premium;
-    private boolean favicon;
-    private boolean removeCompleted;
-    private boolean resumeSupported;
-    private int maxParallelDownloads;
     private int pluginPriority;
     private int maxAllowedDownloads;
     private boolean clipboardMonitored;
+    private boolean removeCompleted;
+
+    @Transient
+    private Pattern supportedURL;
+    @Transient
+    private PluginDescriptor descriptor;
+    @Transient
+    private boolean hasOptions;
+    @Transient
+    private String services;
+    @Transient
+    private String www;
+    @Transient
+    private boolean premium;
+    @Transient
+    private boolean favicon;
+    @Transient
+    private boolean resumeSupported;
+    @Transient
+    private int maxParallelDownloads;
+    @Transient
     private boolean libraryPlugin;
 
-    static {
-        try {
-            BeanInfo info = Introspector.getBeanInfo(DownloadFile.class);
-            PropertyDescriptor[] propertyDescriptors =
-                    info.getPropertyDescriptors();
-            for (PropertyDescriptor pd : propertyDescriptors) {
-                final Object name = pd.getName();
-                if ("supportedURL".equals(name) || "descriptor".equals(name) || "www".equals(name) || "services".equals(name) || "hasOptions".equals(name) || "premium".equals(name) || "favicon".equals(name) || "resumeSupported".equals(name) || "maxParallelDownloads".equals(name) || "libraryPlugin".equals(name)) {
-                    pd.setValue("transient", Boolean.TRUE);
-                }
-            }
-        } catch (IntrospectionException e) {
-            LogUtils.processException(logger, e);
-        }
-    }
-
+//    static {
+//        try {
+//            BeanInfo info = Introspector.getBeanInfo(DownloadFile.class);
+//            PropertyDescriptor[] propertyDescriptors =
+//                    info.getPropertyDescriptors();
+//            for (PropertyDescriptor pd : propertyDescriptors) {
+//                final Object name = pd.getName();
+//                if ("supportedURL".equals(name) || "descriptor".equals(name) || "www".equals(name) || "services".equals(name) || "hasOptions".equals(name) || "premium".equals(name) || "favicon".equals(name) || "resumeSupported".equals(name) || "maxParallelDownloads".equals(name) || "libraryPlugin".equals(name)) {
+//                    pd.setValue("transient", Boolean.TRUE);
+//                }
+//            }
+//        } catch (IntrospectionException e) {
+//            LogUtils.processException(logger, e);
+//        }
+//    }
 
     public PluginMetaData() {
         //default values
@@ -112,6 +128,11 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
      */
     public boolean isSupported(final String url) {
         return !isLibraryPlugin() && supportedURL.matcher(url).matches();
+    }
+
+
+    public Long getIdentificator() {
+        return dbId;
     }
 
     public String getId() {
@@ -203,7 +224,8 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
 
     public String toString() {
         return "PluginMetaData{" +
-                "id='" + id + '\'' + " Version=" + getVersion() +
+                "dbId=" + dbId +
+                " id='" + id + '\'' + " Version=" + getVersion() +
                 '}';
     }
 
@@ -254,4 +276,6 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
         this.clipboardMonitored = clipboardMonitored;
         firePropertyChange("clipboardMonitored", oldValue, clipboardMonitored);
     }
+
+
 }

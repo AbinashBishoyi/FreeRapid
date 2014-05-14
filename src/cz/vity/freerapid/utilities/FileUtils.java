@@ -360,4 +360,24 @@ public class FileUtils {
         return !failed;
     }
 
+
+    public static void writeFileWithValue(final File file, final String stringValue) {
+        OutputStream os = null;
+        try {
+            os = new FileOutputStream(file);
+            os.write(stringValue.getBytes("UTF-8"));
+        } catch (final Exception e) {
+            logger.warning("Failed to write plugin version file: " + e);
+        } finally {
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (final Exception e) {
+                    LogUtils.processException(logger, e);
+                }
+            }
+        }
+    }
+
+
 }

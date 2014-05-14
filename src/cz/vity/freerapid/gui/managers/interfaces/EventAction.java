@@ -1,4 +1,4 @@
-package cz.vity.freerapid.gui.managers;
+package cz.vity.freerapid.gui.managers.interfaces;
 
 import org.jdesktop.application.ApplicationContext;
 

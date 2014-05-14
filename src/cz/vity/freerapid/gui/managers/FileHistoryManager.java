@@ -38,49 +38,12 @@ public class FileHistoryManager extends AbstractBean {
     }
 
     private void init() {
-//        if (AppPrefs.getProperty(UserProp.AUTOSAVE_ENABLED, UserProp.AUTOSAVE_ENABLED_DEFAULT)) {
-//            PropertyAdapter<FileHistoryManager> adapter = new PropertyAdapter<FileHistoryManager>(this, "dataChanged", true);
-//
-//            final int time = AppPrefs.getProperty(UserProp.AUTOSAVE_TIME, UserProp.AUTOSAVE_TIME_DEFAULT);
-//
-//            DelayedReadValueModel delayedReadValueModel = new DelayedReadValueModel(adapter, time * 1000, true);
-//            delayedReadValueModel.addValueChangeListener(new PropertyChangeListener() {
-//
-//                public void propertyChange(PropertyChangeEvent evt) {
-//                    saveListToFileOnBackground();
-//                }
-//            });
-//        }
 
     }
 
-//    private void saveListToFileOnBackground() {
-//        //assert loaded;
-//        final TaskService service = director.getTaskServiceManager().getTaskService(TaskServiceManager.WORK_WITH_FILE_SERVICE);
-//        service.execute(new Task(context.getApplication()) {
-//            protected Object doInBackground() throws Exception {
-//                Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-//                final ArrayListModel<FileHistoryItem> files;
-//
-//                files = new ArrayListModel<FileHistoryItem>(getItems());//getItems je synchronizovana
-//
-//                saveToFile(files);
-//
-//                return null;
-//            }
-//
-//            @Override
-//            protected void failed(Throwable cause) {
-//                LogUtils.processException(logger, cause);
-//            }
-//        });
-//
-//    }
-
-
     @SuppressWarnings({"unchecked"})
     private List<FileHistoryItem> loadList(final File srcFile) throws IOException {
-        final LinkedList<FileHistoryItem> list = new LinkedList<FileHistoryItem>();
+        final List<FileHistoryItem> list = new LinkedList<FileHistoryItem>();
         final LocalStorage localStorage = context.getLocalStorage();
         if (!srcFile.exists()) {
             return list;
@@ -101,7 +64,7 @@ public class FileHistoryManager extends AbstractBean {
     private List<FileHistoryItem> loadFileHistoryList() {
         List<FileHistoryItem> result = null;
         final File srcFile = new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML);
-        if (srcFile.exists()) {
+        if (srcFile.exists()) { //extract from old file
             try {
                 result = loadList(srcFile);
             } catch (Exception e) {
@@ -117,12 +80,15 @@ public class FileHistoryManager extends AbstractBean {
                 }
             }
             if (result != null) {
+                //re-save into database
                 director.getDatabaseManager().saveCollection(result);
             } else result = new ArrayList<FileHistoryItem>();
+            //rename old file history file into another one, so we won't import it again next time
             //noinspection ResultOfMethodCallIgnored
             srcFile.renameTo(new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML + ".imported"));
             return result;
         } else {
+            //load from database
             return director.getDatabaseManager().loadAll(FileHistoryItem.class);
         }
     }
@@ -130,6 +96,7 @@ public class FileHistoryManager extends AbstractBean {
     public void addHistoryItem(final DownloadFile file, final File savedAs) {
         final FileHistoryItem item = new FileHistoryItem(file, savedAs);
         director.getDatabaseManager().saveOrUpdate(item);
+        fireDataAdded(item);
     }
 
     public void clearHistory() {
@@ -142,10 +109,9 @@ public class FileHistoryManager extends AbstractBean {
     }
 
 
-
-//    private void fireDataChanged() {
-//        firePropertyChange("dataChanged", this.dataChanged, ++this.dataChanged);
-//    }
+    private void fireDataAdded(FileHistoryItem dataAdded) {
+        firePropertyChange("dataAdded", null, dataAdded);
+    }
 //
 //
 }

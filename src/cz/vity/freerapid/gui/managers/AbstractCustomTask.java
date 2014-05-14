@@ -1,9 +1,11 @@
 package cz.vity.freerapid.gui.managers;
 
+import cz.vity.freerapid.gui.managers.interfaces.CustomTask;
+
 /**
  * @author Vity
  */
-public abstract class AbstractCustomTask implements CustomTask{
+public abstract class AbstractCustomTask implements CustomTask {
     protected boolean enabled = true;
 
     public AbstractCustomTask() {

@@ -4,6 +4,7 @@ import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.FileTypeIconProvider;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.DownloadTask;
+import cz.vity.freerapid.gui.managers.interfaces.Identifiable;
 import cz.vity.freerapid.plugins.container.FileInfo;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
@@ -12,6 +13,9 @@ import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
 import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.application.AbstractBean;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.beans.*;
 import java.io.File;
 import java.net.URL;
@@ -26,9 +30,14 @@ import java.util.logging.Logger;
  * @author Vity
  */
 
-public class DownloadFile extends AbstractBean implements PropertyChangeListener, HttpFile {
+@Entity
+public class DownloadFile extends AbstractBean implements Identifiable, PropertyChangeListener, HttpFile {
     private final static Logger logger = Logger.getLogger(DownloadFile.class.getName());
 
+
+    @Id
+    @GeneratedValue
+    private Long dbId;
     private volatile long fileSize;
     private volatile DownloadTask task = null;
     private volatile DownloadState state = DownloadState.PAUSED;
@@ -67,7 +76,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
                     info.getPropertyDescriptors();
             for (PropertyDescriptor pd : propertyDescriptors) {
                 final Object name = pd.getName();
-                if ("task".equals(name) || "speed".equals(name) || "shortTimeAvgSpeed".equals(name) || "connectionSettings".equals(name) || "tokens".equals(name) || "takenTokens".equals(name)) {
+                if ("task".equals(name) || "speed".equals(name) || "dbId".equals(name) || "shortTimeAvgSpeed".equals(name) || "connectionSettings".equals(name) || "tokens".equals(name) || "takenTokens".equals(name)) {
                     pd.setValue("transient", Boolean.TRUE);
                 }
             }
@@ -649,5 +658,10 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
         final boolean oldValue = this.resumeSupported;
         this.resumeSupported = resumeSupported;
         firePropertyChange("resumeSupported", oldValue, this.resumeSupported);
+    }
+
+    @Override
+    public Object getIdentificator() {
+        return dbId;
     }
 }

@@ -1,5 +1,6 @@
 package cz.vity.freerapid.gui.managers;
 
+import cz.vity.freerapid.gui.managers.interfaces.Identifiable;
 import cz.vity.freerapid.utilities.LogUtils;
 
 import javax.persistence.EntityManager;
@@ -15,13 +16,12 @@ import java.util.logging.Logger;
  * @author Vity
  */
 public class DatabaseManager {
-    private EntityManager entityManager;
     private final EntityManagerFactory factory;
     private final static Logger logger = Logger.getLogger(DatabaseManager.class.getName());
 
 
     public EntityManager getEntityManager() {
-        return entityManager == null ? entityManager = factory.createEntityManager() : entityManager;
+        return factory.createEntityManager();
     }
 
     public DatabaseManager(ManagerDirector director) {
@@ -32,14 +32,6 @@ public class DatabaseManager {
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override
             public void run() {
-                if (entityManager != null) {
-                    try {
-                        entityManager.close();
-                    } catch (Exception e) {
-                        LogUtils.processException(logger, e);
-                        //ignore
-                    }
-                }
                 if (factory != null) {
                     try {
                         factory.close();
@@ -52,22 +44,27 @@ public class DatabaseManager {
         }));
     }
 
-    public void saveCollection(Collection entityCollection) {
+    public synchronized void saveCollection(Collection<? extends Identifiable> entityCollection) {
         final EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
-            for (Object o : entityCollection) {
-                em.persist(o);
+            for (Identifiable o : entityCollection) {
+                if (o.getIdentificator() == null) {
+                    em.persist(o);
+                } else {
+                    em.merge(o);
+                }
             }
             // Operations that modify the database should come here.
             em.getTransaction().commit();
         } finally {
             if (em.getTransaction().isActive())
                 em.getTransaction().rollback();
+            em.close();
         }
     }
 
-    public void removeCollection(Collection entityCollection) {
+    public synchronized void removeCollection(Collection entityCollection) {
         final EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
@@ -79,11 +76,12 @@ public class DatabaseManager {
         } finally {
             if (em.getTransaction().isActive())
                 em.getTransaction().rollback();
+            em.close();
         }
     }
 
 
-    public int removeAll(Class entityClass) {
+    public synchronized int removeAll(Class entityClass) {
         int affectedResult = 0;
         final EntityManager em = getEntityManager();
         try {
@@ -94,30 +92,42 @@ public class DatabaseManager {
         } finally {
             if (em.getTransaction().isActive())
                 em.getTransaction().rollback();
+            em.close();
         }
         return affectedResult;
     }
 
-    public void saveOrUpdate(Object entity) {
+    public synchronized void saveOrUpdate(Identifiable entity) {
         final EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
-            if (em.contains(entity)) {
-                em.merge(entity);
-            } else {
+            if (entity.getIdentificator() == null) {
                 em.persist(entity);
+            } else {
+                em.merge(entity);
             }
             // Operations that modify the database should come here.
             em.getTransaction().commit();
         } finally {
-            if (em.getTransaction().isActive())
-                em.getTransaction().rollback();
+            if (em.getTransaction().isActive()) {
+                try {
+                    em.getTransaction().rollback();
+                } catch (Exception e) {
+                    //ignore
+                }
+            }
+            em.close();
         }
     }
 
-    public <T> List<T> loadAll(Class<T> entityClass) {
+    public synchronized <T> List<T> loadAll(Class<T> entityClass) {
         final EntityManager em = getEntityManager();
-        final TypedQuery<T> query = em.createQuery("SELECT c FROM " + entityClass.getName() + "  c", entityClass);
-        return query.getResultList();
+        try {
+            final TypedQuery<T> query = em.createQuery("SELECT c FROM " + entityClass.getName() + "  c", entityClass);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
     }
+
 }

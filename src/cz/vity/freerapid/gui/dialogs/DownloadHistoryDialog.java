@@ -56,8 +56,9 @@ import java.util.regex.Pattern;
  * @author Vity
  */
 @SuppressWarnings("UnusedDeclaration")
-public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, ListSelectionListener {
+public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, ListSelectionListener, PropertyChangeListener {
     private final static Logger logger = Logger.getLogger(DownloadHistoryDialog.class.getName());
+    private static final String DATA_ADDED_PROPERTY = "dataAdded";
     private FileHistoryManager manager;
     private static final int COLUMN_DATE = 0;
     private static final int COLUMN_NAME = 1;
@@ -77,7 +78,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         super(owner);
         this.director = director;
         this.manager = director.getFileHistoryManager();
-        this.setName("DonwloadHistoryDialog");
+        this.setName("DownloadHistoryDialog");
         this.exampleSearchString = getResourceMap().getString("exampleSearchString");
         try {
             initComponents();
@@ -116,6 +117,8 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         registerKeyboardAction("copyURL");
 
         updateActions();
+
+        manager.addPropertyChangeListener("dataAdded", this);
 
         pack();
         locateOnOpticalScreenCenter(this);
@@ -260,6 +263,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
 
     @Override
     public void doClose() {
+        manager.removePropertyChangeListener(DATA_ADDED_PROPERTY, this);
         if (AppPrefs.getProperty(UserProp.CONTAIN_DOWNLOADS_FILTER, exampleSearchString).equals(exampleSearchString))
             AppPrefs.storeProperty(UserProp.CONTAIN_DOWNLOADS_FILTER, "");
         super.doClose();
@@ -652,6 +656,12 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
             }
         }
         return min;
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        final CustomTableModel model = (CustomTableModel) table.getModel();
+        model.model.add((FileHistoryItem) evt.getNewValue());
     }
 
 
