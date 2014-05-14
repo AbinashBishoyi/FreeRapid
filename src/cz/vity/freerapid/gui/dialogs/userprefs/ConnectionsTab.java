@@ -266,14 +266,15 @@ public class ConnectionsTab extends UserPreferencesTab {
                     },
                     new RowSpec[]{
                             FormFactory.DEFAULT_ROWSPEC,
+                            FormFactory.UNRELATED_GAP_ROWSPEC,
                             FormFactory.DEFAULT_ROWSPEC,
                             FormFactory.NARROW_LINE_GAP_ROWSPEC
                     }), panelConnections1);
 
             panelConnections1Builder.add(labelMaxConcurrentDownloads, cc.xy(3, 1));
             panelConnections1Builder.add(spinnerMaxConcurrentDownloads, cc.xy(5, 1));
-            panelConnections1Builder.add(checkUseDefaultConnection, cc.xyw(3, 2, 5));
-            panelConnections1Builder.add(btnSelectConnectionProxy, cc.xy(9, 2));
+            panelConnections1Builder.add(checkUseDefaultConnection, cc.xyw(3, 3, 5));
+            panelConnections1Builder.add(btnSelectConnectionProxy, cc.xy(9, 3));
         }
 
         //======== panelProxySettings ========
