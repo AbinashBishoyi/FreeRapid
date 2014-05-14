@@ -16,12 +16,13 @@ import java.util.logging.Logger;
 
 /**
  * @author Ladislav Vitasek
+ * @author ntoskrnl
  */
-final class NirCmdUtils extends AbstractSystemCommander {
-    private final static Logger logger = Logger.getLogger(NirCmdUtils.class.getName());
+final class WindowsCommander extends AbstractSystemCommander {
+    private final static Logger logger = Logger.getLogger(WindowsCommander.class.getName());
     private final static String PATH = "tools/nircmd/nircmd.exe";
 
-    NirCmdUtils() {
+    WindowsCommander() {
     }
 
     private boolean createDesktopShortcut() {
@@ -84,33 +85,26 @@ final class NirCmdUtils extends AbstractSystemCommander {
     }
 
     @Override
-    public boolean shutDown(OSCommand shutDownCommand, boolean force) {
+    public boolean shutDown(final OSCommand shutDownCommand, final boolean force) {
         if (!OSCommand.shutDownCommands.contains(shutDownCommand))
             throw new IllegalArgumentException("OS command " + shutDownCommand + " is not a shut down command");
         if (shutDownCommand == OSCommand.RESTART_APPLICATION) {
             return startNewApplicationInstance();
         }
-        String command = "";
         switch (shutDownCommand) {
             case HIBERNATE:
-                command = "hibernate";
-                break;
+                return WindowsShutdownUtils.hibernate();
             case STANDBY:
-                command = "standby";
-                break;
+                return WindowsShutdownUtils.standby();
             case REBOOT:
-                command = "exitwin reboot";
-                break;
+                return WindowsShutdownUtils.reboot(force);
             case SHUTDOWN:
-                command = "exitwin shutdown";
-                break;
+                return WindowsShutdownUtils.shutdown(force);
             default:
                 assert false;
                 break;
         }
-        if (force)
-            command += " force";
-        return runCommand("cmdwait 2200 " + command, false);
+        return false;
     }
 
     @Override
@@ -183,13 +177,15 @@ final class NirCmdUtils extends AbstractSystemCommander {
     }
 
     private static String getWindowTitle(final WinDef.HWND hwnd) {
-        final char[] name = new char[128];
-        final int len = User32.INSTANCE.GetWindowText(hwnd, name, name.length);
+        int len = User32.INSTANCE.GetWindowTextLength(hwnd);
         if (len > 0) {
-            return new String(name, 0, len);
-        } else {
-            return null;
+            final char[] name = new char[Math.min(len, 2048)];
+            len = User32.INSTANCE.GetWindowText(hwnd, name, name.length);
+            if (len > 0) {
+                return new String(name, 0, len);
+            }
         }
+        return null;
     }
 
 }

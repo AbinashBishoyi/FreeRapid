@@ -1,13 +1,13 @@
-/**
- * @author Ladislav Vitasek
- */
 package cz.vity.freerapid.utilities.os;
 
 import cz.vity.freerapid.utilities.Utils;
 import org.jdesktop.application.ApplicationContext;
 
+/**
+ * @author Ladislav Vitasek
+ */
 final public class SystemCommanderFactory {
-    private static SystemCommanderFactory ourInstance = new SystemCommanderFactory();
+    private final static SystemCommanderFactory ourInstance = new SystemCommanderFactory();
     private SystemCommander commander = null;
 
     public static SystemCommanderFactory getInstance() {
@@ -19,10 +19,9 @@ final public class SystemCommanderFactory {
 
     public SystemCommander getSystemCommanderInstance(ApplicationContext context) {
         if (commander == null) {
-//            commander = new LinuxCmdUtils(context.getLocalStorage().getDirectory());
-            if (Utils.isWindows())
-                commander = new NirCmdUtils();
-            else {
+            if (Utils.isWindows()) {
+                commander = new WindowsCommander();
+            } else {
                 commander = new LinuxCmdUtils(context.getLocalStorage().getDirectory());
             }
         }
