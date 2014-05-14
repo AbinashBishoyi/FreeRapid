@@ -75,31 +75,33 @@ public final class MethodBuilder {
 
     /**
      * Getter for property 'ajax' - whether to add AJAX headers to the method (X-Requested-With: XMLHttpRequest)
+     * @since 0.87
      * @return True if AJAX headers are on
      */
-   public boolean isAjax() {
-      return ajax;
-   }        
-    
-   /**
-    * Sets AJAX headers for the method to be on.  (X-Requested-With: XMLHttpRequest)
-    * @return builder instance
-    */
-   public MethodBuilder setAjax() {
-      return setAjax(true);
-   }
-   
-   /**
-    * Sets AJAX headers for the method on/off.  (X-Requested-With: XMLHttpRequest)
-    * @param ajax True if the method is executed by AJAX - XMLHttpRequest webbrowser object
-    * @return builder instance
-    */
-   public MethodBuilder setAjax(boolean ajax) {
-      this.ajax = ajax;
-      return this;
-   }
-    
-    
+    public boolean isAjax() {
+        return ajax;
+    }
+
+    /**
+     * Sets AJAX headers for the method to be on.  (X-Requested-With: XMLHttpRequest)
+     * @since 0.87
+     * @return builder instance
+     */
+    public MethodBuilder setAjax() {
+        return setAjax(true);
+    }
+
+    /**
+     * Sets AJAX headers for the method on/off.  (X-Requested-With: XMLHttpRequest)
+     * @param ajax True if the method is executed by AJAX - XMLHttpRequest webbrowser object
+     * @since 0.87
+     * @return builder instance
+     */
+    public MethodBuilder setAjax(boolean ajax) {
+        this.ajax = ajax;
+        return this;
+    }
+
 
     /**
      * Returns actual set POST or GET method extracted from result. <br /> Its value is used in <code>toMethod()</code> method.<br/>
@@ -688,9 +690,9 @@ public final class MethodBuilder {
             throw new BuildMethodException("Cannot create URI");
         }
         uri = checkURI(s);
-        HttpMethod getMethod=client.getGetMethod(uri);
-        if(ajax) {
-           getMethod.addRequestHeader("X-Requested-With", "XMLHttpRequest");
+        HttpMethod getMethod = client.getGetMethod(uri);
+        if (ajax) {
+            getMethod.addRequestHeader("X-Requested-With", "XMLHttpRequest");
         }
         return getMethod;
     }
@@ -880,8 +882,8 @@ public final class MethodBuilder {
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
             postMethod.addParameter(entry.getKey(), (encodeParameters) ? encode(entry.getValue()) : entry.getValue());
         }
-        if(ajax) {
-           postMethod.addRequestHeader("X-Requested-With", "XMLHttpRequest");
+        if (ajax) {
+            postMethod.addRequestHeader("X-Requested-With", "XMLHttpRequest");
         }
         return postMethod;
     }

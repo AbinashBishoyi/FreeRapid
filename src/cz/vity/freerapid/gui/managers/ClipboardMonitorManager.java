@@ -95,7 +95,9 @@ public class ClipboardMonitorManager extends Thread implements ClipboardOwner {
                     }
                 }
             } catch (IllegalStateException e) {
-                LogUtils.processException(logger, e);
+                //ignore
+                //  usually java.lang.IllegalStateException: cannot open system clipboard 
+                // LogUtils.processException(logger, e);
             } catch (ArrayIndexOutOfBoundsException e) {
                 LogUtils.processException(logger, e);
             } catch (NullPointerException e) {
