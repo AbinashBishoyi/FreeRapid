@@ -2,13 +2,12 @@ package cz.vity.freerapid.utilities;
 
 import cz.vity.freerapid.core.Consts;
 import cz.vity.freerapid.core.MainApp;
+import cz.vity.freerapid.core.QuietMode;
 import org.jdesktop.application.ResourceManager;
 import org.jdesktop.application.ResourceMap;
 
 import java.applet.Applet;
 import java.applet.AudioClip;
-import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,16 +50,13 @@ public class Sound {
         return Applet.newAudioClip(url);
     }
 
-    public static AudioClip playSound(final String clip) {
-        final AudioClip audioClip = getCachedAudioClip(clip);
-        if (audioClip == null)
-            logger.warning("Audioclip " + clip + " was not found probably.");
-        playSound(audioClip);
-        return audioClip;
+    public static void playSound(final String clip) {
+        if (!QuietMode.getInstance().isSoundsDisabled() || !QuietMode.getInstance().isActive()) {
+            final AudioClip audioClip = getCachedAudioClip(clip);
+            if (audioClip == null)
+                logger.warning("Unable to load " + clip);
+            playSound(audioClip);
+        }
     }
 
-    public static void playSound(File clip) throws MalformedURLException {
-        final AudioClip audioClip = Applet.newAudioClip(clip.toURI().toURL());
-        playSound(audioClip);
-    }
 }

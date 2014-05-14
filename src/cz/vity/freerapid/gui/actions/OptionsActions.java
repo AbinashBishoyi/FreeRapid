@@ -63,6 +63,11 @@ public class OptionsActions extends AbstractBean {
     }
 
     @Action
+    public void quietModeAction() {
+        AppPrefs.negateProperty(UserProp.QUIET_MODE_ENABLED, UserProp.QUIET_MODE_ENABLED_DEFAULT);
+    }
+
+    @Action
     public void globalSpeedLimitAction() {
         AppPrefs.negateProperty(UserProp.SPEED_LIMIT_ENABLED, UserProp.SPEED_LIMIT_ENABLED_DEFAULT);
     }

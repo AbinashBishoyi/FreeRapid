@@ -100,6 +100,13 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
                     AppPrefs.negateProperty(UserProp.CLIPBOARD_MONITORING, UserProp.CLIPBOARD_MONITORING_DEFAULT);
                 }
             });
+            JLabel quietMode = new JLabel();
+            quietMode.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    AppPrefs.negateProperty(UserProp.QUIET_MODE_ENABLED, UserProp.QUIET_MODE_ENABLED_DEFAULT);
+                }
+            });
 
             taskPCL = new PropertyChangeListener() {
                 public void propertyChange(PropertyChangeEvent e) {
@@ -119,6 +126,8 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
 
             clipboardMonitoring.setName("labelClipboardMonitoring");
             resourceMap.injectComponent(clipboardMonitoring);
+            quietMode.setName("labelQuietMode");
+            resourceMap.injectComponent(quietMode);
 
 
             statusbar.setName("statusbarPanel");
@@ -130,6 +139,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
             //indicator.setPreferredSize(new Dimension(100, BAR_HEIGHT));
             infoLabel.setPreferredSize(new Dimension(360, BAR_HEIGHT));
             clipboardMonitoring.setPreferredSize(new Dimension(17, BAR_HEIGHT));
+            quietMode.setPreferredSize(new Dimension(17, BAR_HEIGHT));
             progress.setPreferredSize(new Dimension(progress.getPreferredSize().width + 35, BAR_HEIGHT));
             progress.setVisible(false);
             director.getMenuManager().getMenuBar().addPropertyChangeListener("selectedText", this);
@@ -141,8 +151,10 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
             initSpeedBar(speedBarPanel, resourceMap);
 
             PropertyConnector.connectAndUpdate(BindUtils.getPrefsValueModel(UserProp.CLIPBOARD_MONITORING, UserProp.CLIPBOARD_MONITORING_DEFAULT), clipboardMonitoring, "enabled");
+            PropertyConnector.connectAndUpdate(BindUtils.getPrefsValueModel(UserProp.QUIET_MODE_ENABLED, UserProp.QUIET_MODE_ENABLED_DEFAULT), quietMode, "enabled");
 
             statusbar.add(clipboardMonitoring, JXStatusBar.Constraint.ResizeBehavior.FIXED);
+            statusbar.add(quietMode, JXStatusBar.Constraint.ResizeBehavior.FIXED);
             statusbar.add(speedBarPanel, JXStatusBar.Constraint.ResizeBehavior.FIXED);
             statusbar.add(progress, JXStatusBar.Constraint.ResizeBehavior.FIXED);
 

@@ -5,8 +5,6 @@ package cz.vity.freerapid.core;
  */
 final public class UserProp {
 
-
-
     private UserProp() {
     }
 
@@ -335,13 +333,32 @@ final public class UserProp {
 
     public static final String SEARCH_SUBTITLES_LANGUAGE = "searchSubtitlesLanguage";
 
-
     public static final String RECONNECT_SCRIPT = "reconnectScript";
     public static final String RECONNECT_SCRIPT_ENABLED = "reconnectScriptEnabled";
     public static final boolean RECONNECT_SCRIPT_ENABLED_DEFAULT = true;
 
     public static final String COMBINED_DOWNLOADING = "combinedDownloading";
     public static final boolean COMBINED_DOWNLOADING_DEFAULT = true;
+
+    public static final String QUIET_MODE_ENABLED = "quietModeEnabled";
+    public static final boolean QUIET_MODE_ENABLED_DEFAULT = false;
+    public static final String QUIET_MODE_ACTIVATION_MODE = "quietModeActivationMode";
+    public static final String QUIET_MODE_ACTIVATION_ALWAYS = "always";
+    public static final String QUIET_MODE_ACTIVATION_WHEN_WINDOWS_FOUND = "whenWindowsFound";
+    public static final String QUIET_MODE_ACTIVATION_MODE_DEFAULT = QUIET_MODE_ACTIVATION_ALWAYS;
+    public static final String QUIET_MODE_ACTIVATION_STRINGS = "quietModeActivationStrings";
+    public static final String QUIET_MODE_ACTIVATION_STRINGS_DEFAULT = "VLC media player|iTunes|Call of Duty";
+    public static final String QUIET_MODE_CASE_SENSITIVE_SEARCH = "quietModeCaseSensitiveSearch";
+    public static final boolean QUIET_MODE_CASE_SENSITIVE_SEARCH_DEFAULT = false;
+    public static final String QUIET_MODE_NO_SOUNDS = "quietModeNoSounds";
+    public static final boolean QUIET_MODE_NO_SOUNDS_DEFAULT = true;
+    public static final String QUIET_MODE_NO_CAPTCHA = "quietModeNoCaptcha";
+    public static final boolean QUIET_MODE_NO_CAPTCHA_DEFAULT = true;
+    public static final String QUIET_MODE_NO_CONFIRM_DIALOGS = "quietModeNoConfirmDialogs";
+    public static final boolean QUIET_MODE_NO_CONFIRM_DIALOGS_DEFAULT = true;
+    public static final String QUIET_MODE_PLAY_SOUND_ON_ACTIVATE = "quietModePlaySoundOnActivate";
+    public static final boolean QUIET_MODE_PLAY_SOUND_ON_ACTIVATE_DEFAULT = false;
+
 
 }
 

@@ -124,7 +124,8 @@ public class MenuManager {
                 "options",
                 MENU_SEPARATOR,
                 CHECKED + "monitorClipboardAction",
-                //      CHECKED + "globalLimitSpeedAction",
+                MENU_SEPARATOR,
+                CHECKED + "quietModeAction",
                 MENU_SEPARATOR,
                 CHECKED + "globalSpeedLimitAction",
                 MENU_SEPARATOR,
@@ -222,6 +223,7 @@ public class MenuManager {
         PropertyConnector.connectAndUpdate(BindUtils.getPrefsValueModel(UserProp.SHOW_COMPLETED, UserProp.SHOW_COMPLETED_DEFAULT), map.get("showCompletedAction"), "selected");
         PropertyConnector.connectAndUpdate(BindUtils.getPrefsValueModel(UserProp.SPEED_LIMIT_ENABLED, UserProp.SPEED_LIMIT_ENABLED_DEFAULT), map.get("globalLimitSpeedAction"), "selected");
         PropertyConnector.connectAndUpdate(BindUtils.getPrefsValueModel(UserProp.CLIPBOARD_MONITORING, UserProp.CLIPBOARD_MONITORING_DEFAULT), map.get("monitorClipboardAction"), "selected");
+        PropertyConnector.connectAndUpdate(BindUtils.getPrefsValueModel(UserProp.QUIET_MODE_ENABLED, UserProp.QUIET_MODE_ENABLED_DEFAULT), map.get("quietModeAction"), "selected");
 
         final JRootPane rootPane = director.getMainFrame().getRootPane();
         rootPane.registerKeyboardAction(Swinger.getAction("showDownloadHistoryAction"), SwingUtils.getCtrlKeyStroke(KeyEvent.VK_H), JComponent.WHEN_IN_FOCUSED_WINDOW);

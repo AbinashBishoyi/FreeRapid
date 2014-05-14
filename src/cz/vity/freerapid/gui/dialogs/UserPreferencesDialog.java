@@ -99,7 +99,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
 
     private static enum Card {
-        CARD1, CARD2, CARD3, CARD4, CARD5, CARD6
+        CARD1, CARD2, CARD3, CARD4, CARD5, CARD6, CARD7
     }
 
     public UserPreferencesDialog(Frame owner, ApplicationContext context) throws Exception {
@@ -180,24 +180,8 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         inject();
         buildGUI();
         buildModels();
-
-        setAction(btnOK, "okBtnAction");
-        setAction(btnCancel, "cancelBtnAction");
-        setAction(btnSelectConnectionProxy, "btnSelectConnectionProxy");
-        setAction(btnCreateDesktopShortcut, "createDesktopShortcut");
-        setAction(btnCreateQuickLaunchShortcut, "createQuickLaunchShortcut");
-        setAction(btnCreateStartMenuShortcut, "createStartMenuShortcut");
-        setAction(btnCreateStartupShortcut, "createStartupShortcut");
-        setAction(btnApplyLookAndFeel, "applyLookAndFeelAction");
-
-        setAction(btnPluginOptions, "btnPluginOptionsAction");
-        setAction(btnResetDefaultPluginServer, "btnResetDefaultPluginServerAction");
-        setAction(btnUpdatePlugins, "btnUpdatePluginsAction");
-
-        //btnApplyLookAndFeel.setVisible(false);
-
+        setActions();
         initPluginTable();
-
         setDefaultValues();
         Card card;
         try {
@@ -209,8 +193,22 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         pack();
         setResizable(true);
         locateOnOpticalScreenCenter(this);
+    }
 
-
+    private void setActions() {
+        setAction(btnOK, "okBtnAction");
+        setAction(btnCancel, "cancelBtnAction");
+        setAction(btnSelectConnectionProxy, "btnSelectConnectionProxy");
+        setAction(btnCreateDesktopShortcut, "createDesktopShortcut");
+        setAction(btnCreateQuickLaunchShortcut, "createQuickLaunchShortcut");
+        setAction(btnCreateStartMenuShortcut, "createStartMenuShortcut");
+        setAction(btnCreateStartupShortcut, "createStartupShortcut");
+        setAction(btnApplyLookAndFeel, "applyLookAndFeelAction");
+        setAction(btnPluginOptions, "btnPluginOptionsAction");
+        setAction(btnResetDefaultPluginServer, "btnResetDefaultPluginServerAction");
+        setAction(btnUpdatePlugins, "btnUpdatePluginsAction");
+        setAction(btnAddQuietModeDetectionString, "btnAddQuietModeDetectionStringAction");
+        setAction(btnRemoveQuietModeDetectionString, "btnRemoveQuietModeDetectionStringAction");
     }
 
     @org.jdesktop.application.Action
@@ -249,6 +247,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         addButton(map.get("soundBtnAction"), Card.CARD3, group);
         addButton(map.get("viewsBtnAction"), Card.CARD4, group);
         addButton(map.get("pluginsBtnAction"), Card.CARD6, group);
+        addButton(map.get("quietModeBtnAction"), Card.CARD7, group);
         addButton(map.get("miscBtnAction"), Card.CARD5, group);
 
         setAction(btnProxyListPathSelect, "btnSelectProxyListAction");
@@ -417,7 +416,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 //        registerKeyboardAction(focusFilterAction, ctrlF);
 
 
-        ((DefaultRowSorter) pluginTable.getRowSorter()).setComparator(PluginMetaDataTableModel.COLUMN_PRIORITY, Collections.reverseOrder());
+        ((DefaultRowSorter<?, ?>) pluginTable.getRowSorter()).setComparator(PluginMetaDataTableModel.COLUMN_PRIORITY, Collections.reverseOrder());
     }
 
     private void buildPopmenuButton(final JPopupMenu popupMenu) {
@@ -503,6 +502,40 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
     }
 
+    @org.jdesktop.application.Action
+    public void btnAddQuietModeDetectionStringAction() {
+        final JTextField textField = new JTextField();
+        final int result = Swinger.showInputDialog(getResourceMap().getString("addNewWindowPopupTitle"), textField, true);
+        final String text = textField.getText().trim();
+        if (result == Swinger.RESULT_OK && !text.isEmpty()) {
+            model.setBuffering(true);
+            @SuppressWarnings("unchecked")
+            final ArrayListModel<String> listModel = (ArrayListModel<String>) listQuietModeDetectionStrings.getModel();
+            final int indexOf = listModel.indexOf(text);
+            if (indexOf != -1) {
+                listQuietModeDetectionStrings.setSelectedIndex(indexOf);
+            } else {
+                listModel.add(text);
+                listQuietModeDetectionStrings.setSelectedIndex(listModel.size() - 1);
+            }
+        }
+    }
+
+    @org.jdesktop.application.Action
+    public void btnRemoveQuietModeDetectionStringAction() {
+        final int[] selected = listQuietModeDetectionStrings.getSelectedIndices();
+        if (selected.length > 0) {
+            model.setBuffering(true);
+            final ArrayListModel<?> listModel = (ArrayListModel<?>) listQuietModeDetectionStrings.getModel();
+            for (int i = selected.length - 1; i >= 0; i--) {
+                listModel.remove(selected[i]);
+            }
+            if (selected.length == 1) {
+                listQuietModeDetectionStrings.setSelectedIndex(Math.max(0, selected[0] - 1));
+            }
+        }
+    }
+
     private void addButton(javax.swing.Action action, final Card card, ButtonGroup group) {
         final JToggleButton button = new JToggleButton(action);
         final Dimension size = button.getPreferredSize();
@@ -543,6 +576,9 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                 break;
             case CARD6:
                 actionName = "pluginsBtnAction";
+                break;
+            case CARD7:
+                actionName = "quietModeBtnAction";
                 break;
             default:
                 assert false;
@@ -792,6 +828,31 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                 model.setBuffering(true);
             }
         });
+
+        final ValueModel valueModelQMActivation = model.getBufferedPreferences(UserProp.QUIET_MODE_ACTIVATION_MODE, UserProp.QUIET_MODE_ACTIVATION_MODE_DEFAULT);
+        Bindings.bind(radioButtonActivateQMAlways, valueModelQMActivation, UserProp.QUIET_MODE_ACTIVATION_ALWAYS);
+        Bindings.bind(radioButtonActivateQMWhenWindowsFound, valueModelQMActivation, UserProp.QUIET_MODE_ACTIVATION_WHEN_WINDOWS_FOUND);
+        final ItemListener itemListenerQMActivation = new ItemListener() {
+            @Override
+            public void itemStateChanged(final ItemEvent e) {
+                final boolean enabled = radioButtonActivateQMWhenWindowsFound.isSelected();
+                for (final Component component : panelSearchForWindows.getComponents()) {
+                    component.setEnabled(enabled);
+                }
+            }
+        };
+        radioButtonActivateQMWhenWindowsFound.addItemListener(itemListenerQMActivation);
+        itemListenerQMActivation.itemStateChanged(null);
+
+        final ArrayListModel<String> arrayListModel = new ArrayListModel<String>();
+        arrayListModel.addAll(QuietMode.getInstance().getActivationStrings());
+        listQuietModeDetectionStrings.setModel(arrayListModel);
+
+        bind(checkCaseSensitiveSearchQM, UserProp.QUIET_MODE_CASE_SENSITIVE_SEARCH, UserProp.QUIET_MODE_CASE_SENSITIVE_SEARCH_DEFAULT);
+        bind(checkNoSoundsInQM, UserProp.QUIET_MODE_NO_SOUNDS, UserProp.QUIET_MODE_NO_SOUNDS_DEFAULT);
+        bind(checkNoCaptchaInQM, UserProp.QUIET_MODE_NO_CAPTCHA, UserProp.QUIET_MODE_NO_CAPTCHA_DEFAULT);
+        bind(checkNoConfirmDialogsInQM, UserProp.QUIET_MODE_NO_CONFIRM_DIALOGS, UserProp.QUIET_MODE_NO_CONFIRM_DIALOGS_DEFAULT);
+        bind(checkPlaySoundForQM, UserProp.QUIET_MODE_PLAY_SOUND_ON_ACTIVATE, UserProp.QUIET_MODE_PLAY_SOUND_ON_ACTIVATE_DEFAULT);
     }
 
     private void bindLaFCombobox() {
@@ -924,6 +985,8 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
             updateQueue = updateProxyConnectionList || updateDefaultConnection;
         }
 
+        updateQuietModeDetectionStrings();
+
         if (pluginTableWasChanged) {
             updateQueue = true;
             managerDirector.getPluginsManager().updatePluginSettings();
@@ -959,6 +1022,12 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         AppPrefs.storeProperty(FWProp.SELECTED_LANGUAGE, ((SupportedLanguage) comboLng.getSelectedItem()).getLanguageCode());
         AppPrefs.storeProperty(FWProp.SELECTED_COUNTRY, ((SupportedLanguage) comboLng.getSelectedItem()).getCountry());
         Swinger.showInformationDialog(getResourceMap().getString("changeLanguageAfterRestart"));
+    }
+
+    private void updateQuietModeDetectionStrings() {
+        @SuppressWarnings("unchecked")
+        final ArrayListModel<String> arrayListModel = (ArrayListModel<String>) listQuietModeDetectionStrings.getModel();
+        QuietMode.getInstance().setActivationStrings(arrayListModel);
     }
 
     @org.jdesktop.application.Action
@@ -1006,6 +1075,10 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         showCard(e);
     }
 
+    @org.jdesktop.application.Action
+    public void quietModeBtnAction(ActionEvent e) {
+        showCard(e);
+    }
 
     @org.jdesktop.application.Action
     public void copyPluginListAction() {
@@ -1326,6 +1399,24 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
         labelUpdateFromServer.setLabelFor(this.comboPluginServers);
         labelAfterDetectUpdate.setLabelFor(this.comboHowToUpdate);
+
+        JPanel panelQuietMode = new JPanel();
+        JPanel panelActivateQM = new JPanel();
+        radioButtonActivateQMAlways = new JRadioButton();
+        radioButtonActivateQMWhenWindowsFound = new JRadioButton();
+        panelSearchForWindows = new JPanel();
+        JLabel labelSearchForWindows = new JLabel();
+        JScrollPane panelQMChoice = new JScrollPane();
+        listQuietModeDetectionStrings = new JList();
+        btnAddQuietModeDetectionString = new JButton();
+        btnRemoveQuietModeDetectionString = new JButton();
+        checkCaseSensitiveSearchQM = new JCheckBox();
+        JPanel panelQMOptions = new JPanel();
+        checkNoSoundsInQM = new JCheckBox();
+        checkNoCaptchaInQM = new JCheckBox();
+        checkNoConfirmDialogsInQM = new JCheckBox();
+        checkPlaySoundForQM = new JCheckBox();
+        JLabel labelNoteForQM = new JLabel();
 
         //======== this ========
         Container contentPane = getContentPane();
@@ -2130,6 +2221,138 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                     }
                     labelRequiresRestart.setVisible(false);
                     panelCard.add(panelConnectionSettings, "CARD2");
+
+                    //======== panelQuietMode ========
+                    {
+                        panelQuietMode.setBorder(Borders.TABBED_DIALOG_BORDER);
+
+                        //======== panelActivateQM ========
+                        {
+                            panelActivateQM.setBorder(new TitledBorder(bundle.getString("panelActivateQM.border")));
+                            final PanelBuilder panelActivateQMBuilder = new PanelBuilder(new FormLayout(
+                                    ColumnSpec.decodeSpecs("default:grow"),
+                                    new RowSpec[]{
+                                            FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.LINE_GAP_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.LINE_GAP_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC
+                                    }), panelActivateQM);
+
+                            //---- radioButtonActivateQMAlways ----
+                            radioButtonActivateQMAlways.setName("radioButtonActivateQMAlways");
+                            panelActivateQMBuilder.add(radioButtonActivateQMAlways, cc.xy(1, 1));
+
+                            //---- radioButtonActivateQMWhenWindowsFound ----
+                            radioButtonActivateQMWhenWindowsFound.setName("radioButtonActivateQMWhenWindowsFound");
+                            panelActivateQMBuilder.add(radioButtonActivateQMWhenWindowsFound, cc.xy(1, 3));
+
+                            //======== panelSearchForWindows ========
+                            {
+                                final PanelBuilder panelSearchForWindowsBuilder = new PanelBuilder(new FormLayout(
+                                        new ColumnSpec[]{
+                                                new ColumnSpec(Sizes.dluX(20)),
+                                                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                                new ColumnSpec(Sizes.dluX(140)),
+                                                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                                FormFactory.DEFAULT_COLSPEC,
+                                                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                                FormFactory.MIN_COLSPEC
+                                        },
+                                        new RowSpec[]{
+                                                FormFactory.DEFAULT_ROWSPEC,
+                                                FormFactory.LINE_GAP_ROWSPEC,
+                                                FormFactory.DEFAULT_ROWSPEC,
+                                                FormFactory.LINE_GAP_ROWSPEC,
+                                                FormFactory.DEFAULT_ROWSPEC,
+                                                new RowSpec(RowSpec.FILL, Sizes.ZERO, FormSpec.DEFAULT_GROW),
+                                                FormFactory.LINE_GAP_ROWSPEC,
+                                                FormFactory.DEFAULT_ROWSPEC
+                                        }), panelSearchForWindows);
+
+                                //---- labelSearchForWindows ----
+                                labelSearchForWindows.setName("labelSearchForWindows");
+                                panelSearchForWindowsBuilder.add(labelSearchForWindows, cc.xy(3, 1));
+
+                                //======== panelQMChoice ========
+                                {
+                                    //---- listQuietModeDetectionStrings ----
+                                    listQuietModeDetectionStrings.setVisibleRowCount(6);
+                                    panelQMChoice.setViewportView(listQuietModeDetectionStrings);
+                                }
+                                panelSearchForWindowsBuilder.add(panelQMChoice, cc.xywh(3, 3, 3, 4));
+
+                                //---- btnAddQuietModeDetectionString ----
+                                btnAddQuietModeDetectionString.setName("btnAddQuietModeDetectionString");
+                                panelSearchForWindowsBuilder.add(btnAddQuietModeDetectionString, cc.xy(7, 3));
+
+                                //---- btnRemoveQuietModeDetectionString ----
+                                btnRemoveQuietModeDetectionString.setName("btnRemoveQuietModeDetectionString");
+                                panelSearchForWindowsBuilder.add(btnRemoveQuietModeDetectionString, cc.xy(7, 5));
+
+                                //---- checkCaseSensitiveSearchQM ----
+                                checkCaseSensitiveSearchQM.setName("checkCaseSensitiveSearchQM");
+                                panelSearchForWindowsBuilder.add(checkCaseSensitiveSearchQM, cc.xy(3, 8));
+                            }
+                            panelActivateQMBuilder.add(panelSearchForWindows, cc.xy(1, 5));
+                        }
+
+                        //======== panelQMOptions ========
+                        {
+                            panelQMOptions.setBorder(new TitledBorder(bundle.getString("panelQMOptions.border")));
+                            final PanelBuilder panelQMOptionsBuilder = new PanelBuilder(new FormLayout(
+                                    new ColumnSpec[]{
+                                            FormFactory.DEFAULT_COLSPEC,
+                                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                            new ColumnSpec(ColumnSpec.FILL, Sizes.dluX(105), FormSpec.DEFAULT_GROW)
+                                    },
+                                    new RowSpec[]{
+                                            FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.LINE_GAP_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.LINE_GAP_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.LINE_GAP_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC
+                                    }), panelQMOptions);
+
+                            //---- checkNoSoundsInQM ----
+                            checkNoSoundsInQM.setName("checkNoSoundsInQM");
+                            panelQMOptionsBuilder.add(checkNoSoundsInQM, cc.xy(1, 1));
+
+                            //---- checkNoCaptchaInQM ----
+                            checkNoCaptchaInQM.setName("checkNoCaptchaInQM");
+                            panelQMOptionsBuilder.add(checkNoCaptchaInQM, cc.xy(1, 3));
+
+                            //---- checkNoConfirmDialogsInQM ----
+                            checkNoConfirmDialogsInQM.setName("checkNoConfirmDialogsInQM");
+                            panelQMOptionsBuilder.add(checkNoConfirmDialogsInQM, cc.xy(1, 5));
+
+                            //---- checkPlaySoundForQM ----
+                            checkPlaySoundForQM.setName("checkPlaySoundForQM");
+                            panelQMOptionsBuilder.add(checkPlaySoundForQM, cc.xy(1, 7));
+                        }
+
+                        //---- labelNoteForQM ----
+                        labelNoteForQM.setName("labelNoteForQM");
+
+                        final PanelBuilder panelQuietModeBuilder = new PanelBuilder(new FormLayout(
+                                ColumnSpec.decodeSpecs("default:grow"),
+                                new RowSpec[]{
+                                        FormFactory.DEFAULT_ROWSPEC,
+                                        FormFactory.LINE_GAP_ROWSPEC,
+                                        FormFactory.DEFAULT_ROWSPEC,
+                                        FormFactory.LINE_GAP_ROWSPEC,
+                                        FormFactory.DEFAULT_ROWSPEC,
+                                        FormFactory.LINE_GAP_ROWSPEC,
+                                        new RowSpec(RowSpec.CENTER, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
+                                }), panelQuietMode);
+                        panelQuietModeBuilder.add(panelActivateQM, cc.xy(1, 1));
+                        panelQuietModeBuilder.add(panelQMOptions, cc.xy(1, 3));
+                        panelQuietModeBuilder.add(labelNoteForQM, cc.xy(1, 5));
+                    }
+                    panelCard.add(panelQuietMode, "CARD7");
+
                 }
                 contentPanel.add(panelCard, BorderLayout.CENTER);
             }
@@ -2223,6 +2446,18 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
     private PopdownButton popmenuButton;
 
     private JSpinner spinnerUpdateHour;
+
+    private JRadioButton radioButtonActivateQMAlways;
+    private JRadioButton radioButtonActivateQMWhenWindowsFound;
+    private JPanel panelSearchForWindows;
+    private JList listQuietModeDetectionStrings;
+    private JButton btnAddQuietModeDetectionString;
+    private JButton btnRemoveQuietModeDetectionString;
+    private JCheckBox checkCaseSensitiveSearchQM;
+    private JCheckBox checkNoSoundsInQM;
+    private JCheckBox checkNoCaptchaInQM;
+    private JCheckBox checkNoConfirmDialogsInQM;
+    private JCheckBox checkPlaySoundForQM;
 
     private void updateLookAndFeel(LaF laf) {
         boolean succesful;
