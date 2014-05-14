@@ -2,7 +2,6 @@ package cz.vity.freerapid.gui.managers;
 
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.Consts;
-import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.gui.dialogs.WrappedPluginData;
 import cz.vity.freerapid.gui.managers.exceptions.NotSupportedDownloadServiceException;
@@ -284,7 +283,7 @@ public class PluginsManager {
         if (System.getProperties().containsKey("portable")) {
             parentDir = new File(Utils.getAppPath());
         } else {
-            parentDir = MainApp.getAContext().getLocalStorage().getDirectory();
+            parentDir = context.getLocalStorage().getDirectory();
         }
         final File pluginsDir = new File(parentDir, Consts.PLUGINS_DIR);
         if (pluginsDir.exists() && !pluginsDir.isDirectory()) {
