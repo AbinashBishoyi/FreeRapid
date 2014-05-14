@@ -10,7 +10,6 @@ import cz.vity.freerapid.model.PluginMetaData;
 import cz.vity.freerapid.plugimpl.StandardDialogSupportImpl;
 import cz.vity.freerapid.plugimpl.StandardPluginContextImpl;
 import cz.vity.freerapid.plugimpl.StandardStorageSupportImpl;
-import cz.vity.freerapid.plugins.directdownload.DirectDownloadServiceImpl;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.plugins.webclient.interfaces.PluginContext;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
@@ -36,7 +35,6 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -44,6 +42,8 @@ import java.util.logging.Logger;
  */
 public class PluginsManager {
     private final static Logger logger = Logger.getLogger(PluginsManager.class.getName());
+
+    private final static String ID_DIRECT = "direct";
 
     private final Map<String, PluginMetaData> supportedPlugins = new HashMap<String, PluginMetaData>();
 
@@ -218,7 +218,7 @@ public class PluginsManager {
         if (plugins == null)
             throw new IllegalStateException("Plugin directory does not exist");
         final int length = plugins.length;
-        final PluginManager.PluginLocation[] loc = new PluginManager.PluginLocation[length + 1];
+        final PluginManager.PluginLocation[] loc = new PluginManager.PluginLocation[length];
 
         for (int i = 0; i < length; i++) {
             try {
@@ -230,18 +230,6 @@ public class PluginsManager {
             } catch (MalformedURLException e) {
                 LogUtils.processException(logger, e);
             }
-        }
-
-        try {
-            final String path = DirectDownloadServiceImpl.class.getResource("plugin.xml").toExternalForm();
-            logger.info("Direct download plugin: " + path);
-            final URL context = new URL(path.substring(0, path.lastIndexOf('/') + 1));
-            final URL manifest = new URL(path);
-            loc[length] = new StandardPluginLocation(context, manifest);
-        } catch (NullPointerException e) {
-            logger.log(Level.SEVERE, "Failed to load direct download plugin", e);
-        } catch (MalformedURLException e) {
-            LogUtils.processException(logger, e);
         }
 
         return loc;
@@ -387,7 +375,7 @@ public class PluginsManager {
             throw new PluginIsNotEnabledException(disabledPlugin);
 
         if (AppPrefs.getProperty(UserProp.ENABLE_DIRECT_DOWNLOADS, UserProp.ENABLE_DIRECT_DOWNLOADS_DEFAULT)) {
-            return DirectDownloadServiceImpl.getNameStatic();
+            return ID_DIRECT;
         }
         throw new NotSupportedDownloadServiceException();
     }
