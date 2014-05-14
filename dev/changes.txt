@@ -1,4 +1,13 @@
 Version 0.83->0.84
+InformationDialog.properties
+===================================
+Changed:
+was:
+InformationDialog.title=File Information
+new:
+InformationDialog.title=Download Information
+
+
 DownloadTask.properties
 ====================================
 New:
@@ -6,6 +15,18 @@ fileAlreadyExistsTooltip=File already exists on the disk
 
 MainApp.properties
 ====================================
+Removed:
+sortbyNameAction.Action.text=Sort by &Name
+sortbyNameAction.Action.shortDescription=Sort selected downloads by file name
+sortbyNameAction.Action.accelerator=shortcut S
+sortbyNameAction.Action.smallIcon=${iconsPath}sort_small.gif
+sortbyServerAction.Action.text=Sort by &Server
+sortbyServerAction.Action.shortDescription=Sort selected downloads by server name
+sortbyServerAction.Action.accelerator=
+sortbyServerAction.Action.smallIcon=${iconsPath}sort_small.gif
+
+
+
 New:
 removeCompletedAndDeletedAction.Action.text=Remove Completed Links and De&leted Files
 removeCompletedAndDeletedAction.Action.accelerator =shortcut L

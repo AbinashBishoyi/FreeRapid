@@ -207,7 +207,7 @@ public abstract class URLTransferHandler extends TransferHandler {
                             urls.add(url);
                         else { //search for our URLs as text
                             try {
-                                final String s = Utils.urlDecode(url.toExternalForm());
+                                final String s = url.toExternalForm();
                                 urls.addAll(textURIListToFileList(s, pluginsManager, true));
                             } catch (IllegalArgumentException e) {
                                 LogUtils.processException(logger, e);

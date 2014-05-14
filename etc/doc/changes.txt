@@ -13,7 +13,10 @@ Fixed - indicates a bug fix
 
   Added : plugin API
             - DownloadClientConsts class with constants for DownloadClient parameters
+  Changed : Removed obsolete entries for sorting downloads from dropdown menu, as the table can now be sorted by clicking the headings
+  Changed : Show amount of downloaded data instead of "unknown" if file size is not known while downloading
   Fixed : Wrong file is deleted when cancelling a download in some cases, see http://bugtracker.wordrider.net/task/1306
+  Fixed: Regression: Look and Feel reverts to Quaqua on every startup
 
 11th July 2010 - FreeRapid Downloader 0.85 Alfa 1
   Added : New action in Remove menu: "Remove Completed Links and Deleted Files"
@@ -24,7 +27,7 @@ Fixed - indicates a bug fix
   Added : Menu item for refreshing proxy list
   Added : New setting for handling plugin updates: "Update and restart automatically if no downloads in progress"
   Added : Improved smart clipboard monitoring detection for URLs like
-            http://web.com/vb/redirector.php?url=http%3A%2F%2Frapidshare.com%2Ffiles%2F142676%2la.rar&a45456=asdsd
+            http://web.com/vb/redirector.php?url=http%3A%2F%2Frapidshare.com%2Ffiles%2F142676%2Fla.rar&a45456=asdsd
   Added : plugin API version 0.85
             - support for priorities of each plugin
             - experimental support for RTMP protocol

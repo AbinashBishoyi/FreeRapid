@@ -32,18 +32,23 @@ final class SizeCellRenderer extends DefaultTableCellRenderer {
             value = table.getValueAt(row, column);
         }
         final DownloadFile downloadFile = (DownloadFile) value;
-
         final long fs = downloadFile.getFileSize();
+        final long dl = downloadFile.getDownloaded();
         if (fs >= 0) {
-            if (downloadFile.getDownloaded() != fs)
-                value = String.format(sizeRendererProgress, ContentPanel.bytesToAnother(downloadFile.getDownloaded()), ContentPanel.bytesToAnother(fs));
-            else
+            if (dl != fs) {
+                value = String.format(sizeRendererProgress, ContentPanel.bytesToAnother(dl), ContentPanel.bytesToAnother(fs));
+            } else {
                 value = ContentPanel.bytesToAnother(fs);
-
-            this.setToolTipText(String.format(sizeRendererInBytes, numberFormatter.format(fs)));
+            }
+            setToolTipText(String.format(sizeRendererInBytes, numberFormatter.format(fs)));
         } else {
-            value = sizeRendererUnknown;
-            this.setToolTipText(null);
+            if (dl > 0) {
+                value = ContentPanel.bytesToAnother(dl);
+                setToolTipText(String.format(sizeRendererInBytes, numberFormatter.format(dl)));
+            } else {
+                value = sizeRendererUnknown;
+                setToolTipText(null);
+            }
         }
         getAccessibleContext().setAccessibleName(table.getColumnName(column) + " " + value);
         return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
