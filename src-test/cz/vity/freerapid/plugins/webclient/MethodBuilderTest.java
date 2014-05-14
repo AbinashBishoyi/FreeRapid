@@ -11,6 +11,7 @@ import org.junit.Test;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
 
 
 /**
@@ -103,7 +104,13 @@ public class MethodBuilderTest {
         action = methodBuilder.setActionFromFormByName("downForm", true).getAction();
         Assert.assertEquals("Parsing Form tag", "http://www.badongo.com/cfile/8203387", action);
 
-        Assert.assertEquals("Correct parameter parsing", Boolean.FALSE, methodBuilder.getParameters().containsKey("pamatovat"));
+        final Map<String, String> params = methodBuilder.getParameters();
+        //takovy parametr se tam nesmi vyskytovat
+        Assert.assertEquals("Correct parameter parsing", Boolean.FALSE, params.containsKey("pamatovat"));
+
+        Assert.assertEquals("Correct parameter value", "269200932", params.get("cap_id"));
+        Assert.assertEquals("Correct parameter value", "281f3fe24cc4894a5bb61e4a6b12a3b7", params.get("cap_secret"));
+        Assert.assertEquals("Correct parameter value", "", params.get("user_code")); //parametr nema hodnotu
     }
 
     @Test
