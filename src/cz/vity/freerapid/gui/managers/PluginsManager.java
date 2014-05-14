@@ -238,6 +238,7 @@ public class PluginsManager {
             }
 
             disablePluginsInConflict();
+            updatePluginSettings();
 
         } catch (Exception e) {
             LogUtils.processException(logger, e);
