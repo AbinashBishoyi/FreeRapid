@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <languages>
     <!-- alternative flags for different countries: | is separator, 2 character ISO country code -->
     <!-- language can be country specific, flag indicates this -->
@@ -34,6 +34,6 @@
     <!--<lng name="Română" code="RO" icon="ro.gif"/>-->
     <!--<lng name="עברית" code="HE" icon="il.gif"/>-->
     <!--<lng name="한국어" code="KO" icon="kr.gif"/>-->
-    <!--<lng name="Български" code="BG" icon="bg.gif"/>-->
+    <lng name="Български" code="BG" icon="bg.gif"/>
     <lng name="Suomi" code="FI" icon="fi.gif"/>
 </languages>
