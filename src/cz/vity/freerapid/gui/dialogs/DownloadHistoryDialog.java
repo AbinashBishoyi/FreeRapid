@@ -518,17 +518,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
     public void deleteFileAction() {
         final int[] indexes = getSelectedRows();
         final java.util.List<FileHistoryItem> files = manager.getSelectionToList(indexes);
-        final StringBuilder builder = new StringBuilder();
-        for (int i = 0, n = Math.min(files.size(), 20); i < n; i++) {
-            final FileHistoryItem file = files.get(i);
-            if (file.getOutputFile() != null && file.getOutputFile().exists()) {
-                builder.append('\n').append(Utils.shortenFileName(file.getOutputFile(), 60));
-            }
-        }
-        if (files.size() > 20) {
-            builder.append('\n').append(getResourceMap().getString("andOtherFiles", files.size() - 20));
-        }
-        final String s = builder.toString();
+        final String s = getFileList(files);
         final int result;
         final boolean confirm = AppPrefs.getProperty(UserProp.CONFIRM_FILE_DELETE, UserProp.CONFIRM_FILE_DELETE_DEFAULT);
 
@@ -547,6 +537,23 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
             this.removeSelected(indexes, showedDialog);
             selectFirstIfNoSelection();
         }
+    }
+
+    private String getFileList(final java.util.List<FileHistoryItem> files) {
+        final java.util.List<FileHistoryItem> existingFiles = new ArrayList<FileHistoryItem>();
+        for (FileHistoryItem file : files) {
+            if (file.getOutputFile() != null && file.getOutputFile().exists()) {
+                existingFiles.add(file);
+            }
+        }
+        final StringBuilder builder = new StringBuilder();
+        for (int i = 0, n = Math.min(existingFiles.size(), 20); i < n; i++) {
+            builder.append('\n').append(Utils.shortenFileName(existingFiles.get(i).getOutputFile(), 60));
+        }
+        if (existingFiles.size() > 20) {
+            builder.append('\n').append(getResourceMap().getString("andOtherFiles", existingFiles.size() - 20));
+        }
+        return builder.toString();
     }
 
     private void removeSelected(final int[] indexes, final boolean quiet) {

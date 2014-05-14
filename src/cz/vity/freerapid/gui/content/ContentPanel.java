@@ -269,17 +269,19 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             manager.retryAllError();
     }
 
-
-    private String getFileList(List<DownloadFile> files) {
-        final StringBuilder builder = new StringBuilder();
-        for (int i = 0, n = Math.min(files.size(), 20); i < n; i++) {
-            final DownloadFile file = files.get(i);
+    private String getFileList(final List<DownloadFile> files) {
+        final List<DownloadFile> existingFiles = new ArrayList<DownloadFile>();
+        for (DownloadFile file : files) {
             if (file.getOutputFile() != null && file.getDownloaded() > 0 && file.getOutputFile().exists()) {
-                builder.append('\n').append(Utils.shortenFileName(file.getOutputFile(), 60));
+                existingFiles.add(file);
             }
         }
-        if (files.size() > 20) {
-            builder.append('\n').append(context.getResourceMap().getString("andOtherFiles", files.size() - 20));
+        final StringBuilder builder = new StringBuilder();
+        for (int i = 0, n = Math.min(existingFiles.size(), 20); i < n; i++) {
+            builder.append('\n').append(Utils.shortenFileName(existingFiles.get(i).getOutputFile(), 60));
+        }
+        if (existingFiles.size() > 20) {
+            builder.append('\n').append(context.getResourceMap().getString("andOtherFiles", existingFiles.size() - 20));
         }
         return builder.toString();
     }
