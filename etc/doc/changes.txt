@@ -11,8 +11,12 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
-  Changed : upgraded JTattoo library
+  Added : MS Windows - windows key for popmenu emulates a click with right mouse button on content panel with links
+  Added : Apple MacOS - support for native Aqua Look&Feel
+  Changed : upgraded JTattoo library to the latest version
   Changed : fatal exceptions are shown only once for reporting
+  Changed : Apple MacOS - screen menu bar used by default
+  Changed : Apple MacOS - menu.about.name - correct title - FreeRapid Downloader + version
   Fixed : ClassCast exception in directory chooser 
   Fixed : handling invalid response header from server with empty file name
   Fixed : main window couldn't be activated at some random special cases
