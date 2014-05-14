@@ -32,20 +32,20 @@ final class ServiceCellRenderer extends DefaultTableCellRenderer {
             value = table.getValueAt(row, column);
         }
         final DownloadFile downloadFile = (DownloadFile) value;
-        final String shareDownloadServiceID = downloadFile.getPluginID();
-        assert shareDownloadServiceID != null;
+        final String pluginId = downloadFile.getPluginID();
+        assert pluginId != null;
         final String serviceName = downloadFile.getServiceName();
         Icon faviconImage;
         super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-        faviconImage = iconCache.get(shareDownloadServiceID);
+        faviconImage = iconCache.get(pluginId);
         if (faviconImage == null) {
             try {
-                if (manager.hasPlugin(shareDownloadServiceID) && manager.getPluginMetadata(shareDownloadServiceID).hasFavicon()) {
-                    final ShareDownloadService service = manager.getPluginInstance(shareDownloadServiceID);
+                if (manager.hasPlugin(pluginId) && !manager.isPluginDisabled(pluginId) && manager.getPluginMetadata(pluginId).hasFavicon()) {
+                    final ShareDownloadService service = manager.getPluginInstance(pluginId);
                     faviconImage = service.getFaviconImage();
                     if (faviconImage != null) {
-                        iconCache.put(shareDownloadServiceID, faviconImage);
+                        iconCache.put(pluginId, faviconImage);
                     }
                 }
             } catch (NotSupportedDownloadServiceException e) {

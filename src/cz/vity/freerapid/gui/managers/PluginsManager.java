@@ -115,10 +115,21 @@ public class PluginsManager {
             final PluginRegistry pluginRegistry = pluginManager.getRegistry();
             if (pluginRegistry.isPluginDescriptorAvailable(id)) {
                 final PluginDescriptor descr = pluginRegistry.getPluginDescriptor(id);
-                return pluginManager.isPluginActivated(descr) || pluginManager.isBadPlugin(descr) || pluginManager.isPluginActivating(descr);
+                return pluginManager.isPluginActivated(descr) || pluginManager.isBadPlugin(descr) || pluginManager.isPluginActivating(descr) || !pluginManager.isPluginEnabled(descr);
             }
         }
         return false;
+    }
+
+    public boolean isPluginDisabled(String id) {
+        if (hasPlugin(id)) {
+            final PluginRegistry pluginRegistry = pluginManager.getRegistry();
+            if (pluginRegistry.isPluginDescriptorAvailable(id)) {
+                final PluginDescriptor descr = pluginRegistry.getPluginDescriptor(id);
+                return pluginManager.isBadPlugin(descr) || !pluginManager.isPluginEnabled(descr);
+            }
+        }
+        return true;
     }
 
 
@@ -358,8 +369,11 @@ public class PluginsManager {
      *          pokud doslo k chybe pri ziskani pluginu podle daneho ID
      */
     public ShareDownloadService getPluginInstance(final String id) throws NotSupportedDownloadServiceException {
-
         synchronized (lock) {
+            if (isPluginDisabled(id)) {
+                throw new NotSupportedDownloadServiceException(id);
+            }
+
             Plugin p;
             try {
                 logger.info("Loading plugin with ID=" + id);
