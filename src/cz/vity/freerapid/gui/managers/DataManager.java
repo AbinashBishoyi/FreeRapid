@@ -327,14 +327,16 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         synchronized (this.lock) {
             List<DownloadFile> toRemoveList = selectionToList(indexes);
             for (DownloadFile file : toRemoveList) {
-                if (DownloadsActions.pauseEnabledStates.contains(file.getState())) {
+                final DownloadState state = file.getState();
+                if (DownloadsActions.pauseEnabledStates.contains(state)) {
+                    boolean isProcessState = DownloadsActions.isProcessState(state);
                     final DownloadTask task = file.getTask();
                     if (task != null) {
                         task.cancel(true);
                     }
                     file.setState(PAUSED);
                     final File outputFile = file.getOutputFile();
-                    if (outputFile.exists()) {
+                    if (isProcessState && outputFile.exists()) {
                         outputFile.delete();
                         file.setDownloaded(0);
                     }
