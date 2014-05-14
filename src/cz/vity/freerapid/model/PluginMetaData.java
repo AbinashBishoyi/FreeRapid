@@ -56,22 +56,6 @@ final public class PluginMetaData extends AbstractBean implements Identifiable<L
     @Transient
     private boolean libraryPlugin;
 
-//    static {
-//        try {
-//            BeanInfo info = Introspector.getBeanInfo(DownloadFile.class);
-//            PropertyDescriptor[] propertyDescriptors =
-//                    info.getPropertyDescriptors();
-//            for (PropertyDescriptor pd : propertyDescriptors) {
-//                final Object name = pd.getName();
-//                if ("supportedURL".equals(name) || "descriptor".equals(name) || "www".equals(name) || "services".equals(name) || "hasOptions".equals(name) || "premium".equals(name) || "favicon".equals(name) || "resumeSupported".equals(name) || "maxParallelDownloads".equals(name) || "libraryPlugin".equals(name)) {
-//                    pd.setValue("transient", Boolean.TRUE);
-//                }
-//            }
-//        } catch (IntrospectionException e) {
-//            LogUtils.processException(logger, e);
-//        }
-//    }
-
     public PluginMetaData() {
         //default values
         this.enabled = true;

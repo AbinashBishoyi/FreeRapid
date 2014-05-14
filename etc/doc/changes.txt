@@ -12,6 +12,15 @@ Changed - indicates a change in using/behavior FreeRapid Downloader
 Fixed - indicates a bug fix
 Internal - indicates an internal change - information for FRD developers - nothing important for users
 
+September 2012 - FreeRapid Downloader 0.9
+
+  Added : new action in menu Help -> Browse config folder
+  Changes, which regular users don't see:
+  Changed : Internal - the file list (include file history list) is stored in the database
+  Changed : Internal - moved plugins directory from the root directory of FRD into config directory in user settings folder
+  Changed : Internal - app.log file is created in the main config directory (previous location was a root of FRD)
+
+
 13th November 2011 - FreeRapid Downloader 0.86 Update 1
   Added : Support for Slovakian, Bulgarian and Hungarian languages - thanks to all translators!
   Added : New internal property - -DpopWindowWithoutMainFrame in quiet mode, default value is false,
