@@ -182,11 +182,7 @@ public final class SpeedRegulator implements PropertyChangeListener {
                 timer = new Timer("SpeedRegulatorTimer");
                 timer.schedule(new TimerTask() {
                     public void run() {
-                        final long nano = System.nanoTime();
                         tick();
-                        final long nano2 = System.nanoTime();
-                        final long dif = (nano2 - nano);
-                        System.out.println("dif = " + dif);
                     }
                 }, 0, 1000);
             }
@@ -242,10 +238,12 @@ public final class SpeedRegulator implements PropertyChangeListener {
         private DownloadFile file;
         private long speed;
         private float averageSpeed;
+        private long downloadedStart;
 
         DownloadFileInfo(DownloadTask task) {
             this.task = task;
             this.file = task.getDownloadFile();
+            downloadedStart = this.file.getDownloaded();
             avgSpeedMeasuredSeconds = AppPrefs.getProperty(UserProp.AVG_SPEED_MEASURED_SECONDS, UserProp.AVG_SPEED_MEASURED_SECONDS_DEFAULT);
             avgSpeedArray = new long[avgSpeedMeasuredSeconds];
             Arrays.fill(avgSpeedArray, -1);
@@ -285,7 +283,7 @@ public final class SpeedRegulator implements PropertyChangeListener {
             } else {
                 noDataTimeOut = 0;
                 lastSize = localCounter;
-                task.setDownloaded(localCounter);
+                file.setDownloaded(downloadedStart + localCounter);
             }
 
             final long time = System.currentTimeMillis() - startTime;

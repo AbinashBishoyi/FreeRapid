@@ -93,7 +93,7 @@ public class DownloadNewPluginsTask extends DownloadTask {
         if (out.exists()) {
             out.delete();
         }
-        storeFile.renameTo(out);
+        downloadFile.getStoreFile().renameTo(out);
     }
 
     @Override

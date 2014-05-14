@@ -30,6 +30,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
     private volatile long fileSize;
     private volatile DownloadTask task = null;
     private volatile DownloadState state = DownloadState.PAUSED;
+    private volatile File storeFile;
     private String fileName;
     private volatile long downloaded = 0;
     private int sleep;
@@ -220,14 +221,8 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if ("downloaded".equals(evt.getPropertyName())) {
-            this.setDownloaded((Long) evt.getNewValue());
-        } else if ("sleep".equals(evt.getPropertyName())) {
+        if ("sleep".equals(evt.getPropertyName())) {
             this.setSleep((Integer) evt.getNewValue());
-        } else if ("speed".equals(evt.getPropertyName())) {
-            this.setSpeed((Long) evt.getNewValue());
-        } else if ("averageSpeed".equals(evt.getPropertyName())) {
-            this.setAverageSpeed((Float) evt.getNewValue());
         }
     }
 
@@ -598,5 +593,19 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
 
     public void setTakenTokens(int takenTokens) {
         this.takenTokens = takenTokens;
+    }
+
+    @Override
+    public File getStoreFile() {
+//        if (this.storeFile == null) {
+//            if (fileName != null)
+//                return getOutputFile();
+//        }
+        return this.storeFile;
+    }
+
+    @Override
+    public void setStoreFile(File storeFile) {
+        this.storeFile = storeFile;
     }
 }

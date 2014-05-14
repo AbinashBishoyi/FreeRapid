@@ -143,4 +143,8 @@ public interface HttpFile {
      * @return Value for property 'properties'.
      */
     Map<String, Object> getProperties();
+
+    File getStoreFile();
+
+    void setStoreFile(File storeFile);
 }

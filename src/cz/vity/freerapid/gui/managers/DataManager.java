@@ -90,6 +90,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
             for (DownloadFile file : downloadFiles) {
                 final DownloadTask task = file.getTask();
                 if (task != null && !task.isTerminated()) {
+                    file.setState(PAUSED);
                     task.cancel(true);
                     foundRunning = true;
                     if (AppPrefs.getProperty(UserProp.DOWNLOAD_ON_APPLICATION_START, UserProp.DOWNLOAD_ON_APPLICATION_START_DEFAULT)) {
@@ -334,17 +335,17 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
             for (DownloadFile file : toRemoveList) {
                 final DownloadState state = file.getState();
                 if (DownloadsActions.pauseEnabledStates.contains(state)) {
-                    boolean isProcessState = DownloadsActions.isProcessState(state);
+                    //boolean isProcessState = DownloadsActions.isProcessState(state);
                     final DownloadTask task = file.getTask();
+                    file.setState(PAUSED);
                     if (task != null) {
                         task.cancel(true);
                     }
-                    file.setState(PAUSED);
-                    final File outputFile = file.getOutputFile();
-                    if (isProcessState && outputFile.exists()) {
-                        outputFile.delete();
-                        file.setDownloaded(0);
-                    }
+//                    final File outputFile = file.getOutputFile();
+//                    if (isProcessState && outputFile.exists()) {
+//                        outputFile.delete();
+//                        file.setDownloaded(0);
+//                    }
                 }
             }
         }

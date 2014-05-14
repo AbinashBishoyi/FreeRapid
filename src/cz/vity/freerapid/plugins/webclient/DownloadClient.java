@@ -17,6 +17,8 @@ import java.io.*;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -107,6 +109,7 @@ public class DownloadClient implements HttpDownloadClient {
         method.setRequestHeader("Accept-Charset", "windows-1250,utf-8;q=0.7,*;q=0.7");
         //method.setRequestHeader("Accept-Charset", "utf-8, windows-1250;q=0.7,*;q=0.7");
         method.setRequestHeader("Accept-Encoding", "gzip,deflate");
+        method.setRequestHeader("Accept-Ranges", "bytes");
         method.setRequestHeader("Keep-Alive", "30");
         if (referer != null && referer.length() > 0)
             method.setRequestHeader("Referer", referer);
@@ -150,10 +153,11 @@ public class DownloadClient implements HttpDownloadClient {
         asString = "";
         toString(method);
 
+
         if (allowRedirect && method instanceof GetMethod) {
             method.setFollowRedirects(true); //autoredirects for GetMethod, it's not working for PostMethod
         }
-
+        addRangeHeader(file, method);
         client.executeMethod(method);
 
         final int statuscode = method.getStatusCode();
@@ -171,7 +175,7 @@ public class DownloadClient implements HttpDownloadClient {
 
         final boolean isRedirect = isRedirect(statuscode);
 
-        if (statuscode != HttpStatus.SC_OK && !isRedirect) { //selhalo pripojeni
+        if (statuscode != HttpStatus.SC_OK && statuscode != HttpStatus.SC_PARTIAL_CONTENT && !isRedirect) { //selhalo pripojeni
             logger.warning("Loading file failed - invalid HTTP return status code:" + statuscode);
             updateAsString(method);
             return null;
@@ -207,6 +211,14 @@ public class DownloadClient implements HttpDownloadClient {
         }
     }
 
+    private void addRangeHeader(HttpFile file, HttpMethod method) {
+        final File storeFile = file.getStoreFile();
+        if (storeFile != null && storeFile.exists()) {
+            //velikost souboru muze byt preddelana, proto bereme minimum
+            method.addRequestHeader("Range", "bytes=" + Math.min(storeFile.length(), Math.max(file.getDownloaded(), 0)) + "-");
+        }
+    }
+
     private InputStream processFileForDownload(HttpMethod method, HttpFile file) throws IOException {
         boolean isStream = true;
         final Header contentType = method.getResponseHeader("Content-Type");
@@ -228,8 +240,15 @@ public class DownloadClient implements HttpDownloadClient {
                 file.setFileName(fileName);
             if (client.getParams().isParameterTrue("noContentTypeInHeader"))
                 isStream = true;
-        } else logger.warning("No Content-Disposition (filename) header in file");
-        file.setFileName(HttpUtils.replaceInvalidCharsForFileSystem(PlugUtils.unescapeHtml(file.getFileName()), "_"));
+        } else {
+            if (method.getResponseHeader("Content-Range") == null)
+                logger.warning("No Content-Disposition (filename) header in file");
+        }
+
+        final String fn = file.getFileName();
+        if (fn == null)
+            throw new IOException("No defined file name");
+        file.setFileName(HttpUtils.replaceInvalidCharsForFileSystem(PlugUtils.unescapeHtml(fn), "_"));
 
         //server sends eg. text/plain for binary data
         if (!isStream && contentType != null && client.getParams().isParameterSet("considerAsStream")) {
@@ -245,8 +264,21 @@ public class DownloadClient implements HttpDownloadClient {
             if (contentLength == null) {
                 isStream = false;
                 logger.warning("No Content-Length in header");
-            } else
-                file.setFileSize(Long.valueOf(contentLength.getValue()));
+            } else {
+                final Long contentResponseLength = Long.valueOf(contentLength.getValue());
+                final Header contentRange = method.getResponseHeader("Content-Range");
+                if (contentRange != null) {
+                    final String val = contentRange.getValue();
+                    final Matcher matcher = Pattern.compile("(\\d+)-\\d+/(\\d+)").matcher(val);
+                    if (matcher.find()) {
+                        file.getProperties().put("startPosition", Long.valueOf(matcher.group(1)));
+                        file.setFileSize(Long.valueOf(matcher.group(2)));
+                    } else
+                        file.getProperties().put("startPosition", 0L);
+                } else
+                    file.setFileSize(contentResponseLength);
+                file.getProperties().put("supposeToDownload", contentResponseLength);
+            }
         }
 
         if (isStream) {

@@ -26,15 +26,22 @@ public class FileUtils {
      * @return soubor pro zapis nahodnych dat - nastaveny na zacatek
      * @throws IOException vyjimka pri IO
      */
-    public static OutputStream createEmptyFile(final File f, final long size, DownloadTask task) throws IOException {
+    public static OutputStream createEmptyFile(final File f, final long size, final long startPosition, DownloadTask task) throws IOException {
         final int megabyte = 1024 * 1024;
-        long written = 0;
+        long written;
         RandomAccessFile fos;
         final byte[] bytes = new byte[megabyte];
         fos = null;
+        long startSeek;
+        if (f.exists())
+            startSeek = f.length();
+        else
+            startSeek = 0;
         try {
             fos = new RandomAccessFile(f, "rw");
             fos.setLength(size);
+            fos.seek(startSeek);
+            written = startSeek;
             int toWrite = megabyte;
             while (written != size) {
                 if (task.isTerminated())
@@ -52,34 +59,9 @@ public class FileUtils {
             throw e;
         }
 
-        fos.seek(0);
+        fos.seek(startPosition);
         return new FileOutputStream(fos.getFD());
     }
-//    public static OutputStream createEmptyFile(final File f, final long size, DownloadTask task) throws IOException {
-//        final int megabyte = 1024 * 1024;
-//        long written = 0;
-//        FileOutputStream fos = null;
-//        final byte[] bytes = new byte[megabyte];
-//        try {
-//            fos = new FileOutputStream(f);
-//            int toWrite = megabyte;
-//            while (written != size) {
-//                if (task.isTerminated())
-//                    return null;
-//                if (size - written < megabyte) {
-//                    toWrite = (int) (size - written);
-//                }
-//                fos.write(bytes, 0, toWrite);
-//                written += toWrite;
-//            }
-//        } finally {
-//            if (fos != null)
-//                fos.close();
-//        }
-//
-//        return new FileOutputStream(new RandomAccessFile(f, "rw").getFD());
-//    }
-
 
     public static void makeBackup(final File srcFile) throws IOException {
         final File backupFile = getBackupFile(srcFile);

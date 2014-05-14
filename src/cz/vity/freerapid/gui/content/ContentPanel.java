@@ -817,7 +817,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         table.addHighlighter(highlighter);
         new FindTableAction(Swinger.getResourceMap(), COLUMN_NAME) {
             protected Object getObject(int index, int column) {
-                final DownloadFile downloadFile = (DownloadFile) table.getValueAt(index, column);
+                final DownloadFile downloadFile = (DownloadFile) table.getModel().getValueAt(index, column);
                 if (downloadFile == null) {
                     logger.warning("Download File is null");
                     return null;

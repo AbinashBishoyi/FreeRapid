@@ -87,12 +87,13 @@ class FileListMaintainer {
                 continue;
             }
             if (state != DownloadState.COMPLETED) {
-                file.setDownloaded(0);
+//                if (state != DownloadState.PAUSED)
+//                    file.setDownloaded(0);
                 if (recheckOnStart)
                     file.setFileState(FileState.NOT_CHECKED);
             }
             if (state == DownloadState.ERROR || state == DownloadState.SLEEPING) {
-                file.setDownloaded(0);
+                //file.setDownloaded(0);
                 if (downloadOnStart && file.getTimeToQueued() > 0) {
                     file.setTimeToQueued(-1);
                     file.setTimeToQueuedMax(-1);
