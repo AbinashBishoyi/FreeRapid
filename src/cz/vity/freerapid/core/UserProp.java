@@ -5,6 +5,8 @@ package cz.vity.freerapid.core;
  */
 final public class UserProp {
 
+
+
     private UserProp() {
     }
 
@@ -332,7 +334,13 @@ final public class UserProp {
     public static final boolean SEARCH_SUBTITLES_ENABLED_DEFAULT = false;
 
     public static final String SEARCH_SUBTITLES_LANGUAGE = "searchSubtitlesLanguage";
+
+
+    public static final String RECONNECT_SCRIPT = "reconnectScript";
+    public static final String RECONNECT_SCRIPT_ENABLED = "reconnectScriptEnabled";
+    public static final boolean RECONNECT_SCRIPT_ENABLED_DEFAULT = true;
 }
+
 
 
 

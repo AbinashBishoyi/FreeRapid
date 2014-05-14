@@ -49,6 +49,7 @@ import static cz.vity.freerapid.plugins.webclient.FileState.NOT_CHECKED;
  */
 public class DataManager extends AbstractBean implements PropertyChangeListener, ListDataListener, MaintainQueueSupport {
     private final static Logger logger = Logger.getLogger(DataManager.class.getName());
+    private static final String DATA_CHANGED_PROPERTY = "dataChanged";
 
     private final ArrayListModel<DownloadFile> downloadFiles = new ArrayListModel<DownloadFile>();
 
@@ -122,6 +123,14 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         }
     }
 
+    public void addFileStateChangedListener(FileStateChangeListener listener){
+        listenerList.add(FileStateChangeListener.class, listener);
+    }
+
+    public void removeFileStateChangedListener(FileStateChangeListener listener){
+        listenerList.remove(FileStateChangeListener.class, listener);
+    }
+
     private void saveListToBeanImmediately() {
         fileListMaintainer.saveToFile(downloadFiles);
     }
@@ -135,7 +144,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         processManager.start();
         if (AppPrefs.getProperty(UserProp.AUTOSAVE_ENABLED, UserProp.AUTOSAVE_ENABLED_DEFAULT)) {
 
-            PropertyAdapter<DataManager> adapter = new PropertyAdapter<DataManager>(this, "dataChanged", true);
+            PropertyAdapter<DataManager> adapter = new PropertyAdapter<DataManager>(this, DATA_CHANGED_PROPERTY, true);
 
             final int time = AppPrefs.getProperty(UserProp.AUTOSAVE_TIME, UserProp.AUTOSAVE_TIME_DEFAULT);
 
@@ -212,6 +221,20 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
 
     }
 
+    private void fireFileStateChanged(DownloadFile file, DownloadState oldState, DownloadState newState) {
+        // Guaranteed to return a non-null array
+        Object[] listeners = listenerList.getListenerList();
+        // Process the listeners last to first, notifying
+        // those that are interested in this event
+        final StateChangeEvent event = new StateChangeEvent(file, oldState, newState);
+        for (int i = listeners.length - 2; i >= 0; i -= 2) {
+            if (listeners[i] == FileStateChangeListener.class) {
+                // Lazily create the event:
+                ((FileStateChangeListener) listeners[i + 1]).stateChanged(event);
+            }
+        }
+    }
+
     public ArrayListModel<DownloadFile> getDownloadFiles() {
         return downloadFiles;
     }
@@ -219,6 +242,33 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
     public List<DownloadFile> getActualDownloadFiles() {
         synchronized (lock) {
             return Collections.unmodifiableList(new ArrayList<DownloadFile>(downloadFiles));
+        }
+    }
+
+    public List<DownloadFile> getDownloadFilesInStates(EnumSet<DownloadState> states) {
+        synchronized (lock) {
+            final List<DownloadFile> list = new ArrayList<DownloadFile>();
+            for (DownloadFile file : downloadFiles) {
+                if (states.contains(file.getState())) {
+                    list.add(file);
+                }
+            }
+            return Collections.unmodifiableList(list);
+        }
+    }
+
+    public List<DownloadFile> setDownloadFilesState(DownloadState oldState, DownloadState newState) {
+        synchronized (lock) {
+            final List<DownloadFile> list = new ArrayList<DownloadFile>();
+            for (DownloadFile file : downloadFiles) {
+                if (file.getState() == oldState) {
+                    list.add(file);
+                }
+            }
+            for (DownloadFile downloadFile : list) {
+                downloadFile.setState(newState);
+            }
+            return Collections.unmodifiableList(list);
         }
     }
 
@@ -239,6 +289,9 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                 if ("state".equals(s) || (!optimizeSavingList && "downloaded".equals(s))) {
                     firePropertyChange(s, evt.getOldValue(), evt.getNewValue());
                     fireDataChanged();
+                }
+                if ("state".equals(s)) {
+                    fireFileStateChanged(downloadFile, (DownloadState) evt.getOldValue(), (DownloadState) evt.getNewValue());
                 }
 //                else if ("averageSpeed".equals(s)) {
 //                    final float oldValue = averageSpeed;
@@ -647,7 +700,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
     }
 
     private void fireDataChanged() {
-        firePropertyChange("dataChanged", this.dataChanged, ++this.dataChanged);
+        firePropertyChange(DATA_CHANGED_PROPERTY, this.dataChanged, ++this.dataChanged);
     }
 
     public ProcessManager getProcessManager() {
