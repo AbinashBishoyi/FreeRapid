@@ -550,7 +550,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         final int[] indexes = getSelectedRows();
         final java.util.List<DownloadFile> files = manager.getSelectionToList(indexes);
         for (DownloadFile file : files) {
-            if (!(file.getOutputFile().exists() && file.getOutputFile().length() == file.getFileSize()))
+            final File outputFile = file.getOutputFile();
+            if (!(outputFile.exists() && outputFile.length() == file.getFileSize() && file.getFileSize() > 0))
                 return false;
         }
         return true;

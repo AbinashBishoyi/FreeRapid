@@ -102,7 +102,8 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     private CountingOutputStream getFileOutputStream(final File f, final long fileSize, final long startPosition) throws NotEnoughSpaceException, IOException {
         final long freeSpace = f.getUsableSpace();
         logger.info("Free space on disk: " + freeSpace);
-        if (freeSpace < fileSize + (30 * 1024 * 1024L)) { //+ 30MB
+        final int minDiskSpace = AppPrefs.getProperty(UserProp.MIN_DISK_SPACE, UserProp.MIN_DISK_SPACE_DEFAULT);
+        if (freeSpace < fileSize + (minDiskSpace * 1024 * 1024L)) { //+ 30MB
             throw new NotEnoughSpaceException();
         }
 
@@ -220,8 +221,10 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                 }
                 //-----------------------------------------------
                 if (!isTerminated()) {
-                    if (counter != suppose)
+                    if (counter != suppose) {
+                        logger.info("File size does not match - expected " + suppose + " but " + counter + " was downloaded");
                         throw new IOException("ErrorDuringDownload");
+                    }
                 } else {
                     logger.info("File downloading was terminated");
                 }

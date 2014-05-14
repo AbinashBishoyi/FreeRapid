@@ -66,6 +66,8 @@ public class ManagerDirector {
     private TaskServiceManager taskServiceManager;
     private UpdateManager updateManager;
     private SpeedRegulator speedRegulator;
+    private LinkStoreManager linkStoreManager;
+
 
     /**
      * Konstruktor
@@ -110,6 +112,8 @@ public class ManagerDirector {
         this.clipboardMonitorManager = new ClipboardMonitorManager(context, this);
 
         this.inputDataManager.initProcessManager();
+
+        linkStoreManager = new LinkStoreManager(this, context);
 
         rootContainer.add(getToolbarManager().getComponent(), BorderLayout.NORTH);
         rootContainer.add(getContentManager().getComponent(), BorderLayout.CENTER);

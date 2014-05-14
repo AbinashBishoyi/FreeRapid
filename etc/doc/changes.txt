@@ -11,8 +11,15 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
-29th August 2009 - FreeRapid Downloader 0.83 beta 3
-  Added : error message when launching FRD on GJC
+XXth September 2009 - FreeRapid Downloader 0.83 beta 4
+  Added : SOCKS proxy support [thanks to Benjamin!!] - all urls in proxy list file has to be prefixed with $SOCKS$ or SOCKS:
+  Added : added shell script in tools/socks to help with automatic creating list of SOCKS proxies for FRD [thanks to Benjamin!!]
+  Added : added backup links.txt file (located in configuration folder), which stores all links you ever added into FreeRapid
+  Fixed: problems with backup files
+
+30th August 2009 - FreeRapid Downloader 0.83 beta 3
+  Added : error message when launching FRD using GCJ
+  Changed : connection timeout set from 100 to 120
   Changed : updated default plugins to their latest versions
   Changed : internal - Windows - removed dependency on Windows registry
   Changed : internal - upgraded SwingX components to the latest build

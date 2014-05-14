@@ -156,7 +156,9 @@ Example - running application in debug mode:
 More Info:
   - Unofficial tutorial for Linux users - How to configure FreeRapid Downloader on Linux (in Spanish)
     http://manualinux.my-place.us/freerapid.html
-    
+
+
+
 
 IV.    Known bugs and Limitations
 =======================================

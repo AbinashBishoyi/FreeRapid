@@ -717,6 +717,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
     }
 
 
+    @SuppressWarnings({"unchecked"})
     private void updateFilters() {
         String filterText = fieldFilter.getText();
         if (exampleSearchString.equals(filterText))

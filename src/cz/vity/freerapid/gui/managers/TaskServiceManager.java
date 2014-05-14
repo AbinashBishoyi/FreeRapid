@@ -1,6 +1,7 @@
 package cz.vity.freerapid.gui.managers;
 
 import org.jdesktop.application.ApplicationContext;
+import org.jdesktop.application.Task;
 import org.jdesktop.application.TaskService;
 
 import java.util.concurrent.*;
@@ -61,5 +62,7 @@ public class TaskServiceManager {
         return service;
     }
 
-
+    public void runTask(String taskServiceName, Task task) {
+        this.getTaskService(taskServiceName).execute(task);
+    }
 }

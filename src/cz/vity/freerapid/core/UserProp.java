@@ -265,4 +265,7 @@ final public class UserProp {
 
     public static final String TRAY_ICON_AUTOIMAGESIZE = "trayIconAutoImageSize";
     public static final boolean TRAY_ICON_AUTOIMAGESIZE_DEFAULT = true;
+
+    public static final String MIN_DISK_SPACE = "minDiskSpaceMB";
+    public static final int MIN_DISK_SPACE_DEFAULT = 30;
 }

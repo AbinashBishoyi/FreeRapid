@@ -13,6 +13,7 @@ import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
 
 import java.io.File;
+import java.net.Proxy;
 import java.net.ProxySelector;
 import java.util.*;
 import java.util.logging.Logger;
@@ -23,6 +24,9 @@ import java.util.regex.Pattern;
  * @author Vity
  */
 public class ClientManager {
+
+    private final static String SOCKS_PREFIX_REGEXP = "^(\\$SOCKS\\$|SOCKS\\:)";
+
     private final static Logger logger = Logger.getLogger(ClientManager.class.getName());
 
     private final List<ConnectionSettings> availableConnections = new ArrayList<ConnectionSettings>(2);
@@ -106,9 +110,9 @@ public class ClientManager {
             if (AppPrefs.getProperty(FWProp.PROXY_LOGIN, false)) {
                 final String userName = AppPrefs.getProperty(FWProp.PROXY_USERNAME, "");
                 final String password = Utils.generateXorString(AppPrefs.getProperty(FWProp.PROXY_PASSWORD, ""));
-                connectionSettings.setProxy(url, port, userName, password);
+                connectionSettings.setProxy(url, port, Proxy.Type.HTTP, userName, password);
             } else
-                connectionSettings.setProxy(url, port);
+                connectionSettings.setProxy(url, port, Proxy.Type.HTTP); // TODO: add option for SOCKS in UI
             logger.info("Setting proxy configuration ON with configuration: " + connectionSettings.toString());
         } else {
             logger.info("Setting proxy configuration OFF for default connection");
@@ -117,14 +121,21 @@ public class ClientManager {
     }
 
     private void readProxyList(File f) {
-        //maxClients = AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, 5);
-        //String input = "    vity:heslo@exfort.org:8787 vity2:angor@@exfort2.org:8788  exfort3.org:5478  pavel@exfort.org:564 exfort5.org";
+        Proxy.Type proxyType;
 
         final Pattern patternWhole = Pattern.compile("((\\w*)(:(.*?))?@)?(.*?):(\\d{2,5})");
+        final Pattern socksPattern = Pattern.compile(SOCKS_PREFIX_REGEXP, Pattern.CASE_INSENSITIVE);
         final String[] strings = Utils.loadFile(f).split("(\\s)");
         for (String s : strings) {
             if (s.isEmpty())
                 continue;
+            final Matcher matcherSocks = socksPattern.matcher(s);
+            if (matcherSocks.find()) {
+                proxyType = Proxy.Type.SOCKS;
+                s = s.substring(matcherSocks.group(1).length());
+            } else
+                proxyType = Proxy.Type.HTTP;
+
             final Matcher matcher = patternWhole.matcher(s);
             if (matcher.matches()) {
                 int i = s.lastIndexOf('@');
@@ -139,16 +150,16 @@ public class ClientManager {
                     if (port > 65535)
                         continue;
                     if (i > 0)
-                        settings.setProxy(hostPort[0], port, s1.substring(0, i), s1.substring(i + 1));
+                        settings.setProxy(hostPort[0], port, proxyType, s1.substring(0, i), s1.substring(i + 1));
                     else
-                        settings.setProxy(hostPort[0], port, s1, null);
+                        settings.setProxy(hostPort[0], port, proxyType, s1, null);
                 } else {
                     s2 = s;
                     final String[] hostPort = s2.split(":");
                     final Integer port = Integer.valueOf(hostPort[1]);
                     if (port > 65535)
                         continue;
-                    settings.setProxy(hostPort[0], port);
+                    settings.setProxy(hostPort[0], port, proxyType);
                 }
                 availableConnections.add(settings);
                 logger.info("Reading proxy definition " + settings.toString());

@@ -23,6 +23,7 @@ import org.jdesktop.application.Application;
 import org.jdesktop.application.ApplicationContext;
 
 import javax.swing.*;
+import javax.swing.event.EventListenerList;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import java.awt.event.WindowEvent;
@@ -56,6 +57,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
     private int dataChanged = 0;
     private FileListMaintainer fileListMaintainer;
     private boolean optimizeSavingList;
+    private EventListenerList listenerList = new EventListenerList();
 
     public DataManager(ManagerDirector director, ApplicationContext context) {
         this.director = director;
@@ -162,6 +164,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         synchronized (lock) {
             addOnList(files);
         }
+        fireUrlsAdded(files);
     }
 
     private void addOnList(List<DownloadFile> files) {
@@ -179,6 +182,26 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
             else
                 this.downloadFiles.add(0, file);
         }
+    }
+
+
+    public void addUrlListDataListener(UrlListDataListener l) {
+        listenerList.add(UrlListDataListener.class, l);
+    }
+
+
+    private void fireUrlsAdded(List<DownloadFile> list) {
+        // Guaranteed to return a non-null array
+        Object[] listeners = listenerList.getListenerList();
+        // Process the listeners last to first, notifying
+        // those that are interested in this event
+        for (int i = listeners.length - 2; i >= 0; i -= 2) {
+            if (listeners[i] == UrlListDataListener.class) {
+                // Lazily create the event:
+                ((UrlListDataListener) listeners[i + 1]).linksAdded(list);
+            }
+        }
+
     }
 
     public ArrayListModel<DownloadFile> getDownloadFiles() {

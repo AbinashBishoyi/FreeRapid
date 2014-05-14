@@ -68,7 +68,7 @@ public class FileUtils {
             return;
         final File backupFile = getBackupFile(srcFile);
 
-        final File tmp = File.createTempFile("FRD", "temp", srcFile.getParentFile());
+        File tmp = new File(srcFile.getParentFile(), "FRD" + (int) (Math.random() * 1000000) + "templist.txt");
         final boolean b = srcFile.renameTo(tmp);
         if (!b) {
             logger.warning("Failed to rename oldSrc file to " + tmp);

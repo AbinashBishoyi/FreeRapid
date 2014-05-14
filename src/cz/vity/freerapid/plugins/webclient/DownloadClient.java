@@ -11,9 +11,12 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.httpclient.util.URIUtil;
 
 import java.io.*;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,6 +42,13 @@ public class DownloadClient implements HttpDownloadClient {
      * @see org.apache.commons.httpclient.HttpClient
      */
     protected HttpClient client;
+
+    /**
+     * Protocol to use (custom SocketFactory)
+     */
+
+    protected Protocol protocol = null;
+
     /**
      * Field referer  - HTTP referer
      */
@@ -76,19 +86,27 @@ public class DownloadClient implements HttpDownloadClient {
         clientParams.setParameter(HttpMethodParams.SINGLE_COOKIE_HEADER, true);
         clientParams.setSoTimeout(120 * 1000);
         clientParams.setConnectionManagerTimeout(120 * 1000);
-
         clientParams.setHttpElementCharset("UTF-8");
         this.client.setHttpConnectionManager(new SimpleHttpConnectionManager(true));
         this.client.getHttpConnectionManager().getParams().setConnectionTimeout(120 * 1000);
 
         HttpState initialState = new HttpState();
-        if (settings.isProxySet()) {
-            HostConfiguration configuration = new HostConfiguration();
+        HostConfiguration configuration = new HostConfiguration();
+        if (settings.getProxyType() == Proxy.Type.SOCKS) { // Proxy stuff happens here
+
+            configuration = new HostConfigurationWithStickyProtocol();
+
+            Proxy proxy = new Proxy(settings.getProxyType(), // create custom Socket factory
+                    new InetSocketAddress(settings.getProxyURL(), settings.getProxyPort())
+            );
+            protocol = new Protocol("http", new ProxySocketFactory(proxy), 80);
+
+        } else if (settings.getProxyType() == Proxy.Type.HTTP) { // we use build in HTTP Proxy support          
             configuration.setProxy(settings.getProxyURL(), settings.getProxyPort());
-            client.setHostConfiguration(configuration);
             if (settings.getUserName() != null)
                 initialState.setProxyCredentials(AuthScope.ANY, new NTCredentials(settings.getUserName(), settings.getPassword(), "", ""));
-        } else client.setHostConfiguration(new HostConfiguration());
+        }
+        client.setHostConfiguration(configuration);
 
         clientParams.setBooleanParameter(HttpClientParams.ALLOW_CIRCULAR_REDIRECTS, true);
         // Get initial state object
@@ -164,7 +182,9 @@ public class DownloadClient implements HttpDownloadClient {
             method.setFollowRedirects(true); //autoredirects for GetMethod, it's not working for PostMethod
         }
         addRangeHeader(file, method);
-        client.executeMethod(method);
+
+        //client.executeMethod(method);
+        processHttpMethod(method);
 
         final int statuscode = method.getStatusCode();
 
@@ -230,6 +250,7 @@ public class DownloadClient implements HttpDownloadClient {
     }
 
     private InputStream processFileForDownload(HttpMethod method, HttpFile file) throws IOException {
+
         boolean isStream = true;
         final Header contentType = method.getResponseHeader("Content-Type");
         if (contentType == null) {
@@ -311,8 +332,11 @@ public class DownloadClient implements HttpDownloadClient {
 
     @Override
     public InputStream makeRequestForFile(HttpMethod method) throws IOException {
+
         toString(method);
-        client.executeMethod(method);
+
+        //client.executeMethod(method);
+        processHttpMethod(method);
 
         int statuscode = method.getStatusCode();
 
@@ -345,16 +369,33 @@ public class DownloadClient implements HttpDownloadClient {
         return null;
     }
 
+    private void processHttpMethod(HttpMethod method) throws IOException {
+        if (protocol != null) {
+            /* We set host and our custom protocol */
+            client.getHostConfiguration().setHost(method.getURI().getHost(), 80, protocol);
+        }
+
+        client.executeMethod(method);
+
+        /*
+        if(protocol != null) //undo the URI changes, jut
+            method.setURI(new URI("http://"+client.getHost()+method.getURI()));
+        */
+    }
+
 
     @Override
     public int makeRequest(HttpMethod method, boolean allowRedirect) throws IOException {
         //toString(method);
+
+
         asString = ""; //pro sichr aby tam nebylo nikdy null
         if (allowRedirect && method instanceof GetMethod) {
             method.setFollowRedirects(true);
         }
 
-        client.executeMethod(method);
+        //client.executeMethod(method);
+        processHttpMethod(method);
 
         int statuscode = method.getStatusCode();
         final boolean isRedirect = isRedirect(statuscode);

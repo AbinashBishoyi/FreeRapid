@@ -5,6 +5,7 @@ import org.jdesktop.application.Application;
 import javax.swing.event.SwingPropertyChangeSupport;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.net.Proxy;
 
 /**
  * @author Vity
@@ -50,6 +51,11 @@ public class ConnectionSettings {
      */
     private boolean isDefault = false;
 
+    /**
+     * Field proxyType
+     */
+    private Proxy.Type proxyType = Proxy.Type.DIRECT;
+
 
     /**
      * Constructor - creates a new ConnectionSettings instance.
@@ -58,6 +64,7 @@ public class ConnectionSettings {
         //setProxy("localhost", 8081);
         defaultConnectionLabel = Application.getInstance().getContext().getResourceMap().getString("defaultConnection");
         pcs = new SwingPropertyChangeSupport(this);
+        proxyType = Proxy.Type.DIRECT;
     }
 
     /**
@@ -68,19 +75,20 @@ public class ConnectionSettings {
      * @param userName  access user name
      * @param password  access user password
      */
-    public void setProxy(String proxyURL, int proxyPort, String userName, String password) {
+    public void setProxy(String proxyURL, int proxyPort, Proxy.Type proxyType, String userName, String password) {
         this.userName = userName;
         this.password = password;
-        setProxy(proxyURL, proxyPort);
+        setProxy(proxyURL, proxyPort, proxyType);
     }
 
     /**
      * @param proxyURL
      * @param proxyPort
      */
-    public void setProxy(String proxyURL, int proxyPort) {
+    public void setProxy(String proxyURL, int proxyPort, Proxy.Type proxyType) {
         this.proxyURL = proxyURL;
         this.proxyPort = proxyPort;
+        this.proxyType = proxyType;
         this.proxySet = true;
     }
 
@@ -91,6 +99,16 @@ public class ConnectionSettings {
      */
     public boolean isProxySet() {
         return proxySet;
+    }
+
+
+    /**
+     * Method getProxyType returns the ProxyType of this ConnectionSettings object.
+     *
+     * @return the proxyType (type ProxyType) of this ConnectionSettings object.
+     */
+    public Proxy.Type getProxyType() {
+        return proxyType;
     }
 
     /**
@@ -141,14 +159,15 @@ public class ConnectionSettings {
     @Override
     public String toString() {
         if (isProxySet()) {
-            final String url = getProxyURL() + ":" + getProxyPort();
+            StringBuilder builder = new StringBuilder();
             if (hasUserName()) {
-                return getUserName() + "@" + url;
-            } else return url;
+                builder.append(getUserName()).append('@');
+            }
+            builder.append(getProxyURL()).append(':').append(getProxyPort()).append(' ').append('(').append(this.getProxyType()).append(')');
+            return builder.toString();
         } else {
             return defaultConnectionLabel;
         }
-
     }
 
     @Override
@@ -161,8 +180,10 @@ public class ConnectionSettings {
 
         if (proxyPort != that.proxyPort) return false;
         if (proxySet != that.proxySet) return false;
+        if (proxyType != that.proxyType) return false;
         if (proxyURL != null ? !proxyURL.equalsIgnoreCase(that.proxyURL) : that.proxyURL != null) return false;
         if (userName != null ? !userName.equals(that.userName) : that.userName != null) return false;
+
 
         return true;
     }
