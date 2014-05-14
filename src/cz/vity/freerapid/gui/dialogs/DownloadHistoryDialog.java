@@ -612,9 +612,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         final ArrayListModel<FileHistoryItem> items = getItems();
         final java.util.List<FileHistoryItem> toRemoveList = getSelectionToList(indexes);
         manager.removeItems(toRemoveList);
-        for (FileHistoryItem file : toRemoveList) {
-            items.remove(file);
-        }
+        items.removeAll(toRemoveList);
     }
 
 
@@ -759,9 +757,14 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
     public void clearHistoryBtnAction() {
         if (Swinger.getChoiceYesNo(getApp().getContext().getResourceMap().getString("confirmClearHistory")) == Swinger.RESULT_YES) {
             final ListSelectionModel selectionModel = table.getSelectionModel();
-            selectionModel.setValueIsAdjusting(true);
-            manager.clearHistory();
-            selectionModel.setValueIsAdjusting(false);
+            manager.clearHistory(new Runnable() {
+                @Override
+                public void run() {
+                    selectionModel.setValueIsAdjusting(true);
+                    getItems().clear();
+                    selectionModel.setValueIsAdjusting(false);
+                }
+            });
         }
     }
 

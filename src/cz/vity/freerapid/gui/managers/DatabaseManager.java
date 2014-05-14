@@ -138,8 +138,19 @@ public class DatabaseManager {
     }
 
     public void runOnTask(final Runnable runnable) {
+        runOnTask(runnable, null);
+    }
+
+    public void runOnTask(final Runnable runnable, final Runnable succeeded) {
         final TaskService service = director.getTaskServiceManager().getTaskService(TaskServiceManager.DATABASE_SERVICE);
+
         service.execute(new CoreTask(director.getContext().getApplication()) {
+            @Override
+            protected void succeeded(Object result) {
+                if (succeeded != null) {
+                    succeeded.run();
+                }
+            }
 
             @Override
             protected Object doInBackground() throws Exception {

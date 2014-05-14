@@ -572,6 +572,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         downloadFiles.removeAll(toRemoveList);
         //we have to remove existing changed, otherwise it would be added in the future again
         changedFiles.removeAll(toRemoveList);
+        reOrderListProperty();
         this.fileListMaintainer.removeFromDatabaseOnBackground(toRemoveList);
     }
 

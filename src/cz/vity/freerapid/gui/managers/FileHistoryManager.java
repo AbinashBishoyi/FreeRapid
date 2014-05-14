@@ -108,17 +108,17 @@ public class FileHistoryManager extends AbstractBean {
                 director.getDatabaseManager().saveOrUpdate(item);
             }
         };
-        director.getDatabaseManager().runOnTask(runnable);
+        director.getDatabaseManager().runOnTask(runnable, null);
         fireDataAdded(item);
     }
 
-    public void clearHistory() {
+    public void clearHistory(Runnable succeeded) {
         Runnable runnable = new Runnable() {
             public void run() {
                 director.getDatabaseManager().removeAll(FileHistoryItem.class);
             }
         };
-        director.getDatabaseManager().runOnTask(runnable);
+        director.getDatabaseManager().runOnTask(runnable, succeeded);
     }
 
 
@@ -128,7 +128,16 @@ public class FileHistoryManager extends AbstractBean {
                 director.getDatabaseManager().removeCollection(items);
             }
         };
-        director.getDatabaseManager().runOnTask(runnable);
+        director.getDatabaseManager().runOnTask(runnable, null);
+    }
+
+    public void removeItems(final Collection<FileHistoryItem> items, Runnable succeeded) {
+        Runnable runnable = new Runnable() {
+            public void run() {
+                director.getDatabaseManager().removeCollection(items);
+            }
+        };
+        director.getDatabaseManager().runOnTask(runnable, succeeded);
     }
 
 
