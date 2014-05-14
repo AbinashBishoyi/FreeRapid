@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.InflaterInputStream;
 
 /**
  * Robot to browse on the web.
@@ -361,12 +362,15 @@ public class DownloadClient implements HttpDownloadClient {
             checkContentTypeStream(method, true);
 
             Header hce = method.getResponseHeader("Content-Encoding");
-            if (null != hce) {
-                if ("gzip".equals(hce.getValue())) {
+            if (null != hce && !hce.getValue().isEmpty()) {
+                if ("gzip".equalsIgnoreCase(hce.getValue())) {
                     logger.info("Found gzip Stream");
                     return new GZIPInputStream(method.getResponseBodyAsStream());
+                } else if ("deflate".equalsIgnoreCase(hce.getValue())) {
+                    logger.info("Found deflate Stream");
+                    return new InflaterInputStream(method.getResponseBodyAsStream());
                 } else {
-                    //better hope this never happens
+                    logger.warning("Unknown Content-Encoding: " + hce.getValue());
                 }
             }
             return method.getResponseBodyAsStream();
@@ -458,12 +462,15 @@ public class DownloadClient implements HttpDownloadClient {
     private void updateAsString(HttpMethod method) throws IOException {
         Header hce = method.getResponseHeader("Content-Encoding");
         asString = "";
-        if (null != hce) {
-            if ("gzip".equals(hce.getValue())) {
+        if (null != hce && !hce.getValue().isEmpty()) {
+            if ("gzip".equalsIgnoreCase(hce.getValue())) {
                 logger.info("Extracting GZIP");
-                asString = inflate(method.getResponseBodyAsStream());
+                asString = inflate(method.getResponseBodyAsStream(), "gzip");
+            } else if ("deflate".equalsIgnoreCase(hce.getValue())) {
+                logger.info("Extracting deflate");
+                asString = inflate(method.getResponseBodyAsStream(), "deflate");
             } else {
-                //better hope this never happens
+                logger.warning("Unknown Content-Encoding: " + hce.getValue());
             }
         } else {
             final InputStream bodyAsStream = method.getResponseBodyAsStream();
@@ -560,18 +567,28 @@ public class DownloadClient implements HttpDownloadClient {
     }
 
     /**
-     * Converts given GZIPed input stream into string. <br>
+     * Converts given GZIP/deflate input stream into string. <br>
      * UTF-8 encoding is used as default.<br>
      * Shouldn't be called to file input streams.<br>
      *
-     * @param in input stream which should be converted
+     * @param in     input stream which should be converted
+     * @param format format of InputStream to inflate (gzip or deflate)
      * @return input stream as string
      * @throws IOException when there was an error during reading from the stream
      */
-    protected String inflate(InputStream in) throws IOException {
+    protected String inflate(InputStream in, String format) throws IOException {
+        if (in == null || format == null)
+            throw new NullPointerException();
         byte[] buffer = new byte[4000];
         int b;
-        GZIPInputStream gin = new GZIPInputStream(in);
+        InflaterInputStream gin;
+        if (format.equalsIgnoreCase("gzip")) {
+            gin = new GZIPInputStream(in);
+        } else if (format.equalsIgnoreCase("deflate")) {
+            gin = new InflaterInputStream(in);
+        } else {
+            throw new IllegalArgumentException("Format must be either 'gzip' or 'deflate'");
+        }
         StringBuilder builder = new StringBuilder();
         while (true) {
             b = gin.read(buffer);
