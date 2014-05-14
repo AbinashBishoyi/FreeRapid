@@ -1,4 +1,19 @@
 =======================================================================================================================
+                                           Version 0.86u1->0.87
+=======================================================================================================================
+MainApp.properties
+===================================
+Added:
+targetFileAlreadyExists=Target file %s already exists.\nDo you want to replace/overwrite it?
+message.button.overwrite=Overwrite
+
+renameAction.Action.text=&Rename file
+renameAction.Action.shortDescription=Rename file
+renameAction.Action.accelerator=F2
+
+
+
+=======================================================================================================================
                                            Version 0.85u1->0.86
 =======================================================================================================================
 MainApp.properties

@@ -31,10 +31,8 @@ import org.jdesktop.swingx.sort.SortController;
 import org.jdesktop.swingx.table.TableColumnExt;
 
 import javax.swing.*;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.*;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
@@ -55,13 +53,14 @@ import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
 /**
+ * @version 1.0
  * @author Vity
  */
 public class ContentPanel extends JPanel implements ListSelectionListener, ListDataListener, PropertyChangeListener, ClipboardOwner {
     private final static Logger logger = Logger.getLogger(ContentPanel.class.getName());
 
     private static final int COLUMN_CHECKED = 0;
-    private static final int COLUMN_NAME = 1;
+    static final int COLUMN_NAME = 1;
     private static final int COLUMN_PROGRESSBAR = 2;
     private static final int COLUMN_PROGRESS = 3;
     private static final int COLUMN_STATE = 4;
@@ -808,7 +807,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
 //        table.setHorizontalScrollEnabled(false);
         table.setAutoResizeMode(AppPrefs.getProperty(UserProp.TABLE_COLUMNS_RESIZE, UserProp.TABLE_COLUMNS_RESIZE_DEFAULT));
-        table.setEditable(false);
+        table.setEditable(true);
         table.setColumnControlVisible(true);
         table.setColumnSelectionAllowed(false);
         final DefaultRowSorter sorter = (DefaultRowSorter) table.getRowSorter();
@@ -846,6 +845,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 //        columnID.setMaxWidth(30);
 //        columnID.setWidth(30);
         final TableColumn colName = tableColumnModel.getColumn(COLUMN_NAME);
+        colName.setCellEditor(new RenameFileNameEditor());
         colName.setCellRenderer(new NameURLCellRenderer(director.getFileTypeIconProvider()));
         colName.setWidth(150);
         colName.setMinWidth(50);
@@ -963,6 +963,9 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         inputMap.put(SwingUtils.getShiftKeyStroke(KeyEvent.VK_HOME), "selectFirstRowExtendSelection");
         inputMap.put(SwingUtils.getShiftKeyStroke(KeyEvent.VK_END), "selectLastRowExtendSelection");
 
+        inputMap.put(SwingUtils.getKeyStroke(KeyEvent.VK_F2), "renameAction");
+        actionMap.put("renameAction", Swinger.getAction("renameAction"));
+
         //inputMap.remove("find");
         inputMap.remove(KeyStroke.getKeyStroke("F8"));
         actionMap.remove("find");
@@ -1016,6 +1019,74 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     }
 
     @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
+    public void renameAction() {
+        final int[] selectedRows = table.getSelectedRows();
+        if (selectedRows.length == 0) {
+            return;
+        }
+
+        final int selectedRow = selectedRows[0];
+        final DownloadFile valueAt = (DownloadFile) table.getValueAt(selectedRow, COLUMN_NAME);
+        if (valueAt.getFileName() == null) {
+            return;
+        }
+        final String backup = valueAt.getFileName();
+        final File originalOuputFile = valueAt.getOutputFile();
+        final boolean wasExisting = originalOuputFile.exists();
+        final boolean result = table.editCellAt(selectedRow, COLUMN_NAME);//takes UI rows, not model
+        if (!result)
+            return;
+        final TableCellEditor cellEditor = table.getCellEditor();
+        if (cellEditor != null) {
+            cellEditor.addCellEditorListener(new CellEditorListener() {
+                @Override
+                public void editingStopped(ChangeEvent e) {
+                    final RenameFileNameEditor source = (RenameFileNameEditor) e.getSource();
+                    cellEditor.removeCellEditorListener(this);
+                    if (wasExisting) {
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                renameFile(source, originalOuputFile, backup, selectedRow);
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void editingCanceled(ChangeEvent e) {
+                    cellEditor.removeCellEditorListener(this);
+                }
+            });
+        }
+    }
+
+    private void renameFile(RenameFileNameEditor source, File originalOuputFile, String backup, int selectedRow) {
+        //change file name physically on disk
+        boolean succeeded;
+        final DownloadFile resultDownloadFile = (DownloadFile) source.getCellEditorValue();
+        final File out = resultDownloadFile.getOutputFile();
+
+        if (out.exists()) {
+            final int answer = Swinger.showOptionDialog(context.getResourceMap(), true, JOptionPane.QUESTION_MESSAGE, "confirmMessage", "targetFileAlreadyExists", new String[]{"message.button.overwrite", Swinger.MESSAGE_BTN_CANCEL_CODE}, out);
+            if (answer == 0) {
+                succeeded = out.delete();
+                if (succeeded) {
+                    succeeded = originalOuputFile.renameTo(out);
+                }
+            } else {
+                succeeded = false;//cancel rename change
+            }
+        } else {
+            succeeded = originalOuputFile.renameTo(out);
+        }
+        if (!succeeded) {
+            resultDownloadFile.setFileName(backup);
+            table.setValueAt(resultDownloadFile, selectedRow, COLUMN_NAME);
+        }
+    }
+
+    @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
     public void copyContent() {
         final java.util.List<DownloadFile> files = manager.getSelectionToList(getSelectedRows());
         StringBuilder builder = new StringBuilder();
@@ -1065,6 +1136,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         popup.add(map.get("openFileAction"));
         popup.add(map.get("deleteFileAction"));
         popup.add(map.get("openDirectoryAction"));
+        popup.add(map.get("renameAction"));
         popup.addSeparator();
         popup.add(map.get("resumeAction"));
         popup.add(map.get("pauseAction"));

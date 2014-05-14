@@ -11,7 +11,6 @@ import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,7 +32,7 @@ public class Swinger {
     private static final String MESSAGE_BTN_YES_CODE = "message.button.yes";
     private static final String MESSAGE_BTN_NO_CODE = "message.button.no";
     private static final String MESSAGE_BTN_OK_CODE = "message.button.ok";
-    private static final String MESSAGE_BTN_CANCEL_CODE = "message.button.cancel";
+    public static final String MESSAGE_BTN_CANCEL_CODE = "message.button.cancel";
 
     public static final int RESULT_NO = 1;
     public static final int RESULT_YES = 0;

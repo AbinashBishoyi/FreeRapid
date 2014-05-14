@@ -86,6 +86,7 @@ public class MenuManager {
                 "openFileAction",
                 "deleteFileAction",
                 "openDirectoryAction",
+                "renameAction",
                 MENU_SEPARATOR,
                 "resumeAction",
                 "pauseAction",

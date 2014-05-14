@@ -28,6 +28,10 @@ final class CustomTableModel extends AbstractTableModel implements ListDataListe
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
+        if (ContentPanel.COLUMN_NAME == columnIndex) {
+            final DownloadFile o = (DownloadFile) getValueAt(rowIndex, columnIndex);
+            return o.getFileName() != null && !o.getFileName().isEmpty();
+        }
         return false;
     }
 
@@ -40,6 +44,11 @@ final class CustomTableModel extends AbstractTableModel implements ListDataListe
         return this.columns.length;
     }
 
+    @Override
+    public Class<?> getColumnClass(int columnIndex) {
+        return DownloadFile.class;
+    }
+
     public Object getValueAt(int rowIndex, int columnIndex) {
         return model.get(rowIndex);
     }
@@ -50,6 +59,12 @@ final class CustomTableModel extends AbstractTableModel implements ListDataListe
 
     public void intervalRemoved(ListDataEvent e) {
         fireTableRowsDeleted(e.getIndex0(), e.getIndex1());
+    }
+
+
+    @Override
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        model.set(rowIndex, (DownloadFile) aValue);
     }
 
     public void contentsChanged(ListDataEvent e) {
