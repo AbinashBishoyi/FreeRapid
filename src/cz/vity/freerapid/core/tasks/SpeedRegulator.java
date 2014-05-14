@@ -17,7 +17,7 @@ class SpeedRegulator {
 
     private Map<DownloadFile, DownloadFileInfo> downloading = new Hashtable<DownloadFile, DownloadFileInfo>(10);
     private final float SPEED_BACKUP = 1.3F;
-    private int globalSpeed;
+    private static int globalSpeed;
     private final Object lock = new Object();
     private Timer timer;
     private static final int SPEED_MINIMUM_HOLDED = 10;
@@ -54,14 +54,14 @@ class SpeedRegulator {
             long available = globalSpeed;
             Set<DownloadFile> notSatisfied = new HashSet<DownloadFile>(files); //neuspokojeni
 
+            boolean firstIteration = true;
             do { //je co a komu docpavat
                 int speedPerFile = Math.max((int) (available / (float) notSatisfied.size()), 1);
                 for (DownloadFile file : files) {
                     if (!notSatisfied.contains(file)) //pokud neni v neuspojenych, jdeme na dalsiho
                         continue;
-                    if (available == globalSpeed) {
+                    if (firstIteration)
                         file.setTokensLimit(0); //reset limitu na token - prvni iterace (jeste jsme nic nerozdali), nutne
-                    }
                     int set;
                     final int lastTaken = file.getTakenTokens();
                     if (file.hasSpeedLimit()) { //pokud ma svuj lokalni limit
@@ -80,7 +80,7 @@ class SpeedRegulator {
                         if (lastTaken < 0 || downloadingCount == 1) { //pokud se jeste nezaclo stahovat nebo pokud stahuje pouze 1 soubor
                             set = speedPerFile;
                         } else if (lastTaken > 0) {//pokud se minule neco stahlo
-                            if (file.getTokensLimit() <= 0) //pokud je to prvni iterace while cyklu
+                            if (firstIteration) //pokud je to prvni iterace while cyklu
                                 set = Math.min(speedPerFile, (int) (lastTaken * SPEED_BACKUP));
                             else { //pokud je to druha a dalsi iterace pridelovani v cyklu
                                 final int last = (int) (lastTaken * SPEED_BACKUP); //nesmime dovolit pridat vic nez je 1.3 * lastTaken - prakticky se to musi chovat jako kdyby byl nastaveny speedLimit na soubor, i kdyz na nej speedlimit neni
@@ -96,15 +96,26 @@ class SpeedRegulator {
                     available -= set;
                     file.setTokensLimit(file.getTokensLimit() + set);
                 }
+                firstIteration = false;
             } while (available > 0 && notSatisfied.size() > 0);
             //docpu zbytky - do uspokojeni a dokud je co davat
             for (DownloadFile file : files) {
+                final String s = file.getPluginID();
+                System.out.println("PluginID = " + s);
+                System.out.println("Taken tokens:" + file.getTakenTokens());
+                System.out.println("Tokens Limit:" + file.getTokensLimit());
+                System.out.println("-------------------------------");
                 file.setTakenTokens(0);
             }
         } else {
             //zadne globalni omezeni neni, jen jejich lokalni
             for (DownloadFile file : files) {
                 file.setTokensLimit(file.hasSpeedLimit() ? file.getSpeedLimit() : Integer.MAX_VALUE);
+                final String s = file.getPluginID();
+                System.out.println("PluginID = " + s);
+                System.out.println("Taken tokens:" + file.getTakenTokens());
+                System.out.println("Tokens Limit:" + file.getTokensLimit());
+                System.out.println("-------------------------------");
                 file.setTakenTokens(0);
             }
         }
@@ -246,8 +257,8 @@ class SpeedRegulator {
             int real = Math.min((int) (speed / 1024.0F), file.getTokensLimit() - Math.max(file.getTakenTokens(), 0));
             if (real < 0)
                 real = 10;
-            if (file.hasSpeedLimit())
-                real /= 2;
+            if (file.hasSpeedLimit() || globalSpeed > 0)
+                real /= 4;
             final int result;
             if (real > 50) {
                 if (real >= 300) {

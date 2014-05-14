@@ -189,7 +189,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                         //System.out.println("Going to sleep to slow down speed");
                         Thread.sleep(1000);
                     }
-                    // buf = getBuffer();
+                    buf = getBuffer();
                 }
                 //-----------------------------------------------
 
