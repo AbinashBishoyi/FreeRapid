@@ -19,35 +19,6 @@ public class FileInfo {
         this.fileUrl = fileUrl;
     }
 
-    /**
-     * Constructs dto with informations about file which will be added to download list
-     * @param fileUrl url where locates file
-     * @param fileName with this name will be file saved
-     * @param fileSize file size in Bytes
-     * @since 0.852
-     */
-    public FileInfo(URL fileUrl, String fileName, long fileSize) {
-        this(fileUrl, fileName, fileSize, null);
-    }
-
-    /**
-     * Constructs dto with informations about file which will be added to download list
-     * @param fileUrl url where locates file
-     * @param fileName with this name will be file saved
-     * @param fileSize file size in Bytes
-     * @param description any description of file - not necessary
-     * @since 0.852
-     */
-    public FileInfo(URL fileUrl, String fileName, long fileSize, String description) {
-        if (fileUrl == null) {
-            throw new IllegalArgumentException("fileUrl == null");
-        }
-        this.fileUrl = fileUrl;
-        this.fileName = fileName;
-        this.fileSize = fileSize;
-        this.description = description;
-    }
-
     public URL getFileUrl() {
         return fileUrl;
     }
