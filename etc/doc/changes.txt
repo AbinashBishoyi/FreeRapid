@@ -18,6 +18,7 @@ FreeRapid Downloader 0.86 Update 1
           see startup.properties file for more details
   Added : New internal property - -DcharEncodingForPropertiesFiles defines character encoding for properties files,
           see startup.properties file for more details
+  Added : New file start.bat in FRD directory to allow launch FRD without frd.exe
   Changed : User preferences dialog opens faster
   Thanks to all bug reporters:
   Fixed : Updated JTattoo look and feel, which fixes a bug where the main window shows over the taskbar
