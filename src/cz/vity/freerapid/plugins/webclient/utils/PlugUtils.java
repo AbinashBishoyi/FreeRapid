@@ -173,34 +173,28 @@ public final class PlugUtils {
             throw new IllegalArgumentException("You have to provide some parameter names");
         final Set<String> set = new HashSet<String>(parameters.length);
         set.addAll(Arrays.asList(parameters));
-        if (parameterPattern1 == null)
-            parameterPattern1 = Pattern.compile("name=(?:\"|')?(.*?)(?:\"|'|\\s).*?value=(?:\"|')?(.*?)(?:\"|'|\\s*>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
-        if (parameterPattern2 == null)
-            parameterPattern2 = Pattern.compile("value=(?:\"|')?(.*?)(?:\"|'|\\s).*?name=(?:\"|')?(.*?)(?:\"|'|\\s*>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
-
-        Matcher matcher = parameterPattern1.matcher(content);
+        Pattern parameterInputPattern = Pattern.compile("<input (.+?)>", Pattern.DOTALL | Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+        Pattern parameterNamePattern = Pattern.compile("name=(?:\"|')?(.*?)(?:\"|'|\\s|$)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+        Pattern parameterValuePattern = Pattern.compile("value=(?:\"|')?(.*?)(?:\"|'|\\s|$)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         int start = 0;
-        String param;
+        Matcher matcher = parameterInputPattern.matcher(content);
         while (matcher.find(start)) {
-            param = matcher.group(1);
-            if (set.contains(param)) {
-                set.remove(param);
-                postMethod.addParameter(param, matcher.group(2));
+            final String input = matcher.group(1);
+            final Matcher matchName = parameterNamePattern.matcher(input);
+            if (matchName.find()) {
+                String paramName = matchName.group(1);
+                if (set.contains(paramName)) {
+                    final Matcher matchValue = parameterValuePattern.matcher(input);
+                    String paramValue = "";
+                    if (matchValue.find()) {
+                        paramValue = matchValue.group(1);
+                    }
+                    set.remove(paramName);
+                    postMethod.addParameter(paramName, paramValue);
+                    if (set.isEmpty())
+                        break;
+                }
             }
-            if (set.isEmpty())
-                break;
-            start = matcher.end();
-        }
-        matcher = parameterPattern2.matcher(content);
-        start = 0;
-        while (matcher.find(start)) {
-            param = matcher.group(2);
-            if (set.contains(param)) {
-                set.remove(param);
-                postMethod.addParameter(param, matcher.group(1));
-            }
-            if (set.isEmpty())
-                break;
             start = matcher.end();
         }
         if (!set.isEmpty()) {
