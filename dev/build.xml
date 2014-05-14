@@ -6,16 +6,18 @@
     <property name="mainclass" value="cz.vity.freerapid.core.MainApp"/>
     <property name="mainjar.file" value="frd.jar"/>
 
-    <property name="shrinklog" value="${application}_swingx_shrinklog.xml"/>
+    <property name="shrinklog" value="${application}_mina_shrinklog.xml"/>
 
     <target name="shrink">
         <taskdef name="yguard" classname="com.yworks.yguard.YGuardTask" classpath="ant-tasks/yguard.jar"/>
         <yguard>
-            <inoutpair in="swingx.jar" out="swingx-ob.jar"/>
+            <inoutpair in="mina-core-2.0.0-RC1.jar" out="mina-core-2.0.0-RC1-sh.jar"/>
             <shrink logfile="${shrinklog}">
                 <keep>
-                    <class classes="private" methods="protected" fields="protected">
-
+                    <class classes="private" methods="private" fields="private">
+                        <patternset>
+                            <include name="cz.*"/>
+                        </patternset>
                     </class>
                 </keep>
 
