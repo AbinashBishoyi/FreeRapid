@@ -58,6 +58,7 @@
         <include name="**/?*.xsd"/>
 
         <exclude name="**/plugin.xml"/>
+        <exclude name="**/Thumbs.db"/>
     </patternset>
 
     <path id="cp">
