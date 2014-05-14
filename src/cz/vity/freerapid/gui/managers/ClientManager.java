@@ -6,8 +6,11 @@ import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadClient;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
+import cz.vity.freerapid.plugins.webclient.ssl.EasySSLProtocolSocketFactory;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
+import org.apache.commons.httpclient.protocol.Protocol;
+import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
 
 import java.io.File;
 import java.net.ProxySelector;
@@ -43,7 +46,19 @@ public class ClientManager {
         //System.setProperty("java.net.useSystemProxies", useSystemProxies);
 
         popCount = 0;
+        initSSL();
         updateConnectionSettings();
+    }
+
+    private void initSSL() {
+        try {
+            ProtocolSocketFactory sf = new EasySSLProtocolSocketFactory();
+            Protocol p = new Protocol("https", sf, 443);
+            Protocol.registerProtocol("https", p);
+        } catch (Exception e) {
+            LogUtils.processException(logger, e);
+            logger.warning("SSL initialization failed - some plugins won't work");
+        }
     }
 
     private void updateProxies() {
