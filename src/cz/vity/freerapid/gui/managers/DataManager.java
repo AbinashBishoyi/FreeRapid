@@ -55,12 +55,14 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
 
     private int dataChanged = 0;
     private FileListMaintainer fileListMaintainer;
+    private boolean optimizeSavingList;
 
     public DataManager(ManagerDirector director, ApplicationContext context) {
         this.director = director;
         this.context = context;
         fileListMaintainer = new FileListMaintainer(context, director, this);
         pluginsManager = director.getPluginsManager();
+        optimizeSavingList = AppPrefs.getProperty(UserProp.OPTIMIZE_SAVING_LIST, UserProp.OPTIMIZE_SAVING_LIST_DEFAULT);
         context.getApplication().addExitListener(new Application.ExitListener() {
             public boolean canExit(EventObject event) {
                 if (AppPrefs.getProperty(FWProp.MINIMIZE_ON_CLOSE, FWProp.MINIMIZE_ON_CLOSE_DEFAULT) && event instanceof WindowEvent) {
@@ -127,7 +129,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
 
             final int time = AppPrefs.getProperty(UserProp.AUTOSAVE_TIME, UserProp.AUTOSAVE_TIME_DEFAULT);
 
-            DelayedReadValueModel delayedReadValueModel = new DelayedReadValueModel(adapter, time * 1000, true);
+            DelayedReadValueModel delayedReadValueModel = new DelayedReadValueModel(adapter, time * 1000, false);
             delayedReadValueModel.addValueChangeListener(new PropertyChangeListener() {
 
                 public void propertyChange(PropertyChangeEvent evt) {
@@ -197,7 +199,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                 // logger.info("Firing contents changed");
                 final DownloadFile downloadFile = (DownloadFile) evt.getSource();
                 downloadFiles.fireContentsChanged(getIndex(downloadFile));
-                if ("state".equals(s)) {
+                if ("state".equals(s) || (!optimizeSavingList && "downloaded".equals(s))) {
                     firePropertyChange(s, evt.getOldValue(), evt.getNewValue());
                     fireDataChanged();
                 }
@@ -303,12 +305,14 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                     file.setDownloaded(0);
                     if (delete) {
                         File outputFile = file.getStoreFile();
-                        if (outputFile.exists()) {
-                            outputFile.delete();
+                        if (outputFile != null && outputFile.exists()) {
+                            if (!outputFile.delete())
+                                logger.info("Deleting " + outputFile + " failed");
                         }
                         outputFile = file.getOutputFile();
-                        if (outputFile.exists()) {
-                            outputFile.delete();
+                        if (outputFile != null && outputFile.exists()) {
+                            if (!outputFile.delete())
+                                logger.info("Deleting " + outputFile + " failed");
                         }
                     }
                 }

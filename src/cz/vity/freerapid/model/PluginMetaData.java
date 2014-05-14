@@ -30,6 +30,7 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
     private boolean premium;
     private boolean favicon;
     private boolean removeCompleted;
+    private boolean resumeSupported;
 
     static {
         try {
@@ -38,7 +39,7 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
                     info.getPropertyDescriptors();
             for (PropertyDescriptor pd : propertyDescriptors) {
                 final Object name = pd.getName();
-                if ("supportedURL".equals(name) || "descriptor".equals(name) || "www".equals(name) || "services".equals(name) || "hasOptions".equals(name) || "premium".equals(name) || "favicon".equals(name)) {
+                if ("supportedURL".equals(name) || "descriptor".equals(name) || "www".equals(name) || "services".equals(name) || "hasOptions".equals(name) || "premium".equals(name) || "favicon".equals(name) || "resumeSupported".equals(name)) {
                     pd.setValue("transient", Boolean.TRUE);
                 }
             }
@@ -57,6 +58,7 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
         setPluginDescriptor(descriptor);
         this.enabled = true;
         this.updatesEnabled = true;
+        this.resumeSupported = true;
     }
 
     public void setPluginDescriptor(PluginDescriptor descriptor) {
@@ -68,6 +70,7 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
         premium = DescriptorUtils.getAttribute("premium", false, descriptor);
         favicon = DescriptorUtils.getAttribute("faviconImage", null, descriptor) != null;
         removeCompleted = DescriptorUtils.getAttribute("removeCompleted", false, descriptor);
+        resumeSupported = DescriptorUtils.getAttribute("resumeSupported", true, descriptor);
     }
 
 
@@ -172,5 +175,9 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
         return "PluginMetaData{" +
                 "id='" + id + '\'' + " Version=" + getVersion() +
                 '}';
+    }
+
+    public boolean isResumeSupported() {
+        return resumeSupported;
     }
 }

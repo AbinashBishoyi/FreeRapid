@@ -259,4 +259,6 @@ final public class UserProp {
 
     public static final boolean SHOW_COMPLETED_DEFAULT = true;
 
+    public static final String OPTIMIZE_SAVING_LIST = "optimizeSavingList";
+    public static final boolean OPTIMIZE_SAVING_LIST_DEFAULT = false;
 }

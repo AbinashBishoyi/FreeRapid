@@ -165,7 +165,6 @@ public class DownloadClient implements HttpDownloadClient {
 
         final int statuscode = method.getStatusCode();
 
-
         if (statuscode == HttpStatus.SC_INTERNAL_SERVER_ERROR || statuscode == HttpStatus.SC_FORBIDDEN) {//bezpecnost
             logger.severe("Status code je 500");
             updateAsString(method);
@@ -215,12 +214,15 @@ public class DownloadClient implements HttpDownloadClient {
     }
 
     private void addRangeHeader(HttpFile file, HttpMethod method) {
+        if (!file.isResumeSupported())
+            return;
         final File storeFile = file.getStoreFile();
         if (storeFile != null && storeFile.exists()) {
             //velikost souboru muze byt preddelana, proto bereme minimum
             final long l = Math.max(file.getRealDownload(), 0);
-            if (l != 0)
+            if (l != 0) {
                 method.addRequestHeader("Range", "bytes=" + l + "-");
+            }
         }
     }
 
@@ -270,8 +272,7 @@ public class DownloadClient implements HttpDownloadClient {
                 isStream = false;
                 logger.warning("No Content-Length in header");
             } else {
-                final Header acceptRangesHeader = method.getResponseHeader("Accept-Ranges");
-                file.setResumeSupported(acceptRangesHeader != null && "bytes".equals(acceptRangesHeader.getValue()));
+
                 final Long contentResponseLength = Long.valueOf(contentLength.getValue());
                 final Header contentRange = method.getResponseHeader("Content-Range");
                 if (contentRange != null) {
@@ -282,8 +283,15 @@ public class DownloadClient implements HttpDownloadClient {
                         file.setFileSize(Long.valueOf(matcher.group(2)));
                     } else
                         file.getProperties().put(START_POSITION, 0L);
-                } else
+                    file.setResumeSupported(true);
+                } else {
+                    if (!client.getParams().isParameterTrue("ignoreAcceptRanges")) {
+                        final Header acceptRangesHeader = method.getResponseHeader("Accept-Ranges");
+                        if (file.isResumeSupported())
+                            file.setResumeSupported(acceptRangesHeader != null && "bytes".equals(acceptRangesHeader.getValue()));
+                    }
                     file.setFileSize(contentResponseLength);
+                }
                 file.getProperties().put(SUPPOSE_TO_DOWNLOAD, contentResponseLength);
             }
         }

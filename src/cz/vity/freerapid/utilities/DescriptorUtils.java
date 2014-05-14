@@ -3,13 +3,11 @@ package cz.vity.freerapid.utilities;
 import org.java.plugin.registry.PluginAttribute;
 import org.java.plugin.registry.PluginDescriptor;
 
-import java.util.logging.Logger;
-
 /**
  * @author Ladislav Vitasek
  */
 final public class DescriptorUtils {
-    private final static Logger logger = Logger.getLogger(DescriptorUtils.class.getName());
+    //private final static Logger logger = Logger.getLogger(DescriptorUtils.class.getName());
 
     private DescriptorUtils() {
     }

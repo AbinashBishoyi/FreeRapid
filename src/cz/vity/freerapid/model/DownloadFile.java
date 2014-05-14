@@ -55,7 +55,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
     private volatile int tokens;
     private int takenTokens;
     private volatile long realDownload;
-    private boolean resumeSupported = true;
+    private volatile boolean resumeSupported = true;
 
     static {
         try {
@@ -100,6 +100,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
         this.sleep = -1;
         this.averageSpeed = 0;
         this.speed = 0;
+        this.resumeSupported = true;
         this.fileState = FileState.NOT_CHECKED;
         this.timeToQueued = -1;
         setFileType(FileTypeIconProvider.identifyFileType(fileName));

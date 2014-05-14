@@ -144,11 +144,37 @@ public interface HttpFile {
      */
     Map<String, Object> getProperties();
 
+    /**
+     * File that is stored on the disk. It can be also a temporary file
+     *
+     * @return
+     * @since 0.83
+     */
     File getStoreFile();
 
+    /**
+     * @param storeFile
+     * @since 0.83
+     */
     void setStoreFile(File storeFile);
 
+    /**
+     * @return
+     * @since 0.83
+     */
     long getRealDownload();
 
+    /**
+     * @param resumeSupported
+     * @since 0.83
+     */
     void setResumeSupported(boolean resumeSupported);
+
+    /**
+     * Checks whether resume download is enabled
+     *
+     * @return
+     * @since 0.83
+     */
+    boolean isResumeSupported();
 }

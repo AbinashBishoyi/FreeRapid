@@ -212,7 +212,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                         //System.out.println("Going to sleep to slow down speed");
                         Thread.sleep(1000);
                     }
-                    buf = getBuffer();
+                    buf = this.buffer;
                 }
                 //-----------------------------------------------
                 if (!isTerminated()) {
@@ -222,8 +222,11 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                     logger.info("File downloading was terminated");
                 }
             }
+            catch (Exception e) {
+                throw e;
+            }
             catch (Throwable e) {
-                throw new Exception(e);
+                throw new IOException("ErrorDuringDownload", e);
             }
             finally {
                 closeFileStream(fileOutputStream);

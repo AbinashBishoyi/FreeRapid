@@ -175,7 +175,10 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
         if (result == Swinger.RESULT_OK) {
             for (DownloadFile file : files) {
-                final File outputFile = file.getOutputFile();
+                File outputFile = file.getOutputFile();
+                if (outputFile != null)
+                    outputFile.delete();
+                outputFile = file.getStoreFile();
                 if (outputFile != null)
                     outputFile.delete();
             }

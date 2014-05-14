@@ -22,6 +22,8 @@ public abstract class FindTableAction extends FindOnDemandAction {
         JTable table = (JTable) comp;
         boolean startingFromSelection = true;
         int max = table.getRowCount();
+        if (max == 0)
+            return false;
         int increment = 0;
         if (bias != null)
             increment = (bias == Position.Bias.Forward) ? 1 : -1;
@@ -61,6 +63,8 @@ public abstract class FindTableAction extends FindOnDemandAction {
         if (column == -1)
             column = 0;
         int max = table.getRowCount();
+        if (max == 0)
+            return -1;
         if (prefix == null) {
             throw new IllegalArgumentException();
         }
