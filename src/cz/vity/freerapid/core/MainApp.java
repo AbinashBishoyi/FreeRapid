@@ -20,6 +20,7 @@ import java.awt.event.WindowEvent;
 import java.util.EventObject;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 
 /**
@@ -45,7 +46,12 @@ public class MainApp extends SingleXFrameApplication {
         final CmdLine line = new CmdLine(this);
         final List<String> fileList = line.processCommandLine(args);
 
-        LogUtils.initLogging((debug) ? Consts.LOGDEBUG : Consts.LOGDEFAULT);//logovani nejdrive    
+        try {
+            LogUtils.initLogging((debug) ? Consts.LOGDEBUG : Consts.LOGDEFAULT);//logovani nejdrive
+        } catch (Exception e) {
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainApp.class.getName());
+            logger.log(Level.SEVERE, e.getMessage());
+        }
 
         minimizeOnStart = line.isMinimize();
 
@@ -62,7 +68,7 @@ public class MainApp extends SingleXFrameApplication {
             this.appPrefs = new AppPrefs(this.getContext(), map, line.isResetOptions());
         } catch (IllegalStateException e) {
             java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainApp.class.getName());
-            LogUtils.processException(logger, e);
+            logger.log(Level.SEVERE, e.getMessage());
             exitWithErrorMessage("Fatal Error - not all required libraries are available.\nYou probably didn't extract the zip file properly.\nYou have to have /lib directory with all libraries in the FreeRapid directory.\nExiting.");
         }
 
