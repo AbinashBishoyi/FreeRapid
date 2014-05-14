@@ -27,8 +27,6 @@ public abstract class SingleXFrameApplication extends SingleFrameApplication {
     private boolean started = false;
 
     /**
-     * {@inheritDoc} <p>
-     * <p/>
      * Overridden to force a JXFrame as main frame and inject SwingX specific session properties.
      */
     @Override
@@ -103,6 +101,8 @@ public abstract class SingleXFrameApplication extends SingleFrameApplication {
             }
         }
         {//Vity's hack
+            final Point location = root.getLocation();
+            System.out.println("location = " + location);
             final Dimension size = root.getPreferredSize();
             final boolean invalidWidth = root.getWidth() < size.width;
             final boolean invalidHeight = root.getHeight() < size.height;
@@ -193,8 +193,11 @@ public abstract class SingleXFrameApplication extends SingleFrameApplication {
     @Override
     public void show(JFrame c) {
         super.show(c);
+        final Point onScreen = c.getLocationOnScreen();
+        final int x = Math.max(0, onScreen.x);
+        final int y = Math.max(0, onScreen.y);
 
-        if ((c.getWidth() < 150) || (c.getHeight() < 20)) {
+        if ((c.getWidth() < 150) || (c.getHeight() < 20) || onScreen.x != x || onScreen.y != y) {
             c.pack();
             if (!c.isLocationByPlatform()) {
                 Component owner = (c != getMainFrame()) ? getMainFrame()
@@ -202,6 +205,7 @@ public abstract class SingleXFrameApplication extends SingleFrameApplication {
                 c.setLocationRelativeTo(owner); // center the window
             }
         }
+
         c.getRootPane().putClientProperty("initialized", Boolean.TRUE);
     }
 
