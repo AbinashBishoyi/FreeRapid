@@ -1,9 +1,9 @@
+
 IMPORTANT NOTE
-!!!!!!!!!!!!!!!!!!
-None of other application derived from FreeRapid Downloader sources CANNOT USE FreeRapid Downloader
-update system (plugins from FreeRapid Downloader server)
+No other applications derived from FreeRapid Downloader are allowed to use
+FreeRapid Downloader's update system (plugins from FreeRapid Downloader server)
 without explicit written permission of FreeRapid Downloader authors.
-!!!!!!!!!!!!!!!!!!
+
 
 		    GNU GENERAL PUBLIC LICENSE
 		       Version 2, June 1991

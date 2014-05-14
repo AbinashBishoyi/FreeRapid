@@ -1,12 +1,9 @@
 Copyright (C) 2008-2010 Ladislav Vitasek (aka Vity)
 
-IMPORTANT NOTE -
-!!!!!!!!!!!!!!!!!!
-None of other application derived from FreeRapid Downloader sources CANNOT USE FreeRapid Downloader
-update system (plugins from FreeRapid Downloader server)
+IMPORTANT NOTE
+No other applications derived from FreeRapid Downloader are allowed to use
+FreeRapid Downloader's update system (plugins from FreeRapid Downloader server)
 without explicit written permission of FreeRapid Downloader authors.
-!!!!!!!!!!!!!!!!!!
-
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License version 2 as 

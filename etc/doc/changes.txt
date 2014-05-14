@@ -11,13 +11,12 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid Downloader
 Fixed - indicates a bug fix
 
-14th November 2010 - FreeRapid Downloader 0.85 Final version
+14th November 2010 - FreeRapid Downloader 0.85
   Fixed : JDK 6 bug where the built-in WBMP reader tries to read ICO files and fails
-  Fixed : OpenSearchDescription files requires namespace http://a9.com/-/spec/opensearch/1.1/
+  Fixed : OpenSearchDescription files require namespace http://a9.com/-/spec/opensearch/1.1/
+  Note: support for other translations will come later as a separate download
 
-  Note: support for other translations and languages will come with a new language pack
-
-31th October 2010 - FreeRapid Downloader 0.85 Alpha 4
+31st October 2010 - FreeRapid Downloader 0.85 Alpha 4
   Added : Support for direct downloads (enable this feature in Preferences)
   Added : Support for container files (DLC, CCF, RSDF, etc...)
   Added : GUI - search text field in toolbar (supports OpenSearchDescription file format) - see
@@ -160,7 +159,6 @@ Fixed - indicates a bug fix
   Fixed : "checking... dialog" when updating plugins lies over dialog "checking finished" - finally fixed?!
   Fixed : If you change preferences check for updates every 597 hours or more FRD cannot start [reported by Prthvi, thanks!]
 
-
 9th August 2009 - FreeRapid Downloader 0.83 beta 2 released
   Changed : updated PT_BR translation thanks to Tiago 
   Changed : support for speed limit from menu (additional support will come back with 0.84) 
@@ -295,8 +293,7 @@ Fixed - indicates a bug fix
   Fixed : problem with connecting when proxies had a same port [reported by Peter, thanks]
   Fixed : MS Windows: FRD does not start minimized from Start Up shortcut  (=> added new switch -m to start FRD minimized)
 
-
-22th October 2008 - FreeRapid Downloader 0.7 released
+22nd October 2008 - FreeRapid Downloader 0.7 released
   Added : plugins - support for shareator.com [implemented by Lukiz, thanks!]
   Added : plugins - support for load.to [implemented by Lukiz, thanks!]
   Added : plugins - support for uloz.to [implemented by Lukiz, thanks!]
@@ -329,7 +326,6 @@ Fixed - indicates a bug fix
   Fixed : exception when target disk space has not enough space 
   Fixed : shift+DELETE shortcut does not work in History dialog
   Fixed : PAUSED state sometimes runs another download
-
 
 8th October 2008 - FreeRapid Downloader 0.65 released
   Added : plugins - support for letibit.com [FS#25 - requested by Chris C., implemented by Lukiz] 
@@ -369,7 +365,6 @@ Fixed - indicates a bug fix
   Changed : minor changes in megaupload, rapidshare and uploaded.to plugins
   Changed : updated readme.txt
   Changed : upgraded Substance L&F library to version 0.5 final
-
 
 15th September 2008 - FreeRapid Downloader 0.6 released
   Fixed : remove selected does not select next line in the table (if filter was applied)
