@@ -17,4 +17,7 @@ public interface SystemCommander {
     boolean shutDown(OSCommand shutDownCommand, boolean force);
 
     boolean isSupported(OSCommand command);
+
+    void preventSystemStandby(boolean prevent);
+
 }

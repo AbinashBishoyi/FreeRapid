@@ -4,7 +4,7 @@
 MainApp.properties
 ===================================
 Added:
-fileIsBeingAlreadyDownloading=File is being already downloading.
+fileIsBeingAlreadyDownloading=File is already downloading
 
 quietModeAction.Action.text=&Quiet Mode
 quietModeAction.Action.shortDescription=Toggle Quiet Mode
@@ -24,6 +24,8 @@ monitorClipboardAction.Action.accelerator=F7
 UserPreferencesDialog.properties
 ===================================
 Added:
+checkPreventStandbyWhileDownloading.text=Prevent standby while downloading
+
 alertsPanelQM.tab.title=Quiet Mode
 
 panelActivateQM.border=Quiet Mode activation

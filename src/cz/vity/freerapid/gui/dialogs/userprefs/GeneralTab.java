@@ -48,6 +48,7 @@ public class GeneralTab extends UserPreferencesTab {
         bind(checkEnableDirectDownloads, UserProp.ENABLE_DIRECT_DOWNLOADS, UserProp.ENABLE_DIRECT_DOWNLOADS_DEFAULT);
         bind(checkForFileExistenceBeforeDownload, UserProp.TEST_FILE, UserProp.TEST_FILE_DEFAULT);
         bind(checkRecheckFilesOnStart, UserProp.RECHECK_FILES_ON_START, UserProp.RECHECK_FILES_ON_START_DEFAULT);
+        bind(checkPreventStandbyWhileDownloading, UserProp.PREVENT_STANDBY_WHILE_DOWNLOADING, UserProp.PREVENT_STANDBY_WHILE_DOWNLOADING_DEFAULT);
         bind(comboFileExists, UserProp.FILE_ALREADY_EXISTS, UserProp.FILE_ALREADY_EXISTS_DEFAULT, "fileAlreadyExistsOptions");
         bind(comboRemoveCompleted, UserProp.REMOVE_COMPLETED_DOWNLOADS, UserProp.REMOVE_COMPLETED_DOWNLOADS_DEFAULT, "removeCompletedOptions");
 
@@ -152,6 +153,8 @@ public class GeneralTab extends UserPreferencesTab {
         checkEnableDirectDownloads.setName("checkEnableDirectDownloads");
         checkAutoShutDownDisabledWhenExecuted = new JCheckBox();
         checkAutoShutDownDisabledWhenExecuted.setName("checkAutoShutDownDisabledWhenExecuted");
+        checkPreventStandbyWhileDownloading = new JCheckBox();
+        checkPreventStandbyWhileDownloading.setName("checkPreventStandbyWhileDownloading");
         JLabel labelIfFilenameExists = new JLabel();
         labelIfFilenameExists.setName("labelIfFilenameExists");
         comboFileExists = new JComboBox();
@@ -244,6 +247,7 @@ public class GeneralTab extends UserPreferencesTab {
                             FormFactory.DEFAULT_ROWSPEC,
                             FormFactory.DEFAULT_ROWSPEC,
                             FormFactory.DEFAULT_ROWSPEC,
+                            FormFactory.DEFAULT_ROWSPEC,
                             FormFactory.LINE_GAP_ROWSPEC,
                             FormFactory.DEFAULT_ROWSPEC,
                             FormFactory.LINE_GAP_ROWSPEC,
@@ -256,10 +260,11 @@ public class GeneralTab extends UserPreferencesTab {
             panelDownloadsSettingsBuilder.add(checkAutoStartDownloadsFromDecrypter, cc.xywh(3, 5, 7, 1));
             panelDownloadsSettingsBuilder.add(checkEnableDirectDownloads, cc.xywh(3, 6, 7, 1));
             panelDownloadsSettingsBuilder.add(checkAutoShutDownDisabledWhenExecuted, cc.xywh(3, 7, 7, 1));
-            panelDownloadsSettingsBuilder.add(labelIfFilenameExists, cc.xywh(3, 9, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
-            panelDownloadsSettingsBuilder.add(comboFileExists, cc.xy(5, 9));
-            panelDownloadsSettingsBuilder.add(labelRemoveCompleted, cc.xywh(7, 9, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
-            panelDownloadsSettingsBuilder.add(comboRemoveCompleted, cc.xy(9, 9));
+            panelDownloadsSettingsBuilder.add(checkPreventStandbyWhileDownloading, cc.xywh(3, 8, 7, 1));
+            panelDownloadsSettingsBuilder.add(labelIfFilenameExists, cc.xywh(3, 10, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
+            panelDownloadsSettingsBuilder.add(comboFileExists, cc.xy(5, 10));
+            panelDownloadsSettingsBuilder.add(labelRemoveCompleted, cc.xywh(7, 10, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
+            panelDownloadsSettingsBuilder.add(comboRemoveCompleted, cc.xy(9, 10));
         }
 
         PanelBuilder thisBuilder = new PanelBuilder(new FormLayout(
@@ -296,6 +301,7 @@ public class GeneralTab extends UserPreferencesTab {
     private JCheckBox checkAutoStartDownloadsFromDecrypter;
     private JCheckBox checkEnableDirectDownloads;
     private JCheckBox checkAutoShutDownDisabledWhenExecuted;
+    private JCheckBox checkPreventStandbyWhileDownloading;
     private JComboBox comboFileExists;
     private JComboBox comboRemoveCompleted;
 

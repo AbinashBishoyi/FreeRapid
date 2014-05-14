@@ -17,7 +17,6 @@ class LinuxCmdUtils extends AbstractSystemCommander {
     private static final String SYSTEM_COMMAND_PROPERTIES_FILE = "syscmd.properties";
     private final static Logger logger = Logger.getLogger(LinuxCmdUtils.class.getName());
 
-
     private Properties commands;
 
     LinuxCmdUtils(final File homeDirectory) {
@@ -36,6 +35,7 @@ class LinuxCmdUtils extends AbstractSystemCommander {
         }
     }
 
+    @Override
     public boolean createShortCut(final OSCommand shortCutCommand) {
         if (!OSCommand.shortCutCommands.contains(shortCutCommand))
             throw new IllegalArgumentException("OS command " + shortCutCommand + " is not a shortcut command");
@@ -109,12 +109,14 @@ class LinuxCmdUtils extends AbstractSystemCommander {
         return makeShortcut(OSCommand.CREATE_QUICKLAUNCH_SHORTCUT);
     }
 
+    @Override
     public boolean shutDown(OSCommand shutDownCommand, boolean force) {
         if (!OSCommand.shutDownCommands.contains(shutDownCommand))
             throw new IllegalArgumentException("OS command " + shutDownCommand + " is not a shut down command");
         return isSupported(shutDownCommand) && runCommand(getCommand(shutDownCommand), false);
     }
 
+    @Override
     public boolean isSupported(OSCommand command) {
         final String cmd = getKey(command);
         return commands.containsKey(cmd) && !(commands.getProperty(cmd, "").trim().isEmpty());
@@ -128,13 +130,21 @@ class LinuxCmdUtils extends AbstractSystemCommander {
         return command.toString().toLowerCase();
     }
 
+    @Override
     public boolean findTopLevelWindow(String stringToFind, boolean caseSensitive) throws IOException {
         final String command = getCommand(OSCommand.LIST_TOP_WINDOWS);
         return super.findTopLevelWndow(stringToFind, caseSensitive, command);
     }
 
+    @Override
     public List<String> getTopLevelWindowsList() throws IOException {
         final String command = getCommand(OSCommand.LIST_TOP_WINDOWS);
         return super.getTopLevelWindowsList(command);
     }
+
+    @Override
+    public void preventSystemStandby(final boolean prevent) {
+        //is this even possible?
+    }
+
 }
