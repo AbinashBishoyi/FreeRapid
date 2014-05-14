@@ -580,11 +580,11 @@ public final class MethodBuilder {
 
     private void populateParameters(final String content) {
         if (parameterInputPattern == null)
-            parameterInputPattern = Pattern.compile("<input (.+?)>", Pattern.DOTALL | Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+            parameterInputPattern = Pattern.compile("<input (.+?>)", Pattern.DOTALL | Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         if (parameterNamePattern == null)
-            parameterNamePattern = Pattern.compile("name=(?:\"|')?(.*?)(?:\"|'|\\s)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+            parameterNamePattern = Pattern.compile("name=(?:\"|')?(.*?)(?:\"|'|\\s|>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         if (parameterValuePattern == null)
-            parameterValuePattern = Pattern.compile("value=(?:\"|')?(.*?)(?:\"|'|\\s)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+            parameterValuePattern = Pattern.compile("value=(?:\"|')?(.*?)(?:\"|'|\\s|>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         int start = 0;
         Matcher matcher = parameterInputPattern.matcher(content);
         while (matcher.find(start)) {
