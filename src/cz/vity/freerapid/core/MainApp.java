@@ -8,7 +8,6 @@ import cz.vity.freerapid.swing.LookAndFeels;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.swing.TrayIconSupport;
 import cz.vity.freerapid.utilities.Browser;
-import cz.vity.freerapid.utilities.LogFileHandler;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
 import cz.vity.freerapid.utilities.os.SystemCommanderFactory;
@@ -60,7 +59,6 @@ public class MainApp extends SingleXFrameApplication {
         }
 
         try {
-            LogFileHandler.init();
             LogUtils.initLogging((debug) ? Consts.LOGDEBUG : Consts.LOGDEFAULT);//logovani nejdrive
         } catch (Exception e) {
             getLogger().log(Level.SEVERE, e.getMessage());

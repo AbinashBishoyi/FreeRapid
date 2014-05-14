@@ -11,11 +11,7 @@ import java.util.logging.FileHandler;
  */
 public class LogFileHandler extends FileHandler {
 
-    public LogFileHandler() throws IOException, SecurityException {
-        super(getLogFile().getAbsolutePath());
-    }
-
-    public static void init() {
+    static {
         final File folder = getLogFile().getParentFile();
         if (!folder.exists()) {
             //noinspection ResultOfMethodCallIgnored
@@ -23,13 +19,12 @@ public class LogFileHandler extends FileHandler {
         }
     }
 
+    public LogFileHandler() throws IOException, SecurityException {
+        super(getLogFile().getAbsolutePath());
+    }
+
     public static File getLogFile() {
         final File folder = new File(MainApp.getAContext().getLocalStorage().getDirectory(), "log");
-        //noinspection ResultOfMethodCallIgnored
-        if (!folder.exists()) {
-            //noinspection ResultOfMethodCallIgnored
-            folder.mkdirs();
-        }
         return new File(folder, "app.log");
     }
 

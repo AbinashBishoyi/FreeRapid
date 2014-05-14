@@ -1,5 +1,6 @@
 package cz.vity.freerapid.gui.managers;
 
+import cz.vity.freerapid.core.application.GlobalEDTExceptionHandler;
 import cz.vity.freerapid.gui.managers.interfaces.Identifiable;
 import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.application.Task;
@@ -18,10 +19,9 @@ import java.util.logging.Logger;
  * @author Vity
  */
 public class DatabaseManager {
-    private final EntityManagerFactory factory;
     private final static Logger logger = Logger.getLogger(DatabaseManager.class.getName());
-    private ManagerDirector director;
-
+    private final ManagerDirector director;
+    private final EntityManagerFactory factory;
 
     public EntityManager getEntityManager() {
         return factory.createEntityManager();
@@ -60,7 +60,6 @@ public class DatabaseManager {
                     em.merge(o);
                 }
             }
-            // Operations that modify the database should come here.
             em.getTransaction().commit();
         } finally {
             if (em.getTransaction().isActive())
@@ -79,11 +78,9 @@ public class DatabaseManager {
                 }
                 Object removeObject = em.find(o.getClass(), o.getIdentificator());
                 if (removeObject != null) {
-                    //em.refresh(removeObject);
                     em.remove(removeObject);
                 }
             }
-            // Operations that modify the database should come here.
             em.getTransaction().commit();
         } finally {
             if (em.getTransaction().isActive())
@@ -92,14 +89,12 @@ public class DatabaseManager {
         }
     }
 
-
     public synchronized int removeAll(Class entityClass) {
         int affectedResult = 0;
         final EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
             affectedResult = em.createQuery("DELETE FROM " + entityClass.getName()).executeUpdate();
-            // Operations that modify the database should come here.
             em.getTransaction().commit();
         } finally {
             if (em.getTransaction().isActive())
@@ -118,7 +113,6 @@ public class DatabaseManager {
             } else {
                 em.merge(entity);
             }
-            // Operations that modify the database should come here.
             em.getTransaction().commit();
         } finally {
             if (em.getTransaction().isActive()) {
@@ -149,8 +143,8 @@ public class DatabaseManager {
     public void runOnTask(final Runnable runnable) {
         final TaskService service = director.getTaskServiceManager().getTaskService(TaskServiceManager.DATABASE_SERVICE);
         service.execute(new Task(director.getContext().getApplication()) {
+            @Override
             protected Object doInBackground() throws Exception {
-                Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
                 runnable.run();
                 return null;
             }
@@ -158,9 +152,9 @@ public class DatabaseManager {
             @Override
             protected void failed(Throwable cause) {
                 LogUtils.processException(logger, cause);
+                new GlobalEDTExceptionHandler().uncaughtException(Thread.currentThread(), cause);
             }
         });
     }
-
 
 }
