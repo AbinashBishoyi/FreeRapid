@@ -6,6 +6,7 @@ import cz.vity.freerapid.core.tasks.DownloadTask;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -104,7 +105,6 @@ public class FileUtils {
     public static File getBackupFile(final File srcFile) {
         return new File(srcFile.getParentFile(), srcFile.getName() + BACKUP_EXTENSION);
     }
-
 
     public static File getRelativeDirectory(final File base, final File file) {
         final String relativeFile;
@@ -233,7 +233,7 @@ public class FileUtils {
         return file;
     }
 
-    /***
+    /**
      * Returns the contents of the file in a byte array.
      */
     public static byte[] getBytesFromFile(File file) throws IOException {
@@ -276,41 +276,38 @@ public class FileUtils {
         // Close the input stream and return bytes
     }
 
-
-    public static void deleteFileWithRecycleBin(File fileToDelete) {
-        if (AppPrefs.getProperty(UserProp.USE_RECYCLE_BIN, UserProp.USE_RECYCLE_BIN_DEFAULT)) {
-            final com.sun.jna.platform.FileUtils instance = com.sun.jna.platform.FileUtils.getInstance();
-            final boolean hasTrash = instance.hasTrash();
-            if (hasTrash) {
-                if (!fileToDelete.exists()) {
-                    return;
-                }
-
-                logger.info("Moving file to trash " + fileToDelete);
-
-                try {
-                    instance.moveToTrash(new File[]{fileToDelete});
-                    return;
-                } catch (Exception e) {
-                    logger.warning("Failed to delete file via recycle bin ");
-                    LogUtils.processException(logger, e);
-                    deleteFile(fileToDelete);
-                    return;
-                } 
-            }
-        }
-        deleteFile(fileToDelete);
+    public static boolean supportsRecycleBin() {
+        return com.sun.jna.platform.FileUtils.getInstance().hasTrash();
     }
 
-    public static void deleteFile(File... fileToDelete) {
-        for (File file : fileToDelete) {
+    public static void deleteFileWithRecycleBin(final File... filesToDelete) {
+        if (AppPrefs.getProperty(UserProp.USE_RECYCLE_BIN, UserProp.USE_RECYCLE_BIN_DEFAULT) && supportsRecycleBin()) {
+            final com.sun.jna.platform.FileUtils fileUtils = com.sun.jna.platform.FileUtils.getInstance();
+            for (final File file : filesToDelete) {
+                if (!file.exists()) {
+                    continue;
+                }
+                try {
+                    fileUtils.moveToTrash(new File[]{file});
+                } catch (final Exception e) {
+                    logger.log(Level.WARNING, "Failed to delete file via recycle bin: " + file, e);
+                }
+            }
+        } else {
+            deleteFile(filesToDelete);
+        }
+    }
+
+    public static void deleteFile(final File... filesToDelete) {
+        for (final File file : filesToDelete) {
             if (!file.exists()) {
                 continue;
             }
             final boolean delete = file.delete();
             if (!delete) {
-                logger.info("Failed to delete file " + file);
+                logger.warning("Failed to delete file " + file);
             }
         }
     }
+
 }

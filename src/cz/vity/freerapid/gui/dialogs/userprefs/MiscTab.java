@@ -5,6 +5,7 @@ import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
 import cz.vity.freerapid.core.UserProp;
+import cz.vity.freerapid.utilities.FileUtils;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -24,6 +25,7 @@ public class MiscTab extends UserPreferencesTab {
         bind(checkGenerateDescIon, UserProp.GENERATE_DESCRIPT_ION_FILE, UserProp.GENERATE_DESCRIPT_ION_FILE_DEFAULT);
         bind(checkGenerateHidden, UserProp.GENERATE_DESCRIPTION_FILES_HIDDEN, UserProp.GENERATE_DESCRIPTION_FILES_HIDDEN_DEFAULT);
         bind(checkPrepareFile, UserProp.ANTI_FRAGMENT_FILES, UserProp.ANTI_FRAGMENT_FILES_DEFAULT);
+        bind(checkUseRecycleBin, UserProp.USE_RECYCLE_BIN, UserProp.USE_RECYCLE_BIN_DEFAULT);
     }
 
     @Override
@@ -39,6 +41,9 @@ public class MiscTab extends UserPreferencesTab {
         checkGenerateHidden.setName("checkGenerateHidden");
         checkPrepareFile = new JCheckBox();
         checkPrepareFile.setName("checkPrepareFile");
+        checkUseRecycleBin = new JCheckBox();
+        checkUseRecycleBin.setName("checkUseRecycleBin");
+        checkUseRecycleBin.setEnabled(FileUtils.supportsRecycleBin());
 
         this.setBorder(Borders.TABBED_DIALOG_BORDER);
 
@@ -52,11 +57,12 @@ public class MiscTab extends UserPreferencesTab {
                             FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                             FormFactory.DEFAULT_COLSPEC
                     },
-                    RowSpec.decodeSpecs("default, default, default")), panelDescSettings);
+                    RowSpec.decodeSpecs("default, default, default, default")), panelDescSettings);
 
             panelDescBuilder.add(checkGenerateDescIon, cc.xy(3, 1));
             panelDescBuilder.add(checkGenerateTXTDescription, cc.xy(3, 2));
             panelDescBuilder.add(checkGenerateHidden, cc.xy(3, 3));
+            panelDescBuilder.add(checkUseRecycleBin, cc.xy(3, 4));
         }
 
         //======== panelAdvanced ========
@@ -92,5 +98,6 @@ public class MiscTab extends UserPreferencesTab {
     private JCheckBox checkGenerateDescIon;
     private JCheckBox checkGenerateHidden;
     private JCheckBox checkPrepareFile;
+    private JCheckBox checkUseRecycleBin;
 
 }
