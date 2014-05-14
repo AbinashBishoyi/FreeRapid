@@ -21,6 +21,8 @@ public class GlobalEDTExceptionHandler implements Thread.UncaughtExceptionHandle
             if (e.getMessage().contains("cannot open system"))
                 return;
         }
+        if (e instanceof java.lang.InternalError)
+            return;
         if (SwingUtilities.isEventDispatchThread())
             logger.log(Level.SEVERE, "Uncaught exception on EDT. ", e);
         else
