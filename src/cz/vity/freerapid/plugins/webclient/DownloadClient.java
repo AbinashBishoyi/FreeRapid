@@ -431,8 +431,12 @@ public class DownloadClient implements HttpDownloadClient {
                 if ((newuri == null) || ("".equals(newuri))) {
                     newuri = "/";
                 }
-                if (!newuri.contains("http://"))
-                    newuri = "http://" + method.getURI().getHost() + newuri;
+                if (!newuri.matches("(?i)https?://.+")) {
+                    if (!newuri.startsWith("/")) {
+                        newuri = "/" + newuri;
+                    }
+                    newuri = method.getURI().getScheme() + "://" + method.getURI().getHost() + newuri;
+                }
 
                 logger.info("Redirect target: " + newuri);
                 if (client.getParams().getBooleanParameter("useRefererWhenRedirect", false)) {
