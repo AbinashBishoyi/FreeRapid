@@ -11,6 +11,8 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
+19th August 2009 - FreeRapid Downloader 0.83 RC 1
+  Fixed : "checking... dialog" when updating plugins lies over dialog "checking finished" - finally fixed?
 
 9th August 2009 - FreeRapid Downloader 0.83 beta 2 released
   Changed : updated PT_BR translation thanks to Tiago 
@@ -28,7 +30,7 @@ Fixed - indicates a bug fix
   Added : MS Windows - windows key for popmenu emulates a click with right mouse button on content panel with links
   Added : Apple MacOS - support for native Aqua Look&Feel
   Added : support for GTK look and feel
-  Added : new frd.sh launchin script [thanks to Petris!]
+  Added : new frd.sh launching script [thanks to Petris!]
   Changed : upgraded JTattoo library to the latest version
   Changed : fatal exceptions are shown only once for reporting
   Changed : Apple MacOS - screen menu bar used by default

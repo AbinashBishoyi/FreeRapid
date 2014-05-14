@@ -37,7 +37,7 @@ abstract class FindOnDemandAction extends AbstractAction implements DocumentList
 
         searchPanel.setBackground(UIManager.getColor("ToolTip.background")); //NOI18N
         searchField.setOpaque(false);
-        JLabel label = new JLabel("Search for:");
+        JLabel label = new JLabel();
         label.setName("labelQuickSearch");
         label.setFont(new Font("DialogInput", Font.BOLD, 12)); // for readability
         map.injectComponent(label);

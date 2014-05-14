@@ -61,12 +61,12 @@ public class Swinger {
     }
 
     public static void showInformationDialog(final String message) {
-        JOptionPane.showMessageDialog(getActiveFrame(), message, getResourceMap().getString(MESSAGE_INFORMATION_TITLE_CODE), JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(getActiveWindowComponent(), message, getResourceMap().getString(MESSAGE_INFORMATION_TITLE_CODE), JOptionPane.INFORMATION_MESSAGE);
     }
 
     public static int getChoiceYesNoCancel(final String message) {
         final ResourceMap map = getResourceMap();
-        return JOptionPane.showOptionDialog(getActiveFrame(), message, map.getString(MESSAGE_CONFIRM_TITLE_CODE),
+        return JOptionPane.showOptionDialog(getActiveWindowComponent(), message, map.getString(MESSAGE_CONFIRM_TITLE_CODE),
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null, new Object[]{map.getString(MESSAGE_BTN_YES_CODE), map.getString(MESSAGE_BTN_NO_CODE),
@@ -81,7 +81,7 @@ public class Swinger {
 
     public static int getChoiceOKCancel(final String messageCode, Object... args) {
         final ResourceMap map = getResourceMap();
-        return JOptionPane.showOptionDialog(getActiveFrame(), map.getString(messageCode, args), map.getString(MESSAGE_CONFIRM_TITLE_CODE),
+        return JOptionPane.showOptionDialog(getActiveWindowComponent(), map.getString(messageCode, args), map.getString(MESSAGE_CONFIRM_TITLE_CODE),
                 JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null, new Object[]{map.getString(MESSAGE_BTN_OK_CODE), map.getString(MESSAGE_BTN_CANCEL_CODE)},
@@ -152,11 +152,11 @@ public class Swinger {
     }
 
     public static void showErrorMessage(ResourceMap map, final String message, final Object... args) {
-        JOptionPane.showMessageDialog(getActiveFrame(), (map.containsKey(message)) ? map.getString(message, args) : message, getResourceMap().getString("errorMessage"), JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(getActiveWindowComponent(), (map.containsKey(message)) ? map.getString(message, args) : message, getResourceMap().getString("errorMessage"), JOptionPane.ERROR_MESSAGE);
     }
 
     public static void showErrorMessage(ResourceMap map, final Throwable cause) {
-        JOptionPane.showMessageDialog(getActiveFrame(), getMessageFromException(map, cause), getResourceMap().getString("errorMessage"), JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(getActiveWindowComponent(), getMessageFromException(map, cause), getResourceMap().getString("errorMessage"), JOptionPane.ERROR_MESSAGE);
     }
 
     public static int showOptionDialog(ResourceMap map, final int messageType, final String titleCode, final String messageCode, final String[] buttons, final Object... args) {
@@ -170,7 +170,7 @@ public class Swinger {
         final Frame frame = getActiveFrame();
         bringToFront(frame, true);
         Toolkit.getDefaultToolkit().beep();
-        return JOptionPane.showOptionDialog(frame, map.getString(messageCode, args), mainMap.getString(titleCode), JOptionPane.NO_OPTION, messageType, null, objects, objects[0]);
+        return JOptionPane.showOptionDialog(getActiveWindowComponent(), map.getString(messageCode, args), mainMap.getString(titleCode), JOptionPane.NO_OPTION, messageType, null, objects, objects[0]);
     }
 
     public static int showInputDialog(final String title, final Object inputObject, boolean cancelButton) {
@@ -282,6 +282,13 @@ public class Swinger {
         JXErrorPane.showDialog(getActiveFrame(), pane);
     }
 
+    public static Component getActiveWindowComponent() {
+        final Window window = getActiveDialog();
+        if (window == null)
+            return getActiveFrame();
+        return window;
+    }
+
 
     public static JComponent getTitleComponent(final String title) {
         return getTitleComponent(new JLabel(title));
@@ -309,7 +316,7 @@ public class Swinger {
 
     public static int getChoiceYesNo(final String message) {
         final ResourceMap map = getResourceMap();
-        return JOptionPane.showOptionDialog(getActiveFrame(), message, map.getString(MESSAGE_CONFIRM_TITLE_CODE),
+        return JOptionPane.showOptionDialog(getActiveWindowComponent(), message, map.getString(MESSAGE_CONFIRM_TITLE_CODE),
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null, new Object[]{map.getString(MESSAGE_BTN_YES_CODE), map.getString(MESSAGE_BTN_NO_CODE)},
@@ -327,6 +334,15 @@ public class Swinger {
     public static Frame getActiveFrame() {
         final Frame[] frames = Frame.getFrames();
         for (Frame frame : frames) {
+            if (frame.isActive())
+                return frame;
+        }
+        return frames.length > 0 ? frames[0] : null;
+    }
+
+    public static Window getActiveDialog() {
+        final Window[] frames = Dialog.getWindows();
+        for (Window frame : frames) {
             if (frame.isActive())
                 return frame;
         }

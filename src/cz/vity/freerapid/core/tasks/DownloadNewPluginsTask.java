@@ -34,7 +34,7 @@ public class DownloadNewPluginsTask extends DownloadTask {
         super(context.getApplication());
         this.director = director;
         this.fileList = fileList;
-        this.setInputBlocker(new ScreenInputBlocker(this, BlockingScope.APPLICATION, getMainFrame(), null));
+        this.setInputBlocker(new ScreenInputBlocker(this, BlockingScope.APPLICATION, Swinger.getActiveWindowComponent(), null));
         setUseRelativeStoreFileIfPossible(false);
     }
 

@@ -164,7 +164,7 @@ final public class UserProp {
     public static final boolean CONFIRM_DOWNLOADING_REMOVE_DEFAULT = false;
 
     public static final String SHOW_MEMORY_INDICATOR = "showMemoryIndicator";
-    public static final boolean SHOW_MEMORY_INDICATOR_DEFAULT = true;
+    public static final boolean SHOW_MEMORY_INDICATOR_DEFAULT = false;
 
     public static final String MAKE_FILE_BACKUPS = "makeFileBackups";
     public static final boolean MAKE_FILE_BACKUPS_DEFAULT = true;
