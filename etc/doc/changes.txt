@@ -18,6 +18,7 @@ FreeRapid Downloader 0.85 Alpha 4
   Added : Plugin API
            - Hash class with functions to calculate hashes
            - Base URL is automatically parsed from fileURL during init
+           - Support for unlimited cryptography
   Changed : Upgraded Substance L&F to version 6.1 Final
   Changed : Upgraded Quaqua L&F to version 7.2.1
   Changed : Upgraded SwingX library to version 1.6.2
