@@ -191,7 +191,6 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
         final JXCollapsiblePane cp = new JXCollapsiblePane();
         cp.setDirection(JXCollapsiblePane.Direction.RIGHT);
         cp.setBorder(null);
-        cp.addPropertyChangeListener(JXCollapsiblePane.ANIMATION_STATE_KEY, this);
         cp.setAnimated(true);
 
         cp.setPreferredSize(new Dimension(160, BAR_HEIGHT));
@@ -311,8 +310,6 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
         } else if ("downloading".equals(propertyName)) {
             if (AppPrefs.getProperty(UserProp.ANIMATE_ICON, UserProp.ANIMATE_ICON_DEFAULT))
                 updateIconAnimation();
-        } else if (JXCollapsiblePane.ANIMATION_STATE_KEY.equals(propertyName)) {
-            statusbar.repaint();
         }
     }
 
