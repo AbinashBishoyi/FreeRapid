@@ -197,7 +197,7 @@ public abstract class AbstractRunner implements PluginRunner {
     /**
      * Returns last response from server as specific object instance - eg. using JSON
      *
-     * @return text response from server
+     * @return response from server as specific object instance
      * @since 0.855
      */
     protected <T> T getContentAsObject(Class<T> objectClass) throws PluginImplementationException {
