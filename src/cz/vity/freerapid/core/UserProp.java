@@ -380,6 +380,9 @@ final public class UserProp {
     public static final String ZOOM_CAPTCHA_IMAGE = "zoomCaptchaImage";
     public static final boolean ZOOM_CAPTCHA_IMAGE_DEFAULT = false;
 
+    public static final String MAX_SIMULTANEOUS_RUN_CHECK = "maxSimultaneousRunCheck";
+    public static final int MAX_SIMULTANEOUS_RUN_CHECK_DEFAULT = 5;
+
 }
 
 

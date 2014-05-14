@@ -57,7 +57,8 @@ public class ProcessManager extends Thread {
     private final java.util.Timer errorTimer = new java.util.Timer();
     private PluginsManager pluginsManager;
     private AtomicInteger downloading = new AtomicInteger(0);
-    private TaskService taskService;
+    private final TaskService downloadTaskService;
+    private final TaskService runCheckTaskService;
     private ClientManager clientManager;
 
 
@@ -68,7 +69,8 @@ public class ProcessManager extends Thread {
 
         pcs = new SwingPropertyChangeSupport(this);
         this.context = context;
-        taskService = director.getTaskServiceManager().getTaskService(TaskServiceManager.DOWNLOAD_SERVICE);
+        downloadTaskService = director.getTaskServiceManager().getTaskService(TaskServiceManager.DOWNLOAD_SERVICE);
+        runCheckTaskService = director.getTaskServiceManager().getTaskService(TaskServiceManager.RUN_CHECK_SERVICE);
         clientManager = director.getClientManager();
 
         AppPrefs.getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
@@ -323,27 +325,22 @@ public class ProcessManager extends Thread {
         logger.info("starting download in state s = " + s);
         try {
             final DownloadTask task;
+            final TaskService taskService;
             if (runCheck) {
                 task = new RunCheckTask(context.getApplication(), client, downloadFile, service);
-            } else
+                taskService = runCheckTaskService;
+            } else {
                 task = new DownloadTask(context.getApplication(), client, downloadFile, service);
+                taskService = downloadTaskService;
+            }
             downloadFile.setTask(task);
             updateResumable(downloadFile);
             task.addTaskListener(new TaskListener.Adapter<Void, Long>() {
-
-
-                @Override
-                public void doInBackground(TaskEvent<Void> event) {
-                    super.doInBackground(event);
-                }
-
-
                 @Override
                 public void finished(TaskEvent<Void> event) {
                     finishedDownloading(downloadFile, client, downloadService, task, runCheck);
                     downloadFile.setTask(null);
                 }
-
             });
             try {
                 taskService.execute(task);

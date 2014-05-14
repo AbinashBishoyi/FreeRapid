@@ -1,5 +1,7 @@
 package cz.vity.freerapid.gui.managers;
 
+import cz.vity.freerapid.core.AppPrefs;
+import cz.vity.freerapid.core.UserProp;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.Task;
 import org.jdesktop.application.TaskService;
@@ -14,6 +16,7 @@ public class TaskServiceManager {
     private final static Logger logger = Logger.getLogger(TaskServiceManager.class.getName());
 
     public static final String DOWNLOAD_SERVICE = "downloadService";
+    public static final String RUN_CHECK_SERVICE = "runCheckService";
     public static final String MOVE_FILE_SERVICE = "moveFile";
     public static final String WORK_WITH_FILE_SERVICE = "workWithFile";
     public static final String DATABASE_SERVICE = "databaseService";
@@ -29,6 +32,8 @@ public class TaskServiceManager {
         if (service == null) {
             if (DOWNLOAD_SERVICE.equals(name)) {
                 return initDownloadTaskService();
+            } else if (RUN_CHECK_SERVICE.equals(name)) {
+                return initRunCheckTaskService();
             } else if (MOVE_FILE_SERVICE.equals(name)) {
                 return initMoveFileTaskService();
             } else if (WORK_WITH_FILE_SERVICE.equals(name)) {
@@ -44,12 +49,17 @@ public class TaskServiceManager {
         return initTaskService(0, Integer.MAX_VALUE, 60L, DOWNLOAD_SERVICE, new SynchronousQueue<Runnable>());
     }
 
+    private TaskService initRunCheckTaskService() {
+        final int max = AppPrefs.getProperty(UserProp.MAX_SIMULTANEOUS_RUN_CHECK, UserProp.MAX_SIMULTANEOUS_RUN_CHECK_DEFAULT);
+        return initTaskService(0, max, 60L, RUN_CHECK_SERVICE, new LinkedBlockingQueue<Runnable>());
+    }
+
     private TaskService initMoveFileTaskService() {
-        return initTaskService(1, 1, 60L, MOVE_FILE_SERVICE, new LinkedBlockingQueue<Runnable>());
+        return initTaskService(0, 1, 60L, MOVE_FILE_SERVICE, new LinkedBlockingQueue<Runnable>());
     }
 
     private TaskService initWorkWithFileTaskService() {
-        return initTaskService(1, 1, 60L, WORK_WITH_FILE_SERVICE, new LinkedBlockingQueue<Runnable>());
+        return initTaskService(0, 1, 60L, WORK_WITH_FILE_SERVICE, new LinkedBlockingQueue<Runnable>());
     }
 
     private TaskService initWorkWithDatabaseTaskService() {
