@@ -17,6 +17,7 @@ Internal - indicates an internal change - information for FRD developers - nothi
   Changed : The Traditional Chinese translation had to be disabled as two files were found to be corrupted
   Changed : Internal - All translations are now encoded in UTF-8 for consistency
   Changed : File rename action is limited to files in COMPLETED state
+  Changed : start.bat was renamed to frd.bat
   Fixed : Miscellaneous bugs and regressions
 
 10th October 2012 - FreeRapid Downloader 0.9 Beta 1
