@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
@@ -29,8 +30,11 @@ public final class Utils {
     private static final int XOR_VALUE = 35132;
     public static volatile String appPath = null;
 
-    private Utils() {
+    static {
+        removeCryptographyRestrictions();
+    }
 
+    private Utils() {
     }
 
     /**
@@ -427,6 +431,28 @@ public final class Utils {
             printWriter.append(getSystemLineSeparator());
         }
         return writer.toString();
+    }
+
+    private static void removeCryptographyRestrictions() {
+        try {
+            java.lang.reflect.Field isRestricted;
+            try {
+                final Class<?> c = Class.forName("javax.crypto.JceSecurity");
+                isRestricted = c.getDeclaredField("isRestricted");
+            } catch (final ClassNotFoundException e) {
+                try {
+                    // Java 6 has obfuscated JCE classes
+                    final Class<?> c = Class.forName("javax.crypto.SunJCE_b");
+                    isRestricted = c.getDeclaredField("g");
+                } catch (final ClassNotFoundException e2) {
+                    throw e;
+                }
+            }
+            isRestricted.setAccessible(true);
+            isRestricted.set(null, false);
+        } catch (final Throwable e) {
+            logger.log(Level.WARNING, "Failed to remove cryptography restrictions", e);
+        }
     }
 
 }

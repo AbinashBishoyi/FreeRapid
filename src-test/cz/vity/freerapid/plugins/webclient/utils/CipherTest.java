@@ -1,6 +1,6 @@
 package cz.vity.freerapid.plugins.webclient.utils;
 
-import cz.vity.freerapid.gui.managers.ManagerDirector;
+import cz.vity.freerapid.utilities.Utils;
 import org.apache.commons.codec.binary.Hex;
 import org.junit.Assert;
 import org.junit.Test;
@@ -22,7 +22,7 @@ public class CipherTest {
 
     static {
         // Initialize this class as it removes the cryptography restrictions
-        new ManagerDirector(null);
+        Utils.getAppPath();
     }
 
     @Test
