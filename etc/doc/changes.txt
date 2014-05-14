@@ -12,7 +12,7 @@ Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
 15th April 2009 - FreeRapid Downloader 0.82 released
-  Added : many new plugins coming with 0.82 like Badongo.com, HotFile.com, WikiUpload.com, Paid4share.com,
+  Added : many new plugins coming with 0.82 like Badongo.com, HotFile.com, WikiUpload.com, Paid4share.com, UGotFile.com
           improved YouTube plugin, [thanks to all plugin developers] => 70 plugins for you!
   Added : Turkish translation [thanks to Ugur Karaman]
   Added : Bosnian translation [thanks to Nikola Katanic]
@@ -21,6 +21,7 @@ Fixed - indicates a bug fix
   Added : Arabic translation [thanks to Salah adel]
   Added : Dutch translation [thanks to mastermystery4ever]
   Added : Croatian translation [thanks to Željko Mitroviæ]
+  Added : Slovenian translation [thanks to Tomaž Curk]
   Added : internal - plugin API - support for using SSL in plugins
   Added : French version of readme.txt [thanks to Jean-François]
   Added : Information (fileinfo) dialog - allow to create non existing folder like in NewLinks dialog
