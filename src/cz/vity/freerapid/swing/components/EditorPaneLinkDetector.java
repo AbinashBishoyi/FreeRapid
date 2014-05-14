@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 public class EditorPaneLinkDetector extends JEditorPane {
     private final static Logger logger = Logger.getLogger(EditorPaneLinkDetector.class.getName());
     private final static String EXAMPLE = "";
-    private final static Pattern REGEXP_URL = Pattern.compile("(http|https)://([a-zA-Z0-9\\.\\-]+(:[a-zA-Z0-9\\.:&%\\$\\-]+)*@)?((25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])|([a-zA-Z0-9\\-]+\\.)*[a-zA-Z0-9\\-]+\\.[a-zA-Z]{2,4})(:[0-9]+)?(/[^/][a-zA-Z0-9\\.:,\\?'\\\\/\\+&%\\$#=~_\\-@]*)*");
+    private final static Pattern REGEXP_URL = Pattern.compile("(http|https)://([a-zA-Z0-9\\.\\- ]+(:[a-zA-Z0-9\\.:&%\\$\\- ]+)*@)?((25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])|([a-zA-Z0-9\\- ]+\\.)*[a-zA-Z0-9\\- ]+\\.[a-zA-Z ]{2,4})(:[0-9]+)?(/[^/][a-zA-Z0-9\\.:,\\?'\\\\/\\+&%\\$#=~_\\-@ ]*)*");
 
     public EditorPaneLinkDetector() {
         super();
@@ -194,7 +194,7 @@ public class EditorPaneLinkDetector extends JEditorPane {
         private MutableAttributeSet normal;
         private MutableAttributeSet keyword;
         private static final Pattern EMAIL_PATTERN = REGEXP_URL;
-        private static final String DELIMITERS = " ";
+        private static final String DELIMITERS = "\n\t";
 
 
         public SyntaxDocument() {
@@ -315,8 +315,9 @@ public class EditorPaneLinkDetector extends JEditorPane {
           */
         protected boolean isDelimiter(String character) {
 
-            return Character.isWhitespace(character.charAt(0)) ||
-                    DELIMITERS.indexOf(character) != -1;
+            return DELIMITERS.indexOf(character.charAt(0)) != -1;
+//            return Character.isWhitespace(character.charAt(0)) ||
+//                    DELIMITERS.indexOf(character) != -1;
         }
 
 

@@ -17,6 +17,8 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
+ * Implements ShareDownloadService and adds basic functionality
+ *
  * @author Vity
  */
 public abstract class AbstractFileShareService extends Plugin implements ShareDownloadService {
