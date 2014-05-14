@@ -16,6 +16,8 @@
     <property name="src.tests" value="src-test"/>
 
     <property name="dist.dir" value="dist"/>
+    <property name="macos.dmg.temp.dir" value="macos_dmg_temp"/>
+    <property name="macos.dmg" value="${dist.dir}/${version.name}.dmg"/>
 
     <property name="javadoc.dir" value="${dist.dir}/javadoc"/>
 
@@ -309,8 +311,11 @@
     classname="net.sourceforge.jarbundler.JarBundler"/>
 
     <!--todo chali you have to call target "dist" before this target-->
+    <!--this task is platform depend, you can use it only on mac os x-->
     <target name="mac-os-package">
-        <jarbundler dir="${dist.dir}"
+        <delete file="${macos.dmg}"/>
+        <mkdir dir="${macos.dmg.temp.dir}"/>
+        <jarbundler dir="${macos.dmg.temp.dir}"
                     name="FreeRapid"
                     mainclass="cz.vity.freerapid.core.MainApp"
                     icon="./${build.dir}/frd.icns"
@@ -324,6 +329,14 @@
             <javafileset dir="./${build.dir}" includes="*/*.frp"/>
             <javafileset dir="./${build.dir}" includes="*.properties"/>
         </jarbundler>
+        <mkdir dir="${macos.dmg.temp.dir}"/>
+        <exec executable="./make_alias">
+            <arg line="/Applications ${macos.dmg.temp.dir}"/>
+        </exec>
+        <exec executable="hdiutil">
+            <arg line="create -volname ${version.name} -srcfolder ${macos.dmg.temp.dir} ${macos.dmg}"/>
+        </exec>
+        <delete dir="${macos.dmg.temp.dir}"/>
     </target>
 
     <target name="reverseResources" description="Target reverse all properties into UTF-8 encoded files">
