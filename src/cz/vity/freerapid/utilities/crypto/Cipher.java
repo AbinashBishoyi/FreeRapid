@@ -27,7 +27,6 @@ package cz.vity.freerapid.utilities.crypto;
 
 import sun.security.jca.GetInstance;
 import sun.security.jca.ServiceId;
-import sun.security.util.Debug;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
@@ -43,6 +42,7 @@ import java.security.cert.X509Certificate;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.InvalidParameterSpecException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 /**
@@ -96,15 +96,13 @@ import java.util.regex.Pattern;
  * using an 8 bit mode such as CFB8 or OFB8.
  *
  * @author Jan Luehe
+ * @author ntoskrnl (small changes)
  * @see KeyGenerator
  * @see SecretKey
  * @since 1.4
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"FinalStaticMethod", "UnusedDeclaration"})
 public class Cipher {
-
-    private static final Debug debug =
-            Debug.getInstance("jca", "Cipher");
 
     /**
      * Constant used to initialize cipher to encryption mode.
@@ -170,14 +168,14 @@ public class Cipher {
 
     // remaining services to try in provider selection
     // null once provider is selected
-    private Iterator serviceIterator;
+    private Iterator<Service> serviceIterator;
 
     // list of transform Strings to lookup in the provider
-    private List transforms;
+    private List<Transform> transforms;
 
     private final Object lock;
 
-    private final static SecureRandom RANDOM = new SecureRandom();
+    private static final SecureRandom RANDOM = new SecureRandom();
 
     /**
      * Creates a Cipher object.
@@ -208,7 +206,7 @@ public class Cipher {
     }
 
     private Cipher(CipherSpi firstSpi, Service firstService,
-                   Iterator serviceIterator, String transformation, List transforms) {
+                   Iterator<Service> serviceIterator, String transformation, List<Transform> transforms) {
         this.firstSpi = firstSpi;
         this.firstService = firstService;
         this.serviceIterator = serviceIterator;
@@ -334,12 +332,11 @@ public class Cipher {
         }
 
         // Map<String,Pattern> for previously compiled patterns
-        // XXX use ConcurrentHashMap once available
-        private final static Map patternCache =
-                Collections.synchronizedMap(new HashMap());
+        private final static Map<String, Pattern> patternCache =
+                new ConcurrentHashMap<String, Pattern>();
 
         private static boolean matches(String regexp, String str) {
-            Pattern pattern = (Pattern) patternCache.get(regexp);
+            Pattern pattern = patternCache.get(regexp);
             if (pattern == null) {
                 pattern = Pattern.compile(regexp);
                 patternCache.put(regexp, pattern);
@@ -349,7 +346,7 @@ public class Cipher {
 
     }
 
-    private static List getTransforms(String transformation)
+    private static List<Transform> getTransforms(String transformation)
             throws NoSuchAlgorithmException {
         String[] parts = tokenizeTransformation(transformation);
 
@@ -369,7 +366,7 @@ public class Cipher {
             return Collections.singletonList(tr);
         } else { // if ((mode != null) && (pad != null)) {
             // DES/CBC/PKCS5Padding
-            List list = new ArrayList(4);
+            List<Transform> list = new ArrayList<Transform>(4);
             list.add(new Transform(alg, "/" + mode + "/" + pad, null, null));
             list.add(new Transform(alg, "/" + mode, null, pad));
             list.add(new Transform(alg, "//" + pad, mode, null));
@@ -380,10 +377,9 @@ public class Cipher {
 
     // get the transform matching the specified service
 
-    private static Transform getTransform(Service s, List transforms) {
+    private static Transform getTransform(Service s, List<Transform> transforms) {
         String alg = s.getAlgorithm().toUpperCase(Locale.ENGLISH);
-        for (Iterator t = transforms.iterator(); t.hasNext();) {
-            Transform tr = (Transform) t.next();
+        for (Transform tr : transforms) {
             if (alg.endsWith(tr.suffix)) {
                 return tr;
             }
@@ -422,19 +418,18 @@ public class Cipher {
      */
     public static final Cipher getInstance(String transformation)
             throws NoSuchAlgorithmException, NoSuchPaddingException {
-        List transforms = getTransforms(transformation);
-        List cipherServices = new ArrayList(transforms.size());
-        for (Iterator t = transforms.iterator(); t.hasNext();) {
-            Transform transform = (Transform) t.next();
+        List<Transform> transforms = getTransforms(transformation);
+        List<ServiceId> cipherServices = new ArrayList<ServiceId>(transforms.size());
+        for (Transform transform : transforms) {
             cipherServices.add(new ServiceId("Cipher", transform.transform));
         }
-        List services = GetInstance.getServices(cipherServices);
+        List<Service> services = GetInstance.getServices(cipherServices);
         // make sure there is at least one service from a signed provider
         // and that it can use the specified mode and padding
-        Iterator t = services.iterator();
+        Iterator<Service> t = services.iterator();
         Exception failure = null;
         while (t.hasNext()) {
-            Service s = (Service) t.next();
+            Service s = t.next();
             Transform tr = getTransform(s, transforms);
             if (tr == null) {
                 // should never happen
@@ -544,10 +539,9 @@ public class Cipher {
             throw new IllegalArgumentException("Missing provider");
         }
         Exception failure = null;
-        List transforms = getTransforms(transformation);
+        List<Transform> transforms = getTransforms(transformation);
         String paddingError = null;
-        for (Iterator t = transforms.iterator(); t.hasNext();) {
-            Transform tr = (Transform) t.next();
+        for (Transform tr : transforms) {
             Service s = provider.getService("Cipher", tr.transform);
             if (s == null) {
                 continue;
@@ -564,7 +558,6 @@ public class Cipher {
                 tr.setModePadding(spi);
                 Cipher cipher = new Cipher(spi, transformation);
                 cipher.provider = s.getProvider();
-                cipher.initCryptoPermission();
                 return cipher;
             } catch (Exception e) {
                 failure = e;
@@ -583,15 +576,6 @@ public class Cipher {
                 ("No such algorithm: " + transformation, failure);
     }
 
-    // If the requested crypto service is export-controlled,
-    // determine the maximum allowable keysize.
-
-    private void initCryptoPermission() throws NoSuchAlgorithmException {
-    }
-
-    // max number of debug warnings to print from chooseFirstProvider()
-    private static int warnCount = 10;
-
     /**
      * Choose the Spi from the first provider available. Used if
      * delayed provider selection is not possible because init()
@@ -605,18 +589,6 @@ public class Cipher {
             if (spi != null) {
                 return;
             }
-            if (debug != null) {
-                int w = --warnCount;
-                if (w >= 0) {
-                    debug.println("Cipher.init() not first method "
-                            + "called, disabling delayed provider selection");
-                    if (w == 0) {
-                        debug.println("Further warnings of this type will "
-                                + "be suppressed");
-                    }
-                    new Exception("Call trace").printStackTrace();
-                }
-            }
             Exception lastException = null;
             while ((firstService != null) || serviceIterator.hasNext()) {
                 Service s;
@@ -627,7 +599,7 @@ public class Cipher {
                     firstService = null;
                     firstSpi = null;
                 } else {
-                    s = (Service) serviceIterator.next();
+                    s = serviceIterator.next();
                     thisSpi = null;
                 }
                 Transform tr = getTransform(s, transforms);
@@ -641,13 +613,12 @@ public class Cipher {
                 try {
                     if (thisSpi == null) {
                         Object obj = s.newInstance(null);
-                        if (obj instanceof CipherSpi == false) {
+                        if (!(obj instanceof CipherSpi)) {
                             continue;
                         }
                         thisSpi = (CipherSpi) obj;
                     }
                     tr.setModePadding(thisSpi);
-                    initCryptoPermission();
                     spi = CipherSpiWrapper.wrap(thisSpi);
                     provider = s.getProvider();
                     // not needed any more
@@ -680,19 +651,15 @@ public class Cipher {
         CipherSpiWrapper thisSpi = CipherSpiWrapper.wrap(thisSpi0);
         switch (type) {
             case I_KEY:
-                checkCryptoPerm(thisSpi, key);
                 thisSpi.engineInit(opmode, key, random);
                 break;
             case I_PARAMSPEC:
-                checkCryptoPerm(thisSpi, key, paramSpec);
                 thisSpi.engineInit(opmode, key, paramSpec, random);
                 break;
             case I_PARAMS:
-                checkCryptoPerm(thisSpi, key, params);
                 thisSpi.engineInit(opmode, key, params, random);
                 break;
             case I_CERT:
-                checkCryptoPerm(thisSpi, key);
                 thisSpi.engineInit(opmode, key, random);
                 break;
             default:
@@ -719,11 +686,11 @@ public class Cipher {
                     firstService = null;
                     firstSpi = null;
                 } else {
-                    s = (Service) serviceIterator.next();
+                    s = serviceIterator.next();
                     thisSpi = null;
                 }
                 // if provider says it does not support this key, ignore it
-                if (s.supportsParameter(key) == false) {
+                if (!s.supportsParameter(key)) {
                     continue;
                 }
                 Transform tr = getTransform(s, transforms);
@@ -739,7 +706,6 @@ public class Cipher {
                         thisSpi = (CipherSpi) s.newInstance(null);
                     }
                     tr.setModePadding(thisSpi);
-                    initCryptoPermission();
                     implInit(thisSpi, initType, opmode, key, paramSpec,
                             params, random);
                     provider = s.getProvider();
@@ -883,24 +849,6 @@ public class Cipher {
         return null;
     }
 
-    //
-    // Crypto permission check code below
-    //
-
-    private void checkCryptoPerm(CipherSpi checkSpi, Key key)
-            throws InvalidKeyException {
-    }
-
-    private void checkCryptoPerm(CipherSpi checkSpi, Key key,
-                                 AlgorithmParameterSpec params) throws InvalidKeyException,
-            InvalidAlgorithmParameterException {
-    }
-
-    private void checkCryptoPerm(CipherSpi checkSpi, Key key,
-                                 AlgorithmParameters params)
-            throws InvalidKeyException, InvalidAlgorithmParameterException {
-    }
-
     // check if opmode is one of the defined constants
     // throw InvalidParameterExeption if not
 
@@ -1003,7 +951,6 @@ public class Cipher {
         checkOpmode(opmode);
 
         if (spi != null) {
-            checkCryptoPerm(spi, key);
             spi.engineInit(opmode, key, random);
         } else {
             try {
@@ -1127,7 +1074,6 @@ public class Cipher {
         checkOpmode(opmode);
 
         if (spi != null) {
-            checkCryptoPerm(spi, key, params);
             spi.engineInit(opmode, key, params, random);
         } else {
             chooseProvider(I_PARAMSPEC, opmode, key, params, null, random);
@@ -1246,7 +1192,6 @@ public class Cipher {
         checkOpmode(opmode);
 
         if (spi != null) {
-            checkCryptoPerm(spi, key, params);
             spi.engineInit(opmode, key, params, random);
         } else {
             chooseProvider(I_PARAMS, opmode, key, null, params, random);
@@ -1379,7 +1324,7 @@ public class Cipher {
 
         // Check key usage if the certificate is of
         // type X.509.
-        if (certificate instanceof java.security.cert.X509Certificate) {
+        if (certificate instanceof X509Certificate) {
             // Check whether the cert has a key usage extension
             // marked as a critical extension.
             X509Certificate cert = (X509Certificate) certificate;
@@ -1393,10 +1338,10 @@ public class Cipher {
                 if ((keyUsageInfo != null) &&
                         (((opmode == Cipher.ENCRYPT_MODE) &&
                                 (keyUsageInfo.length > 3) &&
-                                (keyUsageInfo[3] == false)) ||
+                                (!keyUsageInfo[3])) ||
                                 ((opmode == Cipher.WRAP_MODE) &&
                                         (keyUsageInfo.length > 2) &&
-                                        (keyUsageInfo[2] == false)))) {
+                                        (!keyUsageInfo[2])))) {
                     throw new InvalidKeyException("Wrong key usage");
                 }
             }
@@ -1406,7 +1351,6 @@ public class Cipher {
                 (certificate == null ? null : certificate.getPublicKey());
 
         if (spi != null) {
-            checkCryptoPerm(spi, publicKey);
             spi.engineInit(opmode, publicKey, random);
         } else {
             try {

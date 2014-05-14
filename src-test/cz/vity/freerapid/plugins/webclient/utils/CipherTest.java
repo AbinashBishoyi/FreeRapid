@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.security.InvalidKeyException;
 
 /**
  * JUnit test for unlimited cryptography
@@ -23,12 +24,23 @@ public class CipherTest {
         final byte[] key = Hex.decodeHex(KEY.toCharArray());
         final byte[] iv = IV.getBytes("UTF-8");
         final byte[] input = Hex.decodeHex(INPUT.toCharArray());
-        final SecretKeySpec spec = new SecretKeySpec(key, "AES");
-        final IvParameterSpec ivSpec = new IvParameterSpec(iv);
         final Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        cipher.init(Cipher.DECRYPT_MODE, spec, ivSpec);
+        cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key, "AES"), new IvParameterSpec(iv));
         final byte[] decrypted = cipher.doFinal(input);
         Assert.assertEquals("Hello Vity!", new String(decrypted, "UTF-8"));
+    }
+
+    @Test
+    public void testException() throws Exception {
+        final Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
+        try {
+            cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(new byte[16], "Blowfish"));
+        } catch (InvalidKeyException e) {
+            return;
+        } catch (Exception e) {
+            Assert.fail("Wrong exception thrown - " + e);
+        }
+        Assert.fail("Should have thrown InvalidKeyException");
     }
 
 }
