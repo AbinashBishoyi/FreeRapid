@@ -17,9 +17,11 @@ import java.util.prefs.PreferenceChangeListener;
 class SpeedRegulator {
 
     private Set<DownloadFile> downloading = new HashSet<DownloadFile>(5);
+    private final float SPEED_BACKUP = 1.3F;
     private int globalSpeed;
     private final Object lock = new Object();
     private Timer timer;
+    private static final int SPEED_MINIMUM_HOLDED = 10;
 
 
     public SpeedRegulator() {
@@ -67,9 +69,9 @@ class SpeedRegulator {
                         if (lastTaken < 0 || downloadingCount == 1) {
                             set = min;
                         } else if (lastTaken > 0) {
-                            set = Math.min(min, (int) (lastTaken * 1.3));
+                            set = Math.min(min, (int) (lastTaken * SPEED_BACKUP));
                         } else {
-                            set = Math.min(min, 10);
+                            set = Math.min(min, SPEED_MINIMUM_HOLDED);
                         }
                         assert set >= 0;
                         if (file.getTokensLimit() + set == file.getSpeedLimit())
@@ -79,15 +81,15 @@ class SpeedRegulator {
                             set = speedPerFile;
                         } else if (lastTaken > 0) {
                             if (file.getTokensLimit() <= 0) //pokud je to prvni iterace while cyklu
-                                set = Math.min(speedPerFile, (int) (lastTaken * 1.3));
+                                set = Math.min(speedPerFile, (int) (lastTaken * SPEED_BACKUP));
                             else { //pokud je to druha a dalsi iterace pridelovani v cyklu
-                                final int last = (int) (lastTaken * 1.3); //nesmime dovolit pridat vic nez je 1.3 * lastTaken - prakticky se to musi chovat jako kdyby byl nastaveny speedLimit na soubor, i kdyz na nej speedlimit neni
+                                final int last = (int) (lastTaken * SPEED_BACKUP); //nesmime dovolit pridat vic nez je 1.3 * lastTaken - prakticky se to musi chovat jako kdyby byl nastaveny speedLimit na soubor, i kdyz na nej speedlimit neni
                                 set = Math.min(speedPerFile, Math.min(last, Math.abs(last - file.getTokensLimit())));
                                 if (set == 0)
                                     set = 1;
                             }
                         } else {
-                            set = Math.min(speedPerFile, 10);
+                            set = Math.min(speedPerFile, SPEED_MINIMUM_HOLDED);
                         }
                         assert set >= 0;
                     }

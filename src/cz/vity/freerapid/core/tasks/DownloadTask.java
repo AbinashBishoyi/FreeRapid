@@ -196,7 +196,8 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                             return;
                         }
 
-                        final long speed = counter - lastSize;
+                        final long localCounter = counter;
+                        final long speed = localCounter - lastSize;
 
                         setSpeed(speed);
 
@@ -213,8 +214,8 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                             }
                         } else {
                             noDataTimeOut = 0;
-                            lastSize = counter;
-                            setDownloaded(counter);
+                            lastSize = localCounter;
+                            setDownloaded(localCounter);
                         }
 
                         final long current = System.currentTimeMillis();
@@ -223,7 +224,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                         if (Float.compare(l, 0) == 0) {
                             setAverageSpeed(0.0F);
                         } else
-                            setAverageSpeed((float) counter / l);
+                            setAverageSpeed((float) localCounter / l);
                         if (indexer == avgSpeedMeasuredSeconds)
                             indexer = 0;
                         avgSpeedArray[indexer++] = speed;
