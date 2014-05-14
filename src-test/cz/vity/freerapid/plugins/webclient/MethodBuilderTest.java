@@ -130,4 +130,14 @@ public class MethodBuilderTest {
         Assert.assertEquals("Searched IMG tag text in the tag", resultLink, action);
         Assert.assertEquals("Get Method", MethodBuilder.HttpMethodEnum.GET, methodBuilder.getMethodAction());
     }
+
+    @Test
+    public void testEncodeLastPartOfAction() throws BuildMethodException {
+        final MethodBuilder methodBuilder = new MethodBuilder(content, client);
+        String action = methodBuilder.setActionFromFormByName("downForm2", true).encodeLastPartOfAction().getAction();
+        String resultLink = "http://www.badongo.com/cfile/%C4%8Cesk%C3%A9+z%C3%A1zem%C3%AD/";
+        Assert.assertEquals("Encoded last part of action with /", resultLink, action);
+    }
+
+
 }

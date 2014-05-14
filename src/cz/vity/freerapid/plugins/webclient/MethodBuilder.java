@@ -109,7 +109,7 @@ public final class MethodBuilder {
         final Matcher formMatcher = getFormMatcher();
         int start = 0;
         boolean found = false;
-        final Pattern namePattern = Pattern.compile("(?:name|id)=(?:\"|')?" + formIDOrName + "(?:\"|'|\\s)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+        final Pattern namePattern = Pattern.compile("(?:name|id)=(?:\"|')?" + formIDOrName + "(?:\"|'|\\s|>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         while (formMatcher.find(start)) {
             final String title = formMatcher.group(FORM_MATCHER_TITLE_GROUP);
             if (namePattern.matcher(title).find()) {
@@ -505,10 +505,13 @@ public final class MethodBuilder {
         String url = (action != null) ? action : baseURL;
         if (url == null)
             throw new BuildMethodException("Cannot encode last part. Action or baseURL is null");
+        final boolean removedSlash = (url.endsWith("/"));
+        if (removedSlash)
+            url = url.substring(0, url.length() - 1);
         final int index = url.lastIndexOf('/');
         if (index > 0) {
             final String enc = encode(url.substring(index + 1));
-            url = url.substring(0, index + 1) + enc;
+            url = url.substring(0, index + 1) + enc + ((removedSlash) ? "/" : "");
             if (action != null) {
                 action = url;
             } else baseURL = url;

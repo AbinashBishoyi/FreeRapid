@@ -8,6 +8,7 @@ import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -157,15 +158,13 @@ public class EditorPaneLinkDetector extends JEditorPane {
 
     public java.util.List<URL> getURLs() {
         final String s = this.getText();
-        final Pattern pattern = REGEXP_URL;
-        final Matcher matcher = pattern.matcher(s);
-        final java.util.List<URL> list = new ArrayList<URL>();
-        while (matcher.find()) {
-            final String e = matcher.group();
-            if (!EXAMPLE.equals(e)) {
-                final URL url = getURL(e);
-                if (url != null)
-                    list.add(url);
+        final String[] urls = s.split("\n|\t|(?:  )");
+        List<URL> list = new ArrayList<URL>(urls.length);
+        for (String url : urls) {
+            if (!url.trim().isEmpty()) {
+                final URL u = getURL(url);
+                if (u != null)
+                    list.add(u);
             }
         }
         return list;
@@ -173,13 +172,11 @@ public class EditorPaneLinkDetector extends JEditorPane {
 
     public java.util.List<String> getURLsAsStringList() {
         final String s = this.getText();
-        final Pattern pattern = REGEXP_URL;
-        final Matcher matcher = pattern.matcher(s);
-        final java.util.List<String> list = new ArrayList<String>();
-        while (matcher.find()) {
-            final String e = matcher.group();
-            if (!EXAMPLE.equals(e)) {
-                list.add(e);
+        final String[] urls = s.split("\n|\t|(?:  )");
+        List<String> list = new ArrayList<String>(urls.length);
+        for (String url : urls) {
+            if (!url.isEmpty()) {
+                list.add(url);
             }
         }
         return list;
@@ -336,18 +333,30 @@ public class EditorPaneLinkDetector extends JEditorPane {
         } catch (MalformedURLException e) {
             //ignore
         } catch (URISyntaxException e) {
-            final int i = url.lastIndexOf('/');
-            if (i > 0) {
-                try {
-                    final String enc = URLEncoder.encode(url.substring(i + 1), "UTF-8");
-                    url = url.substring(0, i + 1) + enc;
-                    return new URI(url).toURL();
-                } catch (Exception ex) {
-                    //ignore
-                }
+            try {
+                return new URI(encodeLastPartOfURL(url)).toURL();
+            } catch (Exception ex) {
+                //ignore
             }
+
 
         }
         return null;
     }
+
+    private static String encodeLastPartOfURL(String url) throws UnsupportedEncodingException {
+        if (url == null)
+            throw new IllegalArgumentException("Cannot encode last part. URL is null");
+        final boolean removedSlash = (url.endsWith("/"));
+        if (removedSlash)
+            url = url.substring(0, url.length() - 1);
+        final int index = url.lastIndexOf('/');
+        if (index > 0) {
+            final String enc = URLEncoder.encode(url.substring(index + 1), "UTF-8");
+            url = url.substring(0, index + 1) + enc + ((removedSlash) ? "/" : "");
+        }
+        return url;
+
+    }
+
 }
