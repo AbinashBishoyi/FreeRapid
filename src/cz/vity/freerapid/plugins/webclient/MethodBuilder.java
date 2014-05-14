@@ -588,8 +588,10 @@ public final class MethodBuilder {
 
     private void inputForm(boolean useFormParameters, String title, String content) {
         this.action = extractAction(title);
-        if (autoReplaceEntities)
-            this.action = PlugUtils.replaceEntities(this.action);
+        if (this.action != null) {
+            if (autoReplaceEntities)
+                this.action = PlugUtils.replaceEntities(this.action);
+        } else logger.info("Form has no defined action attribute");
         this.postMethod = extractMethod(title);
         if (useFormParameters)
             populateParameters(content);
