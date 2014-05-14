@@ -25,11 +25,17 @@ InformationDialog.title=Download Information
 DownloadTask.properties
 ====================================
 New:
+InsertPassword=Insert Password
+ErrorDuringDownload=Error during download.\nStream was closed unexpectedly.\nFile is not complete
 fileAlreadyExistsTooltip=File already exists on the disk
 
 
 MainApp.properties
 ====================================
+#Changed:
+paypalSupportAction.Action.shortDescription=<html><b>Please, consider a donation to this project!</b><br>FreeRapid downloader is distributed as freeware, <br>but if you wish to express your appreciation for the time and resources <br>the author has spent developing, <br>we do accept and appreciate monetary donations.</html>
+
+
 Removed:
 sortbyServerAction.Action.text=Sort by &Server
 sortbyServerAction.Action.shortDescription=Sort selected downloads by server name
@@ -158,6 +164,11 @@ JAppFileChooser.properties
 New:
 allSupportedFiles=All supported files (%s)
 filterContainer=%2$s containers (%1$s)
+
+==========================================================================================================================
+==========================================================================================================================
+==========================================================================================================================
+==========================================================================================================================
 
 
 Version 0.82->0.83
