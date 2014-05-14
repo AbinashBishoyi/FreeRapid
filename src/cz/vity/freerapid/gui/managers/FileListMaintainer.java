@@ -81,6 +81,11 @@ class FileListMaintainer {
             } else result = new ArrayList<DownloadFile>();
             //rename old file history file into another one, so we won't import it again next time
             //noinspection ResultOfMethodCallIgnored
+            final File backupFile = FileUtils.getBackupFile(srcFile);
+            if (backupFile.exists()) {
+                //noinspection ResultOfMethodCallIgnored
+                backupFile.renameTo(new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML + ".backup.imported"));
+            }
             srcFile.renameTo(new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML + ".imported"));
             return result;
         } else {
