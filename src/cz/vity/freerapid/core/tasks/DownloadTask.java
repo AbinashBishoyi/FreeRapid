@@ -187,6 +187,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                 }
                 downloadFile.setDownloaded(0);
             }
+
             final long fileSize = downloadFile.getFileSize();
             Long startPositionObject = (Long) downloadFile.getProperties().get(DownloadClient.START_POSITION);
             final long startPosition;
@@ -212,9 +213,11 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                 long counter = 0;
                 downloadFile.setState(DownloadState.DOWNLOADING);
                 Long suppose = (Long) downloadFile.getProperties().get(DownloadClient.SUPPOSE_TO_DOWNLOAD);
-                if (suppose == null)
+                if (suppose == null) {
                     suppose = downloadFile.getFileSize();
-                else downloadFile.getProperties().remove(DownloadClient.SUPPOSE_TO_DOWNLOAD);
+                } else {
+                    downloadFile.getProperties().remove(DownloadClient.SUPPOSE_TO_DOWNLOAD);
+                }
 
                 logger.info("starting download from position " + startPosition);
                 downloadFile.setDownloaded(startPosition);
@@ -233,16 +236,19 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                     }
                     final boolean ok = speedRegulator.takeTokens(downloadFile, len);
                     if (!ok && counter != suppose) {
-                        //System.out.println("Going to sleep to slow down speed");
                         Thread.sleep(1000);
                     }
                     buf = this.buffer;
                 }
                 //-----------------------------------------------
                 if (!isTerminated()) {
-                    if (counter != suppose) {
-                        logger.info("File size does not match - expected " + suppose + " but " + counter + " was downloaded");
-                        throw new IOException("ErrorDuringDownload");
+                    if (client.getHTTPClient().getParams().isParameterTrue("noContentLengthAvailable")) {
+                        downloadFile.setFileSize(counter);
+                    } else {
+                        if (counter != suppose) {
+                            logger.info("File size does not match - expected " + suppose + " but " + counter + " was downloaded");
+                            throw new IOException("ErrorDuringDownload");
+                        }
                     }
                 } else {
                     logger.info("File downloading was terminated");

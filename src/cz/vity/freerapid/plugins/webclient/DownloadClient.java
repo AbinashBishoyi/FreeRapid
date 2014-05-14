@@ -287,7 +287,7 @@ public class DownloadClient implements HttpDownloadClient {
             }
         }
 
-        if (isStream) {
+        if (isStream && client.getParams().isParameterFalse("noContentLengthAvailable")) {
             final Header contentLength = method.getResponseHeader("Content-Length");
             if (contentLength == null) {
                 isStream = false;

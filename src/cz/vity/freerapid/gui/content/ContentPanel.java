@@ -1182,7 +1182,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     public static int getProgress(DownloadFile downloadFile) {
         final long downloaded = downloadFile.getDownloaded();
         final long fileSize = downloadFile.getFileSize();
-        if (downloaded == 0 || fileSize == 0)
+        if (downloaded <= 0 || fileSize <= 0)
             return 0;
         return (int) (((downloaded / (float) fileSize) * 100));
     }
