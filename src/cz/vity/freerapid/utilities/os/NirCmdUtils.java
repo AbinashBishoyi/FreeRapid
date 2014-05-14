@@ -1,11 +1,16 @@
 package cz.vity.freerapid.utilities.os;
 
+import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.User32;
+import com.sun.jna.platform.win32.WinDef;
+import com.sun.jna.platform.win32.WinUser;
 import cz.vity.freerapid.core.Consts;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -15,7 +20,6 @@ import java.util.logging.Logger;
 final class NirCmdUtils extends AbstractSystemCommander {
     private final static Logger logger = Logger.getLogger(NirCmdUtils.class.getName());
     private final static String PATH = "tools/nircmd/nircmd.exe";
-    private final static String FIND_COMMAND = "tools/find/find.exe";
 
     NirCmdUtils() {
     }
@@ -59,6 +63,7 @@ final class NirCmdUtils extends AbstractSystemCommander {
         return runCommand(cmd, true);
     }
 
+    @Override
     public boolean createShortCut(final OSCommand shortCutCommand) {
         if (!OSCommand.shortCutCommands.contains(shortCutCommand))
             throw new IllegalArgumentException("OS command " + shortCutCommand + " is not a shortcut command");
@@ -78,6 +83,7 @@ final class NirCmdUtils extends AbstractSystemCommander {
         return false;
     }
 
+    @Override
     public boolean shutDown(OSCommand shutDownCommand, boolean force) {
         if (!OSCommand.shutDownCommands.contains(shutDownCommand))
             throw new IllegalArgumentException("OS command " + shutDownCommand + " is not a shut down command");
@@ -107,6 +113,7 @@ final class NirCmdUtils extends AbstractSystemCommander {
         return runCommand("cmdwait 2200 " + command, false);
     }
 
+    @Override
     public boolean isSupported(OSCommand command) {
         return true;
     }
@@ -119,7 +126,7 @@ final class NirCmdUtils extends AbstractSystemCommander {
     private static boolean run(final String cmd, final boolean waitForResult) {
         if (!Utils.isWindows())
             return true;
-        logger.info("System command:" + cmd);
+        logger.info("System command: " + cmd);
         try {
             final Process process = Runtime.getRuntime().exec(SysCommand.splitCommand(cmd));
             if (waitForResult) {
@@ -127,7 +134,7 @@ final class NirCmdUtils extends AbstractSystemCommander {
                 return process.exitValue() == 0;
             } else return true;
         } catch (IOException e) {
-            logger.warning("Command:" + cmd + " failed from some reason");
+            logger.warning("Command: " + cmd + " failed for some reason");
             LogUtils.processException(logger, e);
             return false;
         } catch (InterruptedException e) {
@@ -136,13 +143,53 @@ final class NirCmdUtils extends AbstractSystemCommander {
         }
     }
 
-    public boolean findTopLevelWindow(String stringToFind, boolean caseSensitive) throws IOException {
-        final String command = Utils.addFileSeparator(Utils.getAppPath()) + FIND_COMMAND;
-        return findTopLevelWndow(stringToFind, caseSensitive, command);
+    @Override
+    public boolean findTopLevelWindow(final String windowTitle, final boolean caseSensitive) throws IOException {
+        final String stringToFind = caseSensitive ? windowTitle : windowTitle.toLowerCase();
+        final boolean[] result = {false};
+        User32.INSTANCE.EnumWindows(new WinUser.WNDENUMPROC() {
+            @Override
+            public boolean callback(final WinDef.HWND hwnd, final Pointer pointer) {
+                String title = getWindowTitle(hwnd);
+                if (title != null) {
+                    if (!caseSensitive) {
+                        title = title.toLowerCase();
+                    }
+                    if (title.contains(stringToFind)) {
+                        result[0] = true;
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }, Pointer.NULL);
+        return result[0];
     }
 
+    @Override
     public List<String> getTopLevelWindowsList() throws IOException {
-        final String command = Utils.addFileSeparator(Utils.getAppPath()) + FIND_COMMAND;
-        return getTopLevelWindowsList(command);
+        final List<String> list = new LinkedList<String>();
+        User32.INSTANCE.EnumWindows(new WinUser.WNDENUMPROC() {
+            @Override
+            public boolean callback(final WinDef.HWND hwnd, final Pointer pointer) {
+                final String title = getWindowTitle(hwnd);
+                if (title != null) {
+                    list.add(title);
+                }
+                return true;
+            }
+        }, Pointer.NULL);
+        return list;
     }
+
+    private static String getWindowTitle(final WinDef.HWND hwnd) {
+        final char[] name = new char[128];
+        final int len = User32.INSTANCE.GetWindowText(hwnd, name, name.length);
+        if (len > 0) {
+            return new String(name, 0, len);
+        } else {
+            return null;
+        }
+    }
+
 }

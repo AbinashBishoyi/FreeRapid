@@ -9,6 +9,7 @@ import javax.script.ScriptEngineManager;
  * Collection of static utility methods for processing scripts easily.
  *
  * @author ntoskrnl
+ * @since 0.85u1
  */
 public final class ScriptUtils {
 
@@ -45,7 +46,7 @@ public final class ScriptUtils {
      */
     public static String evaluateJavaScriptToString(final String script) throws PluginImplementationException {
         final Object result = evaluateJavaScript(script);
-        if (result instanceof String) {
+        if (result == null || result instanceof String) {
             return (String) result;
         } else {
             throw new PluginImplementationException("Wrong script return type: " + result.getClass().getName() + ", expected String");
@@ -64,7 +65,7 @@ public final class ScriptUtils {
      */
     public static Number evaluateJavaScriptToNumber(final String script) throws PluginImplementationException {
         final Object result = evaluateJavaScript(script);
-        if (result instanceof Number) {
+        if (result == null || result instanceof Number) {
             return (Number) result;
         } else {
             throw new PluginImplementationException("Wrong script return type: " + result.getClass().getName() + ", expected Number");
