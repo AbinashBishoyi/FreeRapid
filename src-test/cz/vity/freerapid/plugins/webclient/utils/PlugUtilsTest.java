@@ -30,6 +30,7 @@ public class PlugUtilsTest {
     @Test
     public void testGetFileSizeFromString() {
         assertEquals("File size from B", PlugUtils.getFileSizeFromString("280B"), 280L);
+        assertEquals("File size from B", PlugUtils.getFileSizeFromString("280BB"), 280L);
         assertEquals("File size from MB", PlugUtils.getFileSizeFromString("\t  2500 MB"), 2500 * 1024 * 1024L);
         assertEquals("File size from GB", PlugUtils.getFileSizeFromString("  2 \t500 GB"), 2500 * 1024L * 1024 * 1024L);
         assertEquals("File size from bytes", PlugUtils.getFileSizeFromString(" 2500 byTes"), 2500);
@@ -62,14 +63,18 @@ public class PlugUtilsTest {
         } catch (PluginImplementationException e) {
 
         }
-        assertEquals(PlugUtils.getParameter("par", "\"input type=\"hidden\" name=\"par\" value=\"val\">"), "val");
-        assertEquals(PlugUtils.getParameter("par", "\"input type=\"hidden\" name='par' value='val'>"), "val");
-        assertEquals(PlugUtils.getParameter("par", "\"input type=\"hidden\" name='par'value='val'>"), "val");
-        assertEquals(PlugUtils.getParameter("par", "\"input type=\"hidden\" name=par value=val>"), "val");
-        assertEquals(PlugUtils.getParameter("par", "\"input type=\"hidden\" name=par value='val'"), "val");
-        assertEquals(PlugUtils.getParameter("par", "\"input type=\"hidden\" name=par value=val>"), "val");
-        assertEquals(PlugUtils.getParameter("par", "\"input type=\"hidden\" name=par value=val  >"), "val");
-        assertEquals(PlugUtils.getParameter("par", "\"input type=\"hidden\" name=\"PAR\" value=val  >"), "val");
+        assertEquals(PlugUtils.getParameter("par", "input type=\"hidden\" name=\"par\" value=\"val\">"), "val");
+        assertEquals(PlugUtils.getParameter("par", "input type=\"hidden\" name='par' value='val'>"), "val");
+        assertEquals(PlugUtils.getParameter("par", "input type=\"hidden\" name='par'value='val'>"), "val");
+        assertEquals(PlugUtils.getParameter("par", "input type=\"hidden\" name=par value=val>"), "val");
+        assertEquals(PlugUtils.getParameter("par", "input type=\"hidden\" name=par value='val'"), "val");
+        assertEquals(PlugUtils.getParameter("par", "input type=\"hidden\" name=par value=val>"), "val");
+        assertEquals(PlugUtils.getParameter("par", "input type=\"hidden\" name=par value=val  >"), "val");
+        assertEquals(PlugUtils.getParameter("fname", "input type=\"hidden\" name=\"fname\" value=\"\" />"), "");
+        assertEquals(PlugUtils.getParameter("submitted", "<input name='submitted' type=\"hidden\" value=1>"), "1");
+        assertEquals(PlugUtils.getParameter("submit_btn", "input type=\"submit\" name=\"submit_btn\" DISABLED value=\"val\" />"), "val");
+        assertEquals(PlugUtils.getParameter("par", "input type=\"hidden\" name=\"PAR\" value=val  >"), "val");
+        assertEquals(PlugUtils.getParameter("PAR", "input type=\"hidden\" value=\"val\" name=PAR  >"), "val");
     }
 
     @Test
@@ -99,6 +104,10 @@ public class PlugUtilsTest {
 
         postMethod.removeParameter("par");
         PlugUtils.addParameters(postMethod, "\"input type=\"hidden\" name=\"par\" value=val   >", new String[]{"par"});
+        assertEquals(postMethod.getParameter("par").getValue(), "val");
+
+        postMethod.removeParameter("par");
+        PlugUtils.addParameters(postMethod, "\"input type=\"hidden\" value=\"val\" name=par   >", new String[]{"par"});
         assertEquals(postMethod.getParameter("par").getValue(), "val");
     }
 

@@ -71,8 +71,13 @@ final public class HttpUtils {
                 return s;
             } else {
                 //test na buggove Content-Disposition
-                str = "filename\\*=UTF-8''";
+                str = "filename\\*=utf-8''";
                 index = lowercased.lastIndexOf(str);
+                if (index == -1) {
+                    str = "filename*=utf-8''";
+                    index = lowercased.lastIndexOf(str);
+                }
+
                 if (index >= 0) {
                     final String s = value.substring(index + str.length());
                     if (!s.isEmpty())

@@ -27,13 +27,14 @@ public final class PlugUtils {
     /**
      * regexp pattern for form parameter matching - cached because of speed optimization
      */
-    private static Pattern parameterPattern;
+    private static Pattern parameterPattern1;
+    private static Pattern parameterPattern2;
 
 
     /**
      * Parses input string and converts it into bytes.<br />
      * Acceptable input:<br />
-     * <code>1.35 Gb, 0.5 Mb 5 465kB, 45654 6544 bytes, 54654654, 280B</code> - default value is kB<br />
+     * <code>1.35 Gb, 0.5 Mb 5 465kB, 45654 6544 bytes, 54654654, 280B, also buggy 280BB</code> - default value is B<br />
      * Function is not case sensitive. Spaces among numbers are not important (they are removed).<br />
      * All ',' are converted to '.'<br />
      *
@@ -55,6 +56,8 @@ public final class PlugUtils {
             constant = 1024 * 1024 * 1024;
         } else {
             index = value.lastIndexOf("BYTES");
+            if (index < 0)
+                index = value.lastIndexOf("BB");
             if (index < 0)
                 index = value.lastIndexOf("B");
         }
@@ -141,11 +144,17 @@ public final class PlugUtils {
      */
 
     public static String getParameter(String name, String content) throws PluginImplementationException {
-        final Matcher matcher = Pattern.compile("name=(\"|')?" + name + "(\"|'|\\s).*?value=(\"|')?(.*?)(\"|'|\\s*>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE).matcher(content);
+        //(?: means no capturing group
+        Matcher matcher = Pattern.compile("name=(?:\"|')?" + name + "(?:\"|'|\\s).*?value=(?:\"|')?(.*?)(?:\"|'|\\s*>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE).matcher(content);
         if (matcher.find()) {
-            return matcher.group(4);
-        } else
-            throw new PluginImplementationException("Parameter " + name + " was not found");
+            return matcher.group(1);
+        } else {
+            matcher = Pattern.compile("value=(?:\"|')?(.*?)(?:\"|'|\\s).*?name=(?:\"|')?" + name + "(?:\"|'|\\s*>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE).matcher(content);
+            if (matcher.find()) {
+                return matcher.group(1);
+            } else throw new PluginImplementationException("Parameter " + name + " was not found");
+        }
+
     }
 
     /**
@@ -164,17 +173,31 @@ public final class PlugUtils {
             throw new IllegalArgumentException("You have to provide some parameter names");
         final Set<String> set = new HashSet<String>(parameters.length);
         set.addAll(Arrays.asList(parameters));
-        if (parameterPattern == null)
-            parameterPattern = Pattern.compile("name=(\"|')?(.*?)(\"|'|\\s).*?value=(\"|')?(.*?)(\"|'|\\s*>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+        if (parameterPattern1 == null)
+            parameterPattern1 = Pattern.compile("name=(?:\"|')?(.*?)(?:\"|'|\\s).*?value=(?:\"|')?(.*?)(?:\"|'|\\s*>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+        if (parameterPattern2 == null)
+            parameterPattern2 = Pattern.compile("value=(?:\"|')?(.*?)(?:\"|'|\\s).*?name=(?:\"|')?(.*?)(?:\"|'|\\s*>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 
-        final Matcher matcher = parameterPattern.matcher(content);
+        Matcher matcher = parameterPattern1.matcher(content);
         int start = 0;
         String param;
+        while (matcher.find(start)) {
+            param = matcher.group(1);
+            if (set.contains(param)) {
+                set.remove(param);
+                postMethod.addParameter(param, matcher.group(2));
+            }
+            if (set.isEmpty())
+                break;
+            start = matcher.end();
+        }
+        matcher = parameterPattern2.matcher(content);
+        start = 0;
         while (matcher.find(start)) {
             param = matcher.group(2);
             if (set.contains(param)) {
                 set.remove(param);
-                postMethod.addParameter(param, matcher.group(5));
+                postMethod.addParameter(param, matcher.group(1));
             }
             if (set.isEmpty())
                 break;

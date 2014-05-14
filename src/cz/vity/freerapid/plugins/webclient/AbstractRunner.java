@@ -3,6 +3,7 @@ package cz.vity.freerapid.plugins.webclient;
 import cz.vity.freerapid.plugins.webclient.hoster.CaptchaSupport;
 import cz.vity.freerapid.plugins.webclient.interfaces.*;
 import cz.vity.freerapid.plugins.webclient.utils.PlugUtils;
+import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -220,5 +221,25 @@ public abstract class AbstractRunner implements PluginRunner {
      */
     protected Matcher getMatcherAgainstContent(final String regexp) {
         return PlugUtils.matcher(regexp, client.getContentAsString());
+    }
+
+    /**
+     * Returns new instance of MethodBuilder, which is used to create GET and POST method.<br>
+     * The default content for parsing is taken from the last HTTP response. <br />If you need to use your own content for creating method, make your own instance of MethodBuilder.
+     *
+     * @return new instance of MethodBuilder
+     * @since 0.82
+     */
+    protected MethodBuilder getMethodBuilder() {
+        return new MethodBuilder(client);
+    }
+
+    /**
+     * Sets a cookie to the current session.
+     *
+     * @since 0.82
+     */
+    protected void addCookie(Cookie cookie) {
+        client.getHTTPClient().getState().addCookie(cookie);
     }
 }
