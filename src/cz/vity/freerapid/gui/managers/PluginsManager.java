@@ -123,6 +123,7 @@ public class PluginsManager {
         if (hasPlugin(id)) {
             final PluginRegistry pluginRegistry = pluginManager.getRegistry();
             if (pluginRegistry.isPluginDescriptorAvailable(id)) {
+
                 final PluginDescriptor descr = pluginRegistry.getPluginDescriptor(id);
                 return pluginManager.isBadPlugin(descr) || !pluginManager.isPluginEnabled(descr);
             }
@@ -321,7 +322,7 @@ public class PluginsManager {
             FileUtils.extractZipFileInto(pluginsDistFile, pluginsDir);
             final File file = new File(pluginsDir, Consts.PLUGINS_VERSION_FILE_NAME);
             //write plugins dir Version file
-            FileUtils.writeFileWithValue(file, String.valueOf(MainApp.BUILD_REQUEST));
+            FileUtils.writeFileWithValue(file, String.valueOf(MainApp.PLUGINS_VERSION));
         }
     }
 
@@ -331,7 +332,7 @@ public class PluginsManager {
         if (!versionFile.exists() || versionFile.length() <= 0) {
             return false;
         }
-        return Integer.valueOf(MainApp.BUILD_REQUEST).equals(Integer.valueOf(Utils.loadFile(versionFile)));
+        return Integer.valueOf(MainApp.PLUGINS_VERSION).equals(Integer.valueOf(Utils.loadFile(versionFile)));
     }
 
     private void disablePluginsInConflict() {
