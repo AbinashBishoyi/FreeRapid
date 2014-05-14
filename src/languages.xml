@@ -11,7 +11,7 @@
     <lng name="Magyar" code="HU" icon="hu.gif"/>
     <!--<lng name="Deutsch" code="DE" icon="de.gif"/>-->
     <!--<lng name="Español" code="ES" icon="es.gif"/>-->
-    <!--<lng name="Slovenčina" code="SK" icon="sk.gif"/>-->
+    <lng name="Slovenčina" code="SK" icon="sk.gif"/>
     <lng name="简体字" code="ZH" country="CN" icon="cn.gif"/>
     <!--<lng name="正體字" code="ZH" country="TW" icon="tw.gif"/>-->
     <!--<lng name="日本語" code="JP" icon="jp.gif"/>-->
