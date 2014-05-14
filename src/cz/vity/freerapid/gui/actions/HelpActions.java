@@ -8,9 +8,11 @@ import cz.vity.freerapid.core.tasks.CheckForNewVersionTask;
 import cz.vity.freerapid.gui.dialogs.AboutDialog;
 import cz.vity.freerapid.gui.managers.UpdateManager;
 import cz.vity.freerapid.utilities.Browser;
+import cz.vity.freerapid.utilities.OSDesktop;
 import org.jdesktop.application.Action;
 
 import java.awt.event.ActionEvent;
+import java.io.File;
 
 /**
  * @author Vity
@@ -18,10 +20,9 @@ import java.awt.event.ActionEvent;
 
 public class HelpActions {
     public static final String CONTEXT_DIALOG_HELPPROPERTY = "contextDialogHelp";
-
-    private MainApp app;
     public static final String CONTEXT_DIALOG_HELP_ACTION = "contextDialogHelpAction";
 
+    private MainApp app;
 
     public HelpActions() {
         app = MainApp.getInstance(MainApp.class);
@@ -35,7 +36,6 @@ public class HelpActions {
     @Action
     public void help() {
         Browser.openBrowser(AppPrefs.getProperty(UserProp.HELP_URL, Consts.HELP_WEBURL));
-        //Swinger.showInformationDialog(app.getContext().getResourceMap().getString("notImplementedYet"));
     }
 
     @Action
@@ -60,7 +60,6 @@ public class HelpActions {
 
     @Action
     public void contextDialogHelpAction(ActionEvent event) {
-        //final String context = ((JComponent) event.getSource()).getClientProperty(CONTEXT_DIALOG_HELPPROPERTY).toString();
         final String context = event.getActionCommand();
         Browser.openBrowser(context);
     }
@@ -71,17 +70,27 @@ public class HelpActions {
         app.prepareDialog(aboutDialog, true);
     }
 
-
     @Action
     public void checkForNewPlugins() {
         final UpdateManager updateManager = app.getManagerDirector().getUpdateManager();
         updateManager.checkUpdate(false);
     }
 
-
-    @org.jdesktop.application.Action
+    @Action
     public void czoSupportAction() {
         Browser.openBrowser("http://cos.root.cz/hlasovani/");
+    }
+
+    @Action
+    public void openLogFile() {
+        final File file = new File(app.getContext().getLocalStorage().getDirectory(), Consts.LOG_FILE_NAME);
+        OSDesktop.openFile(file);
+    }
+
+    @Action
+    public void browseToLogFile() {
+        final File file = new File(app.getContext().getLocalStorage().getDirectory(), Consts.LOG_FILE_NAME);
+        OSDesktop.openDirectoryForFile(file);
     }
 
 }

@@ -1,5 +1,6 @@
 package cz.vity.freerapid.utilities;
 
+import cz.vity.freerapid.core.Consts;
 import cz.vity.freerapid.core.MainApp;
 
 import java.io.File;
@@ -12,7 +13,7 @@ import java.util.logging.FileHandler;
 public class LogFileHandler extends FileHandler {
 
     public LogFileHandler() throws IOException, SecurityException {
-        super(new File(MainApp.getAContext().getLocalStorage().getDirectory(), "app.log").getAbsolutePath());
+        super(new File(MainApp.getAContext().getLocalStorage().getDirectory(), Consts.LOG_FILE_NAME).getAbsolutePath());
     }
 
 }

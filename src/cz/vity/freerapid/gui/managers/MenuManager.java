@@ -156,6 +156,9 @@ public class MenuManager {
                 "checkForNewPlugins",
                 "checkForNewVersion",
                 MENU_SEPARATOR,
+                "openLogFile",
+                "browseToLogFile",
+                MENU_SEPARATOR,
                 "paypalSupportAction",
                 MENU_SEPARATOR,
                 "about"
