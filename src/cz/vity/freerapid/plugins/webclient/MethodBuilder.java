@@ -201,7 +201,7 @@ public final class MethodBuilder {
             start = formMatcher.end();
         }
         if (!found)
-            throw new BuildMethodException("Tag <Form> with containing '" + text + "' in the title was not found!");
+            throw new BuildMethodException("Tag <Form> containing '" + text + "' in the title was not found!");
         return this;
     }
 
@@ -260,7 +260,7 @@ public final class MethodBuilder {
             start = matcher.end();
         }
         if (!found)
-            throw new BuildMethodException("Tag <A> with containing '" + text + "' was not found!");
+            throw new BuildMethodException("Tag <A> containing '" + text + "' was not found!");
         return this;
     }
 
@@ -308,7 +308,7 @@ public final class MethodBuilder {
             start = matcher.end();
         }
         if (!found)
-            throw new BuildMethodException("Tag <img> with containing '" + text + "' was not found!");
+            throw new BuildMethodException("Tag <img> containing '" + text + "' was not found!");
         return this;
     }
 
@@ -349,7 +349,7 @@ public final class MethodBuilder {
             start = matcher.end();
         }
         if (!found)
-            throw new BuildMethodException("Tag <iframe> with containing '" + text + "' was not found!");
+            throw new BuildMethodException("Tag <iframe> containing '" + text + "' was not found!");
         return this;
     }
 
@@ -470,7 +470,7 @@ public final class MethodBuilder {
             start = matcher.end();
         }
         if (!set.isEmpty()) {
-            throw new BuildMethodException("Following parameters: " + Arrays.toString(set.toArray()) + " were not found");
+            throw new BuildMethodException("The parameters " + Arrays.toString(set.toArray()) + " were not found");
         }
         return this;
     }
@@ -543,6 +543,8 @@ public final class MethodBuilder {
      * @param name  name of parameter
      * @param value value of the parameter; if the value is null, parameter is removed
      * @return builder instance
+     * @throws cz.vity.freerapid.plugins.exceptions.BuildMethodException
+     *          See {@link UnsupportedEncodingException}
      * @see cz.vity.freerapid.plugins.webclient.MethodBuilder#setParameter(String, String)
      */
     public MethodBuilder setAndEncodeParameter(String name, String value) throws BuildMethodException {
@@ -576,7 +578,7 @@ public final class MethodBuilder {
      * Calls URLEncoder to over path and query part of the action or base URL.<br />
      * <b>Note:</b> This method just sets the flag that the result action in the httpmethod should be encoded.
      *
-     * @param b
+     * @param b setEncodePathAndQuery
      * @return builder instance
      * @throws BuildMethodException if action or base url is null or no '/' was found.
      */
@@ -590,6 +592,7 @@ public final class MethodBuilder {
      * Setter for property 'referer'.
      *
      * @param referer Value to set for property 'referer'.
+     * @return builder instance
      */
     public MethodBuilder setReferer(String referer) {
         this.referer = referer;
@@ -611,7 +614,7 @@ public final class MethodBuilder {
      * At least one of the parameter has to be not null and the string has to start with 'http'.
      *
      * @return new instance of HttpMethod with GET request
-     * @throws BuildMethodException
+     * @throws BuildMethodException if something goes wrong
      */
     public HttpMethod toGetMethod() throws BuildMethodException {
         if (referer != null)
@@ -720,7 +723,7 @@ public final class MethodBuilder {
 
     private String checkURI(String url) throws BuildMethodException {
         final String uriCharset = client.getHTTPClient().getParams().getUriCharset();
-        logger.info("Converting " + url + " with  URI charset is " + uriCharset);
+        logger.info("Converting " + url + " with  URI charset " + uriCharset);
         try {
             return new org.apache.commons.httpclient.URI(url, true, uriCharset).toString();
         } catch (URIException e) {
@@ -728,7 +731,7 @@ public final class MethodBuilder {
             try {
                 return new org.apache.commons.httpclient.URI(URIUtil.encodePathQuery(url, encoding), true, uriCharset).toString();
             } catch (URIException e1) {
-                throw new BuildMethodException("Invalid URL - does not match URI specification:" + url);
+                throw new BuildMethodException("Invalid URL - does not match URI specification: " + url);
             }
         }
     }
@@ -762,7 +765,7 @@ public final class MethodBuilder {
      * At least one of the parameter has to be not null and the string has to start with 'http'.
      *
      * @return new instance of HttpMethod with POST request
-     * @throws BuildMethodException
+     * @throws BuildMethodException if something goes wrong
      */
     public HttpMethod toPostMethod() throws BuildMethodException {
         if (referer != null)
@@ -789,7 +792,7 @@ public final class MethodBuilder {
      * At least one of the parameter has to be not null and the string has to start with 'http'.
      *
      * @return new instance of HttpMethod - result method is given by postMethod settings - how it was extracted from the content - default method is POST
-     * @throws BuildMethodException
+     * @throws BuildMethodException if something goes wrong
      */
     public HttpMethod toHttpMethod() throws BuildMethodException {
         if (postMethod == HttpMethodEnum.POST) {
@@ -810,8 +813,8 @@ public final class MethodBuilder {
     /**
      * Sets new action
      *
-     * @param action
-     * @return
+     * @param action new action
+     * @return builder instance
      */
     public MethodBuilder setAction(String action) {
         this.action = action;
@@ -863,6 +866,7 @@ public final class MethodBuilder {
      * Setter for property 'encodeParameters'.
      *
      * @param encodeParameters Value to set for property 'encodeParameters'.
+     * @return builder instance
      */
     public MethodBuilder setEncodeParameters(boolean encodeParameters) {
         this.encodeParameters = encodeParameters;
@@ -882,6 +886,7 @@ public final class MethodBuilder {
      * Setter for property 'encoding'.
      *
      * @param encoding Value to set for property 'encoding'.
+     * @return builder instance
      */
     public MethodBuilder setEncoding(String encoding) {
         this.encoding = encoding;
@@ -919,6 +924,7 @@ public final class MethodBuilder {
      * Returns escaped URI
      *
      * @return escaped URI for actual GET or POST method
+     * @throws BuildMethodException if something goes wrong
      * @since 0.83
      */
     public String getEscapedURI() throws BuildMethodException {

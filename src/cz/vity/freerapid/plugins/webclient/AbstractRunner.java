@@ -96,7 +96,7 @@ public abstract class AbstractRunner implements PluginRunner {
     public void run() throws Exception {
         if (!initialized)
             throw new IllegalStateException("Cannot run Run method. Runner was not initialized via init method");
-        logger.info("Starting download 'run' for file:" + fileURL);
+        logger.info("Starting 'run' for file " + fileURL);
     }
 
     /**
@@ -105,7 +105,7 @@ public abstract class AbstractRunner implements PluginRunner {
     public void runCheck() throws Exception {
         if (!initialized)
             throw new IllegalStateException("Cannot run runCheck method. Runner was not initialized via init method");
-        logger.info("Starting download 'runCheck' " + fileURL);
+        logger.info("Starting 'runCheck' for file " + fileURL);
     }
 
     /**
@@ -243,6 +243,7 @@ public abstract class AbstractRunner implements PluginRunner {
      * The default content for parsing is taken from the last HTTP response. <br />If you need to use your own content for creating method, make your own instance of MethodBuilder.
      *
      * @return new instance of MethodBuilder
+     * @throws BuildMethodException if something goes wrong
      * @since 0.82
      */
     protected MethodBuilder getMethodBuilder() throws BuildMethodException {
@@ -255,6 +256,7 @@ public abstract class AbstractRunner implements PluginRunner {
      *
      * @param content specific content
      * @return new instance of MethodBuilder
+     * @throws BuildMethodException if something goes wrong
      * @since 0.82
      */
     protected MethodBuilder getMethodBuilder(String content) throws BuildMethodException {
@@ -264,10 +266,53 @@ public abstract class AbstractRunner implements PluginRunner {
     /**
      * Sets a cookie to the current session.
      *
+     * @param cookie cookie to add
      * @since 0.82
      */
     protected void addCookie(Cookie cookie) {
         client.getHTTPClient().getState().addCookie(cookie);
+    }
+
+    /**
+     * Gets the cookies of the current session.
+     *
+     * @return cookies of the current session
+     * @since 0.84
+     */
+    protected Cookie[] getCookies() {
+        return client.getHTTPClient().getState().getCookies();
+    }
+
+    /**
+     * Gets a cookie by name from the current session.
+     *
+     * @param name name of cookie to look for
+     * @return cookie with given name, or null if not found
+     * @since 0.84
+     */
+    protected Cookie getCookieByName(final String name) {
+        for (final Cookie cookie : getCookies()) {
+            if (cookie.getName().equalsIgnoreCase(name)) {
+                return cookie;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets a cookie by value from the current session.
+     *
+     * @param value value of cookie to look for
+     * @return cookie with given value, or null if not found
+     * @since 0.84
+     */
+    protected Cookie getCookieByValue(final String value) {
+        for (final Cookie cookie : getCookies()) {
+            if (cookie.getValue().equalsIgnoreCase(value)) {
+                return cookie;
+            }
+        }
+        return null;
     }
 
     /**

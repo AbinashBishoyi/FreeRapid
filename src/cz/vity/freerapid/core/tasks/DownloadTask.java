@@ -560,7 +560,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         setSleep(0);
         downloadFile.setState(DownloadState.WAITING);
         downloadFile.setTimeToQueuedMax(seconds);
-        logger.info("Going to sleep on " + (seconds) + " seconds");
+        logger.info("Going to sleep for " + (seconds) + " seconds");
         for (int i = seconds; i > 0; i--) {
             if (isTerminated())
                 break;

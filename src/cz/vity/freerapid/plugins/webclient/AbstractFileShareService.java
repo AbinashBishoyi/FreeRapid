@@ -148,11 +148,11 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
     }
 
     /**
-     * Method checkSupportedURL ...
+     * Checks if given downloadTask is supported by this plugin.
      *
-     * @param downloadTask
+     * @param downloadTask downloadTask
      * @throws NotSupportedDownloadByServiceException
-     *          when
+     *          if not supported
      */
     protected void checkSupportedURL(HttpFileDownloadTask downloadTask) throws NotSupportedDownloadByServiceException {
         if (!supportURL(downloadTask.getDownloadFile().getFileUrl().toExternalForm())) {

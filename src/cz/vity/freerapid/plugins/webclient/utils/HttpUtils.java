@@ -68,7 +68,7 @@ final public class HttpUtils {
                     } catch (UnsupportedEncodingException e) {
                         logger.warning("Unsupported encoding");
                     } catch (IllegalArgumentException e) {
-                        logger.warning("Invalid file name header:" + e.getMessage());
+                        logger.warning("Invalid file name header: " + e.getMessage());
                         return s;
                     }
                 return s;
@@ -89,12 +89,12 @@ final public class HttpUtils {
                         } catch (UnsupportedEncodingException e) {
                             logger.warning("Unsupported encoding");
                         } catch (IllegalArgumentException e) {
-                            logger.warning("Invalid file name header:" + e.getMessage());
+                            logger.warning("Invalid file name header: " + e.getMessage());
                             return s;
                         }
 
                 } else
-                    logger.warning("File name was not found in:" + value);
+                    logger.warning("File name was not found in " + value);
             }
         }
         return null;

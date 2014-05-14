@@ -194,7 +194,7 @@ public class DownloadClient implements HttpDownloadClient {
             updateAsString(method);
             return null;
         } else if (statuscode >= HttpStatus.SC_INTERNAL_SERVER_ERROR) {
-            logger.severe("Status code > 500:" + statuscode);
+            logger.severe("Status code > 500: " + statuscode);
             updateAsString(method);
             return null;
         }
@@ -202,7 +202,7 @@ public class DownloadClient implements HttpDownloadClient {
         final boolean isRedirect = isRedirect(statuscode);
 
         if (statuscode != HttpStatus.SC_OK && statuscode != HttpStatus.SC_PARTIAL_CONTENT && !isRedirect) { //selhalo pripojeni
-            logger.warning("Loading file failed - invalid HTTP return status code:" + statuscode);
+            logger.warning("Loading file failed - invalid HTTP return status code: " + statuscode);
             updateAsString(method);
             return null;
         }
@@ -341,7 +341,7 @@ public class DownloadClient implements HttpDownloadClient {
             if (!value.startsWith("application/") && !isImage && !isAudioVideo) {
                 stream = false;
                 if (showWarnings)
-                    logger.warning("Suspicious Content-Type:" + contentType.getValue());
+                    logger.warning("Suspicious Content-Type: " + contentType.getValue());
             }
         }
         return stream;
@@ -364,10 +364,10 @@ public class DownloadClient implements HttpDownloadClient {
             Header hce = method.getResponseHeader("Content-Encoding");
             if (null != hce && !hce.getValue().isEmpty()) {
                 if ("gzip".equalsIgnoreCase(hce.getValue())) {
-                    logger.info("Found gzip Stream");
+                    logger.info("Found GZIP stream");
                     return new GZIPInputStream(method.getResponseBodyAsStream());
                 } else if ("deflate".equalsIgnoreCase(hce.getValue())) {
-                    logger.info("Found deflate Stream");
+                    logger.info("Found deflate stream");
                     return new InflaterInputStream(method.getResponseBodyAsStream());
                 } else {
                     logger.warning("Unknown Content-Encoding: " + hce.getValue());
@@ -417,7 +417,7 @@ public class DownloadClient implements HttpDownloadClient {
         if (statuscode == HttpStatus.SC_INTERNAL_SERVER_ERROR || statuscode == HttpStatus.SC_FORBIDDEN) {//bezpecnost
             logger.severe("Status code je 500");
         } else if (statuscode >= HttpStatus.SC_INTERNAL_SERVER_ERROR) {
-            logger.severe("Status code > 500:" + statuscode);
+            logger.severe("Status code > 500: " + statuscode);
         }
 
         if (allowRedirect && isRedirect && redirect != 1) {

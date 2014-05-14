@@ -42,6 +42,7 @@ public final class PlugUtils {
      * All ',' are converted to '.'<br />
      * Since version 0.83 there is additional replacement for characters in Russian alphabet (azbuka).<br />
      * All <code>&nbsp;</code> are replaced to be a pure <code>' '</code>
+     *
      * @param value input string parsed from page
      * @return filesize in bytes
      */
@@ -86,7 +87,7 @@ public final class PlugUtils {
      *
      * @param regexp        regular expression
      * @param contentString string that is searched for regular expression pattern
-     * @return
+     * @return Matcher for given regular expression and string
      * @see java.util.regex.Pattern
      */
     public static Matcher matcher(final String regexp, final String contentString) {
@@ -218,7 +219,7 @@ public final class PlugUtils {
             start = matcher.end();
         }
         if (!set.isEmpty()) {
-            throw new PluginImplementationException("Following parameters: " + Arrays.toString(set.toArray()) + " were not found");
+            throw new PluginImplementationException("The parameters " + Arrays.toString(set.toArray()) + " were not found");
         }
     }
 
@@ -257,12 +258,6 @@ public final class PlugUtils {
             return null;
         }
     }
-
-//    public static void main(String[] args) {
-//        final long fileSizeFromString = PlugUtils.getFileSizeFromString("95    505 MB");
-//        System.out.println("fileSizeFromString = " + fileSizeFromString);
-//    }
-//
 
     /**
      * Extracts file name from the site. White space around file name is trimmed.
