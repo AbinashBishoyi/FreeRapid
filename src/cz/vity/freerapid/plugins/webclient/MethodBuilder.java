@@ -63,6 +63,7 @@ public final class MethodBuilder {
     private static Pattern imgPattern;
     private static Pattern parameterValuePattern;
     private boolean encodePathAndQuery;
+    private Pattern iframePattern = null;
 
     /**
      * Returns actual set POST or GET method extracted from result. <br /> Its value is used in <code>toMethod()</code> method.<br/>
@@ -223,8 +224,7 @@ public final class MethodBuilder {
         } else
             throw new BuildMethodException(String.format("The searched text between string '%s' and '%s' was not found.", textBefore, textAfter));
         this.postMethod = HttpMethodEnum.GET;
-        if (autoReplaceEntities)
-            this.action = PlugUtils.replaceEntities(this.action);
+        checkAutoreplaceEntities();
         return this;
     }
 
@@ -252,8 +252,7 @@ public final class MethodBuilder {
             final String content = matcher.group(2);
             if (content.toLowerCase().contains(lower)) {
                 this.action = matcher.group(1);
-                if (autoReplaceEntities)
-                    this.action = PlugUtils.replaceEntities(this.action);
+                checkAutoreplaceEntities();
                 found = true;
                 this.postMethod = HttpMethodEnum.GET;
                 break;
@@ -265,11 +264,19 @@ public final class MethodBuilder {
         return this;
     }
 
+    private void checkAutoreplaceEntities() {
+        if (autoReplaceEntities && this.action != null) {
+            if (this.action.startsWith("&#104;&#116;&#116;&#112;")) //http
+                this.action = PlugUtils.unescapeHtml(this.action);
+            else this.action = PlugUtils.replaceEntities(this.action);
+        }
+    }
+
     /**
      * Searches content for <code>&lt;Img&gt;</code> tag with given text and extracts the <code>src</code> attribute.<br/>
      * <p>
      * <b>Content:</b><br/>
-     * <code>&lt;mig class="xx" href="http://blabla/" &gt</code>
+     * <code>&lt;img class="xx" src="http://blabla/" &gt</code>
      * <br /><b>Using:</b>
      * <code><br />setActionFromImgSrcWhereTagContains("class=\"xx\"")</code> - an action <code>http://blabla/</code> will be extracted<br/>
      * <i>also this is possible:</i>
@@ -293,8 +300,7 @@ public final class MethodBuilder {
             final String content = matcher.group(1);
             if (content.toLowerCase().contains(lower)) {
                 this.action = matcher.group(2);
-                if (autoReplaceEntities)
-                    this.action = PlugUtils.replaceEntities(this.action);
+                checkAutoreplaceEntities();
                 found = true;
                 this.postMethod = HttpMethodEnum.GET;
                 break;
@@ -303,6 +309,47 @@ public final class MethodBuilder {
         }
         if (!found)
             throw new BuildMethodException("Tag <img> with containing '" + text + "' was not found!");
+        return this;
+    }
+
+    /**
+     * Searches content for <code>&lt;Iframe&gt;</code> tag with given text and extracts the <code>src</code> attribute.<br/>
+     * <p>
+     * <b>Content:</b><br/>
+     * <code>&lt;iframe class="xx" src="http://blabla/" &gt</code>
+     * <br /><b>Using:</b>
+     * <code><br />setActionFromIFrameSrcWhereTagContains("class=\"xx\"")</code> - an action <code>http://blabla/</code> will be extracted<br/>
+     * <i>also this is possible:</i>
+     * <code><br />setActionFromImgSrcWhereTagContains("/blabla")</code> - an action <code>http://blabla/</code> will be extracted<br/></p>
+     * <p/>
+     * <p>All <code>&amp;amp;</code> entity is replaced to <code>&</code> by default.</p>
+     *
+     * @param text a string searched in the <code>&lt;iframe&gt;</code> tag
+     * @return builder instance
+     * @throws cz.vity.freerapid.plugins.exceptions.BuildMethodException
+     *          when no such <code>&lt;Img&gt;</code> with text in the tag was found
+     * @since 0.83
+     */
+    public MethodBuilder setActionFromIFrameSrcWhereTagContains(final String text) throws BuildMethodException {
+        if (iframePattern == null)
+            iframePattern = Pattern.compile("(<iframe(?:.*?)src\\s?=\\s?(?:\"|')(.+?)(?:\"|')(?:.*?)>)", Pattern.DOTALL | Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+        final Matcher matcher = iframePattern.matcher(content);
+        boolean found = false;
+        int start = 0;
+        final String lower = text.toLowerCase();
+        while (matcher.find(start)) {
+            final String content = matcher.group(1);
+            if (content.toLowerCase().contains(lower)) {
+                this.action = matcher.group(2);
+                checkAutoreplaceEntities();
+                found = true;
+                this.postMethod = HttpMethodEnum.GET;
+                break;
+            }
+            start = matcher.end();
+        }
+        if (!found)
+            throw new BuildMethodException("Tag <iframe> with containing '" + text + "' was not found!");
         return this;
     }
 
@@ -450,6 +497,17 @@ public final class MethodBuilder {
     }
 
     /**
+     * All <code>&amp;="&amp;#104;&amp;#116;&amp;#116;&amp;#112;&amp;#58;&amp;#47;&amp;#...</code> entity is replaced to its value.
+     *
+     * @return builder instance
+     * @since 0.83
+     */
+    public MethodBuilder unescapeHtml() {
+        action = PlugUtils.unescapeHtml(action);
+        return this;
+    }
+
+    /**
      * Removes all parameters from the result method. <br />
      * Note - only extracted parameters and manually added parameters are removed. Parameters in action value are not removed.
      *
@@ -589,8 +647,7 @@ public final class MethodBuilder {
     private void inputForm(boolean useFormParameters, String title, String content) {
         this.action = extractAction(title);
         if (this.action != null) {
-            if (autoReplaceEntities)
-                this.action = PlugUtils.replaceEntities(this.action);
+            checkAutoreplaceEntities();
         } else logger.info("Form has no defined action attribute");
         this.postMethod = extractMethod(title);
         if (useFormParameters)
@@ -853,5 +910,19 @@ public final class MethodBuilder {
      */
     public Map<String, String> getParameters() {
         return parameters;
+    }
+
+    /**
+     * Returns escaped URI
+     *
+     * @return escaped URI for actual GET or POST method
+     * @since 0.83
+     */
+    public String getEscapedURI() throws BuildMethodException {
+        try {
+            return toHttpMethod().getURI().getEscapedURI();
+        } catch (URIException e) {
+            throw new BuildMethodException("Cannot build URI from action");
+        }
     }
 }
