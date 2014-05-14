@@ -4,7 +4,7 @@ import cz.vity.freerapid.core.application.GlobalEDTExceptionHandler;
 import cz.vity.freerapid.core.application.ListItemsConvertor;
 import cz.vity.freerapid.core.tasks.CheckForNewVersionTask;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
-import cz.vity.freerapid.plugins.webclient.utils.Win7NativeUtils;
+import cz.vity.freerapid.utilities.Win7NativeUtils;
 import cz.vity.freerapid.swing.LookAndFeels;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.swing.TrayIconSupport;
