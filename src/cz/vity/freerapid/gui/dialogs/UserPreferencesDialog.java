@@ -776,6 +776,10 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         bind(comboFileExists, UserProp.FILE_ALREADY_EXISTS, UserProp.FILE_ALREADY_EXISTS_DEFAULT, "fileAlreadyExistsOptions");
         bind(comboRemoveCompleted, UserProp.REMOVE_COMPLETED_DOWNLOADS, UserProp.REMOVE_COMPLETED_DOWNLOADS_DEFAULT, "removeCompletedOptions");
 
+        //redundant option now that restarts are not required anymore
+        if (AppPrefs.getProperty(UserProp.PLUGIN_UPDATE_METHOD, UserProp.PLUGIN_UPDATE_METHOD_DEFAULT) == UserProp.PLUGIN_UPDATE_METHOD_AUTO_RESTART) {
+            AppPrefs.storeProperty(UserProp.PLUGIN_UPDATE_METHOD, UserProp.PLUGIN_UPDATE_METHOD_AUTO);
+        }
         bindCombobox(comboHowToUpdate, UserProp.PLUGIN_UPDATE_METHOD, UserProp.PLUGIN_UPDATE_METHOD_DEFAULT, "comboHowToUpdate");
 
         bindLaFCombobox();
@@ -1257,7 +1261,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         JLabel labelAutoReconnectTime = new JLabel();
         spinnerAutoReconnectTime = new JSpinner();
         JLabel labelSeconds = new JLabel();
-        JPanel panelSpeedLimiter = new JPanel();
+        JPanel panelGlobalSpeedLimiter = new JPanel();
         spinnerGlobalSpeedSliderMin = new JSpinner();
         spinnerGlobalSpeedSliderMax = new JSpinner();
         spinnerGlobalSpeedSliderStep = new JSpinner();
@@ -1267,9 +1271,10 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         JLabel labelSpeedSliderKbps1 = new JLabel();
         JLabel labelSpeedSliderKbps2 = new JLabel();
         JLabel labelSpeedSliderKbps3 = new JLabel();
-        JLabel labelFileSpeedLimiterValuesDesc = new JLabel();
+        JPanel panelFileSpeedLimiter = new JPanel();
         fieldFileSpeedLimiterValues = new JTextField();
         JLabel labelFileSpeedLimiterValues = new JLabel();
+        JLabel labelFileSpeedLimiterValuesDesc = new JLabel();
         JLabel labelRequiresRestart = new JLabel();
 
         toolbar = new EnhancedToolbar();
@@ -2003,9 +2008,9 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                             panelErrorHandlingBuilder.add(labelSeconds, cc.xy(7, 3));
                         }
 
-                        //======== panelSpeedLimiter ========
+                        //======== panelGlobalSpeedLimiter ========
                         {
-                            panelSpeedLimiter.setBorder(new TitledBorder(null, bundle.getString("panelSpeedLimiter.border"), TitledBorder.LEADING, TitledBorder.TOP));
+                            panelGlobalSpeedLimiter.setBorder(new TitledBorder(null, bundle.getString("panelGlobalSpeedLimiter.border"), TitledBorder.LEADING, TitledBorder.TOP));
 
                             labelSpeedSliderMinValue.setName("labelSpeedSliderMinValue");
                             labelSpeedSliderMaxValue.setName("labelSpeedSliderMaxValue");
@@ -2019,21 +2024,15 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                             labelSpeedSliderKbps2.setName("labelSpeedSliderKbps");
                             labelSpeedSliderKbps3.setName("labelSpeedSliderKbps");
 
-                            labelFileSpeedLimiterValues.setName("labelFileSpeedLimiterValues");
-                            fieldFileSpeedLimiterValues.setName("fieldFileSpeedLimiterValues");
-                            labelFileSpeedLimiterValuesDesc.setName("labelFileSpeedLimiterValuesDesc");
-
-                            PanelBuilder panelSpeedLimiterBuilder = new PanelBuilder(new FormLayout(
+                            PanelBuilder panelGlobalSpeedLimiterBuilder = new PanelBuilder(new FormLayout(
                                     new ColumnSpec[]{
                                             new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(0), FormSpec.NO_GROW),
                                             FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                            new ColumnSpec(ColumnSpec.RIGHT, Sizes.DEFAULT, ColumnSpec.NO_GROW),
-                                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                            new ColumnSpec(Sizes.dluX(40)),
-                                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                                             FormFactory.DEFAULT_COLSPEC,
+                                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                                             new ColumnSpec(Sizes.dluX(40)),
-                                            new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
+                                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                            FormFactory.DEFAULT_COLSPEC
                                     },
                                     new RowSpec[]{
                                             FormFactory.DEFAULT_ROWSPEC,
@@ -2043,28 +2042,59 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                                             FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.LINE_GAP_ROWSPEC,
                                             FormFactory.NARROW_LINE_GAP_ROWSPEC
-                                    }), panelSpeedLimiter);
+                                    }), panelGlobalSpeedLimiter);
 
-                            panelSpeedLimiterBuilder.add(labelSpeedSliderMinValue, cc.xy(3, 1));
-                            panelSpeedLimiterBuilder.add(spinnerGlobalSpeedSliderMin, cc.xy(5, 1));
-                            panelSpeedLimiterBuilder.add(labelSpeedSliderKbps1, cc.xy(7, 1));
-                            panelSpeedLimiterBuilder.add(labelSpeedSliderMaxValue, cc.xy(3, 3));
-                            panelSpeedLimiterBuilder.add(spinnerGlobalSpeedSliderMax, cc.xy(5, 3));
-                            panelSpeedLimiterBuilder.add(labelSpeedSliderKbps2, cc.xy(7, 3));
-                            panelSpeedLimiterBuilder.add(labelSpeedSliderStep, cc.xy(3, 5));
-                            panelSpeedLimiterBuilder.add(spinnerGlobalSpeedSliderStep, cc.xy(5, 5));
-                            panelSpeedLimiterBuilder.add(labelSpeedSliderKbps3, cc.xy(7, 5));
+                            panelGlobalSpeedLimiterBuilder.add(labelSpeedSliderMinValue, cc.xy(3, 1));
+                            panelGlobalSpeedLimiterBuilder.add(spinnerGlobalSpeedSliderMin, cc.xy(5, 1));
+                            panelGlobalSpeedLimiterBuilder.add(labelSpeedSliderKbps1, cc.xy(7, 1));
+                            panelGlobalSpeedLimiterBuilder.add(labelSpeedSliderMaxValue, cc.xy(3, 3));
+                            panelGlobalSpeedLimiterBuilder.add(spinnerGlobalSpeedSliderMax, cc.xy(5, 3));
+                            panelGlobalSpeedLimiterBuilder.add(labelSpeedSliderKbps2, cc.xy(7, 3));
+                            panelGlobalSpeedLimiterBuilder.add(labelSpeedSliderStep, cc.xy(3, 5));
+                            panelGlobalSpeedLimiterBuilder.add(spinnerGlobalSpeedSliderStep, cc.xy(5, 5));
+                            panelGlobalSpeedLimiterBuilder.add(labelSpeedSliderKbps3, cc.xy(7, 5));
+                        }
 
-                            panelSpeedLimiterBuilder.add(labelFileSpeedLimiterValues, cc.xy(9, 1));
-                            panelSpeedLimiterBuilder.add(fieldFileSpeedLimiterValues, cc.xy(9, 3));
-                            panelSpeedLimiterBuilder.add(labelFileSpeedLimiterValuesDesc, cc.xy(9, 5));
+                        //======== panelFileSpeedLimiter ========
+                        {
+                            panelFileSpeedLimiter.setBorder(new TitledBorder(null, bundle.getString("panelFileSpeedLimiter.border"), TitledBorder.LEADING, TitledBorder.TOP));
+
+                            labelFileSpeedLimiterValues.setName("labelFileSpeedLimiterValues");
+                            fieldFileSpeedLimiterValues.setName("fieldFileSpeedLimiterValues");
+                            labelFileSpeedLimiterValuesDesc.setName("labelFileSpeedLimiterValuesDesc");
+
+                            PanelBuilder panelFileSpeedLimiterBuilder = new PanelBuilder(new FormLayout(
+                                    new ColumnSpec[]{
+                                            new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(0), FormSpec.NO_GROW),
+                                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                            new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
+                                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                            FormFactory.DEFAULT_COLSPEC
+                                    },
+                                    new RowSpec[]{
+                                            FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.LINE_GAP_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.LINE_GAP_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.LINE_GAP_ROWSPEC,
+                                            FormFactory.NARROW_LINE_GAP_ROWSPEC
+                                    }), panelFileSpeedLimiter);
+
+                            panelFileSpeedLimiterBuilder.add(labelFileSpeedLimiterValues, cc.xy(3, 1));
+                            panelFileSpeedLimiterBuilder.add(fieldFileSpeedLimiterValues, cc.xy(3, 3));
+                            panelFileSpeedLimiterBuilder.add(labelFileSpeedLimiterValuesDesc, cc.xy(3, 5));
                         }
 
                         //---- labelRequiresRestart ----
                         labelRequiresRestart.setName("labelRequiresRestart");
 
                         PanelBuilder panelConnectionSettingsBuilder = new PanelBuilder(new FormLayout(
-                                ColumnSpec.decodeSpecs("default:grow"),
+                                new ColumnSpec[]{
+                                        new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
+                                        FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                        new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
+                                },
                                 new RowSpec[]{
                                         new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.NO_GROW),
                                         FormFactory.RELATED_GAP_ROWSPEC,
@@ -2077,11 +2107,12 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                                         FormFactory.DEFAULT_ROWSPEC
                                 }), panelConnectionSettings);
 
-                        panelConnectionSettingsBuilder.add(panelConnections1, cc.xy(1, 1));
-                        panelConnectionSettingsBuilder.add(panelProxySettings, cc.xy(1, 3));
-                        panelConnectionSettingsBuilder.add(panelErrorHandling, cc.xy(1, 5));
-                        panelConnectionSettingsBuilder.add(panelSpeedLimiter, cc.xy(1, 7));
-                        panelConnectionSettingsBuilder.add(labelRequiresRestart, cc.xy(1, 9));
+                        panelConnectionSettingsBuilder.add(panelConnections1, cc.xyw(1, 1, 3));
+                        panelConnectionSettingsBuilder.add(panelProxySettings, cc.xyw(1, 3, 3));
+                        panelConnectionSettingsBuilder.add(panelErrorHandling, cc.xyw(1, 5, 3));
+                        panelConnectionSettingsBuilder.add(panelGlobalSpeedLimiter, cc.xyw(1, 7, 1));
+                        panelConnectionSettingsBuilder.add(panelFileSpeedLimiter, cc.xyw(3, 7, 1));
+                        panelConnectionSettingsBuilder.add(labelRequiresRestart, cc.xyw(1, 9, 3));
                     }
                     labelRequiresRestart.setVisible(false);
                     panelCard.add(panelConnectionSettings, "CARD2");

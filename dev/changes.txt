@@ -28,8 +28,8 @@ sortbyServerAction.Action.smallIcon=${iconsPath}sort_small.gif
 
 
 New:
-checkPluginStatuses.Action.text=Check &plugins statuses
-checkPluginStatuses.Action.shortDescription=Check &plugins statuses in web browser
+checkPluginStatuses.Action.text=&Plugin status
+checkPluginStatuses.Action.shortDescription=Check the status of plugins in web browser
 
 globalSpeedLimitAction.Action.text=&Global speed limit
 globalSpeedLimitAction.Action.shortDescription=${labelSpeedBtn.toolTipText}
@@ -55,10 +55,11 @@ andOtherFiles=...and %d other files
 UserPreferencesDialog.properties
 ====================================
 New:
-panelSpeedLimiter.border=Speed limiter
-labelSpeedSliderMinValue.text=Global speed limiter minimum value
-labelSpeedSliderMaxValue.text=maximum value
-labelSpeedSliderStep.text=step
+panelGlobalSpeedLimiter.border=Global speed limiter
+panelFileSpeedLimiter.border=File speed limiter
+labelSpeedSliderMinValue.text=Minimum value
+labelSpeedSliderMaxValue.text=Maximum value
+labelSpeedSliderStep.text=Step
 labelSpeedSliderKbps.text=kB/s
 labelFileSpeedLimiterValues.text=Values for file speed limiter (kB/s)
 fieldFileSpeedLimiterValues.toolTipText=Separate values with commas. Two commas indicate a menu separator. 0 means unlimited.
@@ -95,11 +96,6 @@ was:
 pluginTableColumns_list=X|U|Plugin ID|Version|Service|Author|WWW
 new:
 pluginTableColumns_list=X|U|C|Plugin ID|Version|Service|Author|Max Downloads|Priority|WWW
-
-was:
-comboHowToUpdate_list=Ask what to do|Show update dialog first|Update automatically without asking
-new:
-comboHowToUpdate_list=Ask what to do|Show update dialog first|Update automatically without asking|Update and restart automatically if no downloads in progress
 
 
 DownloadNewPluginsTask.properties

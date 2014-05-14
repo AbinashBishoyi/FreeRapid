@@ -1,7 +1,5 @@
 package cz.vity.freerapid.core.tasks;
 
-import cz.vity.freerapid.core.AppPrefs;
-import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.exceptions.NoAvailableConnection;
 import cz.vity.freerapid.core.tasks.exceptions.UpdateFailedException;
 import cz.vity.freerapid.gui.dialogs.WrappedPluginData;
@@ -37,8 +35,6 @@ public class DownloadNewPluginsTask extends DownloadTask {
     private final ManagerDirector director;
     private final List<WrappedPluginData> fileList;
     private final boolean beQuiet;
-    private static boolean restartIsRequiredToUpdateSomePlugins = false;
-    //    private List<File> newPluginsFiles = new ArrayList<File>();
     private Collection<WrappedPluginData> updatedPlugins = new LinkedList<WrappedPluginData>();
 
     public DownloadNewPluginsTask(ManagerDirector director, ApplicationContext context, List<WrappedPluginData> fileList, boolean beQuiet) {
@@ -128,6 +124,7 @@ public class DownloadNewPluginsTask extends DownloadTask {
         }
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private void checkRewrite(DownloadFile downloadFile) throws IOException {
         final File out = downloadFile.getOutputFile();
         if (out.exists()) {
@@ -137,7 +134,7 @@ public class DownloadNewPluginsTask extends DownloadTask {
         if (storeFile != null) {
             final boolean b = storeFile.renameTo(out);
             if (!b) {
-                throw new IOException("Renaming target file failed " + downloadFile.getStoreFile() + " ->" + out);
+                throw new IOException("Renaming target file failed " + downloadFile.getStoreFile() + " -> " + out);
             }
         }
     }
@@ -168,22 +165,8 @@ public class DownloadNewPluginsTask extends DownloadTask {
 
     @Override
     protected void succeeded(Void result) {
-        // blocker.unblock();
-        final int updateMethod = AppPrefs.getProperty(UserProp.PLUGIN_UPDATE_METHOD, UserProp.PLUGIN_UPDATE_METHOD_DEFAULT);
-        if (restartIsRequiredToUpdateSomePlugins) {
-            boolean restart = beQuiet && updateMethod == UserProp.PLUGIN_UPDATE_METHOD_AUTO_RESTART && director.getDataManager().checkAllComplete();
-            if (!restart) {
-                restart = Swinger.getChoiceYesNo(getResourceMap().getString("installed")) == Swinger.RESULT_YES;
-            }
-            if (restart) {
-                director.getMenuManager().getFileActions().restartApplication();
-            }
-        } else {
-            if (!beQuiet) {
-                if (!updatedPlugins.isEmpty()) {
-                    Swinger.showInformationDialog(getResourceMap().getString("installedSuccessFully"));
-                }
-            }
+        if (!beQuiet && !updatedPlugins.isEmpty()) {
+            Swinger.showInformationDialog(getResourceMap().getString("installedSuccessFully"));
         }
     }
 }

@@ -63,9 +63,7 @@ public class UpdateManager {
 
     private void initUpdateTimer() {
         final int interval = Math.max(AppPrefs.getProperty(UserProp.PLUGIN_UPDATE_CHECK_INTERVAL, UserProp.PLUGIN_UPDATE_CHECK_INTERVAL_DEFAULT), 4);
-
         long lastTimestamp = AppPrefs.getProperty(UserProp.PLUGIN_LAST_UPDATE_TIMESTAMP_CHECK, 0L);
-
 
         final Calendar currentDateTime = Calendar.getInstance();
         Calendar scheduleTime;
@@ -101,7 +99,6 @@ public class UpdateManager {
     }
 
     public void checkUpdate(final boolean quiet) {
-
         final CheckPluginUpdateTask pluginUpdateTask = new CheckPluginUpdateTask(director, context, quiet);
         pluginUpdateTask.addTaskListener(new TaskListener.Adapter<List<Plugin>, Void>() {
             @Override
@@ -119,8 +116,12 @@ public class UpdateManager {
 
     private void updateDetected(List<Plugin> availablePlugins, boolean quiet) {
         int method = AppPrefs.getProperty(UserProp.PLUGIN_UPDATE_METHOD, UserProp.PLUGIN_UPDATE_METHOD_DEFAULT);
+        if (method == UserProp.PLUGIN_UPDATE_METHOD_AUTO_RESTART) {//redundant option now that restarts are not required anymore
+            AppPrefs.storeProperty(UserProp.PLUGIN_UPDATE_METHOD, UserProp.PLUGIN_UPDATE_METHOD_AUTO);
+            method = UserProp.PLUGIN_UPDATE_METHOD_AUTO;
+        }
         final List<WrappedPluginData> datas;
-        if (method == UserProp.PLUGIN_UPDATE_METHOD_AUTO || method == UserProp.PLUGIN_UPDATE_METHOD_AUTO_RESTART)
+        if (method == UserProp.PLUGIN_UPDATE_METHOD_AUTO)
             datas = generateUpdateData(availablePlugins, false);
         else
             datas = generateUpdateData(availablePlugins, true);
@@ -144,7 +145,6 @@ public class UpdateManager {
                 showUpdateDialog(datas);
                 break;
             case UserProp.PLUGIN_UPDATE_METHOD_AUTO:
-            case UserProp.PLUGIN_UPDATE_METHOD_AUTO_RESTART:
                 downloadUpdate(datas, quiet);
                 break;
             default:
@@ -175,9 +175,7 @@ public class UpdateManager {
         return downloadFile;
     }
 
-    @SuppressWarnings({"UnnecessaryLocalVariable"})
     public Task getDownloadPluginsTask(final List<WrappedPluginData> wrappedList, boolean quiet) {
-
         final List<WrappedPluginData> fileList = new LinkedList<WrappedPluginData>();
         for (WrappedPluginData data : wrappedList) {
             if (data.isSelected() /*&& !updatedPluginsCode.contains(getUniqueId(data.getID(), data.getVersion()))*/) {
@@ -186,28 +184,9 @@ public class UpdateManager {
                     fileList.add(data);
             }
         }
-
         if (fileList.isEmpty())
             return null;
-        final DownloadNewPluginsTask newPluginsTask = new DownloadNewPluginsTask(director, context, fileList, quiet);
-
-//        newPluginsTask.addTaskListener(new TaskListener.Adapter<Void, Long>() {
-//            @Override
-//            public void succeeded(TaskEvent<Void> event) {
-//                super.succeeded(event);
-//            }
-//
-//            @Override
-//            public void finished(TaskEvent<Void> event) {
-//                for (WrappedPluginData data : wrappedList) {
-//                    if (data.getHttpFile().getState() == DownloadState.COMPLETED) {
-//                        updatedPluginsCode.add(getUniqueId(data.getID(), data.getVersion()));
-//                    }
-//                }
-//            }
-//        });
-
-        return newPluginsTask;
+        return new DownloadNewPluginsTask(director, context, fileList, quiet);
     }
 
     public void executeUpdateTask(Task task) {
