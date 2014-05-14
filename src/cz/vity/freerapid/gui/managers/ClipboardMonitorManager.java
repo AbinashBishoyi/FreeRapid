@@ -98,7 +98,10 @@ public class ClipboardMonitorManager extends Thread implements ClipboardOwner {
                 }
             } catch (IllegalStateException e) {
                 //ignore
+            } catch (ArrayIndexOutOfBoundsException e) {
+                //ignore
             }
+
 
         }
         logger.info("ClipboardMonitorManager was interrupted");

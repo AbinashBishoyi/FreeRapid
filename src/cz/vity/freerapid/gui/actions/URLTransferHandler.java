@@ -69,7 +69,7 @@ public abstract class URLTransferHandler extends TransferHandler {
                 String spec = match.group();
                 if (!spec.startsWith(http))
                     spec = http + spec;
-                if (spec.endsWith("'")) {
+                if (spec.endsWith("'") && spec.length() > 2) {
                     spec = spec.substring(0, spec.length() - 1);
                 }
                 final URL url = new URL(spec);
@@ -77,7 +77,7 @@ public abstract class URLTransferHandler extends TransferHandler {
                     final String urlS = url.toExternalForm();
                     final int i = urlS.indexOf("...");
                     Pattern patternMatcher = null;
-                    if (i > 0) {
+                    if (i > 0 && !urlS.endsWith("...")) {
                         String pattern = Pattern.quote(urlS.substring(0, i)) + ".+" + Pattern.quote(urlS.substring(i + 4));
                         patternMatcher = Pattern.compile(pattern);
                     }

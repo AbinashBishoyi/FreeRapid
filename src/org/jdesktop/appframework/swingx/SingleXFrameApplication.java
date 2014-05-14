@@ -183,9 +183,9 @@ public abstract class SingleXFrameApplication extends SingleFrameApplication {
                 appContext.getSessionStorage().save(window, filename);
             }
             catch (IOException e) {
-                logger.log(Level.WARNING, "couldn't save sesssion", e);
+                logger.log(Level.WARNING, "couldn't save session", e);
             } catch (SecurityException e) {
-                logger.log(Level.WARNING, "couldn't save sesssion", e);
+                logger.log(Level.WARNING, "couldn't save session", e);
             }
         }
     }

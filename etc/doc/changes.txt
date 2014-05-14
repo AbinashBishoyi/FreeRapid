@@ -11,6 +11,10 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
+  Changed : upgraded JTattoo library
+  Fixed : main window couldn't be activated at some random special cases
+  Fixed : NullPointerException when server didn't respond anything at some random special cases
+  
 15th April 2009 - FreeRapid Downloader 0.82 released
   Added : many new plugins coming with 0.82 like Badongo.com, HotFile.com, WikiUpload.com, Paid4share.com, UGotFile.com
           improved YouTube plugin, [thanks to all plugin developers] => 70 plugins for you!
