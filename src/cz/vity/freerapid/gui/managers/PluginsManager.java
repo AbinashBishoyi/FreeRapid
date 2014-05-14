@@ -1,6 +1,8 @@
 package cz.vity.freerapid.gui.managers;
 
 import cz.vity.freerapid.core.AppPrefs;
+import cz.vity.freerapid.core.Consts;
+import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.gui.dialogs.WrappedPluginData;
 import cz.vity.freerapid.gui.managers.exceptions.NotSupportedDownloadServiceException;
@@ -29,14 +31,16 @@ import org.java.plugin.util.IoUtil;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.ApplicationContext;
 
-import java.io.File;
-import java.io.FilenameFilter;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * @author Vity
@@ -276,15 +280,66 @@ public class PluginsManager {
     }
 
     public File getPluginsDir() {
-        final File dir = new File(Utils.getAppPath(), "plugins");
-        final String path = System.getProperty("plug-dir", dir.getAbsolutePath());
-        final File file = new File(path);
-        if (!file.exists()) {
-            if (!file.mkdirs()) {
-                logger.warning("Failed to create plugin directory");
+        final File parentDir;
+        if (System.getProperties().containsKey("portable")) {
+            parentDir = new File(Utils.getAppPath());
+        } else {
+            parentDir = MainApp.getAContext().getLocalStorage().getDirectory();
+        }
+        final File pluginsDir = new File(parentDir, Consts.PLUGINS_DIR);
+        if (pluginsDir.exists() && !pluginsDir.isDirectory()) {
+            logger.warning("Deleting file with same name as plugin directory: " + pluginsDir);
+            if (!pluginsDir.delete()) {
+                logger.severe("Failed to delete file with same name as plugin directory: " + pluginsDir);
             }
         }
-        return file;
+        if (!pluginsDir.exists()) {
+            if (!pluginsDir.mkdirs()) {
+                logger.severe("Failed to create plugin directory: " + pluginsDir);
+            }
+        }
+        // If the plugin directory is empty, extract the dist plugins there.
+        final String[] files = pluginsDir.list();
+        if (files != null && files.length == 0) {
+            extractDistPluginsTo(pluginsDir);
+        }
+        return pluginsDir;
+    }
+
+    private void extractDistPluginsTo(final File directory) {
+        ZipInputStream zis = null;
+        OutputStream os = null;
+        try {
+            final File pluginsDistFile = new File(Utils.getAppPath(), Consts.PLUGINS_DIST_FILE_NAME);
+            zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(pluginsDistFile)));
+            byte[] buffer = new byte[8192];
+            int len;
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                // Directory structure inside archive isn't preserved, but it's not really needed.
+                if (!entry.isDirectory()) {
+                    final File outputFile = new File(directory, entry.getName());
+                    os = new BufferedOutputStream(new FileOutputStream(outputFile));
+                    while ((len = zis.read(buffer)) != -1) {
+                        os.write(buffer, 0, len);
+                    }
+                    os.close();
+                }
+            }
+        } catch (final Exception e) {
+            logger.log(Level.SEVERE, "Failed to extract dist plugins", e);
+        } finally {
+            if (zis != null) try {
+                zis.close();
+            } catch (final Exception e) {
+                LogUtils.processException(logger, e);
+            }
+            if (os != null) try {
+                os.close();
+            } catch (final Exception e) {
+                LogUtils.processException(logger, e);
+            }
+        }
     }
 
     private void disablePluginsInConflict() {

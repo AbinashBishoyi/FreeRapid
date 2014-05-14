@@ -41,6 +41,12 @@ public class Consts {
      * cesta k adresari s look&feely
      */
     public static final String LAFSDIR = "lookandfeel";
+
+
+    public static final String PLUGINS_DIR = "plugins";
+
+    public static final String PLUGINS_DIST_FILE_NAME = "distplugins.dat";
+
     /**
      * cesta k properties fajlu
      */

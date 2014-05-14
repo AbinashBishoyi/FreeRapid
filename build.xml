@@ -33,6 +33,9 @@
     <property name="lib-src.dir" value="lib-src"/>
     <property name="plugins-src.dir" value="plugins-src"/>
 
+    <!-- keep in sync with Consts.PLUGINS_DIST_FILE_NAME -->
+    <property name="plugins-dist-file-name" value="distplugins.dat"/>
+
     <property name="resources" value="cz/vity/freerapid/core/resources/"/>
     <property name="splash" value="${resources}icons/splash.jpg"/>
 
@@ -142,9 +145,9 @@
             <fileset dir="${classes.dir}" includes="**/**/?*.properties"/>
         </jar>
 
-        <copy todir="${build.dir}/${plugins.dir}">
+        <zip file="${build.dir}/${plugins-dist-file-name}" level="9" compress="true">
             <fileset dir="${plugins.dir}" includes="**/*"/>
-        </copy>
+        </zip>
 
         <jar jarfile="${dist.dir}/plugin-api.jar" compress="true">
             <manifest>
