@@ -12,18 +12,28 @@ Changed - indicates a change in using/behavior FreeRapid Downloader
 Fixed - indicates a bug fix
 Internal - indicates an internal change - information for FRD developers - nothing important for users
 
-September 2012 - FreeRapid Downloader 0.9
+10 October 2012 - FreeRapid Downloader 0.9 Beta
   Added : After in-depth consideration, all non-updated translations were enabled, bringing the total number of
           supported languages to 31. Missing strings will appear in English. Updates to translations are warmly welcome,
           as usual.
+  Added : Several translations were updated - thanks to all translators!
+  Added : Downloaded files can be renamed within FRD
+  Added : Support for zooming captcha image
+  Added : Progress bar while downloading plugin updates
   Added : Search engine support for IMDb.com
-  Added : new action in menu Downloads -> Rename file
-  Added : new action in menu Help -> Browse log folder
-  Changes, which regular users don't see:
-  Changed : Internal - the file list (include file history list) is stored in the database
-  Changed : Internal - moved plugins directory from the root directory of FRD into config directory in user settings folder
-  Changed : Internal - app.log file is created in the main config directory (previous location was a root of FRD)
-
+  Added : Plugin API
+           - A few new methods to MethodBuilder
+           - FileStreamRecognizer improvements
+           - Changed approach to unlimited cryptography
+  Changed : Removed global simultaneous downloads limit
+  Changed : Internal file list and download history storage backend changed to a much more robust database system.
+            This should provide performance improvements for large lists, and the list should not be lost anymore
+            in case of improper shutdown. Note that older versions of FRD will not be able to read the new format.
+  Changed : Plugins and log files are now stored in the configuration directory, which makes it possible
+            to run FRD from a read-only directory, such as Program Files on Windows Vista and later.
+  Changed : Internal - Updated various libraries to their latest versions
+  Fixed : All downloads would stop working after a direct download until restart of program
+  Fixed : Miscellaneous smaller issues
 
 13th November 2011 - FreeRapid Downloader 0.86 Update 1
   Added : Support for Slovakian, Bulgarian and Hungarian languages - thanks to all translators!
