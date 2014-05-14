@@ -110,7 +110,7 @@ final public class HttpUtils {
                 result = result.substring(1);
             return result;
         } else {
-            return fileName.replaceAll("/", replaceString);
+            return fileName.replaceAll("/|\\uFFFD", replaceString);
         }
     }
 }
