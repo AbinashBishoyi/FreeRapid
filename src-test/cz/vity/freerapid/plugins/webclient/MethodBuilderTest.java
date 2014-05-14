@@ -185,7 +185,7 @@ public class MethodBuilderTest {
         Assert.assertEquals("Encoded part of action 3", resultLink, httpMethod.getURI().toString());
 
         methodBuilder = getMethodBuilder();
-        httpMethod = methodBuilder.setAction("http://www.iskladka.cz/download.php?file=1238795053_Èeský sen.zip").setParameter("test", "È").setEncodePathAndQuery(true).toGetMethod();
+        httpMethod = methodBuilder.setAction("http://www.iskladka.cz/download.php?file=1238795053_\u010cesk\u00fd sen.zip").setParameter("test", "\u010c").setEncodePathAndQuery(true).toGetMethod();
         resultLink = "http://www.iskladka.cz/download.php?file=1238795053_%C4%8Cesk%C3%BD%20sen.zip&test=%C4%8C";
         Assert.assertEquals("Encoded part of action 3", resultLink, httpMethod.getURI().toString());
     }
