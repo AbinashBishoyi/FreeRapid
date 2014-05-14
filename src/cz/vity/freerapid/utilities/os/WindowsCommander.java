@@ -9,7 +9,6 @@ import com.sun.jna.win32.StdCallLibrary;
 import cz.vity.freerapid.core.Consts;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
-import cz.vity.freerapid.utilities.os.shelllink.ShellLink;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -71,13 +70,12 @@ class WindowsCommander extends AbstractSystemCommander {
         final String appPath = Utils.addFileSeparator(Utils.getAppPath());
         final String exe = appPath + Consts.WINDOWS_EXE_NAME;
         final String icon = appPath + Consts.WINDOWS_ICON_NAME;
-        final ShellLink shellLink = new ShellLink(shortcutFile);
+        final WindowsShellLink shellLink = new WindowsShellLink(shortcutFile);
         shellLink.setTarget(exe);
         shellLink.setWorkingDirectory(appPath);
         shellLink.setIconLocation(icon);
         shellLink.setArguments(arguments);
-        shellLink.save();
-        return true;
+        return shellLink.save();
     }
 
     @Override
