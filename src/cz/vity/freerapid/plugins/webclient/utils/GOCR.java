@@ -66,7 +66,7 @@ class GOCR {
             final Process process = Runtime.getRuntime().exec(command + " " + commandLineOptions + " -f ASCII -");
             OutputStream processOut = process.getOutputStream();
             processOut.write(out.toByteArray());
-            processOut.flush();
+//            processOut.flush();
             processOut.close();
             scanner = new Scanner(process.getInputStream());
             StringBuilder builder = new StringBuilder();
