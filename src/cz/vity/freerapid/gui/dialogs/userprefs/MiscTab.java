@@ -57,12 +57,11 @@ public class MiscTab extends UserPreferencesTab {
                             FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                             FormFactory.DEFAULT_COLSPEC
                     },
-                    RowSpec.decodeSpecs("default, default, default, default")), panelDescSettings);
+                    RowSpec.decodeSpecs("default, default, default")), panelDescSettings);
 
             panelDescBuilder.add(checkGenerateDescIon, cc.xy(3, 1));
             panelDescBuilder.add(checkGenerateTXTDescription, cc.xy(3, 2));
             panelDescBuilder.add(checkGenerateHidden, cc.xy(3, 3));
-            panelDescBuilder.add(checkUseRecycleBin, cc.xy(3, 4));
         }
 
         //======== panelAdvanced ========
@@ -75,9 +74,10 @@ public class MiscTab extends UserPreferencesTab {
                             FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                             FormFactory.DEFAULT_COLSPEC
                     },
-                    RowSpec.decodeSpecs("default")), panelAdvancedSettings);
+                    RowSpec.decodeSpecs("default, default")), panelAdvancedSettings);
 
-            panelDescBuilder.add(checkPrepareFile, cc.xy(3, 1));
+            panelDescBuilder.add(checkUseRecycleBin, cc.xy(3, 1));
+            panelDescBuilder.add(checkPrepareFile, cc.xy(3, 2));
         }
 
         PanelBuilder thisBuilder = new PanelBuilder(new FormLayout(
