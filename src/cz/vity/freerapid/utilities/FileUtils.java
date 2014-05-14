@@ -123,7 +123,6 @@ public class FileUtils {
 
     public static void extractZipFileInto(final File zipFile, final File targetDirectory) {
         ZipInputStream zis = null;
-        OutputStream os = null;
         try {
             zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(zipFile)));
             final byte[] buffer = new byte[8192];
@@ -133,6 +132,7 @@ public class FileUtils {
                 // Directory structure inside archive isn't preserved, but it's not really needed.
                 if (!entry.isDirectory()) {
                     final File outputFile = new File(targetDirectory, entry.getName());
+                    OutputStream os = null;
                     try {
                         os = new BufferedOutputStream(new FileOutputStream(outputFile));
                         while ((len = zis.read(buffer)) != -1) {
@@ -150,12 +150,14 @@ public class FileUtils {
                 }
             }
         } catch (final Exception e) {
-            logger.log(Level.SEVERE, "Failed to extract dist plugins", e);
+            logger.log(Level.SEVERE, "Failed to extract archive", e);
         } finally {
-            if (zis != null) try {
-                zis.close();
-            } catch (final Exception e) {
-                LogUtils.processException(logger, e);
+            if (zis != null) {
+                try {
+                    zis.close();
+                } catch (final Exception e) {
+                    LogUtils.processException(logger, e);
+                }
             }
         }
     }

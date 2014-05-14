@@ -145,8 +145,7 @@
             <fileset dir="${classes.dir}" includes="**/**/?*.properties"/>
         </jar>
 
-        <!-- compression is useless, plugins are already compressed, also the main ZIP file -->
-        <zip file="${build.dir}/${plugins-dist-file-name}" level="0" compress="false">
+        <zip file="${build.dir}/${plugins-dist-file-name}" compress="false">
             <fileset dir="${plugins.dir}" includes="**/*"/>
         </zip>
 
