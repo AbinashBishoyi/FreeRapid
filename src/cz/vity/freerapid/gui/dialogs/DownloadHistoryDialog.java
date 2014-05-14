@@ -519,15 +519,14 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         final int[] indexes = getSelectedRows();
         final java.util.List<FileHistoryItem> files = manager.getSelectionToList(indexes);
         final StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < files.size(); i++) {
+        for (int i = 0, n = Math.min(files.size(), 20); i < n; i++) {
             final FileHistoryItem file = files.get(i);
             if (file.getOutputFile() != null && file.getOutputFile().exists()) {
                 builder.append('\n').append(Utils.shortenFileName(file.getOutputFile(), 60));
             }
-            if (i >= 20) {
-                builder.append('\n').append(getResourceMap().getString("andOtherFiles", files.size() - 20));
-                break;
-            }
+        }
+        if (files.size() > 20) {
+            builder.append('\n').append(getResourceMap().getString("andOtherFiles", files.size() - 20));
         }
         final String s = builder.toString();
         final int result;

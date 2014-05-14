@@ -272,15 +272,14 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     private String getFileList(List<DownloadFile> files) {
         final StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < files.size(); i++) {
+        for (int i = 0, n = Math.min(files.size(), 20); i < n; i++) {
             final DownloadFile file = files.get(i);
             if (file.getOutputFile() != null && file.getDownloaded() > 0 && file.getOutputFile().exists()) {
                 builder.append('\n').append(Utils.shortenFileName(file.getOutputFile(), 60));
             }
-            if (i >= 20) {
-                builder.append('\n').append(context.getResourceMap().getString("andOtherFiles", files.size() - 20));
-                break;
-            }
+        }
+        if (files.size() > 20) {
+            builder.append('\n').append(context.getResourceMap().getString("andOtherFiles", files.size() - 20));
         }
         return builder.toString();
     }
