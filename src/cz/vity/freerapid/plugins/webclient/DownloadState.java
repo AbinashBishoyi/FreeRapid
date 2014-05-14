@@ -31,7 +31,7 @@ public enum DownloadState {
      */
     DOWNLOADING,
     /**
-     * downloading/or checking ended with an error
+     * downloading or checking ended with an error
      */
     ERROR,
     /**
@@ -39,7 +39,11 @@ public enum DownloadState {
      */
     CANCELLED,
     /**
-     * file is sucessfully downloaded
+     * user skipped download of this file
+     */
+    SKIPPED,
+    /**
+     * file was successfully downloaded
      */
     COMPLETED,
     /**

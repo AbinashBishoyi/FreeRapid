@@ -1,9 +1,10 @@
 package cz.vity.freerapid.gui.actions;
 
 import cz.vity.freerapid.plugins.webclient.DownloadState;
-import static cz.vity.freerapid.plugins.webclient.DownloadState.*;
 
 import java.util.EnumSet;
+
+import static cz.vity.freerapid.plugins.webclient.DownloadState.*;
 
 /**
  * @author Ladislav Vitasek
@@ -22,8 +23,9 @@ final public class DownloadsActions {
         priorities[DownloadState.ERROR.ordinal()] = 60;
         priorities[DownloadState.PAUSED.ordinal()] = 70;
         priorities[DownloadState.DISABLED.ordinal()] = 80;
-        priorities[DownloadState.CANCELLED.ordinal()] = 90;
-        priorities[DownloadState.COMPLETED.ordinal()] = 100;
+        priorities[DownloadState.SKIPPED.ordinal()] = 90;
+        priorities[DownloadState.CANCELLED.ordinal()] = 100;
+        priorities[DownloadState.COMPLETED.ordinal()] = 110;
         priorities[DownloadState.DELETED.ordinal()] = 1000;
     }
 
@@ -40,19 +42,19 @@ final public class DownloadsActions {
     /**
      * set of states in which user can press resume button
      */
-    public static EnumSet<DownloadState> resumeEnabledStates = EnumSet.of(ERROR, SLEEPING, CANCELLED, PAUSED, DISABLED);
+    public static EnumSet<DownloadState> resumeEnabledStates = EnumSet.of(ERROR, SLEEPING, CANCELLED, SKIPPED, PAUSED, DISABLED);
     /**
      * set of states in which user can press cancel button
      */
-    public static EnumSet<DownloadState> cancelEnabledStates = EnumSet.of(COMPLETED, ERROR, SLEEPING, DOWNLOADING, GETTING, WAITING, PAUSED, DISABLED, TESTING);
+    public static EnumSet<DownloadState> cancelEnabledStates = EnumSet.of(COMPLETED, ERROR, SLEEPING, DOWNLOADING, GETTING, WAITING, PAUSED, DISABLED, TESTING, SKIPPED);
     /**
      * set of states in which user can press force download action
      */
-    public static EnumSet<DownloadState> forceEnabledStates = EnumSet.of(ERROR, SLEEPING, QUEUED, PAUSED, CANCELLED, DISABLED);
+    public static EnumSet<DownloadState> forceEnabledStates = EnumSet.of(ERROR, SLEEPING, QUEUED, PAUSED, CANCELLED, SKIPPED, DISABLED);
     /**
      * set of states in which user can press validate links download action
      */
-    public static EnumSet<DownloadState> recheckExistingStates = EnumSet.of(ERROR, QUEUED, PAUSED, CANCELLED, DISABLED);
+    public static EnumSet<DownloadState> recheckExistingStates = EnumSet.of(ERROR, QUEUED, PAUSED, CANCELLED, SKIPPED, DISABLED);
     /**
      * states those indicates that file is completed
      */

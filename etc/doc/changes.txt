@@ -14,6 +14,7 @@ Fixed - indicates a bug fix
   Added : New action in Remove menu: "Remove Completed Links and Deleted Files"
   Added : New user option: "Slim lines in History dialog"
   Added : New user options for speed limiter
+  Added : New download state SKIPPED, which is used for files that already exist and were skipped by the user
   Fixed : Problem with downloading txt files + using description, see http://wordrider.net/forum/read.php?7,4681,4696
 
  29th October 2009 - FreeRapid Downloader 0.83 Update 1

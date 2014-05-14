@@ -52,6 +52,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     private int fileAlreadyExists;
     private volatile byte[] buffer;
     private boolean useRelativeStoreFileIfPossible = true;
+    private boolean skipped = false;
 
     public DownloadTask(Application application) {
         super(application);
@@ -160,6 +161,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         if (temporary) {
             this.fileAlreadyExists = checkExists();
             if (this.fileAlreadyExists == UserProp.SKIP) {
+                skipped = true;
                 this.cancel(true);
                 return;
             }
@@ -310,8 +312,9 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                 downloadFile.setState(DownloadState.ERROR);
                 this.setServiceError(DownloadTaskError.CONNECTION_TIMEOUT);//we try reconnect
             } else {
-                if (downloadFile.getState() != DownloadState.PAUSED)
-                    downloadFile.setState(DownloadState.CANCELLED);
+                if (downloadFile.getState() != DownloadState.PAUSED) {
+                    downloadFile.setState(skipped ? DownloadState.SKIPPED : DownloadState.CANCELLED);
+                }
             }
         }
     }

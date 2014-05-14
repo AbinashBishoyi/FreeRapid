@@ -7,6 +7,8 @@ removeCompletedAndDeletedAction.Action.accelerator =shortcut L
 removeCompletedAndDeletedAction.Action.shortDescription = Remove all completed downloads whose files do not exist
 removeCompletedAndDeletedAction.Action.smallIcon=${iconsPath}clean.png
 
+SKIPPED=SKIPPED
+
 UserPreferencesDialog.properties
 ====================================
 New:

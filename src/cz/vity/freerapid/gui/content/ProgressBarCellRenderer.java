@@ -18,7 +18,10 @@ final class ProgressBarCellRenderer extends JProgressBar implements TableCellRen
     private static final Color BG_RED = new Color(0xFFD0D0);
     private static final Color BG_ORANGE = new Color(0xFFEDD0);
     private static final Color BG_GREEN = new Color(0xD0FFE9);
-    private static final Color BG_BLUE = new Color(0xb6e9ff);
+    private static final Color BG_BLUE = new Color(0xB6E9FF);
+    private static final Color BG_BLACK = new Color(0xFFFFFF);
+    private static final Color BG_GREY = new Color(0xAAAAAA);
+
     private String autoReconnectIn;
     private String attemptForDownloading;
 
@@ -44,16 +47,18 @@ final class ProgressBarCellRenderer extends JProgressBar implements TableCellRen
         } else if (state == DownloadState.CANCELLED || state == DownloadState.ERROR || state == DownloadState.DELETED) {
             this.setBackground(BG_RED);
         } else if (state == DownloadState.PAUSED || state == DownloadState.DISABLED) {
-            this.setBackground(Color.BLACK);
+            this.setBackground(BG_BLACK);
         } else if (state == DownloadState.QUEUED) {
             this.setBackground(BG_ORANGE);
         } else if (state == DownloadState.SLEEPING) {
             this.setBackground(BG_BLUE);
+        } else if (state == DownloadState.SKIPPED) {
+            this.setBackground(BG_GREY);
         } else if (state == DownloadState.COMPLETED) {
             this.setBackground(null);
             // this.setBackground(Color.GREEN);
         } else
-            this.setBackground(Color.BLACK);
+            this.setBackground(BG_BLACK);
 
         final int toQueued = downloadFile.getTimeToQueued();
         if ((state == DownloadState.ERROR || state == DownloadState.SLEEPING) && toQueued >= 0) {
