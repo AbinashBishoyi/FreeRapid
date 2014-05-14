@@ -102,15 +102,18 @@ public class StandardDialogSupportImpl implements DialogSupport {
     }
 
     private void askCaptcha(Icon image) {
+        boolean bringToFront = false;
         if (!QuietMode.getInstance().isActive() || !QuietMode.getInstance().isCaptchaDisabled()) {
             Swinger.bringToFront(((SingleFrameApplication) context.getApplication()).getMainFrame(), true);
+            bringToFront = true;
         } else {
             QuietMode.getInstance().playUserInteractionRequiredSound();
         }
         if (AppPrefs.getProperty(UserProp.BLIND_MODE, UserProp.BLIND_MODE_DEFAULT)) {
             Sound.playSound(context.getResourceMap().getString("captchaWav"));
         }
-        captchaResult = (String) JOptionPane.showInputDialog(null, context.getResourceMap(DownloadTask.class).getString("InsertWhatYouSee"), context.getResourceMap(DownloadTask.class).getString("InsertCaptcha"), JOptionPane.PLAIN_MESSAGE, image, null, null);
+        final Component parentComponent = (bringToFront) ? null : ((SingleFrameApplication) context.getApplication()).getMainFrame();
+        captchaResult = (String) JOptionPane.showInputDialog(parentComponent, context.getResourceMap(DownloadTask.class).getString("InsertWhatYouSee"), context.getResourceMap(DownloadTask.class).getString("InsertCaptcha"), JOptionPane.PLAIN_MESSAGE, image, null, null);
     }
 
     private void getAccount(String title, PremiumAccount account, PremiumAccount[] result) {
@@ -161,8 +164,11 @@ public class StandardDialogSupportImpl implements DialogSupport {
     }
 
     private void askPassword(final String name) {
+        boolean bringToFront = false;
         if (!QuietMode.getInstance().isActive() || !QuietMode.getInstance().isDialogsDisabled()) {
-            Swinger.bringToFront(((SingleFrameApplication) context.getApplication()).getMainFrame(), true);
+            bringToFront = true;
+            final JFrame mainFrame = ((SingleFrameApplication) context.getApplication()).getMainFrame();
+            Swinger.bringToFront(mainFrame, true);
         } else {
             QuietMode.getInstance().playUserInteractionRequiredSound();
         }
@@ -171,7 +177,8 @@ public class StandardDialogSupportImpl implements DialogSupport {
             Sound.playSound(context.getResourceMap().getString("captchaWav"));
         }
         */
-        passwordResult = (String) JOptionPane.showInputDialog(null, context.getResourceMap(DownloadTask.class).getString("FileIsPasswordProtected", name), context.getResourceMap(DownloadTask.class).getString("InsertPassword"), JOptionPane.PLAIN_MESSAGE, null, null, null);
+        final Component parentComponent = (bringToFront) ? null : ((SingleFrameApplication) context.getApplication()).getMainFrame();
+        passwordResult = (String) JOptionPane.showInputDialog(parentComponent, context.getResourceMap(DownloadTask.class).getString("FileIsPasswordProtected", name), context.getResourceMap(DownloadTask.class).getString("InsertPassword"), JOptionPane.PLAIN_MESSAGE, null, null, null);
     }
 
 }

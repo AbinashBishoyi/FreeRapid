@@ -7,7 +7,10 @@ import org.jdesktop.application.ApplicationContext;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -37,9 +40,9 @@ public final class QuietMode {
     public boolean isActive() {
         if (isEnabled()) {
             final String mode = AppPrefs.getProperty(UserProp.QUIET_MODE_ACTIVATION_MODE, UserProp.QUIET_MODE_ACTIVATION_MODE_DEFAULT);
-            if (mode.equals(UserProp.QUIET_MODE_ACTIVATION_ALWAYS)) {
+            if (UserProp.QUIET_MODE_ACTIVATION_ALWAYS.equals(mode)) {
                 return true;
-            } else if (mode.equals(UserProp.QUIET_MODE_ACTIVATION_WHEN_WINDOWS_FOUND)) {
+            } else if (UserProp.QUIET_MODE_ACTIVATION_WHEN_WINDOWS_FOUND.equals(mode)) {
                 return findWindow();
             }
         }
@@ -54,19 +57,24 @@ public final class QuietMode {
             LogUtils.processException(logger, e);
             return false;
         }
+        if (logger.isLoggable(Level.INFO)) {
+            logger.info("Detected system windows " + Arrays.toString(windows.toArray(new String[windows.size()])));
+        }
         final boolean caseSensitive = AppPrefs.getProperty(UserProp.QUIET_MODE_CASE_SENSITIVE_SEARCH, UserProp.QUIET_MODE_CASE_SENSITIVE_SEARCH_DEFAULT);
         final List<String> stringsToFind = getActivationStrings();
         if (!caseSensitive) {
             for (int i = 0; i < stringsToFind.size(); i++) {
-                stringsToFind.set(i, stringsToFind.get(i).toLowerCase());
+                stringsToFind.set(i, stringsToFind.get(i).toLowerCase(Locale.ENGLISH));
             }
         }
         for (String window : windows) {
             if (!caseSensitive) {
-                window = window.toLowerCase();
+                window = window.toLowerCase(Locale.ENGLISH);
             }
+            //i would use String#matches
             for (String stringToFind : stringsToFind) {
                 if (window.contains(stringToFind)) {
+                    logger.info("Quiet mode is active");
                     return true;
                 }
             }

@@ -272,7 +272,7 @@ public final class AppPrefs {
         }
 
         final File storageDir = localStorage.getDirectory();
-        logger.config("Config files directory: " + storageDir.getAbsolutePath());
+        logger.info("Config files directory: " + storageDir.getAbsolutePath());
 
         final File userFile = new File(storageDir, propertiesFileName);
         if (!(userFile.exists())) {
