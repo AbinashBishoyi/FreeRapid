@@ -134,8 +134,10 @@ public class PluginsManager {
         }
         final String[] ids = newPluginsIds.toArray(new String[newPluginsIds.size()]);
         final PluginRegistry pluginRegistry = pluginManager.getRegistry();
-        pluginRegistry.unregister(ids);
-        initNewPlugins(updatedPluginsFiles.toArray(new File[updatedPluginsFiles.size()]));
+        synchronized (lock) {
+            pluginRegistry.unregister(ids);
+            initNewPlugins(updatedPluginsFiles.toArray(new File[updatedPluginsFiles.size()]));
+        }
     }
 
     public void initNewPlugins(final File[] plugins) {
@@ -382,7 +384,14 @@ public class PluginsManager {
     }
 
     public List<PluginMetaData> getSupportedPlugins() {
-        return new ArrayList<PluginMetaData>(this.supportedPlugins.values());
+        final Collection<PluginMetaData> datas = this.supportedPlugins.values();
+        List<PluginMetaData> result = new ArrayList<PluginMetaData>(datas.size());
+        for (PluginMetaData data : datas) {
+            if (data.getMaxParallelDownloads() >= 1) {
+                result.add(data);
+            }
+        }
+        return result;
     }
 
     public void updatePluginSettings() {
