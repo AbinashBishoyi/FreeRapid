@@ -133,7 +133,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
             //  progress.setStringPainted(false);
             //indicator = new MemoryIndicator();
             //indicator.setPreferredSize(new Dimension(100, BAR_HEIGHT));
-            infoLabel.setPreferredSize(new Dimension(360, BAR_HEIGHT));
+            infoLabel.setPreferredSize(new Dimension(420, BAR_HEIGHT));
             clipboardMonitoring.setPreferredSize(new Dimension(17, BAR_HEIGHT));
             quietMode.setPreferredSize(new Dimension(17, BAR_HEIGHT));
             progress.setPreferredSize(new Dimension(progress.getPreferredSize().width + 35, BAR_HEIGHT));

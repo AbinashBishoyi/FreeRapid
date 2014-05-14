@@ -26,7 +26,9 @@ public final class RecentsFilesComboModel extends DefaultComboBoxModel {
         this.maxRecentPhrasesCount = AppPrefs.getProperty(UserProp.MAX_RECENT_PHRASES_COUNT, UserProp.MAX_RECENT_PHRASES_COUNT_DEFAULT);
         this.keyProperties = keyProperties;
         this.autosave = autosave;
-        final String[] values = AppPrefs.getProperty(keyProperties, "").split("\\|");
+        final String[] avalues = AppPrefs.getProperty(keyProperties, "").split("\\|");
+        final List<String> values = Arrays.asList(Arrays.copyOf(avalues, maxRecentPhrasesCount));
+        Collections.reverse(values);
         int counter = 0;
         for (String value : values) {
             final File file = new File(value);
@@ -94,7 +96,7 @@ public final class RecentsFilesComboModel extends DefaultComboBoxModel {
     }
 
     private Set<File> getNormalizedFiles(Collection<String> col) {
-        final Set<File> set = new HashSet<File>(col.size());
+        final Set<File> set = new LinkedHashSet<File>(col.size());
         final boolean isWindows = Utils.isWindows();
         for (String str : col) {
             if (isWindows && !str.endsWith("\\"))
@@ -110,7 +112,7 @@ public final class RecentsFilesComboModel extends DefaultComboBoxModel {
 
     public void storeFiles() {
         final StringBuilder builder = new StringBuilder();
-        for (final Iterator<File> it = getNormalizedFiles(stack).iterator(); it.hasNext();) {
+        for (final Iterator<File> it = getNormalizedFiles(stack).iterator(); it.hasNext(); ) {
             File str = it.next();
             builder.append(FRDUtils.getAbsRelPath(str));
             if (it.hasNext())
