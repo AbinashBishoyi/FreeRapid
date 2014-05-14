@@ -105,7 +105,7 @@ final public class HttpUtils {
      */
     public static String replaceInvalidCharsForFileSystem(final String fileName, final String replaceString) {
         if (Utils.isWindows()) {
-            String result = fileName.replaceAll("(\\\\|\\||:|\\*|\\?|<|>|\")", replaceString);
+            String result = fileName.replaceAll("(\\\\|\\||:|\\*|\\?|<|>|\\uFFFD|\")", replaceString);
             if (result.startsWith("."))
                 result = result.substring(1);
             return result;

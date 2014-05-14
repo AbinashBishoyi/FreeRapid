@@ -262,4 +262,25 @@ public abstract class AbstractRunner implements PluginRunner {
         return null;
     }
 
+    /**
+     * Sets client parameter for handling requests
+     *
+     * @param parameterName  name of parameter
+     * @param parameterValue parameter's value
+     */
+    protected void setClientParameter(String parameterName, Object parameterValue) {
+        client.getHTTPClient().getParams().setParameter(parameterName, parameterValue);
+    }
+
+    /**
+     * Sets encoding for the web page - encoding must be sets manually, it's not determined automatically<br />
+     * UTF-8 encoding is set by default
+     *
+     * @param encoding encoding name - like Windows-1250, ISO-8859-1
+     */
+    protected void setPageEncoding(String encoding) {
+        setClientParameter("pageCharset", encoding);
+        client.getHTTPClient().getParams().setHttpElementCharset(encoding);
+    }
+
 }

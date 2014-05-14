@@ -349,8 +349,12 @@ public class DownloadClient implements HttpDownloadClient {
             } else {
                 //better hope this never happens
             }
-        } else
-            this.asString = streamToString(method.getResponseBodyAsStream());
+        } else {
+            final InputStream bodyAsStream = method.getResponseBodyAsStream();
+            if (bodyAsStream == null)
+                this.asString = "";
+            this.asString = streamToString(bodyAsStream);
+        }
     }
 
     private String streamToString(final InputStream in) {

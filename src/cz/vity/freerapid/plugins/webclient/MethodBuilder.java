@@ -4,13 +4,17 @@ import cz.vity.freerapid.plugins.exceptions.BuildMethodException;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
 import cz.vity.freerapid.plugins.webclient.utils.PlugUtils;
 import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.util.URIUtil;
 
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,6 +41,8 @@ import java.util.regex.Pattern;
  * @since 0.82
  */
 public final class MethodBuilder {
+    private final static Logger logger = Logger.getLogger(MethodBuilder.class.getName());
+
     private final Map<String, String> parameters = new LinkedHashMap<String, String>(4);
     private final String content;
     private HttpDownloadClient client;
@@ -550,8 +556,7 @@ public final class MethodBuilder {
     public HttpMethod toGetMethod() throws BuildMethodException {
         if (referer != null)
             client.setReferer(referer);
-        String uri = generateURI();
-        checkURI(uri);
+        String uri = checkURI(generateURL());
         if (!parameters.isEmpty()) {
             final StringBuilder builder = new StringBuilder(uri);
             if (!uri.contains("?"))
@@ -568,7 +573,7 @@ public final class MethodBuilder {
             }
             uri = builder.toString();
         }
-        checkURI(uri);
+        uri = checkURI(uri);
         return client.getGetMethod(uri);
     }
 
@@ -616,7 +621,7 @@ public final class MethodBuilder {
         }
     }
 
-    private String generateURI() throws BuildMethodException {
+    private String generateURL() throws BuildMethodException {
         if (baseURL == null && action == null)
             throw new BuildMethodException("Both action and base url has to be not null");
         if (action != null) {
@@ -642,10 +647,22 @@ public final class MethodBuilder {
         return baseURL;
     }
 
-    private void checkURI(String url) throws BuildMethodException {
+    private String checkURI(String url) throws BuildMethodException {
         try {
-            new URI(url);
+            return new URI(url).toURL().toExternalForm();
         } catch (URISyntaxException e) {
+            logger.warning(String.format("Invalid URL - '%s' does not match URI specification", url));
+            try {
+                return new URI(URIUtil.encodePathQuery(url)).toURL().toExternalForm();
+            } catch (URISyntaxException e1) {
+                //ignore
+            } catch (URIException e1) {
+                //ignore
+            } catch (MalformedURLException e1) {
+                //ignore
+            }
+            throw new BuildMethodException("Invalid URL - does not match URI specification:" + url);
+        } catch (MalformedURLException e) {
             throw new BuildMethodException("Invalid URL - does not match URI specification:" + url);
         }
     }
@@ -684,7 +701,7 @@ public final class MethodBuilder {
     public HttpMethod toPostMethod() throws BuildMethodException {
         if (referer != null)
             client.setReferer(referer);
-        final PostMethod postMethod = client.getPostMethod(generateURI());
+        final PostMethod postMethod = client.getPostMethod(generateURL());
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
             postMethod.addParameter(entry.getKey(), entry.getValue());
         }
