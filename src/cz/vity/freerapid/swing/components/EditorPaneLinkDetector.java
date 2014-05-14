@@ -1,5 +1,6 @@
 package cz.vity.freerapid.swing.components;
 
+import cz.vity.freerapid.swing.SwingUtils;
 import cz.vity.freerapid.utilities.Browser;
 import cz.vity.freerapid.utilities.LogUtils;
 
@@ -7,10 +8,7 @@ import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,6 +28,10 @@ public class EditorPaneLinkDetector extends JEditorPane {
 
     public EditorPaneLinkDetector() {
         super();
+        final Action copyAction = this.getActionMap().get("copy");
+        final Action pasteAction = this.getActionMap().get("paste");
+        this.getInputMap().put(SwingUtils.getShiftKeyStroke(KeyEvent.VK_INSERT), pasteAction);
+        this.getInputMap().put(SwingUtils.getCtrlKeyStroke(KeyEvent.VK_INSERT), copyAction);
         final SyntaxDocument doc = new SyntaxDocument();
         this.setEditorKit(new StyledEditorKit() {
             public Document createDefaultDocument() {
@@ -161,13 +163,9 @@ public class EditorPaneLinkDetector extends JEditorPane {
         while (matcher.find()) {
             final String e = matcher.group();
             if (!EXAMPLE.equals(e)) {
-                try {
-                    list.add(new URI(e).toURL());
-                } catch (MalformedURLException e1) {
-                    //ignore
-                } catch (URISyntaxException e1) {
-                    //ignore
-                }
+                final URL url = getURL(e);
+                if (url != null)
+                    list.add(url);
             }
         }
         return list;
@@ -326,20 +324,30 @@ public class EditorPaneLinkDetector extends JEditorPane {
           */
         protected boolean isKeyword(String token) {
             //return keywords.contains(token);
-//            System.out.println("token = " + token);
+            System.out.println("token = " + token);
             final Matcher match = EMAIL_PATTERN.matcher(token);
-            if (match.find()) {
-                try {
-                    new URI(match.group()).toURL();
-                } catch (MalformedURLException e) {
-                    return false;
-                } catch (URISyntaxException e) {
-                    return false;
-                }
-                return true;
-            }
-            return false;
+            return match.find() && getURL(match.group()) != null;
         }
     }
 
+    private static URL getURL(String url) {
+        try {
+            return new URI(url).toURL();
+        } catch (MalformedURLException e) {
+            //ignore
+        } catch (URISyntaxException e) {
+            final int i = url.lastIndexOf('/');
+            if (i > 0) {
+                try {
+                    final String enc = URLEncoder.encode(url.substring(i + 1), "UTF-8");
+                    url = url.substring(0, i + 1) + enc;
+                    return new URI(url).toURL();
+                } catch (Exception ex) {
+                    //ignore
+                }
+            }
+
+        }
+        return null;
+    }
 }

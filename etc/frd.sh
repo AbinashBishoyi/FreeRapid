@@ -13,4 +13,4 @@
 # $JRE_PATH/bin/java -jar frd.jar "$@"
 
 #otherwise...
-java -jar frd.jar "$@"
+java -Xmx128m -jar frd.jar "$@"
