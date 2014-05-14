@@ -852,7 +852,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 //        columnID.setMaxWidth(30);
 //        columnID.setWidth(30);
         final TableColumn colName = tableColumnModel.getColumn(COLUMN_NAME);
-        colName.setCellEditor(new RenameFileNameEditor());
+        colName.setCellEditor(new RenameFileNameEditor(director.getFileTypeIconProvider()));
         colName.setCellRenderer(new NameURLCellRenderer(director.getFileTypeIconProvider()));
         colName.setWidth(150);
         colName.setMinWidth(50);
@@ -1051,6 +1051,11 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                 public void editingStopped(ChangeEvent e) {
                     final RenameFileNameEditor source = (RenameFileNameEditor) e.getSource();
                     cellEditor.removeCellEditorListener(this);
+                    final DownloadFile resultDownloadFile = (DownloadFile) source.getCellEditorValue();
+                    final File out = resultDownloadFile.getOutputFile();
+                    if (backup.equals(out.getName())) {//nothing was changed
+                        return;
+                    }
                     if (wasExisting) {
                         SwingUtilities.invokeLater(new Runnable() {
                             @Override

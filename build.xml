@@ -152,7 +152,7 @@
         </jar>
 
         <zip file="${build.dir}/${plugins-dist-file-name}" compress="false" basedir="${plugins.dir}">
-            <fileset dir="${plugins.dir}" includes="**/*"/>
+            <!--<fileset dir="${plugins.dir}" includes="**/*"/>-->
         </zip>
 
         <jar jarfile="${dist.dir}/plugin-api.jar" compress="true">

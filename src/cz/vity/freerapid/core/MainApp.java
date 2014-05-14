@@ -93,6 +93,8 @@ public class MainApp extends SingleXFrameApplication {
 
         System.setProperty("apple.laf.useScreenMenuBar", String.valueOf(AppPrefs.getProperty("apple.laf.useScreenMenuBar", true)));
 
+        System.setProperty("objectdb.conf", new File(Utils.getAppPath(), "objectdb.conf").getAbsolutePath());
+
         SystemCommanderFactory.getInstance().getSystemCommanderInstance(getContext());//trigger initialization
 
         if (OneInstanceClient.checkInstance(fileList, appPrefs, getContext())) {

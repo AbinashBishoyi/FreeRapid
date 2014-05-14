@@ -1,12 +1,14 @@
 package cz.vity.freerapid.gui.content;
 
 import cz.vity.freerapid.core.AppPrefs;
+import cz.vity.freerapid.core.FileTypeIconProvider;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.webclient.utils.HttpUtils;
 import cz.vity.freerapid.swing.Swinger;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * Provides mapping between DownloadFile and filename to allow edit the column
@@ -14,10 +16,19 @@ import javax.swing.*;
  */
 public class RenameFileNameEditor extends DefaultCellEditor {
 
+    private JPanel component;
+    private final JLabel iconLabel;
 
-    public RenameFileNameEditor() {
+    public RenameFileNameEditor(final FileTypeIconProvider fileTypeIconProvider) {
         super(new JTextField());
         final JTextField field = (JTextField) editorComponent;
+        component = new JPanel(new BorderLayout(0, 0));
+        component.setBorder(null);
+        iconLabel = new JLabel();
+        component.add(iconLabel, BorderLayout.WEST);
+        iconLabel.setBorder(BorderFactory.createEmptyBorder(0, 1, 0, 6));
+        component.add(field, BorderLayout.CENTER);
+        editorComponent = component;
         field.removeActionListener(delegate);
 
         this.setClickCountToStart(1000); // to avoid editing using mouse
@@ -28,6 +39,7 @@ public class RenameFileNameEditor extends DefaultCellEditor {
             public void setValue(Object value) {
                 downloadFile = (DownloadFile) value;
                 final String fileName = downloadFile.getFileName();
+                iconLabel.setIcon(fileTypeIconProvider.getIconImageByFileType(downloadFile.getFileType(), false));
                 field.setText((fileName != null) ? fileName : "");
                 Swinger.inputFocus(field);
                 if (AppPrefs.getProperty(UserProp.RENAME_FILE_ACTION_SELECT_WITHOUT_EXTENSION, UserProp.RENAME_FILE_ACTION_SELECT_WITHOUT_EXTENSION_DEFAULT)) {
@@ -55,4 +67,9 @@ public class RenameFileNameEditor extends DefaultCellEditor {
         field.addActionListener(delegate);
     }
 
+
+    @Override
+    public Component getComponent() {
+        return component;
+    }
 }
