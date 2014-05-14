@@ -6,6 +6,7 @@ import cz.vity.freerapid.core.FWProp;
 import cz.vity.freerapid.swing.Swinger;
 
 import java.awt.*;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.logging.Level;
@@ -38,6 +39,9 @@ public class Browser {
             } else {
                 Desktop.getDesktop().mail(uri);
             }
+        } catch (IOException e) {
+            //ignore
+            //http://bugtracker.wordrider.net/task/477
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Opening browser failed", e);
             Swinger.showErrorDialog("errorOpeningBrowser", e);
