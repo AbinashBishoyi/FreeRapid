@@ -302,6 +302,9 @@ final public class UserProp {
     public static final String ENABLE_DIRECT_DOWNLOADS = "enableDirectDownloads";
     public static final boolean ENABLE_DIRECT_DOWNLOADS_DEFAULT = false;
 
+    public static final String ENABLE_CLIPBOARD_MONITORING_FOR_DIRECT_DOWNLOADS = "enableClipboardMonitoringForDirectDownloads";
+    public static final boolean ENABLE_CLIPBOARD_MONITORING_FOR_DIRECT_DOWNLOADS_DEFAULT = false;
+
     public static final String REMOVE_NOT_SUPPORTED_PLUGINS = "removeNotSupportedPlugins";
     public static final boolean REMOVE_NOT_SUPPORTED_PLUGINS_DEFAULT = false;
 

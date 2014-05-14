@@ -56,11 +56,11 @@ public class PluginsManager {
 
     private final static int MAX_ENTRIES = 10;
     private final Map<String, PluginMetaData> pluginsCache = Collections.synchronizedMap(new LinkedHashMap<String, PluginMetaData>(MAX_ENTRIES, .75F, true) {
+        @Override
         protected boolean removeEldestEntry(Map.Entry eldest) {
             return size() > MAX_ENTRIES;
         }
     });
-
 
     public PluginsManager(ApplicationContext context, ManagerDirector director) {
         this.context = context;
@@ -68,10 +68,12 @@ public class PluginsManager {
         pluginMetaDataManager = new PluginMetaDataManager(context);
 
         this.context.getApplication().addExitListener(new Application.ExitListener() {
+            @Override
             public boolean canExit(EventObject event) {
                 return true;
             }
 
+            @Override
             public void willExit(EventObject event) {
                 if (pluginManager != null) {
                     try {
@@ -87,7 +89,6 @@ public class PluginsManager {
         findAndInitNewPlugins();
     }
 
-
     private void findAndInitNewPlugins() {
         logger.info("Init Plugins Manager");
 
@@ -102,7 +103,6 @@ public class PluginsManager {
 
         initNewPlugins(searchExistingPlugins());
     }
-
 
     public boolean isPluginInUseForUpdates(String id) {
         if (hasPlugin(id)) {
@@ -140,8 +140,7 @@ public class PluginsManager {
                     if (updatedPlugin.isToBeDeleted()) {
                         try {
                             final File file = urlToFile(descriptor.getLocation());
-                            final boolean b = file.delete();
-                            if (!b) {
+                            if (!file.delete()) {
                                 logger.severe("Failed to delete plugin file " + file.getAbsolutePath());
                             }
                             logger.info(id + " " + updatedPlugin.getVersion() + " should be deleted");
@@ -177,8 +176,8 @@ public class PluginsManager {
                             updatedPluginsFiles.add(file);
                         }
                     } catch (URISyntaxException e) {
-                        //it happened to me once, but not reproducable
-                        logger.severe("Descriptor location " + descriptor.getLocation() + " cannot be converted to URI!!");
+                        //it happened to me once, but not reproducible
+                        logger.severe("Descriptor location " + descriptor.getLocation() + " cannot be converted to URI!");
                         LogUtils.processException(logger, e);
                     } catch (MalformedURLException e) {
                         LogUtils.processException(logger, e);
@@ -269,8 +268,11 @@ public class PluginsManager {
         final File dir = new File(Utils.getAppPath(), "plugins");
         final String path = System.getProperty("plug-dir", dir.getAbsolutePath());
         final File file = new File(path);
-        if (!file.exists())
-            file.mkdirs();
+        if (!file.exists()) {
+            if (!file.mkdirs()) {
+                logger.warning("Failed to create plugin directory");
+            }
+        }
         return file;
     }
 
@@ -302,19 +304,18 @@ public class PluginsManager {
     /**
      * Overuje, zda je dane URL podporovane mezi pluginy
      *
-     * @param url
+     * @param url url
      * @return vraci v pripade, ze nejaky plugin podporuje dane URL, jinak false
      */
     public boolean isSupported(final URL url) {
         return isSupported(url, false);
     }
 
-
     /**
      * Overuje, zda je dane URL podporovane mezi pluginy
      *
-     * @param url
-     * @param monitoring if should count with user settings of clipboard monitoring 
+     * @param url        url
+     * @param monitoring if should count with user settings of clipboard monitoring
      * @return vraci v pripade, ze nejaky plugin podporuje dane URL, jinak false
      */
     public boolean isSupported(final URL url, boolean monitoring) {
@@ -339,7 +340,8 @@ public class PluginsManager {
                     }
                 }
             }
-            return AppPrefs.getProperty(UserProp.ENABLE_DIRECT_DOWNLOADS, UserProp.ENABLE_DIRECT_DOWNLOADS_DEFAULT);
+            return (!monitoring || AppPrefs.getProperty(UserProp.ENABLE_CLIPBOARD_MONITORING_FOR_DIRECT_DOWNLOADS, UserProp.ENABLE_CLIPBOARD_MONITORING_FOR_DIRECT_DOWNLOADS_DEFAULT))
+                    && isDirectDownloadEnabled();
         }
     }
 
@@ -358,7 +360,7 @@ public class PluginsManager {
     /**
      * Vraci ID sluzby podle daneho URL
      *
-     * @param url
+     * @param url url
      * @return vraci ID funkcni zapnute sluzby - musi byt enabled
      * @throws NotSupportedDownloadServiceException
      *          pokud zadna zapnuta sluzba neni nalezena
@@ -392,7 +394,7 @@ public class PluginsManager {
         if (disabledPlugin != null)
             throw new PluginIsNotEnabledException(disabledPlugin);
 
-        if (AppPrefs.getProperty(UserProp.ENABLE_DIRECT_DOWNLOADS, UserProp.ENABLE_DIRECT_DOWNLOADS_DEFAULT)) {
+        if (isDirectDownloadEnabled()) {
             return ID_DIRECT;
         }
         throw new NotSupportedDownloadServiceException();
@@ -430,7 +432,6 @@ public class PluginsManager {
             return plugin;
         }
     }
-
 
     public PluginManager getPluginManager() {
         return pluginManager;
@@ -491,11 +492,10 @@ public class PluginsManager {
                 final String newId = getServiceIDForURL(file.getFileUrl());
                 file.setPluginID(newId);
                 return getPluginInstance(newId);
-            } catch (PluginIsNotEnabledException ex) {
+            } catch (PluginIsNotEnabledException e1) {
                 file.setState(DownloadState.DISABLED);
                 file.setErrorMessage(Swinger.getResourceMap().getString("PluginIsNotEnabled", file.getPluginID()));
-            }
-            catch (NotSupportedDownloadServiceException e1) {//nenasel jsem alternativu
+            } catch (NotSupportedDownloadServiceException e1) {//nenasel jsem alternativu
                 file.setState(DownloadState.ERROR);
                 file.setErrorMessage(Swinger.getMessageFromException(Swinger.getResourceMap(), e));
             }
@@ -520,5 +520,9 @@ public class PluginsManager {
         return new File(plugin.toURI());
     }
 
+    private boolean isDirectDownloadEnabled() {
+        return AppPrefs.getProperty(UserProp.ENABLE_DIRECT_DOWNLOADS, UserProp.ENABLE_DIRECT_DOWNLOADS_DEFAULT)
+                && !isPluginDisabled(ID_DIRECT);
+    }
 
 }

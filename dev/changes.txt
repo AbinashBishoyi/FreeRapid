@@ -1,9 +1,9 @@
 Version 0.83->0.85
-
 UpdateDialog.properties
 ============================
 new:
 stateOldPlugin=NOT SUPPORTED
+
 
 InformationDialog.properties
 ===================================
@@ -22,6 +22,7 @@ DownloadTask.properties
 New:
 fileAlreadyExistsTooltip=File already exists on the disk
 
+
 MainApp.properties
 ====================================
 Removed:
@@ -33,7 +34,6 @@ sortbyServerAction.Action.text=Sort by &Server
 sortbyServerAction.Action.shortDescription=Sort selected downloads by server name
 sortbyServerAction.Action.accelerator=
 sortbyServerAction.Action.smallIcon=${iconsPath}sort_small.gif
-
 
 
 New:
@@ -60,6 +60,8 @@ refreshProxyList.Action.smallIcon=${iconsPath}refresh_proxy_list.png
 refreshProxyList.Action.accelerator=
 
 andOtherFiles=...and %d other files
+andOtherURLs=...and %d other URLs
+
 
 UserPreferencesDialog.properties
 ====================================
@@ -78,6 +80,7 @@ checkSlimLinesInHistory.text=Slim lines in History dialog
 checkBringToFrontWhenPasted.text=Bring application to the top when clipboard monitoring detects links
 
 checkAutoStartDownloadsFromDecrypter.text=Start downloads from decrypters and folders automatically
+checkEnableDirectDownloads.text=Enable direct downloads
 
 priorityUpAction.Action.text=
 priorityUpAction.Action.shortDescription=Set higher plugin priority
@@ -120,6 +123,7 @@ New:
 pluginsDirectoryIsNotWriteable=Target plugins directory is not writable. You cannot download plugins.\nIf FreeRapid's directory is placed in 'Program files' directory then run FRD as an administrator or place FreeRapid into another directory.
 installedSuccessFully=New plugins were installed successfuly and they are ready to use.
 DownloadNewPluginsTask.reloadingPlugins=Reloading plugins, please wait...
+
 
 Version 0.82->0.83
 MainApp.properties

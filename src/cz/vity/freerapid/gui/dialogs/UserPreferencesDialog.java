@@ -697,6 +697,8 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
         bind(checkAutoStartDownloadsFromDecrypter, UserProp.AUTO_START_DOWNLOADS_FROM_DECRYPTER, UserProp.AUTO_START_DOWNLOADS_FROM_DECRYPTER_DEFAULT);
 
+        bind(checkEnableDirectDownloads, UserProp.ENABLE_DIRECT_DOWNLOADS, UserProp.ENABLE_DIRECT_DOWNLOADS_DEFAULT);
+
         ValueModel valueModel = bind(checkUseProxyList, UserProp.USE_PROXY_LIST, UserProp.USE_PROXY_LIST_DEFAULT);
         PropertyConnector.connectAndUpdate(valueModel, fieldProxyListPath, "enabled");
         PropertyConnector.connectAndUpdate(valueModel, btnProxyListPathSelect, "enabled");
@@ -1195,6 +1197,9 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         checkAutoStartDownloadsFromDecrypter = new JCheckBox();
         checkAutoStartDownloadsFromDecrypter.setName("checkAutoStartDownloadsFromDecrypter");
 
+        checkEnableDirectDownloads = new JCheckBox();
+        checkEnableDirectDownloads.setName("checkEnableDirectDownloads");
+
         checkAutoShutDownDisabledWhenExecuted = new JCheckBox();
         checkProcessFromTop = new JCheckBox();
         checkGenerateTXTDescription = new JCheckBox();
@@ -1467,6 +1472,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                                             FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.LINE_GAP_ROWSPEC,
                                             FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.LINE_GAP_ROWSPEC,
@@ -1477,11 +1483,12 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                             panelDownloadsSettingsBuilder.add(checkRecheckFilesOnStart, cc.xywh(3, 3, 7, 1));
                             panelDownloadsSettingsBuilder.add(checkProcessFromTop, cc.xywh(3, 4, 7, 1));
                             panelDownloadsSettingsBuilder.add(checkAutoStartDownloadsFromDecrypter, cc.xywh(3, 5, 7, 1));
-                            panelDownloadsSettingsBuilder.add(checkAutoShutDownDisabledWhenExecuted, cc.xywh(3, 6, 7, 1));
-                            panelDownloadsSettingsBuilder.add(labelIfFilenameExists, cc.xywh(3, 8, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
-                            panelDownloadsSettingsBuilder.add(comboFileExists, cc.xy(5, 8));
-                            panelDownloadsSettingsBuilder.add(labelRemoveCompleted, cc.xywh(7, 8, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
-                            panelDownloadsSettingsBuilder.add(comboRemoveCompleted, cc.xy(9, 8));
+                            panelDownloadsSettingsBuilder.add(checkEnableDirectDownloads, cc.xywh(3, 6, 7, 1));
+                            panelDownloadsSettingsBuilder.add(checkAutoShutDownDisabledWhenExecuted, cc.xywh(3, 7, 7, 1));
+                            panelDownloadsSettingsBuilder.add(labelIfFilenameExists, cc.xywh(3, 9, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
+                            panelDownloadsSettingsBuilder.add(comboFileExists, cc.xy(5, 9));
+                            panelDownloadsSettingsBuilder.add(labelRemoveCompleted, cc.xywh(7, 9, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
+                            panelDownloadsSettingsBuilder.add(comboRemoveCompleted, cc.xy(9, 9));
                         }
 
                         PanelBuilder panelGeneralBuilder = new PanelBuilder(new FormLayout(
@@ -2182,6 +2189,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
     private JCheckBox checkShowTitle;
     private JCheckBox checkProcessFromTop;
     private JCheckBox checkAutoStartDownloadsFromDecrypter;
+    private JCheckBox checkEnableDirectDownloads;
     private JCheckBox checkForFileExistenceBeforeDownload;
     private JCheckBox checkServiceAsIconOnly;
     private JCheckBox checkSlimLinesInHistory;

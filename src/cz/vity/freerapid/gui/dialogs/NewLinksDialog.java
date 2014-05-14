@@ -1,6 +1,5 @@
 package cz.vity.freerapid.gui.dialogs;
 
-import com.jgoodies.binding.list.ArrayListModel;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.FormFactory;
@@ -33,9 +32,6 @@ import java.awt.datatransfer.Transferable;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 import java.util.List;
@@ -46,19 +42,17 @@ import java.util.logging.Logger;
  */
 public class NewLinksDialog extends AppDialog implements ClipboardOwner {
     private final static Logger logger = Logger.getLogger(NewLinksDialog.class.getName());
+
+    private final ManagerDirector director;
+    private final DataManager dataManager;
+    private final PluginsManager pluginsManager;
     private EditorPaneLinkDetector urlsArea;
     private boolean startPaused = false;
-    private final DataManager dataManager;
-    private final List<URL> removeList;
-    private PluginsManager pluginsManager;
-    private final ManagerDirector director;
 
     public NewLinksDialog(ManagerDirector director, Frame owner) throws HeadlessException {
         super(owner, true);
         this.director = director;
         this.dataManager = director.getDataManager();
-
-
         this.pluginsManager = director.getPluginsManager();
         this.setName("NewLinksDialog");
         try {
@@ -67,7 +61,6 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
         } catch (Exception e) {
             LogUtils.processException(logger, e);
         }
-        removeList = new ArrayList<URL>();
     }
 
 
@@ -85,7 +78,6 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
         inject();
         buildGUI();
 
-        //final ActionMap actionMap = getActionMap();
         setAction(okButton, "okBtnAction");
         setAction(cancelButton, "cancelBtnAction");
         setAction(btnPasteFromClipboard, "btnPasteFromClipboardAction");
@@ -160,7 +152,6 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
         urlsArea.getParent().setPreferredSize(new Dimension(230, 100));
 
         comboPath.setModel(new RecentsFilesComboModel(UserProp.LAST_USED_SAVED_PATH, true));
-        //AutoCompleteDecorator.decorate(comboPath);
 
         comboPath.setSelectedItem(AppPrefs.getProperty(UserProp.LAST_COMBO_PATH, ""));
 
@@ -182,7 +173,8 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
         urlsArea.addKeyListener(adapter);
         descriptionArea.addKeyListener(adapter);
 
-        this.setTransferHandler(new URLTransferHandler(director) {
+        setTransferHandler(new URLTransferHandler(director) {
+            @Override
             protected void doDropAction(List<URL> files) {
                 urlsArea.setURLList(files);
             }
@@ -203,20 +195,17 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
     }
 
     private boolean validateStart() {
-        List<URL> urlList = urlsArea.getURLs();
+        final List<URL> urlList = urlsArea.getURLs();
         if (urlList.isEmpty()) {
-            Swinger.showErrorMessage(this.getResourceMap(), "noURLMessage");
-            Swinger.inputFocus(this.urlsArea);
+            Swinger.showErrorMessage(getResourceMap(), "noURLMessage");
+            Swinger.inputFocus(urlsArea);
             return false;
         }
-        StringBuilder builder = new StringBuilder();
-        final List<String> stringList = urlsArea.getURLsAsStringList();
-        final List<URL> notSupportedList = new ArrayList<URL>();
 
-
+        //check directory where the downloads are going to be saved to
         final String dir = (String) comboPath.getEditor().getItem();
         if (dir == null || dir.isEmpty()) {
-            Swinger.showErrorMessage(this.getResourceMap(), "noDirectoryMessage");
+            Swinger.showErrorMessage(getResourceMap(), "noDirectoryMessage");
             btnSelectPathAction();
             return false;
         }
@@ -241,88 +230,65 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
             }
         }
 
-
+        //check if links are supported by plugins
+        final List<URL> notSupportedList = new ArrayList<URL>();
         for (URL url : urlList) {
-            final String s = url.toExternalForm();
             if (!pluginsManager.isSupported(url)) {
                 notSupportedList.add(url);
-                builder.append('\n').append(s);
             }
         }
-
-
         if (!notSupportedList.isEmpty()) {
-            final int result = Swinger.getChoiceYesNo(getResourceMap().getString("notSupportedByPlugins", builder.toString()));
+            final int result = Swinger.getChoiceYesNo(getResourceMap().getString("notSupportedByPlugins", urlListToString(notSupportedList)));
             if (result == Swinger.RESULT_YES) {
-                urlList.removeAll(notSupportedList);
+                final List<URL> newList = removeAll(urlList, notSupportedList);
                 urlsArea.setText("");
-                urlsArea.setURLList(urlList);
+                urlsArea.setURLList(newList);
+                if (newList.isEmpty()) {
+                    Swinger.showErrorMessage(getResourceMap(), "noURLMessage");
+                    Swinger.inputFocus(urlsArea);
+                    return false;
+                }
             } else {
                 return false;
             }
         }
 
-        if (urlList.isEmpty()) {
-            Swinger.showErrorMessage(this.getResourceMap(), "noURLMessage");
-            Swinger.inputFocus(this.urlsArea);
-            return false;
-        }
-
-        final List<String> onTheList = new ArrayList<String>();
-        removeList.clear();
-        builder = new StringBuilder();
-        synchronized (this.dataManager.getLock()) {
-            final ArrayListModel<DownloadFile> files = this.dataManager.getDownloadFiles();
-            for (DownloadFile file : files) {
-                final URL urlAddress = file.getFileUrl();
-                final String url = urlAddress.toString();
-                onTheList.add(url);
+        //check if links to be added already exist on the main list
+        final List<URL> alreadyOnList = new ArrayList<URL>();
+        synchronized (dataManager.getLock()) {
+            for (final DownloadFile file : dataManager.getDownloadFiles()) {
+                alreadyOnList.add(file.getFileUrl());
             }
         }
-        try {
-            for (String s : stringList) {
-                if (onTheList.contains(s)) {
-                    removeList.add(new URL(s));
-                    builder.append('\n').append(s);
-                }
-            }
-        } catch (MalformedURLException e) {
-            LogUtils.processException(logger, e);
-        }
-
+        final List<URL> removeList = getCommonElements(urlList, alreadyOnList);
         if (!removeList.isEmpty()) {
-            final int result = Swinger.getChoiceYesNoCancel(getResourceMap().getString("alreadyContainsMessage", builder.toString()));
+            final int result = Swinger.getChoiceYesNoCancel(getResourceMap().getString("alreadyContainsMessage", urlListToString(removeList)));
             switch (result) {
-                case Swinger.RESULT_NO:
-                    return true;
                 case Swinger.RESULT_YES:
-                    removeList.clear();
+                    return true;
+                case Swinger.RESULT_NO:
+                    final List<URL> newList = removeAll(urlList, removeList);
+                    urlsArea.setText("");
+                    urlsArea.setURLList(newList);
+                    if (newList.isEmpty()) {
+                        Swinger.showErrorMessage(getResourceMap(), "noURLMessage");
+                        Swinger.inputFocus(urlsArea);
+                        return false;
+                    }
                     return true;
                 default:
-                    removeList.clear();
                     return false;
             }
         }
+
         return true;
     }
 
     public List<DownloadFile> getDownloadFiles() {
-
-        final File directory = getDirectory();
-        final Collection<URL> urlList = urlsArea.getURLs();
-        urlList.removeAll(removeList);
-        final Map<URI, URL> links = new LinkedHashMap<URI, URL>();
-        for (URL url : urlList) {
-            try {
-                links.put(url.toURI(), url);
-            } catch (URISyntaxException e) {
-                //ignore
-            }
-        }
-        List<DownloadFile> result = new ArrayList<DownloadFile>();
-        final String description = this.descriptionArea.getText();
-        final File saveToDirectory = FRDUtils.getAbsRelPath(directory);
-        for (URL url : links.values()) {
+        final File saveToDirectory = FRDUtils.getAbsRelPath(getDirectory());
+        final String description = descriptionArea.getText();
+        final List<DownloadFile> result = new ArrayList<DownloadFile>();
+        for (final URL url : urlsArea.getURLs()) {
             result.add(new DownloadFile(url, saveToDirectory, description));
         }
         return result;
@@ -333,6 +299,70 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
         return new File((Utils.isWindows()) ? o.trim() : o);
     }
 
+    public boolean isStartPaused() {
+        return startPaused;
+    }
+
+    public void setURLs(List<URL> urlList) {
+        urlsArea.setURLList(urlList);
+    }
+
+    /**
+     * Workaround for performance issue concerning {@link URL#equals(Object) URL.equals()}.
+     * Also removes duplicates.
+     *
+     * @param target This is where the items will be removed from.
+     * @param toRemove Items to remove.
+     * @return List containing the elements which exist in {@code target} but not in {@code toRemove}.
+     */
+    private static List<URL> removeAll(final List<URL> target, final List<URL> toRemove) {
+        final Map<String, URL> map = new LinkedHashMap<String, URL>(target.size());
+        for (final URL u : target) {
+            map.put(u.toString(), u);
+        }
+        for (final URL u : toRemove) {
+            map.remove(u.toString());
+        }
+        final List<URL> result = new ArrayList<URL>(map.size());
+        result.addAll(map.values());
+        return result;
+    }
+
+    /**
+     * Returns the common elements in two Lists.
+     *
+     * @param list1 List 1
+     * @param list2 List 2
+     * @return List containing the elements which exist in both lists passed as arguments.
+     */
+    private static List<URL> getCommonElements(final List<URL> list1, final List<URL> list2) {
+        final Map<String, URL> map = new LinkedHashMap<String, URL>(list1.size());
+        final List<URL> commonElements = new ArrayList<URL>();
+        for (final URL u : list1) {
+            map.put(u.toString(), u);
+        }
+        for (final URL u : list2) {
+            if (map.containsKey(u.toString())) {
+                commonElements.add(u);
+            }
+        }
+        return commonElements;
+    }
+
+    private String urlListToString(final List<URL> urls) {
+        final StringBuilder builder = new StringBuilder();
+        for (int i = 0, n = Math.min(urls.size(), 20); i < n; i++) {
+            builder.append('\n').append(urls.get(i));
+        }
+        if (urls.size() > 20) {
+            builder.append('\n').append(getResourceMap().getString("andOtherURLs", urls.size() - 20));
+        }
+        return builder.toString();
+    }
+
+    @Override
+    public void lostOwnership(Clipboard clipboard, Transferable contents) {
+    }
 
     @SuppressWarnings({"deprecation"})
     private void initComponents() {
@@ -466,11 +496,6 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
         contentPane.add(dialogPane, BorderLayout.CENTER);
     }
 
-
-    public boolean isStartPaused() {
-        return startPaused;
-    }
-
     private JComboBox comboPath;
     private JButton btnSelectPath;
     private JButton btnPasteFromClipboard;
@@ -479,11 +504,4 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
     private JButton cancelButton;
     private JTextArea descriptionArea;
 
-    public void lostOwnership(Clipboard clipboard, Transferable contents) {
-
-    }
-
-    public void setURLs(List<URL> urlList) {
-        urlsArea.setURLList(urlList);
-    }
 }

@@ -13,13 +13,14 @@ Fixed - indicates a bug fix
 
 FreeRapid Downloader 0.85 Alpha 4
   Added : New LookAndFeel skins - Substance Office Black 2007 and Substance Mariner
-  Added : downgrade of plugin is made automatically if necessary
-  Added : new internal property removeNotSupportedPlugins to remove not supported plugins automatically (default value is false)
+  Added : Downgrade of plugin is made automatically if necessary
+  Added : New internal property removeNotSupportedPlugins to remove not supported plugins automatically (default value is false)
   Added : Plugin API
            - Hash class with functions to calculate hashes
            - Base URL is automatically parsed from fileURL during init
            - Support for unlimited cryptography
   Added : A few new user options
+  Added : Support for direct downloads
   Changed : Upgraded Substance L&F to version 6.1 Final
   Changed : Upgraded Quaqua L&F to version 7.2.1
   Changed : Upgraded SwingX library to version 1.6.2

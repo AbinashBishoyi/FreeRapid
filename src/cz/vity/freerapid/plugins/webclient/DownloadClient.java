@@ -47,30 +47,33 @@ public class DownloadClient implements HttpDownloadClient {
     /**
      * Protocol to use (custom SocketFactory)
      */
-
     protected Protocol protocol = null;
 
     /**
      * Field referer  - HTTP referer
      */
     protected String referer = "";
+
     /**
      * string content of last request
      */
     protected String asString;
+
     /**
      * checks whether redirect is used
      */
     private int redirect;
+
     /**
      * connection settings those are used for creating TCP/HTTP connections
      */
     private volatile ConnectionSettings settings;
+
     public static final String START_POSITION = "startPosition";
     public static final String SUPPOSE_TO_DOWNLOAD = "supposeToDownload";
 
     private int timeout = 120 * 1000;
-    private DefaultFileStreamRecognizer streamRecognizer;
+    private FileStreamRecognizer streamRecognizer;
 
 
     /**
@@ -113,7 +116,6 @@ public class DownloadClient implements HttpDownloadClient {
         client.setHostConfiguration(configuration);
 
         clientParams.setBooleanParameter(HttpClientParams.ALLOW_CIRCULAR_REDIRECTS, true);
-        // Get initial state object
 
         client.setState(initialState);
     }
@@ -127,7 +129,7 @@ public class DownloadClient implements HttpDownloadClient {
     /**
      * Method setDefaultsForMethod sets default header request values - emulates Mozilla Firefox
      *
-     * @param method
+     * @param method method
      */
     protected void setDefaultsForMethod(HttpMethod method) {
         if (client.getParams().isParameterSet(DownloadClientConsts.USER_AGENT)) {
@@ -168,7 +170,6 @@ public class DownloadClient implements HttpDownloadClient {
         return referer;
     }
 
-
     @Override
     public InputStream makeFinalRequestForFile(HttpMethod method, HttpFile file, boolean allowRedirect) throws IOException {
         if (method == null)
@@ -190,7 +191,6 @@ public class DownloadClient implements HttpDownloadClient {
 
         toString(method);
 
-        //client.executeMethod(method);
         processHttpMethod(method);
 
         final int statuscode = method.getStatusCode();
@@ -233,7 +233,6 @@ public class DownloadClient implements HttpDownloadClient {
                 final InputStream inputStream = makeRequestFile(redirect, file, deep + 1, allowRedirect);
                 logger.info("Redirect: " + redirect.getStatusLine().toString());
                 return inputStream;
-// release any connection resources used by the method
             } else {
                 logger.warning("Invalid redirect");
                 return null;
@@ -261,8 +260,6 @@ public class DownloadClient implements HttpDownloadClient {
     }
 
     private InputStream processFileForDownload(HttpMethod method, HttpFile file) throws IOException {
-
-
         final Header contentType = getContentType(method);
         boolean isStream = checkContentTypeStream(method, true);
         final String fileName = HttpUtils.getFileName(method);
@@ -344,13 +341,10 @@ public class DownloadClient implements HttpDownloadClient {
         return recognizer.isStream(method, showWarnings);
     }
 
-
     @Override
     public InputStream makeRequestForFile(HttpMethod method) throws IOException {
-
         toString(method);
 
-        //client.executeMethod(method);
         processHttpMethod(method);
 
         int statuscode = method.getStatusCode();
@@ -384,34 +378,24 @@ public class DownloadClient implements HttpDownloadClient {
             /* We set host and our custom protocol */
             client.getHostConfiguration().setHost(method.getURI().getHost(), 80, protocol);
         }
-
         client.executeMethod(method);
-
-        /*
-        if(protocol != null) //undo the URI changes, jut
-            method.setURI(new URI("http://"+client.getHost()+method.getURI()));
-        */
     }
 
 
     @Override
     public int makeRequest(HttpMethod method, boolean allowRedirect) throws IOException {
-        //toString(method);
-
-
-        asString = ""; //pro sichr aby tam nebylo nikdy null
+        asString = ""; //avoid null
         if (allowRedirect && method instanceof GetMethod) {
             method.setFollowRedirects(true);
         }
 
-        //client.executeMethod(method);
         processHttpMethod(method);
 
         int statuscode = method.getStatusCode();
         final boolean isRedirect = isRedirect(statuscode);
         if (!isRedirect)
             redirect = 0;
-        if (statuscode == HttpStatus.SC_INTERNAL_SERVER_ERROR || statuscode == HttpStatus.SC_FORBIDDEN) {//bezpecnost
+        if (statuscode == HttpStatus.SC_INTERNAL_SERVER_ERROR || statuscode == HttpStatus.SC_FORBIDDEN) {
             logger.severe("Status code je 500");
         } else if (statuscode >= HttpStatus.SC_INTERNAL_SERVER_ERROR) {
             logger.severe("Status code > 500: " + statuscode);
@@ -439,11 +423,9 @@ public class DownloadClient implements HttpDownloadClient {
                 GetMethod redirect = getGetMethod(newuri);
                 final int i = makeRequest(redirect, allowRedirect);
                 logger.info("Redirect: " + redirect.getStatusLine().toString());
-// release any connection resources used by the method
                 return i;
             } else {
-                logger.info("Invalid redirect");
-                System.exit(1);
+                logger.warning("Invalid redirect");
             }
         } else {
             redirect = 0;
@@ -454,7 +436,6 @@ public class DownloadClient implements HttpDownloadClient {
                 logger.warning(asString);
             }
         }
-        // logger.info("asString = " + asString);
 
         method.releaseConnection();
         return statuscode;
@@ -539,9 +520,9 @@ public class DownloadClient implements HttpDownloadClient {
     }
 
     /**
-     * Help method for to log
+     * Help method for log
      *
-     * @param method
+     * @param method method
      */
     protected void toString(HttpMethod method) {
         logger.info("===============HTTP METHOD===============");
@@ -635,4 +616,5 @@ public class DownloadClient implements HttpDownloadClient {
     public void setConnectionTimeOut(int timeout) {
         this.timeout = timeout;
     }
+
 }
