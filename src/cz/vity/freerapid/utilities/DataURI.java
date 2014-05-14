@@ -67,7 +67,7 @@ public class DataURI {
             LogUtils.processException(logger, e);
             return null;
         } catch (IllegalArgumentException e) {
-            //JDK 6 bug ICO vs WBMP, fixed by calling ImageIO.searchForPlugins();
+            //JDK 6 bug ICO vs WBMP
             LogUtils.processException(logger, e);
             return null;
         }

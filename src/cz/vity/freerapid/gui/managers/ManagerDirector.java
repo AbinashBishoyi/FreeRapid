@@ -8,8 +8,12 @@ import cz.vity.freerapid.swing.TextComponentContextMenuListener;
 import org.jdesktop.application.ApplicationContext;
 
 import javax.imageio.ImageIO;
+import javax.imageio.spi.ServiceRegistry;
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.Field;
+import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -72,9 +76,29 @@ public class ManagerDirector {
     private SearchManager searchManager;
 
     static {
-        ImageIO.scanForPlugins();
+        // Fix for JDK 6 bug ICO vs WBMP
+        try {
+            final Field theRegistry = ImageIO.class.getDeclaredField("theRegistry");
+            theRegistry.setAccessible(true);
+            final Field categoryMap = ServiceRegistry.class.getDeclaredField("categoryMap");
+            categoryMap.setAccessible(true);
+            final Map categoryMapObj = (Map) categoryMap.get(theRegistry.get(null));
+            for (final Object value : categoryMapObj.values()) {
+                final Field map = value.getClass().getDeclaredField("map");
+                map.setAccessible(true);
+                final Map mapObj = (Map) map.get(value);
+                for (final Object key : mapObj.keySet()) {
+                    if (((Class) key).getName().startsWith("com.sun.imageio.plugins.wbmp.")) {
+                        mapObj.remove(key);
+                        logger.info("Successfully removed " + key);
+                        break;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Failed to remove WBMP SPI, problems may occur when reading ICO files", e);
+        }
     }
-
 
     /**
      * Konstruktor
