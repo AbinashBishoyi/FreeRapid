@@ -32,6 +32,10 @@ public class StandardDialogSupportImpl implements DialogSupport {
      */
     private volatile String captchaResult;
     /**
+     * result from the user's input for password
+     */
+    private volatile String passwordResult;
+    /**
      * synchronization lock - to block more than 1 CAPTCHA dialog
      */
     private final static Object captchaLock = new Object();
@@ -135,4 +139,32 @@ public class StandardDialogSupportImpl implements DialogSupport {
             return captchaResult;
         }
     }
+
+    @Override
+    public String askForPassword(final String name) throws Exception {
+        synchronized (captchaLock) {
+            passwordResult = "";
+            if (!EventQueue.isDispatchThread()) {
+                SwingUtilities.invokeAndWait(new Runnable() {
+                    @Override
+                    public void run() {
+                        askPassword(name);
+                    }
+                });
+            } else askPassword(name);
+            return passwordResult;
+        }
+    }
+
+    private void askPassword(final String name) {
+        if (AppPrefs.getProperty(UserProp.ACTIVATE_WHEN_CAPTCHA, UserProp.ACTIVATE_WHEN_CAPTCHA_DEFAULT))
+            Swinger.bringToFront(((SingleFrameApplication) context.getApplication()).getMainFrame(), true);
+        /*
+        if (AppPrefs.getProperty(UserProp.BLIND_MODE, UserProp.BLIND_MODE_DEFAULT)) {
+            Sound.playSound(context.getResourceMap().getString("captchaWav"));
+        }
+        */
+        passwordResult = (String) JOptionPane.showInputDialog(null, context.getResourceMap(DownloadTask.class).getString("FileIsPasswordProtected", name), context.getResourceMap(DownloadTask.class).getString("InsertPassword"), JOptionPane.PLAIN_MESSAGE, null, null, null);
+    }
+
 }

@@ -60,4 +60,14 @@ public interface DialogSupport {
      */
     public String askForCaptcha(final Icon image) throws Exception;
 
+    /**
+     * Shows default simple input dialog for getting input from user.
+     *
+     * @param name file name to display in dialog
+     * @return returns string given from user - returns null if user cancelled dialog; method can return empty string
+     * @throws Exception if something went wrong or thread was interrupted
+     * @since 0.84
+     */
+    public String askForPassword(final String name) throws Exception;
+
 }
