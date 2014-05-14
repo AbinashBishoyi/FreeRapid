@@ -286,6 +286,7 @@
                 <!--<exclude name="${build.dir}/${mainjar-packed.file}"/>-->
             </fileset>
         </zip>
+        <checksum algorithm="md5" forceoverwrite="true" file="${dist.dir}/${version.name}.zip"/>
         <!--<zip destfile="${dist.dir}/${version.name}-src.zip">-->
         <!--<fileset dir=".">-->
         <!--<include name="${lib.dir}/"/>-->

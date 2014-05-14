@@ -51,7 +51,7 @@ cd "`dirname \"$PROGRAM\"`"
 # Check default java
 if [ -x "`which java`" ]; then
 	JAVA_VERSION_OUTPUT=`java -version 2>&1`
-	check_java_version && exec java -Djava.net.preferIPv4Stack=true -Xmx128m -jar frd.jar "$@"
+	check_java_version && exec java -Djava.net.preferIPv4Stack=true -Xmx160m -jar frd.jar "$@"
 fi
 
 # Test other possible Java locations
@@ -60,7 +60,7 @@ for JRE_PATH in $LOOKUP_JRE_DIRS; do
 		JAVA_VERSION_OUTPUT=`"$JRE_PATH/bin/java" -version 2>&1`
 		check_java_version && {
 			export JRE_PATH
-			exec $JRE_PATH/bin/java -Djava.net.preferIPv4Stack=true -Xmx128m -jar frd.jar "$@"
+			exec $JRE_PATH/bin/java -Djava.net.preferIPv4Stack=true -Xmx160m -jar frd.jar "$@"
 		}
 	fi
 done
