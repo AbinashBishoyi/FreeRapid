@@ -1,5 +1,7 @@
 package cz.vity.freerapid.core.tasks;
 
+import cz.vity.freerapid.core.AppPrefs;
+import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.exceptions.NoAvailableConnection;
 import cz.vity.freerapid.core.tasks.exceptions.UpdateFailedException;
 import cz.vity.freerapid.gui.dialogs.WrappedPluginData;
@@ -35,21 +37,23 @@ public class DownloadNewPluginsTask extends DownloadTask {
 
     private final ManagerDirector director;
     private final List<WrappedPluginData> fileList;
-    private ScreenInputBlocker blocker;
+    private final boolean allowAutomaticRestart;
+    private final ScreenInputBlocker blocker;
     private static boolean restartIsRequiredToUpdateSomePlugins = false;
     private List<File> newPluginsFiles = new ArrayList<File>();
     private Collection<WrappedPluginData> updatedPlugins = new LinkedList<WrappedPluginData>();
 
-    public DownloadNewPluginsTask(ManagerDirector director, ApplicationContext context, List<WrappedPluginData> fileList) {
+    public DownloadNewPluginsTask(ManagerDirector director, ApplicationContext context, List<WrappedPluginData> fileList, boolean allowAutomaticRestart) {
         super(context.getApplication());
         this.director = director;
         this.fileList = fileList;
+        this.allowAutomaticRestart = allowAutomaticRestart;
         blocker = new ScreenInputBlocker(this, BlockingScope.APPLICATION, Swinger.getActiveFrame(), null);
         this.setInputBlocker(blocker);
         setUseRelativeStoreFileIfPossible(false);
     }
 
-
+    @Override
     protected Void doInBackground() throws Exception {
         message("downloadNewPluginsTask");
         final ClientManager clientManager = director.getClientManager();
@@ -178,8 +182,11 @@ public class DownloadNewPluginsTask extends DownloadTask {
         }
         blocker.unblock();
         if (restartIsRequiredToUpdateSomePlugins) {
-            final int choiceYesNo = Swinger.getChoiceYesNo(getResourceMap().getString("installed"));
-            if (choiceYesNo == Swinger.RESULT_YES) {
+            boolean restart = allowAutomaticRestart && AppPrefs.getProperty(UserProp.PLUGIN_UPDATE_METHOD, UserProp.PLUGIN_UPDATE_METHOD_DEFAULT) == UserProp.PLUGIN_UPDATE_METHOD_AUTO_RESTART && director.getDataManager().checkComplete();
+            if (!restart) {
+                restart = Swinger.getChoiceYesNo(getResourceMap().getString("installed")) == Swinger.RESULT_YES;
+            }
+            if (restart) {
                 director.getMenuManager().getFileActions().restartApplication();
             }
         }

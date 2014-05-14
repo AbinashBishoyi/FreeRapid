@@ -19,7 +19,7 @@ final class ProgressBarCellRenderer extends JProgressBar implements TableCellRen
     private static final Color BG_ORANGE = new Color(0xFFEDD0);
     private static final Color BG_GREEN = new Color(0xD0FFE9);
     private static final Color BG_BLUE = new Color(0xB6E9FF);
-    private static final Color BG_BLACK = new Color(0xFFFFFF);
+    private static final Color BG_BLACK = new Color(0x000000);
     private static final Color BG_GREY = new Color(0xAAAAAA);
 
     private String autoReconnectIn;

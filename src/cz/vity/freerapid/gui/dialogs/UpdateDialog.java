@@ -98,7 +98,7 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
         table.setEditable(false);
         Swinger.inputFocus(btnCancel);
         final UpdateManager updateManager = managerDirector.getUpdateManager();
-        final Task task = updateManager.getDownloadPluginsTask(new LinkedList<WrappedPluginData>(listModel));
+        final Task task = updateManager.getDownloadPluginsTask(new LinkedList<WrappedPluginData>(listModel), false);
         if (task == null)
             return;
         updateManager.executeUpdateTask(task);
@@ -326,6 +326,7 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
     private JButton btnCancel;
 
     // JFormDesigner - End of variables declaration  //GEN-END:variables
+
     private class CustomTableModel extends AbstractTableModel implements ListDataListener {
         private final ArrayListModel<WrappedPluginData> model;
         private final String[] columns;

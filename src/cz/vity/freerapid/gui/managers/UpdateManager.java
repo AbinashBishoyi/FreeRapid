@@ -51,6 +51,7 @@ public class UpdateManager {
 
     private void initListeners() {
         AppPrefs.getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
+            @Override
             public void preferenceChange(PreferenceChangeEvent evt) {
                 final String key = evt.getKey();
                 if (UserProp.PLUGIN_UPDATE_CHECK_INTERVAL.equals(key) || UserProp.PLUGIN_LAST_UPDATE_TIMESTAMP_CHECK.equals(key)) {
@@ -87,6 +88,7 @@ public class UpdateManager {
         timer = new Timer("UpdateTimer");
         logger.info(String.format("Rescheduling plugins update check to %1$ta %1$tb %1$td %1$tT", scheduleTime.getTime()));
         timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
             public void run() {
                 if (checkForUpdates())
                     checkUpdate(true);
@@ -102,8 +104,10 @@ public class UpdateManager {
 
         final CheckPluginUpdateTask pluginUpdateTask = new CheckPluginUpdateTask(director, context, quiet);
         pluginUpdateTask.addTaskListener(new TaskListener.Adapter<List<Plugin>, Void>() {
+            @Override
             public void succeeded(final TaskEvent<List<Plugin>> event) {
                 SwingUtilities.invokeLater(new Runnable() {
+                    @Override
                     public void run() {
                         updateDetected(event.getValue(), quiet);
                     }
@@ -116,7 +120,7 @@ public class UpdateManager {
     private void updateDetected(List<Plugin> availablePlugins, boolean quiet) {
         int method = AppPrefs.getProperty(UserProp.PLUGIN_UPDATE_METHOD, UserProp.PLUGIN_UPDATE_METHOD_DEFAULT);
         final List<WrappedPluginData> datas;
-        if (method == UserProp.PLUGIN_UPDATE_METHOD_AUTO)
+        if (method == UserProp.PLUGIN_UPDATE_METHOD_AUTO || method == UserProp.PLUGIN_UPDATE_METHOD_AUTO_RESTART)
             datas = generateUpdateData(availablePlugins, false);
         else
             datas = generateUpdateData(availablePlugins, true);
@@ -140,7 +144,8 @@ public class UpdateManager {
                 showUpdateDialog(datas);
                 break;
             case UserProp.PLUGIN_UPDATE_METHOD_AUTO:
-                downloadUpdate(datas);
+            case UserProp.PLUGIN_UPDATE_METHOD_AUTO_RESTART:
+                downloadUpdate(datas, quiet);
                 break;
             default:
                 break;
@@ -154,8 +159,8 @@ public class UpdateManager {
         app.prepareDialog(dialog, true);
     }
 
-    public void downloadUpdate(List<WrappedPluginData> pluginList) {
-        final Task task = getDownloadPluginsTask(pluginList);
+    public void downloadUpdate(List<WrappedPluginData> pluginList, boolean quiet) {
+        final Task task = getDownloadPluginsTask(pluginList, quiet);
         if (task != null)
             executeUpdateTask(task);
     }
@@ -170,7 +175,7 @@ public class UpdateManager {
         return downloadFile;
     }
 
-    public Task getDownloadPluginsTask(final List<WrappedPluginData> wrappedList) {
+    public Task getDownloadPluginsTask(final List<WrappedPluginData> wrappedList, boolean quiet) {
 
         final List<WrappedPluginData> fileList = new LinkedList<WrappedPluginData>();
         for (WrappedPluginData data : wrappedList) {
@@ -183,10 +188,9 @@ public class UpdateManager {
 
         if (fileList.isEmpty())
             return null;
-        final DownloadNewPluginsTask newPluginsTask = new DownloadNewPluginsTask(director, context, fileList);
+        final DownloadNewPluginsTask newPluginsTask = new DownloadNewPluginsTask(director, context, fileList, quiet);
 
         newPluginsTask.addTaskListener(new TaskListener.Adapter<Void, Long>() {
-
             @Override
             public void succeeded(TaskEvent<Void> event) {
                 super.succeeded(event);

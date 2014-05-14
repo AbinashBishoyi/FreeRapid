@@ -200,6 +200,7 @@ final public class UserProp {
     public static final int PLUGIN_UPDATE_ASK_FOR_METHOD = 0;
     public static final int PLUGIN_UPDATE_METHOD_DIALOG = 1;
     public static final int PLUGIN_UPDATE_METHOD_AUTO = 2;
+    public static final int PLUGIN_UPDATE_METHOD_AUTO_RESTART = 3;
     public static final int PLUGIN_UPDATE_METHOD_DEFAULT = PLUGIN_UPDATE_ASK_FOR_METHOD;
 
     public static final String RECHECK_FILES_ON_START = "recheckFilesOnStart";

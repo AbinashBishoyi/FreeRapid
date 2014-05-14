@@ -16,6 +16,8 @@ Fixed - indicates a bug fix
   Added : New user options for speed limiter
   Added : New download state SKIPPED, which is used for files that already exist and were skipped by the user
   Added : Menu item for refreshing proxy list
+  Added : Support for catching redirector links like http://example.com/redirect.php?url=http%3A%2F%2Frapidshare.com%2Ffiles%2F123456%2example.rar
+  Added : New setting for handling plugin updates: "Update and restart automatically if no downloads in progress"
   Changed : Faster matching of URLs against plugins
   Changed : Less required restarts after plugin updates
   Fixed : Problem with downloading txt files + using description, see http://wordrider.net/forum/read.php?7,4681,4696
