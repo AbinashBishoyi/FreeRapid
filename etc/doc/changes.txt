@@ -12,7 +12,16 @@ Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
 14th April 2009 - FreeRapid Downloader 0.82 released
-  Added : internal - plugin API - support for using SSL in plugins 
+  Added : many new plugins coming with 0.82 like Badongo.com, HotFile.com, WikiUpload.com, Paid4share.com,
+          improved YouTube plugin, [thanks to all plugin developers] => 70 plugins for you!
+  Added : Turkish translation [thanks to Ugur Karaman]
+  Added : Bosnian translation [thanks to Nikola Katanic]
+  Added : Farsi translation [thanks to behnam jan ahmad]
+  Added : Greek translation [thanks to Spyros K.]
+  Added : Arabic translation [thanks to Salah adel]
+  Added : Dutch translation [thanks to mastermystery4ever]
+  Added : Croatian translation [thanks to Željko Mitroviæ]
+  Added : internal - plugin API - support for using SSL in plugins
   Added : French version of readme.txt [thanks to Jean-François]
   Added : Information (fileinfo) dialog - allow to create non existing folder like in NewLinks dialog
   Added : czech user guide for Menu-Help (F1)
@@ -22,10 +31,12 @@ Fixed - indicates a bug fix
   Changed : this file and readme.txt files were moved to 'doc' folder
   Changed : improved clipboard monitoring for URLs violating with RFC
   Changed : Estimated time of arrival (ETA) counted based on the average speed of last 20 seconds
-  Changed : readme.txt files moved to 'doc' folder 
+  Changed : readme.txt files moved to 'doc' folder
+  Changed : improved clipboard monitoring algorithm for URLs algorithm (to catch links with '...') 
   Fixed : support for only X bytes long files (eg. 515B)
   Fixed : UI - UserPreferences dialog - OK not enabled when changed How to update plugins combobox [reported by Alex]
   Fixed : shutdown commands don't not work properly on FRD path with spaces
+  Fixed : many other minor things
 
 16th January 2009 - FreeRapid Downloader 0.81 released
   Added : Russian translation [thanks to Vdm17!]

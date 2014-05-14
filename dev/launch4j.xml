@@ -32,12 +32,12 @@
         <maxHeapSize>128</maxHeapSize>
     </jre>
     <versionInfo>
-        <fileVersion>0.8.0.0</fileVersion>
-        <txtFileVersion>0.8.0.0</txtFileVersion>
+        <fileVersion>0.8.2.0</fileVersion>
+        <txtFileVersion>0.8.2.0</txtFileVersion>
         <fileDescription>File Downloader</fileDescription>
-        <copyright>Vity 2008</copyright>
-        <productVersion>0.8.0.0</productVersion>
-        <txtProductVersion>0.8.0.0</txtProductVersion>
+        <copyright>Vity 2009</copyright>
+        <productVersion>0.8.2.0</productVersion>
+        <txtProductVersion>0.8.2.0</txtProductVersion>
         <productName>FreeRapid Downloader</productName>
         <companyName>Vity</companyName>
         <internalName>FreeRapid</internalName>

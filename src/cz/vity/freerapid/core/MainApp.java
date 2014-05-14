@@ -101,7 +101,7 @@ public class MainApp extends SingleXFrameApplication {
             index = path.indexOf("!\\");
 
         if (index > 0 || path.endsWith("!")) {
-            final String msg = String.format("This application cannot be started on the path containing '+' or '!' characters ('%s'...)\nExiting.", path.substring(0, index + 1));
+            final String msg = String.format("This application cannot be started on the path containing '+' or '!' characters ('%s'...)\nPlease move FRD's folder to another place.\nSorry for inconvenience. Exiting.", path.substring(0, index + 1));
             JOptionPane.showMessageDialog(null, msg, "Error", JOptionPane.ERROR_MESSAGE);
             getLogger().severe(msg);
             System.exit(-1);

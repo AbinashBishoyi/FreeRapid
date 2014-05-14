@@ -201,13 +201,22 @@ public abstract class URLTransferHandler extends TransferHandler {
                     //ignore
                 }
             } else {
+                DataFlavor xhtmlFavor = null;
+                try {
+                    xhtmlFavor = new DataFlavor("application/xhtml+xml;class=java.lang.String");
+                } catch (ClassNotFoundException e) {
+                    LogUtils.processException(logger, e);
+                }
                 DataFlavor htmlFavor = null;
                 try {
                     htmlFavor = new DataFlavor("text/html;class=java.lang.String");
                 } catch (ClassNotFoundException e) {
                     LogUtils.processException(logger, e);
                 }
-                if (htmlFavor != null && transferable.isDataFlavorSupported(htmlFavor)) {
+                if (xhtmlFavor != null && transferable.isDataFlavorSupported(xhtmlFavor)) {
+                    String data = (String) transferable.getTransferData(xhtmlFavor);
+                    urls = textURIListToFileList(data);
+                } else if (htmlFavor != null && transferable.isDataFlavorSupported(htmlFavor)) {
                     String data = (String) transferable.getTransferData(htmlFavor);
                     urls = textURIListToFileList(data);
                 } else if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
