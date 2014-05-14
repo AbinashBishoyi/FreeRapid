@@ -41,6 +41,7 @@ import java.util.logging.Logger;
  */
 public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownloadTask {
     private final static Logger logger = Logger.getLogger(DownloadTask.class.getName());
+    private static final int FILE_ALREADY_EXISTS_MAGIC = -2;
     protected HttpDownloadClient client;
     protected DownloadFile downloadFile;
     protected ShareDownloadService service;
@@ -77,7 +78,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         this.setUserCanCancel(true);
         this.youHaveToSleepSecondsTime = 0;
         this.connectionTimeOut = false;
-        fileAlreadyExists = -2;
+        fileAlreadyExists = FILE_ALREADY_EXISTS_MAGIC;
     }
 
     @Override
@@ -163,10 +164,13 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 
         fileAlreadyExists = checkExists();
         if (fileAlreadyExists == UserProp.SKIP) {
-            skipped = true;
-            downloadFile.setErrorMessage(getResourceMap().getString("fileAlreadyExistsTooltip"));
-            this.cancel(true);
-            return;
+            //if temporary files are not used and there is already such file but smaller
+            if (!(!useTemporaryFiles() && downloadFile.getOutputFile().length() == downloadFile.getDownloaded())) {
+                skipped = true;
+                downloadFile.setErrorMessage(getResourceMap().getString("fileAlreadyExistsTooltip"));
+                this.cancel(true);
+                return;
+            }
         } else if (fileAlreadyExists == UserProp.RENAME) {
             downloadFile.setFileName(getNewUniqueFileName(downloadFile.getOutputFile()));
         }
@@ -436,7 +440,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         if (storeFile != null && storeFile.exists()) {
             if (storeFile.equals(outputFile)) //pokud zapisovaci == vystupnimu
             {
-                setCompleted();
+                runMoveFileTask(false);
                 return;
             }
             if (outputFile.exists()) {
@@ -474,12 +478,12 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 
     protected int checkExists() throws InvocationTargetException, InterruptedException {
         if (!downloadFile.getOutputFile().exists())
-            return -2;
+            return FILE_ALREADY_EXISTS_MAGIC;
         return fileAlreadyExistsProperty();
     }
 
     private int fileAlreadyExistsProperty() throws InvocationTargetException, InterruptedException {
-        if (fileAlreadyExists != -2)
+        if (fileAlreadyExists != FILE_ALREADY_EXISTS_MAGIC)
             return fileAlreadyExists;
         final int[] property = new int[]{AppPrefs.getProperty(UserProp.FILE_ALREADY_EXISTS, UserProp.FILE_ALREADY_EXISTS_DEFAULT)};
         if (property[0] == UserProp.ASK) {

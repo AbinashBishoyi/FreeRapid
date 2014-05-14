@@ -10,7 +10,10 @@ import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
 import org.jdesktop.application.Application;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
@@ -42,14 +45,16 @@ public class MoveFileTask extends CoreTask<Void, Void> {
 
     protected Void doInBackground() throws Exception {
 
-//        SwingUtilities.invokeAndWait(new Runnable() {
-//            public void run() {
-//                Swinger.showInformationDialog("Finished downloading");
-//            }
-//        });
-
-        if (!from.exists())
+        //in case temporary .part files do not exist
+        if (from.equals(to) && from.exists()) {
+            saveToHistoryList();
+            saveDescriptionFiles();
             return null;
+        }
+
+        if (!from.exists()) {
+            return null;
+        }
 
         if (to.exists()) {
             if (!overWriteExisting) {
@@ -111,13 +116,11 @@ public class MoveFileTask extends CoreTask<Void, Void> {
             }
 
             saveToHistoryList();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             if (to.exists())
                 to.delete();
             deleteDescriptionFileOnError();
-        }
-        finally {
+        } finally {
             if (deleteSource && from.exists()) // i v pripade cancelled a failed
                 from.delete();
         }
@@ -217,7 +220,11 @@ public class MoveFileTask extends CoreTask<Void, Void> {
 
     private void saveToHistoryList() {
         downloadFile.setFileName(to.getName());
-        ((MainApp) getApplication()).getManagerDirector().getFileHistoryManager().addHistoryItem(downloadFile, to);
+        logger.info("Saving to history " + downloadFile.getFileName());
+        final boolean saveHistory = AppPrefs.getProperty(UserProp.USE_HISTORY, UserProp.USE_HISTORY_DEFAULT);
+        if (saveHistory) {
+            ((MainApp) getApplication()).getManagerDirector().getFileHistoryManager().addHistoryItem(downloadFile, to);
+        }
     }
 
     @Override

@@ -122,7 +122,7 @@ public class FileHistoryManager extends AbstractBean {
                 director.getDatabaseManager().saveOrUpdate(item);
             }
         };
-        director.getDatabaseManager().runOnTask(runnable, null);
+        director.getDatabaseManager().runOnTask(runnable);
         fireDataAdded(item);
     }
 
