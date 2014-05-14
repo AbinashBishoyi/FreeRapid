@@ -14,6 +14,7 @@ import java.awt.*;
  * @author Vity
  */
 public class PluginDetailPanel extends JPanel {
+
     public PluginDetailPanel() {
         initComponents();
     }
@@ -220,4 +221,6 @@ public class PluginDetailPanel extends JPanel {
     public JLabel getVersionLabel() {
         return versionLabel;
     }
+
+
 }

@@ -22,7 +22,7 @@ class PluginMetaDataTableModel extends AbstractTableModel implements ListDataLis
     static final int COLUMN_VERSION = 4;
     static final int COLUMN_SERVICES = 5;
     static final int COLUMN_AUTHOR = 6;
-    static final int COLUMN_MAX_DOWNLOADS = 7;
+    static final int COLUMN_MAX_PARALEL_DOWNLOADS = 7;
     static final int COLUMN_PRIORITY = 8;
     static final int COLUMN_WWW = 9;
 
@@ -41,8 +41,9 @@ class PluginMetaDataTableModel extends AbstractTableModel implements ListDataLis
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columnIndex == COLUMN_ACTIVE || columnIndex == COLUMN_UPDATE || columnIndex == COLUMN_PRIORITY || columnIndex == COLUMN_MAX_DOWNLOADS || columnIndex == COLUMN_CLIPBOARD_MONITORED;
+        return columnIndex == COLUMN_ACTIVE || columnIndex == COLUMN_UPDATE || columnIndex == COLUMN_PRIORITY || columnIndex == COLUMN_MAX_PARALEL_DOWNLOADS || columnIndex == COLUMN_CLIPBOARD_MONITORED;
     }
+
 
     @Override
     public String getColumnName(int column) {
@@ -58,7 +59,7 @@ class PluginMetaDataTableModel extends AbstractTableModel implements ListDataLis
     public Class<?> getColumnClass(int columnIndex) {
         if (columnIndex == COLUMN_ACTIVE || columnIndex == COLUMN_UPDATE || columnIndex == COLUMN_CLIPBOARD_MONITORED) {
             return Boolean.class;
-        } else if (columnIndex == COLUMN_PRIORITY || columnIndex == COLUMN_MAX_DOWNLOADS)
+        } else if (columnIndex == COLUMN_PRIORITY || columnIndex == COLUMN_MAX_PARALEL_DOWNLOADS)
             return Integer.class;
         else if (columnIndex == COLUMN_WWW)
             return LinkModel.class;
@@ -83,8 +84,8 @@ class PluginMetaDataTableModel extends AbstractTableModel implements ListDataLis
                 return data.getServices();
             case COLUMN_AUTHOR:
                 return data.getVendor();
-            case COLUMN_MAX_DOWNLOADS:
-                return data.getMaxAllowedDownloads();
+            case COLUMN_MAX_PARALEL_DOWNLOADS:
+                return data.getMaxParallelDownloads();
             case COLUMN_PRIORITY:
                 return data.getPriority();
             case COLUMN_WWW:
@@ -108,8 +109,10 @@ class PluginMetaDataTableModel extends AbstractTableModel implements ListDataLis
             data.setUpdatesEnabled((Boolean) aValue);
         } else if (columnIndex == COLUMN_PRIORITY) {
             data.setPriority((Integer) aValue);
-        } else if (columnIndex == COLUMN_MAX_DOWNLOADS) {
-            data.setMaxAllowedDownloads((Integer) aValue);
+        } else if (columnIndex == COLUMN_MAX_PARALEL_DOWNLOADS) {
+            data.setMaxParallelDownloads((Integer) aValue);
+        } else if (columnIndex == COLUMN_CLIPBOARD_MONITORED) {
+            data.setClipboardMonitored((Boolean) aValue);
         }
         this.fireTableCellUpdated(rowIndex, columnIndex);
     }

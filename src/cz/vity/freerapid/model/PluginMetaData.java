@@ -79,7 +79,7 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
         removeCompleted = DescriptorUtils.getAttribute("removeCompleted", false, descriptor);
         maxParallelDownloads = DescriptorUtils.getAttribute("maxParallelDownloads", 1, descriptor);
         if (priority == -1)
-            priority = DescriptorUtils.getAttribute("priority", (premium) ? 1000 : 100, descriptor);
+            priority = DescriptorUtils.getAttribute("priority", (premium) ? 100 : 1000, descriptor);
         if (maxAllowedDownloads > 1)
             maxAllowedDownloads = Math.min(maxParallelDownloads, maxAllowedDownloads);
         else if (maxAllowedDownloads == -1) maxAllowedDownloads = maxParallelDownloads;
@@ -212,11 +212,25 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
         return clipboardMonitored;
     }
 
-    public void setPriority(Integer value) {
+    public void setPriority(int value) {
+        Integer oldValue = this.priority;
         this.priority = value;
+        firePropertyChange("priority", oldValue, value);
+    }
+
+    public void setMaxParallelDownloads(int maxParallelDownloads) {
+        int oldValue = this.maxParallelDownloads;
+        this.maxParallelDownloads = maxParallelDownloads;
+        firePropertyChange("maxParallelDownloads", oldValue, maxParallelDownloads);
     }
 
     public void setMaxAllowedDownloads(int maxAllowedDownloads) {
         this.maxAllowedDownloads = maxAllowedDownloads;
+    }
+
+    public void setClipboardMonitored(boolean clipboardMonitored) {
+        final boolean oldValue = this.clipboardMonitored;
+        this.clipboardMonitored = clipboardMonitored;
+        firePropertyChange("clipboardMonitored", oldValue, clipboardMonitored);
     }
 }

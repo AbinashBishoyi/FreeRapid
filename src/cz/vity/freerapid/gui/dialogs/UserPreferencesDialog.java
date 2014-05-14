@@ -3,6 +3,7 @@ package cz.vity.freerapid.gui.dialogs;
 import com.jgoodies.binding.PresentationModel;
 import com.jgoodies.binding.adapter.Bindings;
 import com.jgoodies.binding.adapter.SpinnerAdapterFactory;
+import com.jgoodies.binding.beans.BeanAdapter;
 import com.jgoodies.binding.beans.PropertyConnector;
 import com.jgoodies.binding.list.ArrayListModel;
 import com.jgoodies.binding.list.SelectionInList;
@@ -57,11 +58,15 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.EventObject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -71,6 +76,9 @@ import java.util.logging.Logger;
  */
 public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
     private final static Logger logger = Logger.getLogger(UserPreferencesDialog.class.getName());
+    private static final int MINIMUM_PRIORITY = 1000;
+    private static final int MAXIMUM_PRIORITY = 1;
+
     private MyPresentationModel model;
     private static final String CARD_PROPERTY = "card";
     private static final String LAF_PROPERTY = "lafFakeProperty";
@@ -123,6 +131,52 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
     protected AbstractButton getBtnOK() {
         return btnOK;
     }
+
+
+    @org.jdesktop.application.Action
+    public void priorityUpAction() {
+        final int[] rows = Swinger.getSelectedRows(pluginTable);
+        if (rows.length <= 0) {
+            return;
+        }
+        pluginTable.getRowSorter().setSortKeys(Arrays.asList(new RowSorter.SortKey(PluginMetaDataTableModel.COLUMN_PRIORITY, SortOrder.ASCENDING)));
+        final PluginMetaData data = ((PluginMetaDataTableModel) pluginTable.getModel()).getMetaValueAt(rows[0]);
+        final java.util.List<PluginMetaData> dataList = getSortedPriorityPluginList();
+        final int i = dataList.indexOf(data);
+        if (i == -1 || i == 0) {
+            return;
+        }
+        final PluginMetaData higherPriorityPlugin = dataList.get(i - 1);
+        data.setPriority(Math.max(MAXIMUM_PRIORITY, higherPriorityPlugin.getPriority() - 1));
+    }
+
+    @org.jdesktop.application.Action
+    public void priorityDownAction() {
+        final int[] rows = Swinger.getSelectedRows(pluginTable);
+        if (rows.length <= 0) {
+            return;
+        }
+        pluginTable.getRowSorter().setSortKeys(Arrays.asList(new RowSorter.SortKey(PluginMetaDataTableModel.COLUMN_PRIORITY, SortOrder.ASCENDING)));
+        final PluginMetaData data = ((PluginMetaDataTableModel) pluginTable.getModel()).getMetaValueAt(rows[0]);
+        final java.util.List<PluginMetaData> dataList = getSortedPriorityPluginList();
+        final int i = dataList.indexOf(data);
+        if (i == -1 || dataList.size() - 1 == i) {
+            return;
+        }
+        final PluginMetaData lowerPriorityPlugin = dataList.get(i + 1);
+        data.setPriority(Math.min(MINIMUM_PRIORITY, lowerPriorityPlugin.getPriority() + 1));
+    }
+
+    private java.util.List<PluginMetaData> getSortedPriorityPluginList() {
+        java.util.List<PluginMetaData> datas = getSupportedPlugins();
+        Collections.sort(datas, new Comparator<PluginMetaData>() {
+            public int compare(PluginMetaData o1, PluginMetaData o2) {
+                return new Integer(o1.getPriority()).compareTo(o2.getPriority());
+            }
+        });
+        return datas;
+    }
+
 
     private void build() throws CloneNotSupportedException {
         inject();
@@ -258,13 +312,44 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                     return;
                 final int index = e.getLastIndex();
                 if (index != -1) {
+                    pluginDetailPanel.setVisible(true);
                     final PluginMetaData data = customTableModel.getObject(pluginTable.convertRowIndexToModel(selectionModel.getMinSelectionIndex()));
+
+                    final BeanAdapter<PluginMetaData> beanModel = new BeanAdapter<PluginMetaData>(data, true);
+                    beanModel.addBeanPropertyChangeListener(new PropertyChangeListener() {
+
+                        public void propertyChange(PropertyChangeEvent evt) {
+                            final int row = pluginTable.convertRowIndexToModel(selectionModel.getMinSelectionIndex());
+                            ((PluginMetaDataTableModel) pluginTable.getModel()).fireTableRowsUpdated(row, row);
+                        }
+                    });
+                    bind(pluginDetailPanel.getSpinnerPluginPriority(), 1, MAXIMUM_PRIORITY, MINIMUM_PRIORITY, 1, beanModel.getValueModel("priority"));
+                    final int max = data.getMaxAllowedDownloads();
+                    bind(pluginDetailPanel.getSpinnerMaxPluginConnections(), 1, 1, max, 1, beanModel.getValueModel("maxParallelDownloads"));
+                    pluginDetailPanel.getSpinnerMaxPluginConnections().setEnabled(max > 1);
+                    bind(pluginDetailPanel.getCheckboxClipboardMonitoring(), beanModel.getValueModel("clipboardMonitored"));
+                    bind(pluginDetailPanel.getCheckboxPluginIsActive(), beanModel.getValueModel("enabled"));
+                    bind(pluginDetailPanel.getCheckboxUpdatePlugins(), beanModel.getValueModel("updatesEnabled"));
+                    pluginDetailPanel.getAuthorLabel().setText(data.getVendor());
+                    pluginDetailPanel.getAuthorLabel().setToolTipText(data.getVendor());
+                    pluginDetailPanel.getVersionLabel().setText(data.getVersion());
+                    pluginDetailPanel.getServicesLabel().setText(data.getServices());
+                    pluginDetailPanel.getServicesLabel().setToolTipText(data.getServices());
+                    pluginDetailPanel.getTitleSeparator().setTitle(data.getId());
                     setPluginOptionsEnabled(data.isOptionable());
-                } else setPluginOptionsEnabled(false);
+                } else {
+                    setPluginOptionsEnabled(false);
+                    pluginDetailPanel.setVisible(false);
+                }
+
             }
         });
+        pluginDetailPanel.setVisible(false);
 
         pluginTable.setSortOrder(PluginMetaDataTableModel.COLUMN_ID, SortOrder.ASCENDING);
+        pluginTable.setTerminateEditOnFocusLost(true);
+        pluginTable.setAutoStartEditOnKeyStroke(true);
+        ///pluginTable.set
 
         TableColumn tableColumn = Swinger.updateColumn(pluginTable, "X", PluginMetaDataTableModel.COLUMN_ACTIVE, 22, 22, null);
         tableColumn.setWidth(22);
@@ -284,13 +369,13 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         Swinger.updateColumn(pluginTable, "Version", PluginMetaDataTableModel.COLUMN_VERSION, -1, 40, null);
         Swinger.updateColumn(pluginTable, "Services", PluginMetaDataTableModel.COLUMN_SERVICES, -1, 100, null);
         Swinger.updateColumn(pluginTable, "Author", PluginMetaDataTableModel.COLUMN_AUTHOR, -1, -1, null);
-        Swinger.updateColumn(pluginTable, "MaxDownloads", PluginMetaDataTableModel.COLUMN_MAX_DOWNLOADS, -1, -1, new PluginConnectionAllowedRenderer());
+        Swinger.updateColumn(pluginTable, "MaxDownloads", PluginMetaDataTableModel.COLUMN_MAX_PARALEL_DOWNLOADS, -1, -1, new PluginConnectionAllowedRenderer());
         Swinger.updateColumn(pluginTable, "Priority", PluginMetaDataTableModel.COLUMN_PRIORITY, -1, -1, null);
         Swinger.updateColumn(pluginTable, "WWW", PluginMetaDataTableModel.COLUMN_WWW, -1, -1, SwingXUtils.getHyperLinkTableCellRenderer());
 
         final TableColumnModel tableColumnModel = pluginTable.getColumnModel();
         final SpinnerEditor spinnerEditor = new SpinnerEditor();
-        tableColumnModel.getColumn(PluginMetaDataTableModel.COLUMN_MAX_DOWNLOADS).setCellEditor(spinnerEditor);
+        tableColumnModel.getColumn(PluginMetaDataTableModel.COLUMN_MAX_PARALEL_DOWNLOADS).setCellEditor(spinnerEditor);
         tableColumnModel.getColumn(PluginMetaDataTableModel.COLUMN_PRIORITY).setCellEditor(spinnerEditor);
 
         //pluginTable.getColumnExt(PluginMetaDataTableModel.COLUMN_AUTHOR).setVisible(false);
@@ -322,6 +407,9 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
         tableInputMap.put(SwingUtils.getShiftKeyStroke(KeyEvent.VK_HOME), "selectFirstRowExtendSelection");
         tableInputMap.put(SwingUtils.getShiftKeyStroke(KeyEvent.VK_END), "selectLastRowExtendSelection");
+
+        setAction(pluginDetailPanel.getBtnPriorityDown(), "priorityDownAction");
+        setAction(pluginDetailPanel.getBtnPriorityUp(), "priorityUpAction");
 
         new FindTableAction(getResourceMap(), PluginMetaDataTableModel.COLUMN_ID) {
             protected Object getObject(int index, int column) {
@@ -358,8 +446,9 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
         final Object value = tableModel.getValueAt(rows[0], selCol);
 
-        if (value != null)
+        if (value != null) {
             SwingUtils.copyToClipboard(value.toString(), this);
+        }
     }
 
 
@@ -474,8 +563,14 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
         final ArrayListModel<PluginMetaData> plugins = new ArrayListModel<PluginMetaData>(managerDirector.getPluginsManager().getSupportedPlugins());
 
-
         pluginTable.setModel(new PluginMetaDataTableModel(plugins, getList("pluginTableColumns")));
+        if (!plugins.isEmpty()) { //select first row in plugin table
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    pluginTable.getSelectionModel().setSelectionInterval(0, 0);
+                }
+            });
+        }
 
         bindBasicComponents();
 
@@ -668,8 +763,12 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
     }
 
     private void bind(JSpinner spinner, String key, int defaultValue, int minValue, int maxValue, int step) {
+        bind(spinner, defaultValue, minValue, maxValue, step, model.getBufferedPreferences(key, defaultValue));
+    }
+
+    private void bind(JSpinner spinner, int defaultValue, int minValue, int maxValue, int step, final ValueModel valueModel) {
         spinner.setModel(SpinnerAdapterFactory.createNumberAdapter(
-                model.getBufferedPreferences(key, defaultValue),
+                valueModel,
                 defaultValue,   // defaultValue
                 minValue,   // minValue
                 maxValue, // maxValue
@@ -683,6 +782,11 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
     private ValueModel bind(final JCheckBox checkBox, final String key, final Object defaultValue) {
         final ValueModel valueModel = model.getBufferedPreferences(key, defaultValue);
+        return bind(checkBox, valueModel);
+    }
+
+
+    private ValueModel bind(final JCheckBox checkBox, final ValueModel valueModel) {
         Bindings.bind(checkBox, valueModel);
         return valueModel;
     }
@@ -705,7 +809,6 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         final MyPreferencesAdapter adapter = new MyPreferencesAdapter(key, defaultValue);
         final SelectionInList<String> inList = new SelectionInList<String>(values, new ValueHolder(values[(Integer) adapter.getValue()]), model.getBufferedModel(adapter));
         Bindings.bind(combobox, inList);
-
     }
 
 
@@ -1847,7 +1950,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
     private JButton btnCreateStartupShortcut;
 
     private JPanel panelCard;
-    private JPanel pluginDetailPanel;
+    private PluginDetailPanel pluginDetailPanel;
 
 
     private JCheckBox checkForNewVersion;
@@ -1985,8 +2088,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
     }
 
 
-    private static class SpinnerEditor extends AbstractCellEditor
-            implements TableCellEditor {
+    private static class SpinnerEditor extends AbstractCellEditor implements TableCellEditor {
         private final JSpinner spinner = new JSpinner();
 
         // Initializes the spinner.
@@ -1995,17 +2097,37 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
             spinner.setModel(model);
             spinner.setEditor(new JSpinner.NumberEditor(spinner));
             model.setMinimum(1);
+            spinner.setFocusable(true);
+
+            //List all of the components and make them focusable
+            //then add an empty focuslistener to each
+            for (Component tmpComponent : spinner.getComponents()) {
+                tmpComponent.setFocusable(true);
+                tmpComponent.addFocusListener(new FocusAdapter() {
+                    @Override
+                    public void focusLost(FocusEvent fe) {
+                    }
+                });
+            }
         }
 
         // Prepares the spinner component and returns it.
         public Component getTableCellEditorComponent(JTable table, Object value,
                                                      boolean isSelected, int row, int column) {
+            row = table.convertRowIndexToModel(row);
+            assert row >= 0;
             final PluginMetaData data = ((PluginMetaDataTableModel) table.getModel()).getMetaValueAt(row);
             final SpinnerNumberModel model = (SpinnerNumberModel) spinner.getModel();
-            if (column == PluginMetaDataTableModel.COLUMN_PRIORITY) {
-                model.setMaximum(data.getMaxParallelDownloads());
+            column = table.convertColumnIndexToModel(column);
+            spinner.setEnabled(true);
+            if (column == PluginMetaDataTableModel.COLUMN_MAX_PARALEL_DOWNLOADS) {
+                final int max = data.getMaxParallelDownloads();
+                if (max == 1) {
+                    spinner.setEnabled(false);
+                }
+                model.setMaximum(max);
             } else {
-                model.setMaximum(1000);
+                model.setMaximum(MINIMUM_PRIORITY);
             }
             spinner.setValue(value);
             return spinner;

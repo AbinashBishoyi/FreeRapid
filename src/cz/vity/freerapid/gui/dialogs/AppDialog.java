@@ -216,7 +216,15 @@ abstract class AppDialog extends JDialog {
     }
 
     protected Action setAction(AbstractButton button, String actionCode) {
+        if (button == null) {
+            throw new IllegalArgumentException("Button component cannot be null");
+        }
+
         final Action action = getActionMap().get(actionCode);
+        if (action == null) {
+            throw new IllegalArgumentException("Action with actionCode " + actionCode + " was not found");
+        }
+
         button.setAction(action);
         final Object keystroke = action.getValue(Action.ACCELERATOR_KEY);
         if (keystroke != null) {

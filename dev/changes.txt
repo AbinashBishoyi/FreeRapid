@@ -1,4 +1,32 @@
-Version 0.83->
+Version 0.83->0.84
+UserPreferencesDialog.properties
+====================================
+New:
+priorityUpAction.Action.text=
+priorityUpAction.Action.shortDescription=Set higher plugin priority
+priorityUpAction.Action.smallIcon=${iconsPath}priority_up.gif
+priorityDownAction.Action.text=
+priorityDownAction.Action.shortDescription=Set lower plugin priority
+priorityDownAction.Action.smallIcon=${iconsPath}priority_down.gif
+
+checkboxPluginIsActive.text=Plugin is active
+checkboxUpdatePlugins.text=Make updates of this plugin
+checkboxClipboardMonitoring.text=Enable plugin for Clipboard monitoring
+labelAuthor.text=Author:
+labelVersion.text=Version:
+labelServices.text=Services:
+labelPriority.text=Priority:
+labelMaxConnections.text=Max connections:
+
+
+Changed:
+-----------
+was:
+pluginTableColumns_list=X|U|Plugin ID|Version|Service|Author|WWW
+new:
+pluginTableColumns_list=X|U|C|Plugin ID|Version|Service|Author|Max Downloads|Priority|WWW
+
+
 DownloadNewPluginsTask.properties
 ====================================
 New:

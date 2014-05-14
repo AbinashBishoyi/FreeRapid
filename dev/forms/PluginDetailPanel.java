@@ -166,5 +166,10 @@ public class PluginDetailPanel extends JPanel {
 	private JButton btnPriorityUp;
 	private JButton btnPriorityDown;
 	private JXHyperlink pluginHyperlink;
+
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
+
+
+	
 }
+
