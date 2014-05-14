@@ -12,11 +12,18 @@
 *                                                            *
 *                                                            *
 *     FreeRapid Downloader                                   *
-*      - Ladislav Vitasek alias Vity (c) 2009                *
+*      - Ladislav Vitásek alias Vity (c) 2009                *
 *Dom.stránka/Forum/Bugtracker: http://wordrider.net/freerapid*
 *E-Mail: info@wordrider.net - návrhy                         *
 *Poslední zmìna: 2009-04-14                                  *
 **************************************************************
+
+Dùležité - než zaènete èíst dále!!!:
+Pokud jste FreeRapid Downloader stáhli odnìkud jinud než z oficiálních stránek na http://wordrider.net/freerapid,
+nespouštìjte program a radìji si ho znovu stáhnìte.
+Vyskytla se øada pøípadù, kdy záškodníci infikovali frd.exe záškodnickým plevelem a dále to šíøili jako vlastní distribuci.
+Na oficiálních stránkách vždy najdete nejnovìjší verzi, která je v poøádku.
+Toto doporuèení se netýká pouze tohoto softwaru, ale obecnì jakéhokoli.
 
 =======================================
 Obsah:
@@ -55,48 +62,41 @@ Rùzné:
 
 V souèasné dobì jsou podporovány následující služby (øazeno abecednì):
 
- - 2shared.com                             - RapidShare.com
- - 4shared.com                             - RapidShare.com premium
- - badongo.com                             - rapidshare.de
- - bagruj.cz                               - rapidshareuser
- - bitroad.net                             - savefile.com
- - cobrashare.sk                           - sendspace.com
- - czshare.com                             - share-rapid
- - czshare.com_profi                       - shareator.com
- - dataup.de                               - shareonline.biz
- - depositfiles.com                        - stream.cz
- - easyshare.com                           - subory.sk
- - edisk.cz                                - tinyurl.com
- - egoshare.com                            - uloz.cz
- - enterupload.com                         - uloz.to
- - filebase.to                             - ulozisko.sk
- - filefactory.com                         - ultrashare.net
- - fileflyer.com                           - uploadbox.com
- - filesend.net                            - uploaded.to
- - flyshare.cz                             - uploading.com
- - hellshare.com                           - uploadjockey.com
- - hellshare.com_full                      - upnito.sk
- - hotfile.com                             - uppit.com
- - ifile.it                                - usercash.com
- - indowebster.com                         - webshare.net
- - iskladka.cz                             - wiiupload.net    
- - jandown.com                             - wikiupload.com
- - kewlshare.com                           - xtraupload.de
- - leteckaposta.cz                         - yourfiles.biz
- - letitbit.net                            - youtube.com
- - linkbucks.com                           - ziddu.com
- - load.to                                 - zippyshare.com
- - mediafire.com                           - zshare.net
- - megaupload.com
- - nahraj.cz
- - netload.in
- - paid4share.com
- - quickshare.cz
- - radikal.ru
+ - 2shared.com	             - jandown.com	             - share-rapid
+ - 4shared.com	             - kewlshare.com	         - shareator.com
+ - badongo.com	             - kitaupload.com	         - shareonline.biz
+ - bagruj.cz	             - leteckaposta.cz	         - storage.to
+ - bitroad.net	             - letitbit.net	             - stream.cz
+ - cobrashare.sk	         - linkbucks.com	         - subory.sk
+ - czshare.com	             - load.to	                 - tinyurl.com
+ - czshare.com_profi	     - mediafire.com	         - ugotfile.com
+ - dataup.de	             - megaupload.com	         - uloz.cz
+ - depositfiles.com	         - myurl.in	                 - uloz.to
+ - disperseit.com	         - nahraj.cz	             - ulozisko.sk
+ - easyshare.com	         - netgull.com	             - ultrashare.net
+ - edisk.cz	                 - netload.in	             - uploadbox.com
+ - egoshare.com	             - o2musicstream.cz	         - uploaded.to
+ - enterupload.com	         - paid4share.com	         - uploading.com
+ - filebase.to	             - plunder.com	             - uploadjockey.com
+ - filefactory.com	         - przeklej.pl	             - upnito.sk
+ - fileflyer.com	         - quickshare.cz	         - uppit.com
+ - filesend.net	             - radikal.ru	             - usercash.com
+ - fileupload.eu	         - RapidShare.com	         - webshare.net
+ - flyshare.cz	             - RapidShare.com_premium	 - wiiupload.net
+ - hellshare.com	         - rapidshare.de	         - wikiupload.com
+ - hellshare.com_full	     - rapidshareuser	         - xtraupload.de
+ - hotfile.com	             - rsmonkey.com	             - yourfiles.biz
+ - ifile.it	                 - savefile.com	             - youtube.com
+ - imagebam.com	             - saveqube.com	             - ziddu.com
+ - imagehaven.net	         - sdilej.to	             - zippyshare.com
+ - indowebster.com	         - sendspace.com	         - zshare.net
+ - iskladka.cz	             - sendspacepl.pl
 
+
+  
 Pozn.: Tento seznam nemusí být vždy aktuální - aktuální seznam lze nalézt na http://wordrider.net/freerapid
 
- II.    Systémové požadavky
+ II.    Systémové požadavky                                                                	            
 =======================================
 
 Doporuèená konfigurace
@@ -192,6 +192,7 @@ IV.    Známé problémy a omezení
 - Uživatelùm Linuxu se nezobrazuje ikona v oznamovací oblasti
     X jediným øešením tohoto problému by mohl být pøechod JRE na verzi 1.6.0_10-rc èi novìjší
 
+Pozn.: Tento seznam nemusí být vždy aktuální - aktuální seznam lze nalézt na http://wordrider.net/freerapid
 
 V.    Øešení problémù
 =======================================
@@ -229,7 +230,7 @@ Jsme obyèejní studenti, kteøí musí platit webhosting, úèty za naše pøítelkynì at
 
 PayPal: http://wordrider.net/freerapid/paypal
    nebo
-použijte bankovní úèet, jak je popsáno na domovské stránce http://wordrider.net/freerapid/
+použijte bankovní úèet, jak je popsáno na domovské stránce http://wordrider.net/freerapid/donation.html
 
 
 VIII.   Èasto kladené otázky a odpovìdi
@@ -250,7 +251,7 @@ Jdìte do Nastavení->Možnosti->Pluginy -> panel Nastavení , dále naleznìte plugin
 Dále kliknìte na tlaèítko možností pro zvolený RapidShare_premium plugin a vložte autentifikaèní údaje. Potvrïte tlaèítkem OK.
 Podporováno je pouze èíselné uživatelské ID.
 
-Q:Uživatelé Windows - jak spustit program z pøíkazové øádky?
+Q: Uživatelé Windows - jak spustit program z pøíkazové øádky?
 A: Start->Spustit
 cmd ENTER
 cd cesta_k_adresari_freerapidu ENTER

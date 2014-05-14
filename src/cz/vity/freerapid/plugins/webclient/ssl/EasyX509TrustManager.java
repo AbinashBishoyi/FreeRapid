@@ -26,9 +26,6 @@
 
 package cz.vity.freerapid.plugins.webclient.ssl;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
@@ -37,6 +34,8 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * <p>
@@ -66,7 +65,7 @@ public class EasyX509TrustManager implements X509TrustManager {
     /**
      * Log object for this class.
      */
-    private static final Log LOG = LogFactory.getLog(EasyX509TrustManager.class);
+    private static final Logger logger = Logger.getLogger(EasyX509TrustManager.class.getName());
 
     /**
      * Constructor for EasyX509TrustManager.
@@ -93,10 +92,10 @@ public class EasyX509TrustManager implements X509TrustManager {
      * @see javax.net.ssl.X509TrustManager#checkServerTrusted(X509Certificate[],String authType)
      */
     public void checkServerTrusted(X509Certificate[] certificates, String authType) throws CertificateException {
-        if ((certificates != null) && LOG.isDebugEnabled()) {
-            LOG.debug("Server certificate chain:");
+        if ((certificates != null) && logger.isLoggable(Level.FINE)) {
+            logger.fine("Server certificate chain:");
             for (int i = 0; i < certificates.length; i++) {
-                LOG.debug("X509Certificate[" + i + "]=" + certificates[i]);
+                logger.fine("X509Certificate[" + i + "]=" + certificates[i]);
             }
         }
         if ((certificates != null) && (certificates.length == 1)) {

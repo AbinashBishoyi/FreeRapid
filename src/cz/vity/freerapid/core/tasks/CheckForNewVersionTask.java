@@ -30,6 +30,7 @@ public class CheckForNewVersionTask extends CoreTask<ConnectResult, Void> {
     private static final String PARAM_VERSION = "version";
 
     private final boolean showInfoMessages;
+    private static int counter = 0;
 
     public CheckForNewVersionTask(final boolean showInfoMessages) {
         super(Application.getInstance());
@@ -43,6 +44,8 @@ public class CheckForNewVersionTask extends CoreTask<ConnectResult, Void> {
 
     @Override
     protected ConnectResult doInBackground() throws Exception {
+        if (counter++ > 4)
+            return ConnectResult.SAME_VERSION; //security
         message("message.connecting");
 
         final String url = AppPrefs.getProperty(FWProp.CHECK_FOR_NEW_VERSION_URL, Consts.WEBURL_CHECKNEWVERSION);

@@ -30,18 +30,18 @@
 
 package cz.vity.freerapid.plugins.webclient.ssl;
 
+import cz.vity.freerapid.utilities.LogUtils;
 import org.apache.commons.httpclient.ConnectTimeoutException;
 import org.apache.commons.httpclient.HttpClientError;
 import org.apache.commons.httpclient.params.HttpConnectionParams;
 import org.apache.commons.httpclient.protocol.SecureProtocolSocketFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import java.io.IOException;
 import java.net.*;
+import java.util.logging.Logger;
 
 /**
  * <p>
@@ -93,7 +93,7 @@ public class EasySSLProtocolSocketFactory implements SecureProtocolSocketFactory
     /**
      * Log object for this class.
      */
-    private static final Log LOG = LogFactory.getLog(EasySSLProtocolSocketFactory.class);
+    private static final Logger logger = Logger.getLogger(EasySSLProtocolSocketFactory.class.getName());
 
     private SSLContext sslcontext = null;
 
@@ -113,7 +113,7 @@ public class EasySSLProtocolSocketFactory implements SecureProtocolSocketFactory
                     null);
             return context;
         } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
+            LogUtils.processException(logger, e);
             throw new HttpClientError(e.toString());
         }
     }
@@ -133,7 +133,7 @@ public class EasySSLProtocolSocketFactory implements SecureProtocolSocketFactory
             int port,
             InetAddress clientHost,
             int clientPort)
-            throws IOException, UnknownHostException {
+            throws IOException {
 
         return getSSLContext().getSocketFactory().createSocket(
                 host,
@@ -168,7 +168,7 @@ public class EasySSLProtocolSocketFactory implements SecureProtocolSocketFactory
             final InetAddress localAddress,
             final int localPort,
             final HttpConnectionParams params
-    ) throws IOException, UnknownHostException, ConnectTimeoutException {
+    ) throws IOException {
         if (params == null) {
             throw new IllegalArgumentException("Parameters may not be null");
         }
@@ -190,7 +190,7 @@ public class EasySSLProtocolSocketFactory implements SecureProtocolSocketFactory
      * @see SecureProtocolSocketFactory#createSocket(java.lang.String,int)
      */
     public Socket createSocket(String host, int port)
-            throws IOException, UnknownHostException {
+            throws IOException {
         return getSSLContext().getSocketFactory().createSocket(
                 host,
                 port
@@ -205,7 +205,7 @@ public class EasySSLProtocolSocketFactory implements SecureProtocolSocketFactory
             String host,
             int port,
             boolean autoClose)
-            throws IOException, UnknownHostException {
+            throws IOException {
         return getSSLContext().getSocketFactory().createSocket(
                 socket,
                 host,

@@ -102,6 +102,8 @@ public class ClipboardMonitorManager extends Thread implements ClipboardOwner {
                 LogUtils.processException(logger, e);
             } catch (NullPointerException e) {
                 LogUtils.processException(logger, e);
+            } catch (AbstractMethodError e) {
+                LogUtils.processException(logger, e);
             }
 
 

@@ -5,8 +5,7 @@
 
 package org.jdesktop.application;
 
-import org.jdesktop.swingworker.SwingWorker;
-
+import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

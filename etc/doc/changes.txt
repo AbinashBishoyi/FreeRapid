@@ -11,19 +11,24 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
-  Added : quick search (incremental search) for searching in the main queue table and plugins table
-  Added : global speed limiter
+  Added : support for resuming files for hostings which support it (eg. HotFile, but not Rapidshare free!)
+  Added : quick search (incremental search) for searching in the main queue table and plugins table (ctrl+F)  
   Added : MS Windows - windows key for popmenu emulates a click with right mouse button on content panel with links
   Added : Apple MacOS - support for native Aqua Look&Feel
+  Added : support for GTK look and feel
+  Added : new frd.sh starting script [thanks to Petris!]
   Changed : upgraded JTattoo library to the latest version
   Changed : fatal exceptions are shown only once for reporting
   Changed : Apple MacOS - screen menu bar used by default
   Changed : Apple MacOS - menu.about.name - correct title - FreeRapid Downloader + version
-  Fixed : ClassCast exception in directory chooser 
+  Changed : upgraded Substance lookAndFeel to version 5.2 + new themes
+  Fixed : ClassCast exception in directory chooser
   Fixed : handling invalid response header from server with empty file name
   Fixed : main window couldn't be activated at some random special cases
   Fixed : NullPointerException when server didn't respond anything at some random special cases
-  
+  Fixed : downloading updates does not work on Windows 7
+  Fixed : New links dialog - paste from clipboard did not work properly at some cases
+
 15th April 2009 - FreeRapid Downloader 0.82 released
   Added : many new plugins coming with 0.82 like Badongo.com, HotFile.com, WikiUpload.com, Paid4share.com, UGotFile.com
           improved YouTube plugin, [thanks to all plugin developers] => 70 plugins for you!

@@ -39,7 +39,7 @@ public abstract class URLTransferHandler extends TransferHandler {
         pluginsManager = director.getPluginsManager();
     }
 
-    private List<URL> textURIListToFileList(String data) {
+    public static List<URL> textURIListToFileList(String data, final PluginsManager pluginsManager) {
         final Set<URI> list = new HashSet<URI>();
         final LinkedList<URL> result = new LinkedList<URL>();
 //        final String[] strings = data.split("\\p{Space}");
@@ -191,7 +191,7 @@ public abstract class URLTransferHandler extends TransferHandler {
                         else { //search for our URLs as text
                             try {
                                 final String s = URLDecoder.decode(url.toExternalForm(), "UTF-8");
-                                urls.addAll(textURIListToFileList(s));
+                                urls.addAll(textURIListToFileList(s, pluginsManager));
                             } catch (UnsupportedEncodingException e) {
                                 //ignore
                             } catch (IllegalArgumentException e) {
@@ -217,7 +217,7 @@ public abstract class URLTransferHandler extends TransferHandler {
                 }
                 if (xhtmlFavor != null && transferable.isDataFlavorSupported(xhtmlFavor)) {
                     String data = (String) transferable.getTransferData(xhtmlFavor);
-                    urls = textURIListToFileList(data);
+                    urls = textURIListToFileList(data, pluginsManager);
                 } else {
                     DataFlavor htmlFavor = null;
                     try {
@@ -230,12 +230,12 @@ public abstract class URLTransferHandler extends TransferHandler {
                         if (!Pattern.compile("<a\\s", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE).matcher(data).find()) {
                             if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                                 data = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-                                urls = textURIListToFileList(data);
-                            } else urls = textURIListToFileList(data);
-                        } else urls = textURIListToFileList(data);
+                                urls = textURIListToFileList(data, pluginsManager);
+                            } else urls = textURIListToFileList(data, pluginsManager);
+                        } else urls = textURIListToFileList(data, pluginsManager);
                     } else if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                         String data = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-                        urls = textURIListToFileList(data);
+                        urls = textURIListToFileList(data, pluginsManager);
                     }
                 }
             }

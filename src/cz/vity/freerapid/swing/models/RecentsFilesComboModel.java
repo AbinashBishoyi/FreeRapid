@@ -57,14 +57,16 @@ public final class RecentsFilesComboModel extends DefaultComboBoxModel {
         if (index < 0) {
             final String s = anObject.toString().trim();
             if (!"".equals(s) && !"?".equals(s)) {
-                if (!(new File(s).exists())) {
+                //    if (!(new File(s).exists())) {
+                if (!getNormalizedFiles(stack).contains(new File(s))) {
                     super.insertElementAt(anObject, 0);
                     if (stack.size() > maxRecentPhrasesCount) {
-                        this.remove(maxRecentPhrasesCount - 1);
+                        this.remove(stack.size() - 1);
                         if (autosave)
                             storeFiles();
                     }
                 }
+                //    }
             }
             if (autosave)
                 storeFiles();
@@ -87,11 +89,10 @@ public final class RecentsFilesComboModel extends DefaultComboBoxModel {
         AppPrefs.removeProperty(keyProperties);
     }
 
-    public void storeFiles() {
-        final StringBuilder builder = new StringBuilder();
-        final Set<File> set = new HashSet<File>(stack.size());
+    Set<File> getNormalizedFiles(Collection<String> col) {
+        final Set<File> set = new HashSet<File>(col.size());
         final boolean isWindows = Utils.isWindows();
-        for (String str : stack) {
+        for (String str : col) {
             if (isWindows && !str.endsWith("\\"))
                 str = str + "\\";
             final File file = new File(str);
@@ -99,7 +100,13 @@ public final class RecentsFilesComboModel extends DefaultComboBoxModel {
                 set.add(file);
             }
         }
-        for (final Iterator<File> it = set.iterator(); it.hasNext();) {
+        return set;
+    }
+
+
+    public void storeFiles() {
+        final StringBuilder builder = new StringBuilder();
+        for (final Iterator<File> it = getNormalizedFiles(stack).iterator(); it.hasNext();) {
             File str = it.next();
             builder.append(FRDUtils.getAbsRelPath(str));
             if (it.hasNext())

@@ -100,7 +100,12 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
         if (clipboard.isDataFlavorAvailable(DataFlavor.stringFlavor)) {
             try {
                 final String data = (String) clipboard.getData(DataFlavor.stringFlavor);
-                urlsArea.setURLs(data);
+                final List<URL> urlList = URLTransferHandler.textURIListToFileList(data, getApp().getManagerDirector().getPluginsManager());
+                final List<String> result = new LinkedList<String>();
+                for (URL url : urlList) {
+                    result.add(url.toExternalForm());
+                }
+                urlsArea.setURLs(result);
             } catch (Exception e) {
                 //ignore
             }

@@ -58,34 +58,37 @@ public class UpdateManager {
     }
 
     private void initUpdateTimer() {
-        final int interval = AppPrefs.getProperty(UserProp.PLUGIN_UPDATE_CHECK_INTERVAL, UserProp.PLUGIN_UPDATE_CHECK_INTERVAL_DEFAULT);
+        final int interval = Math.max(AppPrefs.getProperty(UserProp.PLUGIN_UPDATE_CHECK_INTERVAL, UserProp.PLUGIN_UPDATE_CHECK_INTERVAL_DEFAULT), 4);
 
         long lastTimestamp = AppPrefs.getProperty(UserProp.PLUGIN_LAST_UPDATE_TIMESTAMP_CHECK, 0L);
-        Calendar instance = Calendar.getInstance();
-        instance.setTimeInMillis(lastTimestamp);
-        instance.add(Calendar.HOUR_OF_DAY, interval);
+
 
         final Calendar currentDateTime = Calendar.getInstance();
-
-        if (lastTimestamp == 0 || currentDateTime.after(instance)) {
-            currentDateTime.add(Calendar.SECOND, 15);
-            instance = currentDateTime; //calendar switch off
-        } else if (lastTimestamp < 0) {
-            currentDateTime.add(Calendar.SECOND, 5 * 60);
-            instance = currentDateTime; //calendar switch off
+        Calendar scheduleTime;
+        if (lastTimestamp < 0) {//error connection
+            currentDateTime.add(Calendar.HOUR_OF_DAY, 1);
+            scheduleTime = currentDateTime;
+        } else {
+            scheduleTime = Calendar.getInstance();
+            scheduleTime.setTimeInMillis(lastTimestamp);
+            scheduleTime.add(Calendar.HOUR_OF_DAY, interval);
+            if (lastTimestamp == 0 || currentDateTime.after(scheduleTime)) {
+                currentDateTime.add(Calendar.SECOND, 17);
+                scheduleTime = currentDateTime; //calendar switch off
+            }
         }
 
         if (timer != null) {
             timer.cancel();
         }
         timer = new Timer("UpdateTimer");
-        logger.info(String.format("Rescheduling plugins update check to %1$ta %1$tb %1$td %1$tT", instance.getTime()));
+        logger.info(String.format("Rescheduling plugins update check to %1$ta %1$tb %1$td %1$tT", scheduleTime.getTime()));
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
                 if (checkForUpdates())
                     checkUpdate(true);
             }
-        }, instance.getTime(), interval * 1000 * 3600);
+        }, scheduleTime.getTime(), interval * 1000 * 3600);
     }
 
     private boolean checkForUpdates() {

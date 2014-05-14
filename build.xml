@@ -159,7 +159,8 @@
 
     <target name="compile" depends="clean, init" description="compiling source codes">
         <mkdir dir="${classes.dir}"/>
-        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="cp" optimize="on" target="1.6">
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="cp" optimize="false" target="1.6"
+               defaultexcludes="false" excludes="**/sandbox/**">
 
         </javac>
 

@@ -36,44 +36,36 @@ Misc.:
  - Arrastrar y Soltar URLs
 
 Los serivicios soportados actualmente son:
-           - 2shared.com                             - RapidShare.com
-           - 4shared.com                             - RapidShare.com premium
-           - badongo.com                             - rapidshare.de
-           - bagruj.cz                               - rapidshareuser
-           - bitroad.net                             - savefile.com
-           - cobrashare.sk                           - sendspace.com
-           - czshare.com                             - share-rapid
-           - czshare.com_profi                       - shareator.com
-           - dataup.de                               - shareonline.biz
-           - depositfiles.com                        - stream.cz
-           - easyshare.com                           - subory.sk
-           - edisk.cz                                - tinyurl.com
-           - egoshare.com                            - uloz.cz
-           - enterupload.com                         - uloz.to
-           - filebase.to                             - ulozisko.sk
-           - filefactory.com                         - ultrashare.net
-           - fileflyer.com                           - uploadbox.com
-           - filesend.net                            - uploaded.to
-           - flyshare.cz                             - uploading.com
-           - hellshare.com                           - uploadjockey.com
-           - hellshare.com_full                      - upnito.sk
-           - hotfile.com                             - uppit.com
-           - ifile.it                                - usercash.com
-           - indowebster.com                         - webshare.net
-           - iskladka.cz                             - wiiupload.net
-           - jandown.com                             - wikiupload.com
-           - kewlshare.com                           - xtraupload.de
-           - leteckaposta.cz                         - yourfiles.biz
-           - letitbit.net                            - youtube.com
-           - linkbucks.com                           - ziddu.com
-           - load.to                                 - zippyshare.com
-           - mediafire.com                           - zshare.net
-           - megaupload.com
-           - nahraj.cz
-           - netload.in
-           - paid4share.com
-           - quickshare.cz
-           - radikal.ru
+ - 2shared.com	             - jandown.com	             - share-rapid
+ - 4shared.com	             - kewlshare.com	         - shareator.com
+ - badongo.com	             - kitaupload.com	         - shareonline.biz
+ - bagruj.cz	             - leteckaposta.cz	         - storage.to
+ - bitroad.net	             - letitbit.net	             - stream.cz
+ - cobrashare.sk	         - linkbucks.com	         - subory.sk
+ - czshare.com	             - load.to	                 - tinyurl.com
+ - czshare.com_profi	     - mediafire.com	         - ugotfile.com
+ - dataup.de	             - megaupload.com	         - uloz.cz
+ - depositfiles.com	         - myurl.in	                 - uloz.to
+ - disperseit.com	         - nahraj.cz	             - ulozisko.sk
+ - easyshare.com	         - netgull.com	             - ultrashare.net
+ - edisk.cz	                 - netload.in	             - uploadbox.com
+ - egoshare.com	             - o2musicstream.cz	         - uploaded.to
+ - enterupload.com	         - paid4share.com	         - uploading.com
+ - filebase.to	             - plunder.com	             - uploadjockey.com
+ - filefactory.com	         - przeklej.pl	             - upnito.sk
+ - fileflyer.com	         - quickshare.cz	         - uppit.com
+ - filesend.net	             - radikal.ru	             - usercash.com
+ - fileupload.eu	         - RapidShare.com	         - webshare.net
+ - flyshare.cz	             - RapidShare.com_premium	 - wiiupload.net
+ - hellshare.com	         - rapidshare.de	         - wikiupload.com
+ - hellshare.com_full	     - rapidshareuser	         - xtraupload.de
+ - hotfile.com	             - rsmonkey.com	             - yourfiles.biz
+ - ifile.it	                 - savefile.com	             - youtube.com
+ - imagebam.com	             - saveqube.com	             - ziddu.com
+ - imagehaven.net	         - sdilej.to	             - zippyshare.com
+ - indowebster.com	         - sendspace.com	         - zshare.net
+ - iskladka.cz	             - sendspacepl.pl
+
 
  II.    Requicitos del sistema
 =======================================

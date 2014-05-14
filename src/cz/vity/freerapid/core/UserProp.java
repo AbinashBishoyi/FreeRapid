@@ -231,9 +231,6 @@ final public class UserProp {
 
     public static final String HELP_URL = "HELP_URL";
 
-    public static final String SHOW_CZO2009 = "czo2009";
-    public static final boolean SHOW_CZO2009_DEFAULT = false;
-
     public static final String SPEED_LIMIT = "speedLimit";
     public static final int SPEED_LIMIT_DEFAULT = 250;
 
@@ -261,4 +258,8 @@ final public class UserProp {
 
     public static final String OPTIMIZE_SAVING_LIST = "optimizeSavingList";
     public static final boolean OPTIMIZE_SAVING_LIST_DEFAULT = false;
+
+    public static final String CHECK_FOR_NEW_VERSION_TIME = "checkForNewVersionLastTime";
+    public static final int CHECK_FOR_NEW_VERSION_TIME_DEFAULT = 0;
+
 }

@@ -121,7 +121,9 @@ public class MainApp extends SingleXFrameApplication {
     }
 
     private void checkBugs() {
-        if (Utils.isJVMVersion("1.6.0_0") || Utils.isJVMVersion("1.6.0-beta")) {
+        final String jvm = System.getProperty("java.version");
+        getLogger().info("You are running FRD with JVM version = " + System.getProperty("java.version") + " - (min 1.6.0_07 is required)");
+        if (jvm.equals("1.6.0_0") || System.getProperty("java.version").equals("1.6.0-beta")) {
             exitWithErrorMessage("errorInvalidJRE");
         }
     }
@@ -229,6 +231,7 @@ public class MainApp extends SingleXFrameApplication {
         };
         appThread.setPriority(Thread.MIN_PRIORITY);
         appThread.start();
+
     }
 
 

@@ -43,7 +43,7 @@ public class StandardStorageSupportImpl implements ConfigurationStorageSupport {
             return (E) xmlDecoder.readObject();
         } catch (RuntimeException e) {
             LogUtils.processException(logger, e);
-            throw e;
+            throw new Exception(e);
         } catch (Exception e) {
             LogUtils.processException(logger, e);
             throw e;

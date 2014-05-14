@@ -584,17 +584,39 @@ public class SessionStorage {
             if (!w.isLocationByPlatform() && (state != null)) {
                 WindowState windowState = (WindowState) state;
                 Rectangle gcBounds0 = windowState.getGraphicsConfigurationBounds();
-                int sc0 = windowState.getScreenCount();
-                GraphicsConfiguration gc = c.getGraphicsConfiguration();
-                Rectangle gcBounds1 = (gc == null) ? null : gc.getBounds();
-                int sc1 = getScreenCount();
-                if ((gcBounds0 != null) && (gcBounds0.equals(gcBounds1)) && (sc0 == sc1)) {
-                    w.setBounds(windowState.getBounds());
+                if (gcBounds0 != null && computeVirtualGraphicsBounds().contains(gcBounds0.getLocation())) {
+                    boolean resizable = true;
+                    if (w instanceof Frame) {
+                        resizable = ((Frame) w).isResizable();
+                    } else if (w instanceof Dialog) {
+                        resizable = ((Dialog) w).isResizable();
+                    }
+                    if (resizable) {
+                        w.setBounds(windowState.getBounds());
+                    } else {//fix
+                        w.setLocation(windowState.getBounds().getLocation());
+                    }
                 }
                 if (w instanceof Frame) {
                     ((Frame) w).setExtendedState(windowState.getFrameState());
                 }
             }
+        }
+
+        private Rectangle computeVirtualGraphicsBounds() {
+            Rectangle virtualBounds = new Rectangle();
+            GraphicsEnvironment ge = GraphicsEnvironment.
+                    getLocalGraphicsEnvironment();
+            GraphicsDevice[] gs =
+                    ge.getScreenDevices();
+            for (GraphicsDevice gd : gs) {
+                GraphicsConfiguration[] gc =
+                        gd.getConfigurations();
+                for (GraphicsConfiguration aGc : gc) {
+                    virtualBounds = virtualBounds.union(aGc.getBounds());
+                }
+            }
+            return virtualBounds;
         }
     }
 

@@ -17,7 +17,7 @@
     <xs:element name="plugins">
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="plugin" maxOccurs="unbounded"/>
+                <xs:element ref="plugin" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

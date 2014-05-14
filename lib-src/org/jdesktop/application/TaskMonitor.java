@@ -1,7 +1,6 @@
 package org.jdesktop.application;
 
-import org.jdesktop.swingworker.SwingWorker.StateValue;
-
+import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.*;
@@ -270,7 +269,7 @@ public class TaskMonitor extends AbstractBean {
             if ((task != null) && (task == getForegroundTask())) {
                 firePropertyChange(e);
                 if ("state".equals(propertyName)) {
-                    StateValue newState = (StateValue) (e.getNewValue());
+                    SwingWorker.StateValue newState = (SwingWorker.StateValue) (e.getNewValue());
                     switch (newState) {
                         case PENDING:
                             fireStateChange(task, "pending");

@@ -11,12 +11,15 @@ import org.jdesktop.application.ResourceMap;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
+import java.util.logging.Logger;
 
 /**
  * @author Ladislav Vitasek
  */
 class ConnectionCellRenderer extends DefaultTableCellRenderer {
     private final String defaultConnection;
+
+    private final static Logger logger = Logger.getLogger(ConnectionCellRenderer.class.getName());
 
     ConnectionCellRenderer(ApplicationContext context) {
         final ResourceMap map = context.getResourceMap();
@@ -26,7 +29,12 @@ class ConnectionCellRenderer extends DefaultTableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         final DownloadFile downloadFile = (DownloadFile) value;
+        if (value == null) {
+            logger.warning("DownloadFile is null");
+            return new JLabel();
+        }
         final DownloadTask task = downloadFile.getTask();
+
         ConnectionSettings con = null;
         if (downloadFile.getState() == DownloadState.SLEEPING || downloadFile.getState() == DownloadState.ERROR) {
             con = downloadFile.getConnectionSettings();

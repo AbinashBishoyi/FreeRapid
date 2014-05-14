@@ -42,12 +42,30 @@ public class GlobalEDTExceptionHandler implements Thread.UncaughtExceptionHandle
         e.printStackTrace(writer);
         writer.close();
         final String msg = s.toString();
-        final boolean contains = reported.contains(msg);
+        if (msg.contains("java.lang.ClassCastException: java.awt.TrayIcon cannot be cast to java.awt.Component")) {
+            logger.severe(msg + "JRE bug - ignoring this exception");
+            return;
+        }
+        if (msg.contains("NoSuchMethodError: java.awt.Rectangle.union")) {
+            logger.severe(msg + "invalid JRE installation - ignoring this exception");
+            return;
+        }
+        boolean contains = reported.contains(msg);
         reported.add(msg);
 
+        if (msg.contains("NoClassDefFoundError: Could not initialize class sun.awt.shell.Win32ShellFolder2") || msg.contains("WinampMoveStyle") || msg.contains("JToolTip cannot be cast to javax.swing.text.JTextComponent") || msg.contains("Connection is not open") || msg.contains("Buffers have not been created") || msg.contains("RejectedExecutionException") || msg.contains("OutOfMemoryError") || msg.contains("Could not get shell folder ID list")) {
+            contains = true;
+        }
+
+        final String message;
+        if (msg.contains("Non-Java exception raised, not handled!")) {
+            message = "errorMessageMacOSXBug";
+            contains = true;
+        } else message = "errorMessageBasic";
+        final boolean contains1 = contains;
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                Swinger.showErrorDialog("errorMessageBasic", e, !contains);
+                Swinger.showErrorDialog(message, e, !contains1);
             }
         });
 
