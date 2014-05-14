@@ -19,6 +19,7 @@ import java.util.regex.Matcher;
 
 /**
  * Support for communication betweem client and server but without support for to download file - for that case you have to use AbstractRunner
+ *
  * @author Vity
  */
 public abstract class AbstractRunner implements PluginRunner {
@@ -206,7 +207,8 @@ public abstract class AbstractRunner implements PluginRunner {
      * The default content for parsing is taken from the last HTTP response. <br />If you need to use your own content for creating method, make your own instance of MethodBuilder.
      *
      * @return new instance of MethodBuilder
-     * @throws cz.vity.freerapid.plugins.exceptions.BuildMethodException if something goes wrong
+     * @throws cz.vity.freerapid.plugins.exceptions.BuildMethodException
+     *          if something goes wrong
      * @since 0.82
      */
     protected MethodBuilder getMethodBuilder() throws BuildMethodException {
@@ -219,7 +221,8 @@ public abstract class AbstractRunner implements PluginRunner {
      *
      * @param content specific content
      * @return new instance of MethodBuilder
-     * @throws cz.vity.freerapid.plugins.exceptions.BuildMethodException if something goes wrong
+     * @throws cz.vity.freerapid.plugins.exceptions.BuildMethodException
+     *          if something goes wrong
      * @since 0.82
      */
     protected MethodBuilder getMethodBuilder(String content) throws BuildMethodException {
@@ -341,22 +344,34 @@ public abstract class AbstractRunner implements PluginRunner {
     }
 
     /**
-     * Set up allowed content types which identifies file streams.
-     * @param allowedContentType content types - e.g.: "text/plain", "application/xml"
+     * Set content types that are considered as streams.
+     *
+     * @param streamContentTypes consider these content types as streams - e.g.: "text/plain", "application/xml"
      * @since 0.85
      */
-    protected void setFileStreamContentTypes(String... allowedContentType) {
-        setClientParameter(DownloadClientConsts.FILE_STREAM_RECOGNIZER, new DefaultFileStreamRecognizer(allowedContentType, false));
+    protected void setFileStreamContentTypes(final String... streamContentTypes) {
+        setFileStreamContentTypes(streamContentTypes, new String[]{});
     }
 
     /**
-     * Set up allowed content types which identifies file streams.
-     * @param allowedContentType content types - e.g.: "text/plain", "application/xml"
-     * @param forbiddenContentTypes - do not consider this content types as file streams
+     * Set content types that are considered as text.
+     *
+     * @param textContentTypes consider these content types as text - e.g.: "application/octet-stream"
+     * @since 0.87
+     */
+    protected void setTextContentTypes(final String... textContentTypes) {
+        setFileStreamContentTypes(new String[]{}, textContentTypes);
+    }
+
+    /**
+     * Set content types.
+     *
+     * @param streamContentTypes consider these content types as streams
+     * @param textContentTypes   consider these content types as text
      * @since 0.85
      */
-    protected void setFileStreamContentTypes(String[] allowedContentType, String[] forbiddenContentTypes) {
-        setClientParameter(DownloadClientConsts.FILE_STREAM_RECOGNIZER, new DefaultFileStreamRecognizer(allowedContentType, forbiddenContentTypes, false));
+    protected void setFileStreamContentTypes(final String[] streamContentTypes, final String[] textContentTypes) {
+        setClientParameter(DownloadClientConsts.FILE_STREAM_RECOGNIZER, new DefaultFileStreamRecognizer(streamContentTypes, textContentTypes, false));
     }
 
     /**
@@ -368,14 +383,14 @@ public abstract class AbstractRunner implements PluginRunner {
      * @throws Exception when connection/writing to file failed
      */
     protected boolean tryDownloadAndSaveFile(HttpMethod method) throws Exception {
-        if(httpFile.getState() == DownloadState.PAUSED || httpFile.getState() == DownloadState.CANCELLED)
+        if (httpFile.getState() == DownloadState.PAUSED || httpFile.getState() == DownloadState.CANCELLED)
             return false;
         else
             httpFile.setState(DownloadState.GETTING);
         if (logger.isLoggable(Level.INFO)) {
             logger.info("Download link URI: " + method.getURI().toString());
             logger.info("Making final request for file");
-        } 
+        }
 
         try {
             final InputStream inputStream = client.makeFinalRequestForFile(method, httpFile, true);

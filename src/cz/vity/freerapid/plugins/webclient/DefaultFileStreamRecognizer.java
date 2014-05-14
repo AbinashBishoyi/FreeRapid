@@ -4,126 +4,88 @@ import cz.vity.freerapid.plugins.webclient.interfaces.FileStreamRecognizer;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpMethod;
 
-import java.util.Arrays;
-import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
  * Default implementation of FileStreamRecognizer - it identifies file stream.
  * Eg. for text/plain as file stream use this code:
  * <code>
- *      new DefaultFileStreamRecognizer(new String[] {"text/plain"}, false);
+ * new DefaultFileStreamRecognizer(new String[]{"text/plain"}, false);
  * </code>
+ *
  * @author Vity
- * @since 0.85
+ * @author ntoskrnl
  * @see AbstractRunner#setFileStreamContentTypes(String[])
+ * @since 0.85
  */
 public class DefaultFileStreamRecognizer implements FileStreamRecognizer {
     private final static Logger logger = Logger.getLogger(DefaultFileStreamRecognizer.class.getName());
-    private final String[] allowedValues;
-    private final String[] forbiddenValues;
-    private final boolean exactMatch;
+
+    protected final static String[] DEFAULT_STREAM_VALUES = {"application/", "image/", "audio/", "video/", EMPTY};
+    protected final static String[] DEFAULT_TEXT_VALUES = {"text/", "xml", "javascript", "json", "smil"};
+
+    protected final String[] streamValues;
+    protected final String[] textValues;
+    protected final boolean exactMatch;
 
     public DefaultFileStreamRecognizer() {
-        allowedValues = new String[0];
-        forbiddenValues = new String[0];
+        streamValues = new String[0];
+        textValues = new String[0];
         exactMatch = false;
     }
 
     /**
-     * Constructor
-     * @param allowedValues allowed values for content type identifying filestream. One of allowed value can be NULL.
-     * @param exactMatch whether only <code>allowedValues</code> should be considered as file stream
+     * @param streamValues consider these content types as streams
+     * @param textValues   consider these content types as text
+     * @param exactMatch   if true, don't check against default values
      */
-    public DefaultFileStreamRecognizer(String[] allowedValues, boolean exactMatch) {
-        this(allowedValues, new String[0], exactMatch);
-    }
-
-    /**
-     * Constructor
-     * @param allowedValues allowed values for content type identifying filestream. One of allowed value can be NULL.
-     * @param forbiddenValues whether only <code>forbiddenValues</code> should NOT be considered as file stream. One of allowed value can be NULL.
-     * @param exactMatch whether only <code>allowedValues</code> should be considered as file stream
-     */
-    public DefaultFileStreamRecognizer(String[] allowedValues, String[] forbiddenValues, boolean exactMatch) {
-        this.allowedValues = allowedValues;
+    public DefaultFileStreamRecognizer(final String[] streamValues, final String[] textValues, final boolean exactMatch) {
+        this.streamValues = streamValues;
+        this.textValues = textValues;
         this.exactMatch = exactMatch;
-        this.forbiddenValues = forbiddenValues;
     }
 
+    @Override
     public boolean isStream(HttpMethod method, boolean showWarnings) {
-        final Header contentType = getContentType(method);
-        String value = null;
-        if (contentType != null) {
-            value = contentType.getValue().toLowerCase(Locale.ENGLISH);
-        } else {
-            if (showWarnings) {
-                logger.warning("No Content-Type!");
-            }
+        final String contentType = getContentType(method);
+        if (isOnList(contentType, textValues)) {
+            return false;
         }
-        boolean found = false;
-        for (String s : allowedValues) {
-            if (s == null) {
-                if (value == null) {
-                    found = true;
-                    break;
-                }
-            } else {
-                if (value != null) {
-                    s = s.toLowerCase(Locale.ENGLISH);
-                    if (value.startsWith(s)) {
-                        found = true;
-                        break;
-                    }
-                }
-            }
-        }
-        for (String s : forbiddenValues) {
-            if (s == null) {
-                if (value == null) {
-                    return false;
-                }
-            } else {
-                if (value != null) {
-                    s = s.toLowerCase(Locale.ENGLISH);
-                    if (value.startsWith(s)) {
-                        return false;
-                    }
-                }
-            }
-        }
-        if (found) {
+        if (isOnList(contentType, streamValues)) {
             return true;
-        } else if (exactMatch) {
-            if (showWarnings && allowedValues.length > 0) {
-                logger.warning("Content type " + value + " is not on supported list " + Arrays.toString(allowedValues));
-            }
-            return false;
         }
-        if (contentType == null || value == null) {
-            return false;
-        } else {
-            if (isApplicationXML(value)) {
+        if (!exactMatch) {
+            if (isOnList(contentType, DEFAULT_TEXT_VALUES)) {
                 return false;
             }
-            final boolean isImage = value.startsWith("image/");
-            boolean stream = true;
-            final boolean isAudioVideo = value.startsWith("audio/") || value.startsWith("video/");
-            if (!value.startsWith("application/") && !isImage && !isAudioVideo) {
-                stream = false;
-                if (showWarnings) {
-                    logger.warning("Suspicious Content-Type: " + contentType.getValue());
-                }
+            if (isOnList(contentType, DEFAULT_STREAM_VALUES)) {
+                return true;
             }
-            return stream;
         }
+        if (showWarnings) {
+            logger.warning("Unknown content type: " + contentType);
+        }
+        return true;
     }
 
-    protected Header getContentType(HttpMethod method) {
-        return method.getResponseHeader("Content-Type");
+    protected boolean isOnList(final String contentType, final String[] list) {
+        for (final String s : list) {
+            if (contentType.contains(s)) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    private static boolean isApplicationXML(String value) {
-        return value.startsWith("application/") && value.lastIndexOf("xml") > 0;
+    protected String getContentType(final HttpMethod method) {
+        final Header header = method.getResponseHeader("Content-Type");
+        if (header != null) {
+            final String contentType = header.getValue();
+            if (contentType != null && !contentType.isEmpty()) {
+                return contentType;
+            }
+        }
+        return EMPTY;
     }
+
 }
