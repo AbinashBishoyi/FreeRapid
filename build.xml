@@ -44,6 +44,7 @@
     <property name="ignoreProperties" value="log*,lookandfeels*"/>
 
     <fileset id="jars" dir="${lib.dir}" includes="**/*"/>
+    <fileset id="libjars" dir="${lib.dir}" includes="**/?*.jar"/>
     <fileset id="devjars" dir="dev/lib" includes="**/*"/>
 
     <taskdef name="native2AsciiExt" classpath="${dev.dir}/ant-tasks/vityanttasks.jar"
@@ -73,6 +74,11 @@
         <fileset refid="devjars"/>
     </path>
 
+    <path id="test-cp">
+        <fileset refid="libjars"/>
+        <fileset refid="devjars"/>
+    </path>
+
     <path id="dist-jars">
         <fileset dir="${build.dir}/${lib.dir}" includes="**/*.jar"/>
         <fileset dir="${build.dir}/${lookandfeel.dir}" includes="**/*.jar"/>
@@ -88,7 +94,7 @@
     </pathconvert>
 
 
-    <target name="build" depends="compile, tests" description="building">
+    <target name="build" depends="compile, objectDbEnhance, tests" description="building">
         <buildnumber file="build.txt"/>
 
         <!--copying properties files-->
@@ -179,7 +185,7 @@
         </javac>
 
         <mkdir dir="${build.tests}"/>
-        <javac srcdir="${src.tests}" destdir="${build.tests}" classpathref="cp" optimize="false" target="1.6">
+        <javac srcdir="${src.tests}" destdir="${build.tests}" classpathref="test-cp" optimize="false" target="1.6">
             <classpath location="${classes.dir}"/>
         </javac>
 
@@ -282,6 +288,17 @@
         <native2AsciiExt src="${src.dir}" encoding="utf-8" includes="**/?*.properties"
                          excludes="${ignoreProperties},${unicodeResources}"
                          dest="out/production/freerapid" ext=".properties"/>
+    </target>
+
+
+    <target name="objectDbEnhance" description="enhancing Object db entities">
+        <!--@see http://www.objectdb.com/java/jpa/tool/enhancer-->
+        <java classname="com.objectdb.Enhancer" fork="false" classpathref="test-cp">
+            <arg line="-cp ${classes.dir}"/>
+            <arg line="cz.vity.freerapid.gui.managers.FileHistoryItem"/>
+            <arg line="cz.vity.freerapid.model.DownloadFile"/>
+            <arg line="cz.vity.freerapid.model.PluginMetaData"/>
+        </java>
     </target>
 
 
