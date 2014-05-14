@@ -1,5 +1,6 @@
 #!/bin/sh
-# FRD requires Sun Java 6, NO Shity GCJ, NO OpenJDK, but Sun Java 6!
+# FRD requires Sun Java 6, NO Shity GCJ, NO buggy OpenJDK, but Sun Java 6!
+# some crappy distros needed to add switch -Djava.net.preferIPv4Stack=true 
 # Look for java in these directories
 LOOKUP_JRE_DIRS="/usr/lib/jvm/* /opt/java* /opt/jre*"
 #Created by Petris 2009 -> Many thanks!
@@ -50,7 +51,7 @@ cd "`dirname \"$PROGRAM\"`"
 # Check default java
 if [ -x "`which java`" ]; then
 	JAVA_VERSION_OUTPUT=`java -version 2>&1`
-	check_java_version && exec java -Xmx128m -jar frd.jar "$@"
+	check_java_version && exec java -Djava.net.preferIPv4Stack=true -Xmx128m -jar frd.jar "$@"
 fi
 
 # Test other possible Java locations
@@ -59,7 +60,7 @@ for JRE_PATH in $LOOKUP_JRE_DIRS; do
 		JAVA_VERSION_OUTPUT=`"$JRE_PATH/bin/java" -version 2>&1`
 		check_java_version && {
 			export JRE_PATH
-			exec $JRE_PATH/bin/java -Xmx128m -jar frd.jar "$@"
+			exec $JRE_PATH/bin/java -Djava.net.preferIPv4Stack=true -Xmx128m -jar frd.jar "$@"
 		}
 	fi
 done
