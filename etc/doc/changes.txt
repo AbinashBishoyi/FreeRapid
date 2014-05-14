@@ -11,6 +11,7 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
+ 11th July 2010 - FreeRapid Downloader 0.85 Alfa 1
   Added : New action in Remove menu: "Remove Completed Links and Deleted Files"
   Added : New user option: "Slim lines in History dialog"
   Added : New user options for speed limiter
@@ -19,6 +20,10 @@ Fixed - indicates a bug fix
   Added : New setting for handling plugin updates: "Update and restart automatically if no downloads in progress"
   Added : Improved smart clipboard monitoring detection for URLs like
             http://web.com/vb/redirector.php?url=http%3A%2F%2Frapidshare.com%2Ffiles%2F142676%2la.rar&a45456=asdsd
+  Added : plugin API version 0.85
+            - support for priorities of each plugin
+            - experimental support for RTMP protocol
+  Added : max downloads option per plugin              
   Added : Experimental support for downloading basic RTMP streams.
             This was made possible by Flazr v0.6, which we took and modified slightly to fit our needs.
             Big thanks to the developers of Flazr! Home page: http://www.flazr.com/

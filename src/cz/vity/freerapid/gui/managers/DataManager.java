@@ -20,6 +20,7 @@ import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
 import cz.vity.freerapid.plugins.webclient.interfaces.MaintainQueueSupport;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.Utils;
+import org.apache.commons.httpclient.URIException;
 import org.jdesktop.application.AbstractBean;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.ApplicationContext;
@@ -35,6 +36,7 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 import java.util.logging.Logger;
@@ -334,16 +336,20 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                         //file.setState(DownloadState.CANCELLED);
                     }
                     file.setState(CANCELLED);
-                    if (delete && file.getDownloaded() > 0) {
+                    if (delete && file.getDownloaded() >= 0) {
                         File outputFile = file.getStoreFile();
                         if (outputFile != null && outputFile.exists()) {
                             if (!outputFile.delete())
                                 logger.info("Deleting store file " + outputFile + " failed");
                         }
-                        outputFile = file.getOutputFile();
-                        if (outputFile != null && outputFile.exists()) {
-                            if (!outputFile.delete())
-                                logger.info("Deleting output file " + outputFile + " failed");
+                        if (file.getDownloaded() > 0) {
+                            outputFile = file.getOutputFile();
+                            //bugfix, workaround, not sure if it works properly at all situations
+                            if (outputFile != null && outputFile.exists() && outputFile.length() == file.getDownloaded()) {
+                                if (!outputFile.delete()) {
+                                    logger.info("Deleting output file " + outputFile + " failed");
+                                }
+                            }
                         }
                     }
                     file.setDownloaded(0);
@@ -372,6 +378,22 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         }
     }
 
+
+    @Override
+    public boolean addLinksToQueue(final HttpFile parentFile, final String data) {
+        final List<URL> urlList = URLTransferHandler.textURIListToFileList(data, pluginsManager, false);
+        final List<URI> uriList = new LinkedList<URI>();
+        for (URL url : urlList) {
+            try {
+                uriList.add(Utils.convertToURI(url.toExternalForm()));
+            } catch (URISyntaxException e) {
+                //ignore
+            } catch (URIException e) {
+                //ignore
+            }
+        }
+        return !uriList.isEmpty() && addLinksToQueue(parentFile, uriList);
+    }
 
     private List<DownloadFile> selectionToList(int[] indexes) {
         List<DownloadFile> toRemoveList = new ArrayList<DownloadFile>();

@@ -1,5 +1,6 @@
 package cz.vity.freerapid.plugins.webclient;
 
+import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.plugins.exceptions.BuildMethodException;
 import cz.vity.freerapid.utilities.Utils;
 import org.apache.commons.httpclient.HttpMethod;
@@ -25,6 +26,7 @@ public class MethodBuilderTest {
 
     @Before
     public void before() throws URISyntaxException {
+        AppPrefs.initEmptyPreferences();
         final URI uri = MethodBuilderTest.class.getResource("resources/MethodBuilderTest.html").toURI();
         content = Utils.loadFile(new File(uri), "Windows-1250");
         client = new DownloadClient();

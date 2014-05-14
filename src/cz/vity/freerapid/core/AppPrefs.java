@@ -295,6 +295,10 @@ public final class AppPrefs {
     }
 
 
+    public static void initEmptyPreferences() {
+        properties = Preferences.userRoot();
+    }
+
     public static Preferences getPreferences() {
         if (properties == null)
             throw new IllegalStateException("Properties were not initialized yet");

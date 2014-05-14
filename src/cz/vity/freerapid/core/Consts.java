@@ -83,7 +83,7 @@ public class Consts {
     /**
      * version of API
      */
-    public static final String APIVERSION = "0.83";
+    public static final String APIVERSION = "0.849";
 
     /**
      * Od teto tridy se nebudou delat zadne instance

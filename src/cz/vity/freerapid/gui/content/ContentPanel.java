@@ -1186,7 +1186,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             return 0;
         int i = (int) (((downloaded / (float) fileSize) * 100));
         if (i < 0) i = 0;
-        if (i > 100) i = 100;
+        else if (i > 100) i = 100;
         return i;
     }
 

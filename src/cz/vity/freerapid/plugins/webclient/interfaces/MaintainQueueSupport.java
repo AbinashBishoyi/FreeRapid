@@ -8,8 +8,10 @@ import java.util.List;
  * @author Vity
  */
 public interface MaintainQueueSupport {
-
+    //TODO javadoc
     boolean addLinksToQueue(HttpFile parentFile, List<URI> uriList);
+
+    boolean addLinksToQueue(HttpFile parentFile, String data);
 
     public boolean addLinkToQueueUsingPriority(HttpFile parentFile, List<URL> urlList) throws Exception;
 
