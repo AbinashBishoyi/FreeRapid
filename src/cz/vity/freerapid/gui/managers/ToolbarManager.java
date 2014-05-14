@@ -151,6 +151,7 @@ public class ToolbarManager implements PropertyChangeListener {
 //        toolbar.add(getButton(Swinger.getAction("quit")));
         //    toolbar.add(Box.createGlue());
         AbstractButton btn = getButton(Swinger.getAction("paypalSupportAction"));
+        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btn.putClientProperty("noChange", true);
         btn.setOpaque(false);
         btn.setRolloverEnabled(false);
