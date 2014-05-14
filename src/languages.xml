@@ -17,7 +17,7 @@
     <!--<lng name="Bahasa Indonesia" code="IN" icon="indonesia.gif"/>-->
     <lng name="Polski" code="PL" icon="poland.gif"/>
     <lng name="Українська" code="UA" icon="ukraine.gif"/>
-    <!--<lng name="Italiano" code="IT" icon="italy.gif"/>-->
+    <lng name="Italiano" code="IT" icon="italy.gif"/>
     <!--<lng name="Dansk" code="DA" icon="denmark.gif"/>-->
     <lng name="Português do Brasil" code="PT" country="BR" icon="brazil.gif"/>
     <lng name="Português" code="PT" icon="pt.gif"/>
