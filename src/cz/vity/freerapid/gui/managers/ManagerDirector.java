@@ -9,6 +9,7 @@ import org.jdesktop.application.ApplicationContext;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -71,6 +72,7 @@ public class ManagerDirector {
 
     private SearchManager searchManager;
     private SystemManager systemManager;
+    private CountDownLatch countDownLatch = new CountDownLatch(1); //only one purpose barrier simulation
 
     static {
         // Fix for JDK 6 bug ICO vs WBMP
@@ -110,7 +112,7 @@ public class ManagerDirector {
         this.fileHistoryManager = new FileHistoryManager(this, context);
 
 
-        this.pluginsManager = new PluginsManager(context, this);
+        this.pluginsManager = new PluginsManager(context, this, countDownLatch);
 
         this.searchManager = new SearchManager(context, this);
 
@@ -148,6 +150,11 @@ public class ManagerDirector {
      */
     public void guiIsReady() {
         //initialization of managers
+        try {
+            countDownLatch.await(); //wait for finishing loading threads
+        } catch (InterruptedException e) {
+            //ignore
+        }
         inputDataManager.initProcessManagerQueue(); //loads file list from file, fills main table
         this.systemManager.initManager();
 

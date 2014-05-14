@@ -5,6 +5,7 @@ package cz.vity.freerapid.core;
  */
 final public class UserProp {
 
+
     private UserProp() {
     }
 
@@ -358,6 +359,11 @@ final public class UserProp {
 
     public static final String PREVENT_STANDBY_WHILE_DOWNLOADING = "preventStandbyWhileDownloading";
     public static final boolean PREVENT_STANDBY_WHILE_DOWNLOADING_DEFAULT = false;
+
+    public static final String POP_WINDOW_WITHOUT_MAIN_WINDOW_IN_QUIET_MODE = "popWindowWithoutMainFrame";
+    public static final boolean POP_WINDOW_WITHOUT_MAIN_WINDOW_IN_QUIET_MODE_DEFAULT = false;
+
+    public static final String CHAR_ENCODING_FOR_PROPERTIES_FILES = "charEncodingForPropertiesFiles";
 
 }
 

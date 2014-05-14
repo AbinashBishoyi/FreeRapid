@@ -5,6 +5,7 @@ import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.exceptions.FileTransferFailedException;
+import cz.vity.freerapid.utilities.FileEncWriter;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
 import org.jdesktop.application.Application;
@@ -12,6 +13,8 @@ import org.jdesktop.application.Application;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.logging.Logger;
 
 /**
@@ -144,9 +147,9 @@ public class MoveFileTask extends CoreTask<Void, Void> {
 
         if (descIon) {
             final File descriptIonFile = new File(to.getParentFile(), getNameForFile("descript.ion"));
-            FileWriter writer = null;
+            FileEncWriter writer = null;
             try {
-                writer = new FileWriter(descriptIonFile, true);
+                writer = new FileEncWriter(descriptIonFile, true, getCharsetForPropertiesFile());
                 if (descriptIonFile.length() > 0)
                     writer.write(Utils.getSystemLineSeparator());
                 writer.write(to.getName() + " " + desc.trim());
@@ -179,9 +182,9 @@ public class MoveFileTask extends CoreTask<Void, Void> {
             if (descTxtFile.exists()) {
                 descTxtFile = getNewUniqueFileName(descTxtFile);
             }
-            FileWriter writer = null;
+            FileEncWriter writer = null;
             try {
-                writer = new FileWriter(descTxtFile, false);
+                writer = new FileEncWriter(descTxtFile, false, getCharsetForPropertiesFile());
                 writer.write(desc);
             } catch (IOException e) {
                 LogUtils.processException(logger, e);
@@ -234,6 +237,19 @@ public class MoveFileTask extends CoreTask<Void, Void> {
             ++counter;
         }
         return newFile;
+    }
+
+    private Charset getCharsetForPropertiesFile() {
+        final String encoding = AppPrefs.getProperty(UserProp.CHAR_ENCODING_FOR_PROPERTIES_FILES, Charset.defaultCharset().name());
+        final Charset charset;
+        try {
+            charset = Charset.forName(encoding);
+        } catch (UnsupportedCharsetException e) {
+            logger.severe("Unsupported encoding for properties files:" + encoding);
+            LogUtils.processException(logger, e);
+            return Charset.defaultCharset();
+        }
+        return charset;
     }
 
 }

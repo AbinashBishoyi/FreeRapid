@@ -25,6 +25,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import java.util.Timer;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
@@ -39,6 +40,8 @@ public class UpdateManager {
     private final ApplicationContext context;
 
     private Timer timer;
+    private AtomicBoolean updating = new AtomicBoolean(false);
+
 
     public UpdateManager(ManagerDirector director, ApplicationContext context) {
         this.director = director;
@@ -110,7 +113,12 @@ public class UpdateManager {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        updateDetected(event.getValue(), quiet);
+                        if (!updating.getAndSet(true)) {
+                            updateDetected(event.getValue(), quiet);
+                            updating.set(false);
+                        } else {
+                            logger.info("I don't know when this happens, but it happens");
+                        }
                     }
                 });
             }

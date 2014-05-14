@@ -35,6 +35,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 import java.util.logging.Logger;
 
 /**
@@ -62,7 +63,7 @@ public class PluginsManager {
         }
     });
 
-    public PluginsManager(ApplicationContext context, ManagerDirector director) {
+    public PluginsManager(ApplicationContext context, ManagerDirector director, final CountDownLatch countDownLatch) {
         this.context = context;
         this.director = director;
         pluginMetaDataManager = new PluginMetaDataManager(context);
@@ -89,7 +90,11 @@ public class PluginsManager {
         new Thread(new Runnable() {
             @Override
             public void run() {
-              findAndInitNewPlugins();
+                try {
+                    findAndInitNewPlugins();
+                } finally {
+                    countDownLatch.countDown();
+                }
             }
         }).start();
     }

@@ -112,7 +112,11 @@ public class StandardDialogSupportImpl implements DialogSupport {
         if (AppPrefs.getProperty(UserProp.BLIND_MODE, UserProp.BLIND_MODE_DEFAULT)) {
             Sound.playSound(context.getResourceMap().getString("captchaWav"));
         }
-        final Component parentComponent = (bringToFront) ? null : ((SingleFrameApplication) context.getApplication()).getMainFrame();
+        Component parentComponent;
+        if (AppPrefs.getProperty(UserProp.POP_WINDOW_WITHOUT_MAIN_WINDOW_IN_QUIET_MODE, UserProp.POP_WINDOW_WITHOUT_MAIN_WINDOW_IN_QUIET_MODE_DEFAULT)) {
+            parentComponent = null;
+        } else
+            parentComponent = (bringToFront) ? null : ((SingleFrameApplication) context.getApplication()).getMainFrame();
         captchaResult = (String) JOptionPane.showInputDialog(parentComponent, context.getResourceMap(DownloadTask.class).getString("InsertWhatYouSee"), context.getResourceMap(DownloadTask.class).getString("InsertCaptcha"), JOptionPane.PLAIN_MESSAGE, image, null, null);
     }
 
