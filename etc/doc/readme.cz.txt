@@ -12,10 +12,10 @@
 *                                                            *
 *                                                            *
 *     FreeRapid Downloader                                   *
-*      - Ladislav Vitásek alias Vity (c) 2008-2011           *
+*      - Ladislav Vitásek alias Vity (c) 2008-2012           *
 *Dom.stránka/Forum/Bugtracker: http://wordrider.net/freerapid*
 *E-Mail: info@wordrider.net - návrhy                         *
-*Poslední změna: 2011-10-29                                  *
+*Poslední změna: 2012-10-10                                  *
 **************************************************************
 
 Důležité - než začnete číst dále!!!:
@@ -103,11 +103,11 @@ Doporučená konfigurace
     * Windows 2000/XP/Vista/7/Linux(jádro 2.4)* nebo vyšší operační systém
     * procesor Pentium 800MHz
     * minimální rozlišení obrazovky 1024x768
-    * 40 MB volné operační paměti
-    * 10 MB volného prostoru na pevném disku
-    * Java 2 Platform - nainstalovaná alespoň verze 1.6 (Java SE 6 Runtime)
+    * 100 MB volné operační paměti
+    * 20 MB volného prostoru na pevném disku
+    * Java 2 Platform - nainstalovaná alespoň verze 1.6 (Java SE 6 Runtime), Java SE 7 je také podporována
 
-Aplikace pro své spuštění vyžaduje mít nainstalovanou alespoň Sun Javu 6.0 (http://java.sun.com/javase/downloads/index.jsp , JRE 6).
+Aplikace pro své spuštění vyžaduje mít nainstalovanou alespoň Sun Javu 6.0 (http://java.sun.com/javase/downloads/index.jsp , JRE 7).
 
 Uživatelé Linuxu (Debian) like mohou použít tento příkaz k instalaci Javy:
      sudo apt-get install sun-java6-jre

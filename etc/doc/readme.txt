@@ -14,7 +14,7 @@
 *      by Ladislav Vitasek aka Vity                          *
 *   Website/Forum/Bugtracker: http://wordrider.net/freerapid *
 *   Mail: info@wordrider.net - suggestions                   *
-*   Last change: 29th October 2011                           *
+*   Last change: 10th October 2012                           *
 **************************************************************
 
 =======================================
@@ -54,7 +54,7 @@ Misc.:
  - Drag&Drop URLs
  - easy programming interface (API) for adding other services like plugins
 
-Currently supported services are (in alphabetical order):
+Currently supported services list quite large (in alphabetical order) - more than 400 websites are supported
  - 2shared.com	             - jandown.com	             - share-rapid
  - 4shared.com	             - kewlshare.com	         - shareator.com
  - badongo.com	             - kitaupload.com	         - shareonline.biz
@@ -95,11 +95,11 @@ Recommended configuration:
     * Windows 2000/XP/Vista/7/Linux(core 2.4)* or higher operating system
     * Pentium 800MHz processor
     * min 1024x768 screen resolution
-    * 40 MB of free RAM
-    * 10 MB free disk space
-    * Java 2 Platform - version at least 1.6 (Java SE 6 Runtime) installed
+    * 100 MB of free RAM
+    * 20 MB free disk space
+    * Java 2 Platform - version at least 1.6 (Java SE 6 Runtime) installed, version 1.7 (=7) is supported too
 
-Application needs at least Sun Java 6.0 to start (http://java.sun.com/javase/downloads/index.jsp , JRE 6).
+Application needs at least Sun Java 7.0 to start (http://java.sun.com/javase/downloads/index.jsp , JRE 7).
 
 Linux Debian like users can use this command to intall Java:
    sudo apt-get install sun-java6-jre
@@ -245,8 +245,8 @@ It can help us to recognize a problem. You can also help us if you run applicati
 We ignore simple reports like "I cannot run FRD. What should I do?". Describe your situation and application behaviour.
 
 
+forum: http://wordrider.net/forum/list.php?7 (preffered)
 issue tracker: http://bugtracker.wordrider.net/
-forum: http://wordrider.net/forum/list.php?7
 mail: bugs@wordrider.net (your mail can be caught by spam filter, so this way is NOT preffered!)
 
 

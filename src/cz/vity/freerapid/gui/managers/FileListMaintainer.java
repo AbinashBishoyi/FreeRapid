@@ -63,7 +63,11 @@ class FileListMaintainer {
             }
             if (result != null) {
                 //re-save into database
-                saveToDatabase(result);
+                int counter = 0;
+                for (DownloadFile downloadFile : result) {
+                    downloadFile.setListOrder(counter++);
+                }
+                saveToDatabaseOnBackground(result);
             } else result = new ArrayList<DownloadFile>();
             //rename old file history file into another one, so we won't import it again next time
             //noinspection ResultOfMethodCallIgnored
