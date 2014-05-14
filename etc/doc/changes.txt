@@ -14,16 +14,17 @@ Internal - indicates an internal change - information for FRD developers - nothi
 
 FreeRapid Downloader 0.86 Update 1
   Added : Support for Slovakian, Bulgarian and Hungarian languages - thanks to all translators!
-  Added : New internal property - -DpopWindowWithoutMainFrame in quiet mode, default value is false, see
-          startup.properties file for more details
-  Added : New internal property - -DcharEncodingForPropertiesFiles defines character encoding for properties files, see
-          startup.properties file for more details
+  Added : New internal property - -DpopWindowWithoutMainFrame in quiet mode, default value is false,
+          see startup.properties file for more details
+  Added : New internal property - -DcharEncodingForPropertiesFiles defines character encoding for properties files,
+          see startup.properties file for more details
   Changed : User preferences dialog opens faster
-  Thanks to all reporters:
+  Thanks to all bug reporters:
+  Fixed : Updated JTattoo look and feel, which fixes a bug where the main window shows over the taskbar
   Fixed : Updated Quaqua look and feel, which fixes certain regressions in 0.86 on Mac OS X
   Fixed : Unable to deselect "Use proxy list" - regression in 0.86
   Fixed : Unable to view dialog for settings of selected files - regression in 0.86
-  Fixed : rare case - couldn't detect plugins on start - regression in 0.86
+  Fixed : Rare case - couldn't detect plugins on start - regression in 0.86
 
 30th October 2011 - FreeRapid Downloader 0.86
   Added : Support for Portuguese and Simplified Chinese languages - thanks to all translators!
