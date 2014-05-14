@@ -2,17 +2,17 @@
 * Copyright (C) 2006 Sun Microsystems, Inc. All rights reserved. Use is
 * subject to license terms.
 */
-
 package org.jdesktop.application;
+
+import org.jdesktop.application.utils.PlatformType;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
-
 /**
- * The application's {@code ResourceManager} provides
- * read-only cached access to resources in {@code ResourceBundles} via the
+ * The application's {@code ResourceManager} provides 
+ * read-only cached access to resources in {@code ResourceBundles} via the 
  * {@link ResourceMap ResourceMap} class.  {@code ResourceManager} is a
  * property of the {@code ApplicationContext} and most applications
  * look up resources relative to it, like this:
@@ -26,28 +26,29 @@ import java.util.logging.Logger;
  * {@link ApplicationContext#getResourceMap(Class) ApplicationContext.getResourceMap()}
  * just delegates to its {@code ResourceManager}.  The {@code ResourceMap}
  * in this example contains resources from the ResourceBundle named
- * {@code MyClass}, and the rest of the
+ * {@code MyClass}, and the rest of the 
  * chain contains resources shared by the entire application.
- * <p/>
+ * <p>
  * Resources for a class are defined by an eponymous {@code ResourceBundle}
  * in a {@code resources} subpackage.  The Application class itself
  * may also provide resources. A complete
  * description of the naming conventions for ResourceBundles is provided
  * by the {@link #getResourceMap(Class) getResourceMap()} method.
- * <p/>
+ * <p>
  * The mapping from classes and {@code Application} to a list
- * ResourceBundle names is handled by two protected methods:
+ * ResourceBundle names is handled by two protected methods: 
  * {@link #getClassBundleNames(Class) getClassBundleNames},
  * {@link #getApplicationBundleNames() getApplicationBundleNames}.
- * Subclasses could override these methods to append additional
+ * Subclasses could override these methods to append additional 
  * ResourceBundle names to the default lists.
  *
- * @author Hans Muller (Hans.Muller@Sun.COM)
  * @see ApplicationContext#getResourceManager
  * @see ApplicationContext#getResourceMap
  * @see ResourceMap
+ * @author Hans Muller (Hans.Muller@Sun.COM)
  */
 public class ResourceManager extends AbstractBean {
+
     private static final Logger logger = Logger.getLogger(ResourceManager.class.getName());
     private final Map<String, ResourceMap> resourceMaps;
     private final ApplicationContext context;
@@ -66,9 +67,9 @@ public class ResourceManager extends AbstractBean {
      * <pre>
      * Application.getInstance().getContext().getResourceMap(MyClass.class)
      * </pre>
-     * <p/>
-     * FIXME - @param javadoc
      *
+     * FIXME - @param javadoc
+     * @param context
      * @see ApplicationContext#getResourceManager
      * @see ApplicationContext#getResourceMap
      */
@@ -173,12 +174,12 @@ public class ResourceManager extends AbstractBean {
     /**
      * Returns a {@link ResourceMap#getParent chain} of {@code ResourceMaps}
      * that encapsulate the {@code ResourceBundles} for each class
-     * from {@code startClass} to (including) {@code stopClass}.  The
+     * from {@code startClass} to (including) {@code stopClass}.  The 
      * final link in the chain is Application ResourceMap chain, i.e.
      * the value of {@link #getResourceMap() getResourceMap()}.
-     * <p/>
+     * <p>
      * The ResourceBundle names for the chain of ResourceMaps
-     * are defined by  {@link #getClassBundleNames} and
+     * are defined by  {@link #getClassBundleNames} and 
      * {@link #getApplicationBundleNames}.  Collectively they define the
      * standard location for {@code ResourceBundles} for a particular
      * class as the {@code resources} subpackage.  For example, the
@@ -186,50 +187,54 @@ public class ResourceManager extends AbstractBean {
      * be named {@code com.myco.resources.MyScreen}.  Typical
      * ResourceBundles are ".properties" files, so: {@code
      * com/foo/bar/resources/MyScreen.properties}.  The following table
-     * is a list of the ResourceMaps and their constituent
+     * is a list of the ResourceMaps and their constituent 
      * ResourceBundles for the same example:
-     * <p/>
+     * <p>
      * <table border="1" cellpadding="4%">
-     * <caption><em>ResourceMap chain for class MyScreen in MyApp</em></caption>
-     * <tr>
-     * <th></th>
-     * <th>ResourceMap</th>
-     * <th>ResourceBundle names</th>
-     * <th>Typical ResourceBundle files</th>
-     * </tr>
-     * <tr>
-     * <td>1</td>
-     * <td>class: com.myco.MyScreen</td>
-     * <td>com.myco.resources.MyScreen</td>
-     * <td>com/myco/resources/MyScreen.properties</td>
-     * </tr>
-     * <tr>
-     * <td>2/td>
-     * <td>application: com.myco.MyApp</td>
-     * <td>com.myco.resources.MyApp</td>
-     * <td>com/myco/resources/MyApp.properties</td>
-     * </tr>
-     * <tr>
-     * <td>3</td>
-     * <td>application: javax.swing.application.Application</td>
-     * <td>javax.swing.application.resources.Application</td>
-     * <td>javax.swing.application.resources.Application.properties</td>
-     * </tr>
+     *   <caption><em>ResourceMap chain for class MyScreen in MyApp</em></caption>
+     *     <tr>
+     *       <th></th>
+     *       <th>ResourceMap</th>
+     *       <th>ResourceBundle names</th>
+     *       <th>Typical ResourceBundle files</th>
+     *     </tr>
+     *     <tr>
+     *       <td>1</td>
+     *       <td>class: com.myco.MyScreen</td>
+     *       <td>com.myco.resources.MyScreen</td>
+     *       <td>com/myco/resources/MyScreen.properties</td>
+     *     </tr>
+     *     <tr>
+     *       <td>2/td>
+     *       <td>application: com.myco.MyApp</td>
+     *       <td>com.myco.resources.MyApp</td>
+     *       <td>com/myco/resources/MyApp.properties</td>
+     *     </tr>
+     *     <tr>
+     *       <td>3</td>
+     *       <td>application: javax.swing.application.Application</td>
+     *       <td>javax.swing.application.resources.Application</td>
+     *       <td>javax.swing.application.resources.Application.properties</td>
+     *     </tr>
      * </table>
-     * <p/>
-     * <p/>
-     * None of the ResourceBundles are required to exist.  If more than one
+     *
+     * <p>Note that inner classes are searched for by "simple" name - eg,
+     * for a class MyApp$InnerClass, the resource bundle must be named
+     * InnerClass.properties. See the notes on {@link #classBundleBaseName classBundleBaseName} </p>
+     *
+     * <p>
+     * None of the ResourceBundles are required to exist.  If more than one 
      * ResourceBundle contains a resource with the same name then
      * the one earlier in the list has precedence
-     * <p/>
+     * <p>
      * ResourceMaps are constructed lazily and cached.  One ResourceMap
      * is constructed for each sequence of classes in the same package.
      *
      * @param startClass the first class whose ResourceBundles will be included
-     * @param stopClass  the last class whose ResourceBundles will be included
-     * @return a {@code ResourceMap} chain that contains resources loaded from
-     *         {@code ResourceBundles}  found in the resources subpackage for
-     *         each class.
+     * @param stopClass the last class whose ResourceBundles will be included
+     * @return a {@code ResourceMap} chain that contains resources loaded from 
+     *   {@code ResourceBundles}  found in the resources subpackage for 
+     *   each class.
      * @see #getClassBundleNames
      * @see #getApplicationBundleNames
      * @see ResourceMap#getParent
@@ -254,9 +259,9 @@ public class ResourceManager extends AbstractBean {
      * <code>getResourceMap(cls, cls)</code>.
      *
      * @param cls the class that defines the location of ResourceBundles
-     * @return a {@code ResourceMap} that contains resources loaded from
-     *         {@code ResourceBundles}  found in the resources subpackage of the
-     *         specified class's package.
+     * @return a {@code ResourceMap} that contains resources loaded from 
+     *   {@code ResourceBundles}  found in the resources subpackage of the 
+     *   specified class's package.
      * @see #getResourceMap(Class, Class)
      */
     public final ResourceMap getResourceMap(Class cls) {
@@ -269,7 +274,7 @@ public class ResourceManager extends AbstractBean {
     /**
      * Returns the chain of ResourceMaps that's shared by the entire application,
      * beginning with the resources defined for the application's class, i.e.
-     * the value of the ApplicationContext
+     * the value of the ApplicationContext 
      * {@link ApplicationContext#getApplicationClass applicationClass} property.
      * If the {@code applicationClass} property has not been set, e.g. because
      * the application has not been {@link Application#launch launched} yet,
@@ -288,25 +293,26 @@ public class ResourceManager extends AbstractBean {
      * application.  The list is in priority order: resources defined
      * by the first ResourceBundle shadow resources with the the same
      * name that come later.
-     * <p/>
+     * <p>
      * The default value for this property is a list of {@link
      * #getClassBundleNames per-class} ResourceBundle names, beginning
      * with the {@code Application's} class and of each of its
      * superclasses, up to {@code Application.class}.
-     * For example, if the Application's class was
+     * For example, if the Application's class was 
      * {@code com.foo.bar.MyApp}, and MyApp was a subclass
-     * of {@code SingleFrameApplication.class}, then the
+     * of {@code SingleFrameApplication.class}, then the 
      * ResourceBundle names would be:
      * <code><ol>
      * <li>com.foo.bar.resources.MyApp</li>
      * <li>javax.swing.application.resources.SingleFrameApplication</li>
      * <li>javax.swing.application.resources.Application</li>
      * </code></ol>
-     * <p/>
+     * <p> 
      * The default value of this property is computed lazily and
      * cached.  If it's reset, then all ResourceMaps cached by
      * {@code getResourceMap} will be updated.
      *
+     * @return
      * @see #setApplicationBundleNames
      * @see #getResourceMap
      * @see #getClassBundleNames
@@ -314,9 +320,9 @@ public class ResourceManager extends AbstractBean {
      */
     public List<String> getApplicationBundleNames() {
         /* Lazily compute an initial value for this property, unless the
-       * application's class hasn't been specified yet.  In that case
-       * we just return a placeholder based on Application.class.
-       */
+         * application's class hasn't been specified yet.  In that case
+         * we just return a placeholder based on Application.class.
+         */
         if (applicationBundleNames == null) {
             Class appClass = getContext().getApplicationClass();
             if (appClass == null) {
@@ -331,8 +337,9 @@ public class ResourceManager extends AbstractBean {
     /**
      * Specify the names of the ResourceBundles to be shared by the entire
      * application.  More information about the property is provided
-     * by the {@link #getApplicationBundleNames} method.
+     * by the {@link #getApplicationBundleNames} method.  
      *
+     * @param bundleNames
      * @see #setApplicationBundleNames
      */
     public void setApplicationBundleNames(List<String> bundleNames) {
@@ -380,16 +387,16 @@ public class ResourceManager extends AbstractBean {
     }
 
     /**
-     * Map from a class to a list of the names of the
+     * Map from a class to a list of the names of the 
      * {@code ResourceBundles} specific to the class.
-     * The list is in priority order: resources defined
+     * The list is in priority order: resources defined 
      * by the first ResourceBundle shadow resources with the
      * the same name that come later.
-     * <p/>
-     * By default this method returns one ResourceBundle
+     * <p>
+     * By default this method returns one ResourceBundle 
      * whose name is the same as the class's name, but in the
      * {@code "resources"} subpackage.
-     * <p/>
+     * <p>
      * For example, given a class named
      * {@code com.foo.bar.MyClass}, the ResourceBundle name would
      * be {@code "com.foo.bar.resources.MyClass"}. If MyClass is
@@ -397,7 +404,7 @@ public class ResourceManager extends AbstractBean {
      * given an inner class named {@code com.foo.bar.OuterClass$InnerClass},
      * the ResourceBundle name would be
      * {@code "com.foo.bar.resources.InnerClass"}.
-     * <p/>
+     * <p>
      * This method is used by the {@code getResourceMap} methods
      * to compute the list of ResourceBundle names
      * for a new {@code ResourceMap}.  ResourceManager subclasses
@@ -422,6 +429,10 @@ public class ResourceManager extends AbstractBean {
      * </pre>
      * Custom ResourceManagers might override this method to construct their
      * own ResourceMap subclasses.
+     * @param classLoader
+     * @param parent
+     * @param bundleNames
+     * @return
      */
     protected ResourceMap createResourceMap(ClassLoader classLoader, ResourceMap parent, List<String> bundleNames) {
         return new ResourceMap(parent, classLoader, bundleNames);
@@ -429,15 +440,13 @@ public class ResourceManager extends AbstractBean {
 
     /**
      * The value of the special Application ResourceMap resource
-     * named "platform".  By default the value of this resource
-     * is "osx" if the underlying operating environment is Apple
-     * OSX or "default".
+     * named "platform".  
      *
      * @return the value of the platform resource
      * @see #setPlatform
      */
-    public String getPlatform() {
-        return getResourceMap().getString("platform");
+    public PlatformType getPlatform() {
+        return getResourceMap().getPlatform();
     }
 
     /**
@@ -449,23 +458,24 @@ public class ResourceManager extends AbstractBean {
      * myLabel.text.default = A value for other platforms
      * myLabel.text = myLabel.text.${platform}
      * </pre>
-     * <p/>
+     * <p> 
      * By default the value of this resource is "osx" if the
      * underlying operating environment is Apple OSX or "default".
      * To distinguish other platforms one can reset this property
      * based on the value of the {@code "os.name"} system property.
-     * <p/>
+     * <p>
      * This method should be called as early as possible, typically
      * in the Application {@link Application#initialize initialize}
-     * method.
+     * method.  
      *
+     * @param platform
      * @see #getPlatform
      * @see System#getProperty
      */
-    public void setPlatform(String platform) {
+    public void setPlatform(PlatformType platform) {
         if (platform == null) {
             throw new IllegalArgumentException("null platform");
         }
-        getResourceMap().putResource("platform", platform);
+        getResourceMap().setPlatform(platform);
     }
 }

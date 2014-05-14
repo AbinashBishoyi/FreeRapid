@@ -2,7 +2,6 @@
 * Copyright (C) 2006 Sun Microsystems, Inc. All rights reserved. Use is
 * subject to license terms.
 */
-
 package org.jdesktop.application;
 
 import javax.swing.*;
@@ -10,15 +9,15 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
+import java.util.logging.Logger;
 
 /**
  * A View encapsulates a top-level Application GUI component, like a JFrame
- * or an Applet, and its main GUI elements: a menu bar, tool bar, component,
+ * or an Applet, and its main GUI elements: a menu bar, tool bar, component, 
  * and a status bar.  All of the elements are optional (although a View without
- * a main component would be unusual).  Views have a {@code JRootPane}, which
+ * a main component would be unusual).  Views have a {@code JRootPane}, which 
  * is the root component for all of the Swing Window types as well as JApplet.
- * Setting a View property, like {@code menuBar} or {@code toolBar}, just
+ * Setting a View property, like {@code menuBar} or {@code toolBar}, just 
  * adds a component to the rootPane in a way that's defined by the View subclass.
  * By default the View elements are arranged in a conventional way:
  * <ul>
@@ -27,12 +26,12 @@ import java.util.List;
  * <li> {@code component} - added to {@code BorderLayout.CENTER} of the rootPane's contentPane
  * <li> {@code statusBar} - added to {@code BorderLayout.SOUTH} of the rootPane's contentPane
  * </ul>
- * <p/>
+ * <p>
  * To show or hide a View you call the corresponding Application methods.  Here's a simple
  * example:
  * <pre>
  * class MyApplication extends SingleFrameApplication {
- *     @Override protected void startup() {
+ *     &#064;ppOverride protected void startup() {
  *         View view = getMainView();
  *         view.setComponent(createMainComponent());
  *         view.setMenuBar(createMenuBar());
@@ -40,17 +39,18 @@ import java.util.List;
  *     }
  * }
  * </pre>
- * <p/>
+ * <p>
  * The advantage of Views over just configuring a JFrame or JApplet
  * directly, is that a View is more easily moved to an alternative
- * top level container, like a docking framework.
+ * top level container, like a docking framework.  
  *
  * @see JRootPane
  * @see Application#show(View)
  * @see Application#hide(View)
  */
 public class View extends AbstractBean {
- //   private static final Logger logger = Logger.getLogger(View.class.getName());
+
+    private static final Logger logger = Logger.getLogger(View.class.getName());
     private final Application application;
     private ResourceMap resourceMap = null;
     private JRootPane rootPane = null;
@@ -101,7 +101,7 @@ public class View extends AbstractBean {
     }
 
     /**
-     * The {@code ResourceMap} for this View.
+     * The {@code ResourceMap} for this View.  
      * This method is just shorthand for {@code getContext().getResourceMap(getClass(), View.class)}.
      *
      * @return The {@code ResourceMap} for this View
@@ -115,8 +115,8 @@ public class View extends AbstractBean {
     }
 
     /**
-     * The {@code JRootPane} for this View.  All of the components for this
-     * View must be added to its rootPane.  Most applications will do so
+     * The {@code JRootPane} for this View.  All of the components for this 
+     * View must be added to its rootPane.  Most applications will do so 
      * by setting the View's {@code component}, {@code menuBar}, {@code toolBar},
      * and {@code statusBar} properties.
      *
@@ -145,7 +145,7 @@ public class View extends AbstractBean {
     }
 
     /**
-     * The main {JComponent} for this View.
+     * The main {JComponent} for this View.  
      *
      * @return The {@code component} for this View
      * @see #setComponent
@@ -155,14 +155,14 @@ public class View extends AbstractBean {
     }
 
     /**
-     * Set the single main Component for this View.  It's added to the
-     * {@code BorderLayout.CENTER} of the rootPane's contentPane.  If
-     * the component property was already set, the old component is removed
+     * Set the single main Component for this View.  It's added to the 
+     * {@code BorderLayout.CENTER} of the rootPane's contentPane.  If 
+     * the component property was already set, the old component is removed 
      * first.
-     * <p/>
+     * <p>
      * This is a bound property.  The default value is null.
      *
-     * @return The {@code component} for this View
+     * @param component The {@code component} for this View
      * @see #getComponent
      */
     public void setComponent(JComponent component) {
@@ -173,7 +173,7 @@ public class View extends AbstractBean {
     }
 
     /**
-     * The main {JMenuBar} for this View.
+     * The main {JMenuBar} for this View.  
      *
      * @return The {@code menuBar} for this View
      * @see #setMenuBar
@@ -198,7 +198,7 @@ public class View extends AbstractBean {
             throw new IllegalArgumentException("null toolbars");
         }
         List<JToolBar> oldValue = getToolBars();
-        this.toolBars = Collections.unmodifiableList(new ArrayList<JToolBar>(toolBars));
+        this.toolBars = Collections.unmodifiableList(new ArrayList(toolBars));
         JComponent oldToolBarsPanel = this.toolBarsPanel;
         JComponent newToolBarsPanel = null;
         if (this.toolBars.size() == 1) {
@@ -238,6 +238,5 @@ public class View extends AbstractBean {
         replaceContentPaneChild(oldValue, this.statusBar, BorderLayout.SOUTH);
         firePropertyChange("statusBar", oldValue, this.statusBar);
     }
-
 }
 

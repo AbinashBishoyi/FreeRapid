@@ -2,7 +2,6 @@
 * Copyright (C) 2006 Sun Microsystems, Inc. All rights reserved. Use is
 * subject to license terms.
 */
-
 package org.jdesktop.application;
 
 import javax.swing.*;
@@ -10,26 +9,26 @@ import java.awt.event.KeyEvent;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 
-
 /**
- * An internal helper class that configures the text and mnemonic
- * properties for instances of AbstractButton, JLabel, and
+ * An internal helper class that configures the text and mnemonic 
+ * properties for instances of AbstractButton, JLabel, and 
  * javax.swing.Action.  It's used like this:
  * <pre>
  * MnemonicText.configure(myButton, "Save &As")
  * </pre>
- * The configure method unconditionally sets three properties on the
- * target object:
+ * The configure method unconditionally sets three properties on the 
+ * target object: 
  * <ul>
- * <li>the label text, "Save As"
+ * <li>the label text, "Save As" 
  * <li>the mnemonic key code, VK_A
  * <li>the index of the mnemonic character, 5
  * </ul>
  * If the mnemonic marker character isn't present, then the second
  * two properties are cleared to VK_UNDEFINED (0) and -1 respectively.
- * <p/>
+ * <p>
  */
 class MnemonicText {
+
     private MnemonicText() {
     } // not used
 

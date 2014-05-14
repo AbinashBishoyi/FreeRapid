@@ -2,7 +2,6 @@
 * Copyright (C) 2006 Sun Microsystems, Inc. All rights reserved. Use is
 * subject to license terms.
 */
-
 package org.jdesktop.application;
 
 import javax.swing.*;
@@ -16,18 +15,19 @@ import java.util.List;
 import java.util.WeakHashMap;
 import java.util.logging.Logger;
 
-
 /**
  * The application's {@code ActionManager} provides read-only cached
  * access to {@code ActionMaps} that contain one entry for each method
  * marked with the {@code @Action} annotation in a class.
  *
- * @author Hans Muller (Hans.Muller@Sun.COM)
+ *
  * @see ApplicationContext#getActionMap(Object)
  * @see ApplicationActionMap
  * @see ApplicationAction
+ * @author Hans Muller (Hans.Muller@Sun.COM)
  */
 public class ActionManager extends AbstractBean {
+
     private static final Logger logger = Logger.getLogger(ActionManager.class.getName());
     private final ApplicationContext context;
     private final WeakHashMap<Object, WeakReference<ApplicationActionMap>> actionMaps;
@@ -67,13 +67,12 @@ public class ActionManager extends AbstractBean {
         return parent;
     }
 
-
     /**
      * The {@code ActionMap} chain for the entire {@code Application}.
-     * <p/>
-     * Returns an {@code ActionMap} with the {@code @Actions} defined
+     * <p>
+     * Returns an {@code ActionMap} with the {@code @Actions} defined 
      * in the application's {@code Application} subclass, i.e. the
-     * the value of:
+     * the value of: 
      * <pre>
      * ApplicationContext.getInstance().getApplicationClass()
      * </pre>
@@ -82,7 +81,7 @@ public class ActionManager extends AbstractBean {
      * {@code ActionMap.get()} method searches the entire chain, so
      * logically, the {@code ActionMap} that this method returns contains
      * all of the application-global actions.
-     * <p/>
+     * <p>
      * The value returned by this method is cached.
      *
      * @return the {@code ActionMap} chain for the entire {@code Application}.
@@ -111,19 +110,19 @@ public class ActionManager extends AbstractBean {
     /**
      * Returns the {@code ApplicationActionMap} chain for the specified
      * actions class and target object.
-     * <p/>
+     * <p>
      * The specified class can contain methods marked with
      * the {@code @Action} annotation.  Each one will be turned
      * into an {@link ApplicationAction ApplicationAction} object
-     * and all of them will be added to a single
-     * {@link ApplicationActionMap ApplicationActionMap}.  All of the
+     * and all of them will be added to a single 
+     * {@link ApplicationActionMap ApplicationActionMap}.  All of the 
      * {@code ApplicationActions} invoke their {@code actionPerformed}
      * method on the specified {@code actionsObject}.
      * The parent of the returned {@code ActionMap} is the global
      * {@code ActionMap} that contains the {@code @Actions} defined
      * in this application's {@code Application} subclass.
-     * <p/>
-     * <p/>
+     *
+     * <p>
      * To bind an {@code @Action} to a Swing component, one specifies
      * the {@code @Action's} name in an expression like this:
      * <pre>
@@ -131,8 +130,8 @@ public class ActionManager extends AbstractBean {
      * MyActions myActions = new MyActions();
      * myComponent.setAction(ac.getActionMap(myActions).get("myAction"));
      * </pre>
-     * <p/>
-     * <p/>
+     *
+     * <p>
      * The value returned by this method is cached.  The lifetime of
      * the cached entry will be the same as the lifetime of the {@code
      * actionsObject} and the {@code ApplicationActionMap} and {@code
@@ -142,11 +141,13 @@ public class ActionManager extends AbstractBean {
      * ApplicationActionMaps}, then the cached {@code ActionMap} entry
      * will be cleared.
      *
-     * @return the {@code ApplicationActionMap} for {@code actionsClass} and {@code actionsObject}
+     * @param actionsClass
+     * @param actionsObject
      * @see #getActionMap()
      * @see ApplicationContext#getActionMap()
      * @see ApplicationContext#getActionMap(Class, Object)
      * @see ApplicationContext#getActionMap(Object)
+     * @return the {@code ApplicationActionMap} for {@code actionsClass} and {@code actionsObject}
      */
     public ApplicationActionMap getActionMap(Class actionsClass, Object actionsObject) {
         if (actionsClass == null) {
@@ -171,21 +172,23 @@ public class ActionManager extends AbstractBean {
                     lastActionMap = lastActionMap.getParent();
                 }
                 lastActionMap.setParent(getActionMap());
-                actionMaps.put(actionsObject, new WeakReference(classActionMap));
+                actionMaps.put(actionsObject, new WeakReference<ApplicationActionMap>(classActionMap));
             }
             return classActionMap;
         }
     }
 
     private final class KeyboardFocusPCL implements PropertyChangeListener {
+
         private final TextActions textActions;
 
         KeyboardFocusPCL() {
             textActions = new TextActions(getContext());
         }
 
+        @Override
         public void propertyChange(PropertyChangeEvent e) {
-            if (e.getPropertyName() == "permanentFocusOwner") {
+            if ("permanentFocusOwner".equals(e.getPropertyName())) {
                 JComponent oldOwner = getContext().getFocusOwner();
                 Object newValue = e.getNewValue();
                 JComponent newOwner = (newValue instanceof JComponent) ? (JComponent) newValue : null;

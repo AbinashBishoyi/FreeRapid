@@ -2,7 +2,6 @@
 * Copyright (C) 2006 Sun Microsystems, Inc. All rights reserved. Use is
 * subject to license terms.
 */
-
 package org.jdesktop.application;
 
 import java.net.MalformedURLException;
@@ -15,21 +14,21 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * A base class for converting arbitrary types to and from Strings, as well as
+ * A base class for converting arbitrary types to and from Strings, as well as 
  * a registry of ResourceConverter implementations.
- * <p/>
+ * <p>
  * The <tt>supportsType</tt> method defines what types a ResourceConverter supports.
  * By default it returns true for classes that are equal to the constructor's
  * <tt>type</tt> argument.  The <tt>parseType</tt> methods converts a string
- * the ResourceConverter's supported type, and the <tt>toString</tt> does the
- * inverse, it converts a supported type to a String.  Concrete ResourceConverter
- * subclasses must override <tt>parseType()</tt> and, in most cases, the
+ * the ResourceConverter's supported type, and the <tt>toString</tt> does the 
+ * inverse, it converts a supported type to a String.  Concrete ResourceConverter 
+ * subclasses must override <tt>parseType()</tt> and, in most cases, the 
  * <tt>toString</tt> method as well.
- * <p/>
- * This class maintains a registry of ResourceConverters.
- * The <tt>forType</tt> method returns the first ResourceConverter that
- * supports a particular type, new ResourceConverters can be added with
- * <tt>register()</tt>.  A small set of generic ResourceConverters are
+ * <p>
+ * This class maintains a registry of ResourceConverters.  
+ * The <tt>forType</tt> method returns the first ResourceConverter that 
+ * supports a particular type, new ResourceConverters can be added with 
+ * <tt>register()</tt>.  A small set of generic ResourceConverters are 
  * registered by default.  They support the following types:
  * <ul>
  * <li><tt>Boolean</tt></li>
@@ -43,7 +42,7 @@ import java.util.List;
  * <li><tt>URL</tt></li>
  * <li><tt>URI</tt></li>
  * </ul>
- * <p/>
+ * <p>
  * The Boolean ResourceConverter returns true for "true", "on", "yes",
  * false otherwise.  The other primitive type ResourceConverters rely on
  * the corresponding static parse<i>Type</i> method,
@@ -82,6 +81,7 @@ public abstract class ResourceConverter {
     }
 
     public static class ResourceConverterException extends Exception {
+
         private final String badString;
 
         private String maybeShorten(String s) {
@@ -99,6 +99,7 @@ public abstract class ResourceConverter {
             this.badString = maybeShorten(badString);
         }
 
+        @Override
         public String toString() {
             StringBuffer sb = new StringBuffer(super.toString());
             sb.append(" string: \"");
@@ -142,8 +143,8 @@ public abstract class ResourceConverter {
     private static List<ResourceConverter> resourceConverters =
             new ArrayList<ResourceConverter>(Arrays.asList(resourceConvertersArray));
 
-
     private static class BooleanResourceConverter extends ResourceConverter {
+
         private final String[] trueStrings;
 
         BooleanResourceConverter(String... trueStrings) {
@@ -169,6 +170,7 @@ public abstract class ResourceConverter {
     }
 
     private static abstract class NumberResourceConverter extends ResourceConverter {
+
         private final Class primitiveType;
 
         NumberResourceConverter(Class type, Class primitiveType) {
@@ -182,8 +184,7 @@ public abstract class ResourceConverter {
         public Object parseString(String s, ResourceMap ignore) throws ResourceConverterException {
             try {
                 return parseString(s);
-            }
-            catch (NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 throw new ResourceConverterException("invalid " + type.getSimpleName(), s, e);
             }
         }
@@ -195,6 +196,7 @@ public abstract class ResourceConverter {
     }
 
     private static class FloatResourceConverter extends NumberResourceConverter {
+
         FloatResourceConverter() {
             super(Float.class, float.class);
         }
@@ -206,6 +208,7 @@ public abstract class ResourceConverter {
     }
 
     private static class DoubleResourceConverter extends NumberResourceConverter {
+
         DoubleResourceConverter() {
             super(Double.class, double.class);
         }
@@ -217,6 +220,7 @@ public abstract class ResourceConverter {
     }
 
     private static abstract class INumberResourceConverter extends ResourceConverter {
+
         private final Class primitiveType;
 
         INumberResourceConverter(Class type, Class primitiveType) {
@@ -232,8 +236,7 @@ public abstract class ResourceConverter {
                 String[] nar = s.split("&"); // number ampersand radix
                 int radix = (nar.length == 2) ? Integer.parseInt(nar[1]) : -1;
                 return parseString(nar[0], radix);
-            }
-            catch (NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 throw new ResourceConverterException("invalid " + type.getSimpleName(), s, e);
             }
         }
@@ -245,6 +248,7 @@ public abstract class ResourceConverter {
     }
 
     private static class ByteResourceConverter extends INumberResourceConverter {
+
         ByteResourceConverter() {
             super(Byte.class, byte.class);
         }
@@ -256,17 +260,19 @@ public abstract class ResourceConverter {
     }
 
     private static class IntegerResourceConverter extends INumberResourceConverter {
+
         IntegerResourceConverter() {
             super(Integer.class, int.class);
         }
 
         @Override
         protected Number parseString(String s, int radix) throws NumberFormatException {
-            return (radix == -1) ? Integer.decode(s) : Integer.parseInt(s);
+            return (radix == -1) ? Integer.decode(s) : Integer.parseInt(s, radix);
         }
     }
 
     private static class LongResourceConverter extends INumberResourceConverter {
+
         LongResourceConverter() {
             super(Long.class, long.class);
         }
@@ -278,6 +284,7 @@ public abstract class ResourceConverter {
     }
 
     private static class ShortResourceConverter extends INumberResourceConverter {
+
         ShortResourceConverter() {
             super(Short.class, short.class);
         }
@@ -289,6 +296,7 @@ public abstract class ResourceConverter {
     }
 
     private static class MessageFormatResourceConverter extends ResourceConverter {
+
         MessageFormatResourceConverter() {
             super(MessageFormat.class);
         }
@@ -300,6 +308,7 @@ public abstract class ResourceConverter {
     }
 
     private static class URLResourceConverter extends ResourceConverter {
+
         URLResourceConverter() {
             super(URL.class);
         }
@@ -308,14 +317,14 @@ public abstract class ResourceConverter {
         public Object parseString(String s, ResourceMap ignore) throws ResourceConverterException {
             try {
                 return new URL(s);
-            }
-            catch (MalformedURLException e) {
+            } catch (MalformedURLException e) {
                 throw new ResourceConverterException("invalid URL", s, e);
             }
         }
     }
 
     private static class URIResourceConverter extends ResourceConverter {
+
         URIResourceConverter() {
             super(URI.class);
         }
@@ -324,8 +333,7 @@ public abstract class ResourceConverter {
         public Object parseString(String s, ResourceMap ignore) throws ResourceConverterException {
             try {
                 return new URI(s);
-            }
-            catch (URISyntaxException e) {
+            } catch (URISyntaxException e) {
                 throw new ResourceConverterException("invalid URI", s, e);
             }
         }

@@ -11,8 +11,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-
 public class TaskService extends AbstractBean {
+
     private final String name;
     private final ExecutorService executorService;
     private final List<Task> tasks;
@@ -33,9 +33,9 @@ public class TaskService extends AbstractBean {
 
     public TaskService(String name) {
         this(name, new ThreadPoolExecutor(
-                3,   // corePool size
-                10,  // maximumPool size
-                1L, TimeUnit.SECONDS,  // non-core threads time to live
+                3, // corePool size
+                10, // maximumPool size
+                1L, TimeUnit.SECONDS, // non-core threads time to live
                 new LinkedBlockingQueue<Runnable>()));
     }
 
@@ -54,6 +54,8 @@ public class TaskService extends AbstractBean {
     }
 
     private class TaskPCL implements PropertyChangeListener {
+
+        @Override
         public void propertyChange(PropertyChangeEvent e) {
             String propertyName = e.getPropertyName();
             if ("done".equals(propertyName)) {
@@ -86,6 +88,8 @@ public class TaskService extends AbstractBean {
                 inputBlocker.block();
             } else {
                 Runnable doBlockTask = new Runnable() {
+
+                    @Override
                     public void run() {
                         inputBlocker.block();
                     }

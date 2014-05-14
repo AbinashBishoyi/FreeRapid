@@ -40,10 +40,10 @@ import java.beans.PropertyChangeListener;
  * @author Scott Violet (Scott.Violet@Sun.COM)
  */
 class TextActions extends AbstractBean {
+    private static final String MARKER_ACTION_KEY = "TextActions.markerAction";
     private final ApplicationContext context;
     private final CaretListener textComponentCaretListener;
     private final PropertyChangeListener textComponentPCL;
-    private final String markerActionKey = "TextActions.markerAction";
     private final javax.swing.Action markerAction;
     private boolean copyEnabled = false;    // see setCopyEnabled
     private boolean cutEnabled = false;     // see setCutEnabled
@@ -54,6 +54,7 @@ class TextActions extends AbstractBean {
     public TextActions(ApplicationContext context) {
         this.context = context;
         markerAction = new javax.swing.AbstractAction() {
+            @Override
             public void actionPerformed(ActionEvent e) {
             }
         };
@@ -99,6 +100,7 @@ class TextActions extends AbstractBean {
     }
 
     private final class ClipboardListener implements FlavorListener {
+        @Override
         public void flavorsChanged(FlavorEvent e) {
             JComponent c = getFocusOwner();
             if (c instanceof JTextComponent) {
@@ -108,12 +110,14 @@ class TextActions extends AbstractBean {
     }
 
     private final class TextComponentCaretListener implements CaretListener {
+        @Override
         public void caretUpdate(CaretEvent e) {
             updateTextActions((JTextComponent) (e.getSource()));
         }
     }
 
     private final class TextComponentPCL implements PropertyChangeListener {
+        @Override
         public void propertyChange(PropertyChangeEvent e) {
             String propertyName = e.getPropertyName();
             if ((propertyName == null) || "editable".equals(propertyName)) {
@@ -145,8 +149,8 @@ class TextActions extends AbstractBean {
     // TBD: what if text.getActionMap is null, or if it's parent isn't the UI-installed actionMap
     private void maybeInstallTextActions(JTextComponent text) {
         ActionMap actionMap = text.getActionMap();
-        if (actionMap.get(markerActionKey) == null) {
-            actionMap.put(markerActionKey, markerAction);
+        if (actionMap.get(MARKER_ACTION_KEY) == null) {
+            actionMap.put(MARKER_ACTION_KEY, markerAction);
             ActionMap textActions = getContext().getActionMap(getClass(), this);
             for (Object key : textActions.keys()) {
                 actionMap.put(key, textActions.get(key));
@@ -155,7 +159,7 @@ class TextActions extends AbstractBean {
     }
 
 
-    /* This method lifted from JTextComponent.java 
+    /* This method lifted from JTextComponent.java
      */
     private int getCurrentEventModifiers() {
         int modifiers = 0;
@@ -236,12 +240,12 @@ class TextActions extends AbstractBean {
         Object src = e.getSource();
         if (src instanceof JTextComponent) {
             /* The deleteNextCharAction is bound to the delete key in
-            * text components.  The name appears to be a misnomer,
-            * however it's really a compromise.  Calling the method
-            * by a more accurate name,
-            *   "IfASelectionExistsThenDeleteItOtherwiseDeleteTheNextCharacter"
-            * would be rather unwieldy.
-            */
+              * text components.  The name appears to be a misnomer,
+              * however it's really a compromise.  Calling the method
+              * by a more accurate name,
+              *   "IfASelectionExistsThenDeleteItOtherwiseDeleteTheNextCharacter"
+              * would be rather unwieldy.
+              */
             invokeTextAction((JTextComponent) src, DefaultEditorKit.deleteNextCharAction);
         }
     }
@@ -269,7 +273,7 @@ class TextActions extends AbstractBean {
     }
 
     public void setSelectAllEnabled(boolean selectAllEnabled) {
-        final boolean oldValue = this.selectAllEnabled;
+        boolean oldValue = this.selectAllEnabled;
         this.selectAllEnabled = selectAllEnabled;
         firePropertyChange("selectAllEnabled", oldValue, this.selectAllEnabled);
     }

@@ -1,14 +1,18 @@
 /*
-* Copyright (C) 2006 Sun Microsystems, Inc. All rights reserved. Use is
-* subject to license terms.
-*/
-
+ * Copyright (C) 2006 Sun Microsystems, Inc. All rights reserved. Use is
+ * subject to license terms.
+ */
 package org.jdesktop.application;
 
+import org.jdesktop.application.utils.AppHelper;
+import org.jdesktop.application.utils.PlatformType;
+
 import javax.swing.*;
+import javax.swing.UIManager.LookAndFeelInfo;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.PaintEvent;
+import java.beans.Beans;
 import java.lang.reflect.Constructor;
 import java.util.EventListener;
 import java.util.EventObject;
@@ -17,28 +21,27 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 /**
- * The base class for Swing applications.
- * <p/>
- * <p/>
+ * The base class for Swing applications. 
+ *
+ * <p> 
  * This class defines a simple lifecyle for Swing applications: {@code
  * initialize}, {@code startup}, {@code ready}, and {@code shutdown}.
  * The {@code Application's} {@code startup} method is responsible for
  * creating the initial GUI and making it visible, and the {@code
  * shutdown} method for hiding the GUI and performing any other
- * cleanup actions before the application exits.  The {@code initialize}
+ * cleanup actions before the application exits.  The {@code initialize} 
  * method can be used configure system properties that must be set
  * before the GUI is constructed and the {@code ready}
  * method is for applications that want to do a little bit of extra
  * work once the GUI is "ready" to use.  Concrete subclasses must
  * override the {@code startup} method.
- * <p/>
+ * <p>
  * Applications are started with the static {@code launch} method.
  * Applications use the {@code ApplicationContext} {@link
  * Application#getContext singleton} to find resources,
  * actions, local storage, and so on.
- * <p/>
+ * <p>
  * All {@code Application} subclasses must override {@code startup}
  * and they should call {@link #exit} (which
  * calls {@code shutdown}) to exit.
@@ -67,24 +70,24 @@ import java.util.logging.Logger;
  *     }
  * }
  * </pre>
- * <p/>
+ * <p>
  * The {@code mainFrame's} {@code defaultCloseOperation} is set
  * to {@code DO_NOTHING_ON_CLOSE} because we're handling attempts
- * to close the window by calling
+ * to close the window by calling 
  * {@code ApplicationContext} {@link #exit}.
- * <p/>
+ * <p>
  * Simple single frame applications like the example can be defined
  * more easily with the {@link SingleFrameApplication
  * SingleFrameApplication} {@code Application} subclass.
- * <p/>
- * <p/>
+ *
+ * <p> 
  * All of the Application's methods are called (must be called) on
  * the EDT.
- * <p/>
- * <p/>
+ *
+ * <p>
  * All but the most trivial applications should define a ResourceBundle
  * in the resources subpackage with the same name as the application class (like {@code
- * resources/MyApplication.properties}).  This ResourceBundle contains
+ * resources/MyApplication.properties}).  This ResourceBundle contains 
  * resources shared by the entire application and should begin with the
  * following the standard Application resources:
  * <pre>
@@ -98,7 +101,7 @@ import java.util.logging.Logger;
  * Application.description =  One brief sentence
  * Application.lookAndFeel = either system, default, or a LookAndFeel class name
  * </pre>
- * <p/>
+ * <p>
  * The {@code Application.lookAndFeel} resource is used to initialize the
  * {@code UIManager lookAndFeel} as follows:
  * <ul>
@@ -107,28 +110,33 @@ import java.util.logging.Logger;
  * <li>a LookAndFeel class name - use the specified class
  * </ul>
  *
- * @author Hans Muller (Hans.Muller@Sun.COM)
  * @see SingleFrameApplication
  * @see ApplicationContext
  * @see UIManager#setLookAndFeel
+ * @author Hans Muller (Hans.Muller@Sun.COM)
  */
-
-@ProxyActions({"cut", "copy", "paste", "delete", "select-all"})
-
+@ProxyActions({"cut", "copy", "paste", "delete"})
 public abstract class Application extends AbstractBean {
+
+    public static final String KEY_APPLICATION_TITLE = "Application.title";
+    public static final String KEY_APPLICATION_ICON = "Application.icon";
+    public static final String KEY_APPLICATION_VENDOR_ID = "Application.vendorId";
+
+
     private static final Logger logger = Logger.getLogger(Application.class.getName());
     private static Application application = null;
     private final List<ExitListener> exitListeners;
     private final ApplicationContext context;
+    protected boolean ready;
 
     /**
      * Not to be called directly, see {@link #launch launch}.
-     * <p/>
+     * <p>
      * Subclasses can provide a no-args construtor
      * to initialize private final state however GUI
-     * initialization, and anything else that might refer to
+     * initialization, and anything else that might refer to 
      * public API, should be done in the {@link #startup startup}
-     * method.
+     * method.  
      */
     protected Application() {
         exitListeners = new CopyOnWriteArrayList<ExitListener>();
@@ -149,21 +157,23 @@ public abstract class Application extends AbstractBean {
      * The {@code applicationClass} constructor and {@code startup} methods
      * run on the event dispatching thread.
      *
+     * @param <T>
      * @param applicationClass the {@code Application} class to launch
-     * @param args             {@code main} method arguments
+     * @param args {@code main} method arguments
      * @see #shutdown
      * @see ApplicationContext#getApplication
      */
     public static synchronized <T extends Application> void launch(final Class<T> applicationClass, final String[] args) {
         Runnable doCreateAndShowGUI = new Runnable() {
+
+            @Override
             public void run() {
                 try {
                     application = create(applicationClass);
                     application.initialize(args);
                     application.startup();
                     application.waitForReady();
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     String msg = String.format("Application %s failed to launch", applicationClass);
                     logger.log(Level.SEVERE, msg, e);
                     throw (new Error(msg, e));
@@ -184,16 +194,17 @@ public abstract class Application extends AbstractBean {
      */
     static <T extends Application> T create(Class<T> applicationClass) throws Exception {
 
-        /* A common mistake for privileged applications that make
-       * network requests (and aren't applets or web started) is to
-       * not configure the http.proxyHost/Port system properties.
-       * We paper over that issue here.
-       */
-        try {
-            System.setProperty("java.net.useSystemProxies", "true");
-        }
-        catch (SecurityException ignoreException) {
-            // Unsigned apps can't set this property.
+        if (!Beans.isDesignTime()) {
+            /* A common mistake for privileged applications that make
+             * network requests (and aren't applets or web started) is to
+             * not configure the http.proxyHost/Port system properties.
+             * We paper over that issue here.
+             */
+            try {
+                System.setProperty("java.net.useSystemProxies", "true");
+            } catch (SecurityException ignoreException) {
+                // Unsigned apps can't set this property. 
+            }
         }
 
         /* Construct the Application object.  The following
@@ -205,8 +216,7 @@ public abstract class Application extends AbstractBean {
         if (!ctor.isAccessible()) {
             try {
                 ctor.setAccessible(true);
-            }
-            catch (SecurityException ignore) {
+            } catch (SecurityException ignore) {
                 // ctor.newInstance() will throw an IllegalAccessException
             }
         }
@@ -219,49 +229,41 @@ public abstract class Application extends AbstractBean {
         ctx.setApplication(application);
 
         /* Load the application resource map, notably the
-       * Application.* properties.
-       */
+         * Application.* properties.
+         */
         ResourceMap appResourceMap = ctx.getResourceMap();
 
-        appResourceMap.putResource("platform", platform());
+        appResourceMap.putResource(ResourceMap.KEY_PLATFORM, AppHelper.getPlatform());
 
-        /* Initialize the UIManager lookAndFeel property with the
-       * Application.lookAndFeel resource.  If the the resource
-       * isn't defined we default to "system".
-       */
-        String key = "Application.lookAndFeel";
-        String lnfResource = appResourceMap.getString(key);
-        String lnf = (lnfResource == null) ? "system" : lnfResource;
-        try {
-            if (lnf.equalsIgnoreCase("system")) {
-                String name = UIManager.getSystemLookAndFeelClassName();
-                UIManager.setLookAndFeel(name);
-            } else if (!lnf.equalsIgnoreCase("default")) {
-                UIManager.setLookAndFeel(lnf);
+        if (!Beans.isDesignTime()) {
+            /* Initialize the UIManager lookAndFeel property with the
+             * Application.lookAndFeel resource.  If the the resource
+             * isn't defined we default to "system".
+             */
+            String key = "Application.lookAndFeel";
+            String lnfResource = appResourceMap.getString(key);
+            String lnf = (lnfResource == null) ? "system" : lnfResource;
+            try {
+                if (lnf.equalsIgnoreCase("system")) {
+                    String name = UIManager.getSystemLookAndFeelClassName();
+                    UIManager.setLookAndFeel(name);
+                } else if (lnf.equalsIgnoreCase("nimbus")) {
+                    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                        if ("Nimbus".equals(info.getName())) {
+                            UIManager.setLookAndFeel(info.getClassName());
+                            break;
+                        }
+                    }
+                } else if (!lnf.equalsIgnoreCase("default")) {
+                    UIManager.setLookAndFeel(lnf);
+                }
+            } catch (Exception e) {
+                String s = "Couldn't set LookandFeel " + key + " = \"" + lnfResource + "\"";
+                logger.log(Level.WARNING, s, e);
             }
-        }
-        catch (Exception e) {
-            String s = "Couldn't set LookandFeel " + key + " = \"" + lnfResource + "\"";
-            logger.log(Level.WARNING, s, e);
         }
 
         return application;
-    }
-
-    /* Defines the default value for the platform resource, 
-     * either "osx" or "default".
-     */
-    private static String platform() {
-        String platform = "default";
-        try {
-            String osName = System.getProperty("os.name");
-            if ((osName != null) && osName.toLowerCase().startsWith("mac os x")) {
-                platform = "osx";
-            }
-        }
-        catch (SecurityException ignore) {
-        }
-        return platform;
     }
 
     /* Call the ready method when the eventQ is quiet.
@@ -271,15 +273,15 @@ public abstract class Application extends AbstractBean {
     }
 
     /**
-     * Responsible for initializations that must occur before the
+     * Responsible for initializations that must occur before the 
      * GUI is constructed by {@code startup}.
-     * <p/>
-     * This method is called by the static {@code launch} method,
+     * <p>
+     * This method is called by the static {@code launch} method, 
      * before {@code startup} is called. Subclasses that want
      * to do any initialization work before {@code startup} must
-     * override it.  The {@code initialize} method
-     * runs on the event dispatching thread.
-     * <p/>
+     * override it.  The {@code initialize} method 
+     * runs on the event dispatching thread.  
+     * <p>
      * By default initialize() does nothing.
      *
      * @param args the main method's arguments.
@@ -293,8 +295,8 @@ public abstract class Application extends AbstractBean {
     /**
      * Responsible for starting the application; for creating and showing
      * the initial GUI.
-     * <p/>
-     * This method is called by the static {@code launch} method,
+     * <p>
+     * This method is called by the static {@code launch} method, 
      * subclasses must override it.  It runs on the event dispatching
      * thread.
      *
@@ -305,13 +307,13 @@ public abstract class Application extends AbstractBean {
     protected abstract void startup();
 
     /**
-     * Called after the startup() method has returned and there
-     * are no more events on the
+     * Called after the startup() method has returned and there 
+     * are no more events on the 
      * {@link Toolkit#getSystemEventQueue system event queue}.
-     * When this method is called, the application's GUI is ready
+     * When this method is called, the application's GUI is ready 
      * to use.
-     * <p/>
-     * It's usually important for an application to start up as
+     * <p>
+     * It's usually important for an application to start up as 
      * quickly as possible.  Applications can override this method
      * to do some additional start up work, after the GUI is up
      * and ready to use.
@@ -324,7 +326,7 @@ public abstract class Application extends AbstractBean {
     }
 
     /**
-     * Called when the application {@link #exit exits}.
+     * Called when the application {@link #exit exits}.  
      * Subclasses may override this method to do any cleanup
      * tasks that are neccessary before exiting.  Obviously, you'll want to try
      * and do as little as possible at this point.  This method runs
@@ -336,6 +338,7 @@ public abstract class Application extends AbstractBean {
      * @see #addExitListener
      */
     protected void shutdown() {
+        // TBD should call TaskService#shutdownNow() on each TaskService
     }
 
     /* An event that sets a flag when it's dispatched and another
@@ -343,6 +346,7 @@ public abstract class Application extends AbstractBean {
      * was empty at dispatch time.
      */
     private static class NotifyingEvent extends PaintEvent implements ActiveEvent {
+
         private boolean dispatched = false;
         private boolean qEmpty = false;
 
@@ -358,6 +362,7 @@ public abstract class Application extends AbstractBean {
             return qEmpty;
         }
 
+        @Override
         public void dispatch() {
             EventQueue q = Toolkit.getDefaultToolkit().getSystemEventQueue();
             synchronized (this) {
@@ -371,9 +376,8 @@ public abstract class Application extends AbstractBean {
     /* Keep queuing up NotifyingEvents until the event queue is
      * empty when the NotifyingEvent is dispatched().
      */
-    private void waitForEmptyEventQ() {
+    private void waitForEmptyEventQ(JPanel placeHolder) {
         boolean qEmpty = false;
-        JPanel placeHolder = new JPanel();
         EventQueue q = Toolkit.getDefaultToolkit().getSystemEventQueue();
         while (!qEmpty) {
             NotifyingEvent e = new NotifyingEvent(placeHolder);
@@ -382,8 +386,7 @@ public abstract class Application extends AbstractBean {
                 while (!e.isDispatched()) {
                     try {
                         e.wait();
-                    }
-                    catch (InterruptedException ie) {
+                    } catch (InterruptedException ie) {
                         //ignore
                     }
                 }
@@ -396,22 +399,25 @@ public abstract class Application extends AbstractBean {
      * something, now that the GUI is "ready".
      */
     private class DoWaitForEmptyEventQ extends Task<Void, Void> {
+        private final JPanel placeHolder;
+
         DoWaitForEmptyEventQ() {
             super(Application.this);
+            placeHolder = new JPanel();
         }
 
         @Override
         protected Void doInBackground() {
-            waitForEmptyEventQ();
+            waitForEmptyEventQ(placeHolder);
             return null;
         }
 
         @Override
         protected void finished() {
+            ready = true;
             ready();
         }
     }
-
 
     /**
      * Gracefully shutdown the application, calls {@code exit(null)}
@@ -426,14 +432,14 @@ public abstract class Application extends AbstractBean {
 
     /**
      * Gracefully shutdown the application.
-     * <p/>
+     * <p>
      * If none of the {@code ExitListener.canExit()} methods return false,
-     * calls the {@code ExitListener.willExit()} methods, then
+     * calls the {@code ExitListener.willExit()} methods, then 
      * {@code shutdown()}, and then exits the Application with
-     * System.exit(0).  Exceptions thrown while running willExit() or shutdown()
-     * are logged but otherwise ignored.
-     * <p/>
-     * If the caller is responding to an GUI event, it's helpful to pass the
+     * {@link #end end}.  Exceptions thrown while running willExit() or shutdown() 
+     * are logged but otherwise ignored. 
+     * <p>
+     * If the caller is responding to an GUI event, it's helpful to pass the 
      * event along so that ExitListeners' canExit methods that want to popup
      * a dialog know on which screen to show the dialog.  For example:
      * <pre>
@@ -444,7 +450,7 @@ public abstract class Application extends AbstractBean {
      *         int option = JOptionPane.showConfirmDialog(owner, "Really Exit?");
      *         return option == JOptionPane.YES_OPTION;
      *     }
-     *     public void willExit(EventObejct e) {}
+     *     public void willExit(EventObejct e) {} 
      * }
      * myApplication.addExitListener(new ConfirmExit());
      * </pre>
@@ -455,34 +461,56 @@ public abstract class Application extends AbstractBean {
      * Component}.
      *
      * @param event the EventObject that triggered this call or null
-     * @see #exit()
      * @see #addExitListener
      * @see #removeExitListener
      * @see #shutdown
+     * @see #end
      */
-    public void exit(EventObject event) {
-        for (ExitListener listener : exitListeners) {
-            if (!listener.canExit(event)) {
-                return;
-            }
-        }
-        try {
-            for (ExitListener listener : exitListeners) {
+    public void exit(final EventObject event) {
+        Runnable runnable = new Runnable() {
+
+            @Override
+            public void run() {
+                for (ExitListener listener : exitListeners) {
+                    if (!listener.canExit(event)) {
+                        return;
+                    }
+                }
                 try {
-                    listener.willExit(event);
-                }
-                catch (Exception e) {
-                    logger.log(Level.WARNING, "ExitListener.willExit() failed", e);
+                    for (ExitListener listener : exitListeners) {
+                        try {
+                            listener.willExit(event);
+                        } catch (Exception e) {
+                            logger.log(Level.WARNING, "ExitListener.willExit() failed", e);
+                        }
+                    }
+                    shutdown();
+                } catch (Exception e) {
+                    logger.log(Level.WARNING, "unexpected error in Application.shutdown()", e);
+                } finally {
+                    end();
                 }
             }
-            shutdown();
+        };
+
+        if (SwingUtilities.isEventDispatchThread()) {
+            runnable.run();
+        } else {
+            try {
+                SwingUtilities.invokeAndWait(runnable);
+            } catch (Exception ignore) {
+            }
         }
-        catch (Exception e) {
-            logger.log(Level.WARNING, "unexpected error in Application.shutdown()", e);
-        }
-        finally {
-            System.exit(0);
-        }
+    }
+
+    /**
+     * Called by {@link #exit exit} to terminate the application.  Calls
+     * {@code Runtime.getRuntime().exit(0)}, which halts the JVM.
+     *
+     * @see #exit
+     */
+    protected void end() {
+        Runtime.getRuntime().exit(0);
     }
 
     /**
@@ -491,22 +519,22 @@ public abstract class Application extends AbstractBean {
      * false if there are pending decisions that the user must make
      * before the app exits.  A typical {@code ExitListener} would
      * prompt the user with a modal dialog.
-     * <p/>
+     * <p>
      * The {@code eventObject} argument will be the the value passed
      * to {@link #exit(EventObject) exit()}.  It may be null.
-     * <p/>
+     * <p>
      * The {@code willExit} method is called after the exit has
      * been confirmed.  An ExitListener that's going to perform
      * some cleanup work should do so in {@code willExit}.
-     * <p/>
+     * <p>
      * {@code ExitListeners} run on the event dispatching thread.
      *
-     * @param event the EventObject that triggered this call or null
      * @see #exit(EventObject)
      * @see #addExitListener
      * @see #removeExitListener
      */
     public interface ExitListener extends EventListener {
+
         boolean canExit(EventObject event);
 
         void willExit(EventObject event);
@@ -566,59 +594,59 @@ public abstract class Application extends AbstractBean {
     }
 
     /**
-     * The {@code Application} singleton, or null if {@code launch} hasn't
-     * been called yet.
+     * The {@code Application} singleton.
+     * <p>
+     * This method is only called after an Application has
+     * been launched.
      *
+     * @param <T>
+     * @param applicationClass this Application's subclass
      * @return the launched Application singleton.
      * @see Application#launch
      */
-    public static synchronized <T extends Application> T getInstance(Class<T> applicationType) {
-        return applicationType.cast(application);
+    public static synchronized <T extends Application> T getInstance(Class<T> applicationClass) {
+
+        if (Beans.isDesignTime() && application == null) {
+            try {
+                application = create(applicationClass);
+            } catch (Exception ex) {
+                String msg = String.format("Couldn't construct %s", applicationClass);
+                Logger.getLogger(Application.class.getName()).log(Level.SEVERE, msg, ex);
+                throw new Error(msg, ex);
+            }
+        }
+
+        checkApplicationLaunched();
+        return applicationClass.cast(application);
     }
 
     /**
-     * The {@code Application} singleton, or a placeholder if {@code
-     * launch} hasn't been called yet.
-     * <p/>
-     * Typically this method is only called after an Application has
-     * been launched however in some situations, like tests, it's useful to be
-     * able to get an {@code Application} object without actually
-     * launching.  The <i>placeholder</i> Application object provides
-     * access to an {@code ApplicationContext} singleton and has
-     * the same semantics as launching an Application defined like this:
-     * <pre>
-     * public class PlaceholderApplication extends Application {
-     *     public void startup() { }
-     * }
-     * Application.launch(PlaceholderApplication.class);
-     * </pre>
+     * The {@code Application} singleton.  
+     * <p>
+     * This method is only called after an Application has
+     * been launched.
      *
      * @return the Application singleton or a placeholder
      * @see Application#launch
      * @see Application#getInstance(Class)
      */
     public static synchronized Application getInstance() {
-        if (application == null) {
-            application = new NoApplication();
+
+        if (Beans.isDesignTime() && application == null) {
+            application = new DesignTimeApplication();
         }
+
+        checkApplicationLaunched();
         return application;
     }
 
-    private static class NoApplication extends Application {
-        protected NoApplication() {
-            ApplicationContext ctx = getContext();
-            ctx.setApplicationClass(getClass());
-            ctx.setApplication(this);
-            ResourceMap appResourceMap = ctx.getResourceMap();
-            appResourceMap.putResource("platform", platform());
-        }
-
-        protected void startup() {
+    private static void checkApplicationLaunched() throws IllegalStateException {
+        if (application == null) {
+            throw new IllegalStateException("Application is not launched.");
         }
     }
 
     /* Prototype support for the View type */
-
     public void show(View view) {
         Window window = (Window) view.getRootPane().getParent();
         if (window != null) {
@@ -629,5 +657,24 @@ public abstract class Application extends AbstractBean {
 
     public void hide(View view) {
         view.getRootPane().getParent().setVisible(false);
+    }
+
+    public boolean isReady() {
+        return ready;
+    }
+
+    private static final class DesignTimeApplication extends Application {
+
+        protected DesignTimeApplication() {
+            ApplicationContext ctx = getContext();
+            ctx.setApplicationClass(getClass());
+            ctx.setApplication(this);
+            ResourceMap appResourceMap = ctx.getResourceMap();
+            appResourceMap.setPlatform(PlatformType.DEFAULT);
+        }
+
+        @Override
+        protected void startup() {
+        }
     }
 }

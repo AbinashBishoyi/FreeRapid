@@ -2,7 +2,6 @@
 * Copyright (C) 2006 Sun Microsystems, Inc. All rights reserved. Use is
 * subject to license terms.
 */
-
 package org.jdesktop.application;
 
 import javax.swing.*;
@@ -12,24 +11,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Logger;
 
 /**
- * A singleton that manages shared objects, like actions, resources, and tasks,
- * for {@code Applications}.
- * <p/>
- * {@link Application Applications} use the {@code ApplicationContext}
- * singleton to find global values and services.  The majority of the
- * Swing Application Framework API can be accessed through {@code
- * ApplicationContext}.  The static {@code getInstance} method returns
- * the singleton Typically it's only called after the application has
- * been {@link Application#launch launched}, however it is always safe
- * to call {@code getInstance}.
+ * A singleton that manages shared objects, like actions, resources, and tasks, 
+ * for {@code Applications}.  
+ * <p>
+ * {@link Application Applications} use {@code ApplicationContext},
+ * via {@link Application#getContext}, to access global values and services.
+ * The majority of the Swing Application Framework API can be accessed through {@code
+ * ApplicationContext}.
  *
- * @author Hans Muller (Hans.Muller@Sun.COM)
  * @see Application
+ * @author Hans Muller (Hans.Muller@Sun.COM)
  */
 public class ApplicationContext extends AbstractBean {
-    //private static final Logger logger = Logger.getLogger(ApplicationContext.class.getName());
+
+    private static final Logger logger = Logger.getLogger(ApplicationContext.class.getName());
     private final List<TaskService> taskServices;
     private final List<TaskService> taskServicesReadOnly;
     private ResourceManager resourceManager;
@@ -40,9 +38,7 @@ public class ApplicationContext extends AbstractBean {
     private Class applicationClass = null;
     private JComponent focusOwner = null;
     private Clipboard clipboard = null;
-   // private Throwable uncaughtException = null;
     private TaskMonitor taskMonitor = null;
-
 
     protected ApplicationContext() {
         resourceManager = new ResourceManager(this);
@@ -69,14 +65,15 @@ public class ApplicationContext extends AbstractBean {
     }
 
     /**
-     * Called by
-     * {@link Application#launch Application.launch()} to
+     * Called by 
+     * {@link Application#launch Application.launch()} to 
      * record the application's class.
-     * <p/>
+     * <p>
      * This method is only intended for testing, or design time
-     * configuration.  Normal applications shouldn't need to
+     * configuration.  Normal applications shouldn't need to 
      * call it directly.
      *
+     * @param applicationClass
      * @see #getApplicationClass
      */
     public final synchronized void setApplicationClass(Class applicationClass) {
@@ -107,8 +104,8 @@ public class ApplicationContext extends AbstractBean {
     }
 
     /**
-     * The application's {@code ResourceManager} provides
-     * read-only cached access to resources in ResourceBundles via the
+     * The application's {@code ResourceManager} provides 
+     * read-only cached access to resources in ResourceBundles via the 
      * {@link ResourceMap ResourceMap} class.
      *
      * @return this application's ResourceManager.
@@ -123,10 +120,10 @@ public class ApplicationContext extends AbstractBean {
      * {@code ApplicationContext} subclass that
      * wanted to fundamentally change the way {@code ResourceMaps} were
      * created and cached could replace this property in its constructor.
-     * <p/>
+     * <p>
      * Throws an IllegalArgumentException if resourceManager is null.
      *
-     * @param resourceManager the new value of the resourceManager property.
+     * @param resourceManager the new value of the resourceManager property. 
      * @see #getResourceMap(Class, Class)
      * @see #getResourceManager
      */
@@ -142,10 +139,10 @@ public class ApplicationContext extends AbstractBean {
     /**
      * Returns a {@link ResourceMap#getParent chain} of two or
      * more ResourceMaps.  The first encapsulates the ResourceBundles
-     * defined for the specified class, and its parent
+     * defined for the specified class, and its parent 
      * encapsulates the ResourceBundles defined for the entire application.
-     * <p/>
-     * This is just a convenience method that calls
+     * <p>
+     *  This is just a convenience method that calls
      * {@link ResourceManager#getResourceMap(Class, Class)
      * ResourceManager.getResourceMap()}.  It's defined as:
      * <pre>
@@ -153,9 +150,9 @@ public class ApplicationContext extends AbstractBean {
      * </pre>
      *
      * @param cls the class that defines the location of ResourceBundles
-     * @return a {@code ResourceMap} that contains resources loaded from
-     *         {@code ResourceBundles}  found in the resources subpackage of the
-     *         specified class's package.
+     * @return a {@code ResourceMap} that contains resources loaded from 
+     *   {@code ResourceBundles}  found in the resources subpackage of the 
+     *   specified class's package.
      * @see ResourceManager#getResourceMap(Class)
      */
     public final ResourceMap getResourceMap(Class cls) {
@@ -168,8 +165,8 @@ public class ApplicationContext extends AbstractBean {
      * defined for the all of the classes between {@code startClass}
      * and {@code stopClass} inclusive.  It's parent encapsulates the
      * ResourceBundles defined for the entire application.
-     * <p/>
-     * This is just a convenience method that calls
+     * <p>
+     *  This is just a convenience method that calls
      * {@link ResourceManager#getResourceMap(Class, Class)
      * ResourceManager.getResourceMap()}.  It's defined as:
      * <pre>
@@ -177,10 +174,10 @@ public class ApplicationContext extends AbstractBean {
      * </pre>
      *
      * @param startClass the first class whose ResourceBundles will be included
-     * @param stopClass  the last class whose ResourceBundles will be included
-     * @return a {@code ResourceMap} that contains resources loaded from
-     *         {@code ResourceBundles}  found in the resources subpackage of the
-     *         specified class's package.
+     * @param stopClass the last class whose ResourceBundles will be included
+     * @return a {@code ResourceMap} that contains resources loaded from 
+     *   {@code ResourceBundles}  found in the resources subpackage of the 
+     *   specified class's package.
      * @see ResourceManager#getResourceMap(Class, Class)
      */
     public final ResourceMap getResourceMap(Class startClass, Class stopClass) {
@@ -188,11 +185,11 @@ public class ApplicationContext extends AbstractBean {
     }
 
     /**
-     * Returns the {@link ResourceMap#getParent chain} of ResourceMaps
-     * that's shared by the entire application, beginning with the one
-     * defined for the Application class, i.e. the value of the
+     * Returns the {@link ResourceMap#getParent chain} of ResourceMaps 
+     * that's shared by the entire application, beginning with the one 
+     * defined for the Application class, i.e. the value of the 
      * {@code applicationClass} property.
-     * <p/>
+     * <p>
      * This is just a convenience method that calls
      * {@link ResourceManager#getResourceMap()
      * ResourceManager.getResourceMap()}.  It's defined as:
@@ -209,6 +206,7 @@ public class ApplicationContext extends AbstractBean {
     }
 
     /**
+     *
      * @return this application's ActionManager.
      * @see #getActionMap(Object)
      */
@@ -221,10 +219,10 @@ public class ApplicationContext extends AbstractBean {
      * {@code ApplicationContext} subclass that
      * wanted to fundamentally change the way {@code ActionManagers} were
      * created and cached could replace this property in its constructor.
-     * <p/>
+     * <p>
      * Throws an IllegalArgumentException if actionManager is null.
      *
-     * @param actionManager the new value of the actionManager property.
+     * @param actionManager the new value of the actionManager property. 
      * @see #getActionManager
      * @see #getActionMap(Object)
      */
@@ -237,11 +235,10 @@ public class ApplicationContext extends AbstractBean {
         firePropertyChange("actionManager", oldValue, this.actionManager);
     }
 
-
     /**
      * Returns the shared {@code ActionMap} chain for the entire {@code Application}.
-     * <p/>
-     * This is just a convenience method that calls
+     * <p>
+     *  This is just a convenience method that calls
      * {@link ActionManager#getActionMap()
      * ActionManager.getActionMap()}.  It's defined as:
      * <pre>
@@ -258,14 +255,16 @@ public class ApplicationContext extends AbstractBean {
     /**
      * Returns the {@code ApplicationActionMap} chain for the specified
      * actions class and target object.
-     * <p/>
-     * This is just a convenience method that calls
+     * <p>
+     *  This is just a convenience method that calls
      * {@link ActionManager#getActionMap()
      * ActionManager.getActionMap(Class, Object)}.  It's defined as:
      * <pre>
      * return getActionManager().getActionMap(actionsClass, actionsObject)
      * </pre>
      *
+     * @param actionsClass
+     * @param actionsObject
      * @return the {@code ActionMap} chain for the entire {@code Application}.
      * @see ActionManager#getActionMap(Class, Object)
      */
@@ -276,6 +275,7 @@ public class ApplicationContext extends AbstractBean {
     /**
      * Defined as {@code getActionMap(actionsObject.getClass(), actionsObject)}.
      *
+     * @param actionsObject
      * @return the {@code ActionMap} for the specified object
      * @see #getActionMap(Class, Object)
      */
@@ -309,7 +309,6 @@ public class ApplicationContext extends AbstractBean {
         firePropertyChange("localStorage", oldValue, this.localStorage);
     }
 
-
     /**
      * The shared {@link SessionStorage SessionStorage} object.
      *
@@ -334,14 +333,13 @@ public class ApplicationContext extends AbstractBean {
     }
 
     /**
-     * A shared {@code Clipboard}.
+     * @return A shared {@code Clipboard}.
      */
     public Clipboard getClipboard() {
         if (clipboard == null) {
             try {
                 clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            }
-            catch (SecurityException e) {
+            } catch (SecurityException e) {
                 clipboard = new Clipboard("sandbox");
             }
         }
@@ -349,7 +347,7 @@ public class ApplicationContext extends AbstractBean {
     }
 
     /**
-     * The application's focus owner.
+     * @return The application's focus owner.
      */
     public JComponent getFocusOwner() {
         return focusOwner;
@@ -365,6 +363,12 @@ public class ApplicationContext extends AbstractBean {
         return new ArrayList<TaskService>(taskServices);
     }
 
+    /**
+     * Register a new TaskService with the application. The task service
+     * then be retrieved by name via {@link ApplicationContext#getTaskService(String)}.
+     *
+     * @param taskService Task service to register
+     */
     public void addTaskService(TaskService taskService) {
         if (taskService == null) {
             throw new IllegalArgumentException("null taskService");
@@ -384,6 +388,12 @@ public class ApplicationContext extends AbstractBean {
         }
     }
 
+    /**
+     * Unregister a previously registered TaskService. The task service
+     * is not shut down.
+     *
+     * @param taskService TaskService to unregister
+     */
     public void removeTaskService(TaskService taskService) {
         if (taskService == null) {
             throw new IllegalArgumentException("null taskService");
@@ -403,6 +413,12 @@ public class ApplicationContext extends AbstractBean {
         }
     }
 
+    /**
+     * Look up a task service by name.
+     *
+     * @param name Name of the task service to retrieve.
+     * @return Task service found, or null if no service of that name found
+     */
     public TaskService getTaskService(String name) {
         if (name == null) {
             throw new IllegalArgumentException("null name");
@@ -417,16 +433,17 @@ public class ApplicationContext extends AbstractBean {
 
     /**
      * Returns the default TaskService, i.e. the one named "default":
-     * <code>return getTaskService("default")</code>.  The
+     * <code>return getTaskService("default")</code>.  The 
      * {@link ApplicationAction#actionPerformed ApplicationAction actionPerformed}
      * method executes background <code>Tasks</code> on the default
      * TaskService.  Application's can launch Tasks in the same way, e.g.
      * <pre>
-     * ApplicationContext.getInstance().getTaskService().execute(myTask);
+     * Application.getInstance().getContext().getTaskService().execute(myTask);
      * </pre>
      *
      * @return the default TaskService.
      * @see #getTaskService(String)
+     *
      */
     public final TaskService getTaskService() {
         return getTaskService("default");
@@ -444,7 +461,7 @@ public class ApplicationContext extends AbstractBean {
     }
 
     /**
-     * Returns a shared TaskMonitor object.  Most applications only
+     * Returns a shared TaskMonitor object.  Most applications only 
      * need one TaskMonitor for the sake of status bars and other status
      * indicators.
      *

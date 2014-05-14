@@ -1,19 +1,18 @@
 package org.jdesktop.application;
 
-import javax.swing.*;
+import javax.swing.SwingWorker.StateValue;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.*;
-
 
 /**
  * This class is intended to serve as the model for GUI components,
  * like status bars, that display the state of an application's
  * background tasks.  {@code TaskMonitor} provides an overview of all
  * the ApplicationContext's Tasks, as well as the state of a single
- * {@code foreground} Task.
- * <p/>
- * <p/>
+ * {@code foreground} Task.  
+ *
+ * <p>
  * The value of {@link #getTasks getTasks()} is a list of all of the
  * {@code Tasks} whose state is not {@link
  * Task#isDone DONE} for all of the
@@ -24,19 +23,19 @@ import java.util.*;
  * list changes {@code PropertyChangeListeners} are fired.
  * Applications that wish to create a detailed visualization of all
  * Tasks should monitor the TaskMonitor {@code "tasks"} property.
- * <p/>
- * <p/>
+ *
+ * <p>
  * Users are often only interested in the status of a single
  * <i>foreground</i> task, typically the one associated with GUI
  * element they're working with, or with the most recent command
  * they've issued.  The TaskMonitor's PropertyChangeListener is
  * notified each time a property of the {@link #setForegroundTask
  * foregroundTask} changes.  Additionally the TaskMonitor fires
- * synthetic PropertyChangeEvents for properties named "pending",
+ * synthetic PropertyChangeEvents for properties named "pending", 
  * "started", and "done" when the corresponding Task {@code state}
  * property changes occur.
- * <p/>
- * <p/>
+ *
+ * <p>
  * TaskMonitor manages a queue of new Tasks.  The
  * foregroundTask is automatically set to the first new Task, and when
  * that Task finishes, the next Task in the queue, and so on.
@@ -46,19 +45,22 @@ import java.util.*;
  * time the user selected a tab.  To prevent the foregroundTask
  * property from (ever) being reset automatically, one must set {@link
  * #setAutoUpdateForegroundTask autoUpdateForegroundTask} to false.
- * <p/>
- * <p/>
- * This class is not thread-safe.  All of its methods must be called
- * on the event dispatching thread (EDT) and all of its listeners will
+ *
+ * <p>
+ * This class is not thread-safe.  All of its methods must be called 
+ * on the event dispatching thread (EDT) and all of its listeners will 
  * run on the EDT.
+ *
  *
  * @author Hans Muller (Hans.Muller@Sun.COM)
  * @see ApplicationContext#getTaskServices
  * @see TaskService#getTasks
  * @see TaskService#execute
  */
-
 public class TaskMonitor extends AbstractBean {
+
+    public static final String PROP_FOREGROUND_TASK = "foregroundTask";
+    private final PropertyChangeListener applicationPCL;
     private final PropertyChangeListener taskServicePCL;
     private final PropertyChangeListener taskPCL;
     private final LinkedList<Task> taskQueue;
@@ -67,9 +69,10 @@ public class TaskMonitor extends AbstractBean {
 
     /**
      * Construct a TaskMonitor.
+     * @param context
      */
     public TaskMonitor(ApplicationContext context) {
-        PropertyChangeListener applicationPCL = new ApplicationPCL();
+        applicationPCL = new ApplicationPCL();
         taskServicePCL = new TaskServicePCL();
         taskPCL = new TaskPCL();
         taskQueue = new LinkedList<Task>();
@@ -80,7 +83,7 @@ public class TaskMonitor extends AbstractBean {
     }
 
     /**
-     * The TaskMonitor's PropertyChangeListeners are fired each time
+     * The TaskMonitor's PropertyChangeListeners are fired each time 
      * any property of the the {@code foregroundTask} changes.  By
      * default this property is set to the first Task to be executed
      * and then, when that Task finishes, reset to the next most
@@ -102,12 +105,13 @@ public class TaskMonitor extends AbstractBean {
         if (newTask != null) {
             newTask.addPropertyChangeListener(taskPCL);
         }
-        firePropertyChange("foregroundTask", oldTask, newTask);
+        firePropertyChange(PROP_FOREGROUND_TASK, oldTask, newTask);
     }
 
     /**
-     * Indicates the {@code Task} whose status the ApplicationContext's GUI wants
+     * Indicates the {@code Task} whose status the ApplicationContext's GUI wants 
      * to be displayed, typically in the main window's status bar.
+     *
      *
      * @return the value of the foregroundTask property.
      * @see #setForegroundTask
@@ -116,11 +120,10 @@ public class TaskMonitor extends AbstractBean {
         return foregroundTask;
     }
 
-
     /**
      * True if the {@code foregroundTask} property should be automatically
      * reset to the oldest Task in the queue when it finishes running.
-     * <p/>
+     * <p>
      * This property is true by default.
      *
      * @return true if the foregroundTask should be set automatically.
@@ -133,10 +136,10 @@ public class TaskMonitor extends AbstractBean {
 
     /**
      * True if the {@code foregroundTask} property should be automatically
-     * reset to the oldest Task in the queue when it finishes running.  An
+     * reset to the oldest Task in the queue when it finishes running.  An 
      * application that wants explicit control over the Task being monitored
      * can set this property to false.
-     * <p/>
+     * <p>
      * This property is true by default.
      *
      * @param autoUpdateForegroundTask true if the foregroundTask should be set automatically
@@ -160,7 +163,7 @@ public class TaskMonitor extends AbstractBean {
 
     /**
      * All of the Application Tasks whose {@code state} is not {@code DONE}.
-     * <p/>
+     * <p>
      * Each time the list of Tasks changes, a PropertyChangeEvent for the
      * property named "tasks" is fired.  Applications that want to monitor all
      * background Tasks should monitor the tasks property.
@@ -221,6 +224,8 @@ public class TaskMonitor extends AbstractBean {
      * This listener runs on the EDT.
      */
     private class ApplicationPCL implements PropertyChangeListener {
+
+        @Override
         public void propertyChange(PropertyChangeEvent e) {
             String propertyName = e.getPropertyName();
             if ("taskServices".equals(propertyName)) {
@@ -242,6 +247,8 @@ public class TaskMonitor extends AbstractBean {
      * This listener runs on the EDT.
      */
     private class TaskServicePCL implements PropertyChangeListener {
+
+        @Override
         public void propertyChange(PropertyChangeEvent e) {
             String propertyName = e.getPropertyName();
             if ("tasks".equals(propertyName)) {
@@ -258,18 +265,19 @@ public class TaskMonitor extends AbstractBean {
      * This listener runs on the EDT.
      */
     private class TaskPCL implements PropertyChangeListener {
+
         private void fireStateChange(Task task, String propertyName) {
             firePropertyChange(new PropertyChangeEvent(task, propertyName, false, true));
         }
 
+        @Override
         public void propertyChange(PropertyChangeEvent e) {
             String propertyName = e.getPropertyName();
             Task task = (Task) (e.getSource());
-            //Object newValue = e.getNewValue();
             if ((task != null) && (task == getForegroundTask())) {
                 firePropertyChange(e);
                 if ("state".equals(propertyName)) {
-                    SwingWorker.StateValue newState = (SwingWorker.StateValue) (e.getNewValue());
+                    StateValue newState = (StateValue) (e.getNewValue());
                     switch (newState) {
                         case PENDING:
                             fireStateChange(task, "pending");
@@ -279,7 +287,9 @@ public class TaskMonitor extends AbstractBean {
                             break;
                         case DONE:
                             fireStateChange(task, "done");
-                            setForegroundTask(null);
+                            if (autoUpdateForegroundTask) {
+                                setForegroundTask(taskQueue.isEmpty() ? null : taskQueue.getLast());
+                            }
                     }
                 }
             }

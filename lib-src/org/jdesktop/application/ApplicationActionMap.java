@@ -2,7 +2,6 @@
 * Copyright (C) 2006 Sun Microsystems, Inc. All rights reserved. Use is
 * subject to license terms.
 */
-
 package org.jdesktop.application;
 
 import javax.swing.*;
@@ -13,13 +12,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-
 /**
- * An {@link javax.swing.ActionMap ActionMap} class where each entry
- * corresponds to an <tt>&#064;Action</tt> method from a single
- * <tt>actionsClass</tt> (i.e. a class that contains one or more
+ * An {@link javax.swing.ActionMap ActionMap} class where each entry 
+ * corresponds to an <tt>&#064;Action</tt> method from a single 
+ * <tt>actionsClass</tt> (i.e. a class that contains one or more 
  * <tt>&#064;Actions</tt>).  Each entry's key is the <tt>&#064;Action's</tt>
- * name (the method name by default), and the value is an
+ * name (the method name by default), and the value is an 
  * {@link ApplicationAction} that calls the <tt>&#064;Actions</tt> method.
  * For example, the code below prints <tt>"Hello World"</tt>:
  * <pre>
@@ -33,24 +31,25 @@ import java.util.List;
  * appAM.get("Hello").actionPerformed(e);
  * appAM.get("World").actionPerformed(e);
  * </pre>
- * <p/>
- * <p/>
+ *
+ * <p>
  * If a <tt>ResourceMap</tt> is provided then each
  * <tt>ApplicationAction's</tt> ({@link javax.swing.Action#putValue
  * putValue}, {@link javax.swing.Action#getValue getValue}) properties
- * are initialized from the ResourceMap.
- * <p/>
- * <p/>
- * TBD: explain use of resourcemap including action types, actionsObject,
- * actionsClass, ProxyActions,
+ * are initialized from the ResourceMap.  
  *
- * @author Hans Muller (Hans.Muller@Sun.COM)
+ * <p>
+ * TBD: explain use of resourcemap including action types, actionsObject, 
+ * actionsClass, ProxyActions, 
+ *
  * @see ApplicationAction
  * @see ResourceMap
+ * @author Hans Muller (Hans.Muller@Sun.COM)
  */
-
 public class ApplicationActionMap extends ActionMap {
+
     private final ApplicationContext context;
+    private final ResourceMap resourceMap;
     private final Class actionsClass;
     private final Object actionsObject;
     private final List<ApplicationAction> proxyActions;
@@ -71,7 +70,7 @@ public class ApplicationActionMap extends ActionMap {
         this.context = context;
         this.actionsClass = actionsClass;
         this.actionsObject = actionsObject;
-      //  ResourceMap resourceMap1 = resourceMap;
+        this.resourceMap = resourceMap;
         this.proxyActions = new ArrayList<ApplicationAction>();
         addAnnotationActions(resourceMap);
         maybeAddActionsPCL();
@@ -90,9 +89,9 @@ public class ApplicationActionMap extends ActionMap {
     }
 
     /**
-     * All of the {@code @ProxyActions} recursively defined by this
+     * All of the {@code @ProxyActions} recursively defined by this 
      * {@code ApplicationActionMap} and its parent ancestors.
-     * <p/>
+     * <p>
      * Returns a read-only list of the {@code @ProxyActions} defined
      * by this {@code ApplicationActionMap's} {@code actionClass}
      * and, recursively, by this {@code ApplicationActionMap's} parent.
@@ -182,8 +181,7 @@ public class ApplicationActionMap extends ActionMap {
                     Class actionsClass = getActionsClass();
                     Method m = actionsClass.getMethod("addPropertyChangeListener", PropertyChangeListener.class);
                     m.invoke(getActionsObject(), new ActionsPCL());
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     String s = "addPropertyChangeListener undefined " + actionsClass;
                     throw new Error(s, e);
                 }
@@ -196,6 +194,8 @@ public class ApplicationActionMap extends ActionMap {
      * the ApplicationAction object itself.
      */
     private class ActionsPCL implements PropertyChangeListener {
+
+        @Override
         public void propertyChange(PropertyChangeEvent event) {
             String propertyName = event.getPropertyName();
             Object[] keys = keys();

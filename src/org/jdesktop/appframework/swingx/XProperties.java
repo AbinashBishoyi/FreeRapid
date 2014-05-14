@@ -5,7 +5,7 @@
 package org.jdesktop.appframework.swingx;
 
 import com.jgoodies.binding.list.ArrayListModel;
-import org.jdesktop.application.SessionStorage;
+import org.jdesktop.application.session.PropertySupport;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.table.TableColumnExt;
 
@@ -76,7 +76,7 @@ public class XProperties {
         }
     }
 
-    public static class XTableProperty implements SessionStorage.Property {
+    public static class XTableProperty implements PropertySupport {
 
         public Object getSessionState(Component c) {
             checkComponent(c);

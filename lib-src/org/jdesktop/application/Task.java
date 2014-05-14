@@ -141,7 +141,6 @@ public abstract class Task<T, V> extends SwingWorker<T, V> {
     private ResourceMap resourceMap;
     private List<TaskListener<T, V>> taskListeners;
     private InputBlocker inputBlocker;
-    private String name = null;
     private String title = null;
     private String description = null;
     private long messageTime = -1L;
@@ -151,8 +150,6 @@ public abstract class Task<T, V> extends SwingWorker<T, V> {
     private boolean userCanCancel = true;
     private boolean progressPropertyIsValid = false;
     private TaskService taskService = null;
-    private T result;
-    private Exception exception;
 
     /**
      * Specifies to what extent the GUI should be blocked a Task 
@@ -189,8 +186,6 @@ public abstract class Task<T, V> extends SwingWorker<T, V> {
          */
         APPLICATION
     }
-
-    ;
 
     private void initTask(ResourceMap resourceMap, String prefix) {
         this.resourceMap = resourceMap;
@@ -307,8 +302,7 @@ public abstract class Task<T, V> extends SwingWorker<T, V> {
     /**
      * Returns the TaskService that this Task has been submitted to,
      * or null.  This property is set when a task is executed by a
-     * TaskService, cleared when the task is done and all of its
-     * completion methods have run.  
+     * TaskService, cleared when the task is done.  
      * <p> 
      * This is a read-only bound property.
      *
@@ -759,23 +753,7 @@ public abstract class Task<T, V> extends SwingWorker<T, V> {
 
     @Override
     protected final void done() {
-        try {
-            if (isCancelled()) {
-                cancelled();
-            } else {
-                try {
-                    result = get();
-                } catch (Exception ex) {
-                    exception = ex;
-                }
-            }
-        } finally {
-            try {
-                finished();
-            } finally {
-                setTaskService(null);
-            }
-        }
+        setTaskService(null);
     }
 
     /**
@@ -896,7 +874,7 @@ public abstract class Task<T, V> extends SwingWorker<T, V> {
      * from SwingWorker.process().
      */
     private void fireProcessListeners(List<V> values) {
-        TaskEvent<List<V>> event = new TaskEvent(this, values);
+        TaskEvent<List<V>> event = new TaskEvent<List<V>>(this, values);
         for (TaskListener<T, V> listener : taskListeners) {
             listener.process(event);
         }
@@ -906,7 +884,7 @@ public abstract class Task<T, V> extends SwingWorker<T, V> {
      * StatePCL (see below).
      */
     private void fireDoInBackgroundListeners() {
-        TaskEvent<Void> event = new TaskEvent(this, null);
+        TaskEvent<Void> event = new TaskEvent<Void>(this, null);
         for (TaskListener<T, V> listener : taskListeners) {
             listener.doInBackground(event);
         }
@@ -916,7 +894,7 @@ public abstract class Task<T, V> extends SwingWorker<T, V> {
      * StatePCL (see below).
      */
     private void fireSucceededListeners(T result) {
-        TaskEvent<T> event = new TaskEvent(this, result);
+        TaskEvent<T> event = new TaskEvent<T>(this, result);
         for (TaskListener<T, V> listener : taskListeners) {
             listener.succeeded(event);
         }
@@ -926,7 +904,7 @@ public abstract class Task<T, V> extends SwingWorker<T, V> {
      * StatePCL (see below).
      */
     private void fireCancelledListeners() {
-        TaskEvent<Void> event = new TaskEvent(this, null);
+        TaskEvent<Void> event = new TaskEvent<Void>(this, null);
         for (TaskListener<T, V> listener : taskListeners) {
             listener.cancelled(event);
         }
@@ -936,7 +914,7 @@ public abstract class Task<T, V> extends SwingWorker<T, V> {
      * StatePCL (see below).
      */
     private void fireInterruptedListeners(InterruptedException e) {
-        TaskEvent<InterruptedException> event = new TaskEvent(this, e);
+        TaskEvent<InterruptedException> event = new TaskEvent<InterruptedException>(this, e);
         for (TaskListener<T, V> listener : taskListeners) {
             listener.interrupted(event);
         }
@@ -946,7 +924,7 @@ public abstract class Task<T, V> extends SwingWorker<T, V> {
      * StatePCL (see below).
      */
     private void fireFailedListeners(Throwable e) {
-        TaskEvent<Throwable> event = new TaskEvent(this, e);
+        TaskEvent<Throwable> event = new TaskEvent<Throwable>(this, e);
         for (TaskListener<T, V> listener : taskListeners) {
             listener.failed(event);
         }
@@ -956,7 +934,7 @@ public abstract class Task<T, V> extends SwingWorker<T, V> {
      * StatePCL (see below).
      */
     private void fireFinishedListeners() {
-        TaskEvent<Void> event = new TaskEvent(this, null);
+        TaskEvent<Void> event = new TaskEvent<Void>(this, null);
         for (TaskListener<T, V> listener : taskListeners) {
             listener.finished(event);
         }
@@ -990,13 +968,12 @@ public abstract class Task<T, V> extends SwingWorker<T, V> {
             String propertyName = e.getPropertyName();
             if ("state".equals(propertyName)) {
                 StateValue state = (StateValue) (e.getNewValue());
-                Task task = (Task) (e.getSource());
                 switch (state) {
                     case STARTED:
-                        taskStarted(task);
+                        taskStarted();
                         break;
                     case DONE:
-                        taskDone(task);
+                        taskDone();
                         break;
                 }
             } else if ("progress".equals(propertyName)) {
@@ -1006,7 +983,7 @@ public abstract class Task<T, V> extends SwingWorker<T, V> {
             }
         }
 
-        private void taskStarted(Task task) {
+        private void taskStarted() {
             synchronized (Task.this) {
                 startTime = System.currentTimeMillis();
             }
@@ -1014,36 +991,40 @@ public abstract class Task<T, V> extends SwingWorker<T, V> {
             fireDoInBackgroundListeners();
         }
 
-        private void taskDone(Task task) {
+        private void taskDone() {
             synchronized (Task.this) {
                 doneTime = System.currentTimeMillis();
             }
             try {
-                task.removePropertyChangeListener(this);
+                removePropertyChangeListener(this);
                 firePropertyChange(PROP_DONE, false, true);
-
+            } finally {
                 // execute succeeded only when SwingWorker is done.
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            if (exception == null) {
-                                succeeded(result);
-                            } else if (exception instanceof InterruptedException) {
-                                interrupted((InterruptedException) exception);
+                            if (isCancelled()) {
+                                cancelled();
                             } else {
-                                failed(exception.getCause());
+                                try {
+                                    succeeded(get());
+                                } catch (InterruptedException e) {
+                                    interrupted(e);
+                                } catch (ExecutionException e) {
+                                    failed(e.getCause());
+                                }
                             }
                         } finally {
-                            result = null;
-                            exception = null;
+                            finished();
+                            try {
+                                fireCompletionListeners();
+                            } finally {
+                                firePropertyChange(PROP_COMPLETED, false, true);
+                            }
                         }
                     }
                 });
-
-                fireCompletionListeners();
-            } finally {
-                firePropertyChange(PROP_COMPLETED, false, true);
             }
         }
     }
