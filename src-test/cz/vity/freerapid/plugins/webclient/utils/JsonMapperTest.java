@@ -12,7 +12,7 @@ public class JsonMapperTest {
     @Test
     public void testDeserialize() throws Exception {
         final JsonMapper jsonMapper = new JsonMapper();
-        final JsonValueTest deserialized = jsonMapper.deserialize("{\"value\": 10, \"stringValue\":\"blabla\"}", JsonValueTest.class);
+        final JsonValue deserialized = jsonMapper.deserialize("{\"value\": 10, \"stringValue\":\"blabla\"}", JsonValue.class);
         Assert.assertEquals(10, deserialized.value);
         Assert.assertEquals("blabla", deserialized.stringValue);
     }
@@ -20,14 +20,14 @@ public class JsonMapperTest {
     @Test(expected = PluginImplementationException.class)
     public void testDeserializeWithException() throws Exception {
         final JsonMapper jsonMapper = new JsonMapper();
-        final JsonValueTest deserialized = jsonMapper.deserialize("{\"valu: 10, \"stringValue\":\"blabla\"}", JsonValueTest.class);
+        final JsonValue deserialized = jsonMapper.deserialize("{\"valu: 10, \"stringValue\":\"blabla\"}", JsonValue.class);
     }
 
-    public static class JsonValueTest {
+    public static class JsonValue {
         private int value;
         private String stringValue;
 
-        public JsonValueTest() {
+        public JsonValue() {
 
         }
 
