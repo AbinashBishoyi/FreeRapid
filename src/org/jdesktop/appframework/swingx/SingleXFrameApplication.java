@@ -102,7 +102,7 @@ public abstract class SingleXFrameApplication extends SingleFrameApplication {
         }
         {//Vity's hack
             final Point location = root.getLocation();
-            System.out.println("location = " + location);
+            //System.out.println("location = " + location);
             final Dimension size = root.getPreferredSize();
             final boolean invalidWidth = root.getWidth() < size.width;
             final boolean invalidHeight = root.getHeight() < size.height;

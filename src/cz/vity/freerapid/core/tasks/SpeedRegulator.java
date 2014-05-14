@@ -100,22 +100,22 @@ class SpeedRegulator {
             } while (available > 0 && notSatisfied.size() > 0);
             //docpu zbytky - do uspokojeni a dokud je co davat
             for (DownloadFile file : files) {
-                final String s = file.getPluginID();
-                System.out.println("PluginID = " + s);
-                System.out.println("Taken tokens:" + file.getTakenTokens());
-                System.out.println("Tokens Limit:" + file.getTokensLimit());
-                System.out.println("-------------------------------");
+//                final String s = file.getPluginID();
+//                System.out.println("PluginID = " + s);
+//                System.out.println("Taken tokens:" + file.getTakenTokens());
+//                System.out.println("Tokens Limit:" + file.getTokensLimit());
+//                System.out.println("-------------------------------");
                 file.setTakenTokens(0);
             }
         } else {
             //zadne globalni omezeni neni, jen jejich lokalni
             for (DownloadFile file : files) {
                 file.setTokensLimit(file.hasSpeedLimit() ? file.getSpeedLimit() : Integer.MAX_VALUE);
-                final String s = file.getPluginID();
-                System.out.println("PluginID = " + s);
-                System.out.println("Taken tokens:" + file.getTakenTokens());
-                System.out.println("Tokens Limit:" + file.getTokensLimit());
-                System.out.println("-------------------------------");
+//                final String s = file.getPluginID();
+//                System.out.println("PluginID = " + s);
+//                System.out.println("Taken tokens:" + file.getTakenTokens());
+//                System.out.println("Tokens Limit:" + file.getTokensLimit());
+//                System.out.println("-------------------------------");
                 file.setTakenTokens(0);
             }
         }

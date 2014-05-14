@@ -235,7 +235,23 @@ final public class UserProp {
     public static final boolean SHOW_CZO2009_DEFAULT = true;
 
     public static final String SPEED_LIMIT = "speedLimit";
-    public static final int SPEED_LIMIT_DEFAULT = 128;
+    public static final int SPEED_LIMIT_DEFAULT = 250;
+
     public static final String SPEED_LIMIT_ENABLED = "speedLimitEnabled";
     public static final boolean SPEED_LIMIT_ENABLED_DEFAULT = true;
+
+    public static final String SPEED_LIMIT_SPEEDS = "speedLimitSpeeds";
+    public static final String SPEED_LIMIT_SPEEDS_DEFAULT = "0,,10,15,20,30,40,50,100,150,200,300";
+
+
+    public static final String GLOBAL_SPEED_SLIDER_MIN = "globalSpeedMin";
+    public static final int GLOBAL_SPEED_SLIDER_MIN_DEFAULT = 50;
+
+    public static final String GLOBAL_SPEED_SLIDER_MAX = "globalSpeedMax";
+    public static final int GLOBAL_SPEED_SLIDER_MAX_DEFAULT = 250;
+
+    public static final String GLOBAL_SPEED_SLIDER_STEP = "globalSpeedSliderStep";
+    public static final int GLOBAL_SPEED_SLIDER_STEP_DEFAULT = 10;
+
+
 }

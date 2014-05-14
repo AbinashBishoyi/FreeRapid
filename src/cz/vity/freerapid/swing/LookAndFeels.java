@@ -104,7 +104,7 @@ public final class LookAndFeels {
             return classLoader;
         }
         final String path = Utils.addFileSeparator(Utils.getAppPath()) + Consts.LAFSDIR;
-        logger.info("Loading plugin path " + path);
+        logger.info("Loading lookandfeel path " + path);
         final File file = new File(path);
 
         try {

@@ -1,9 +1,11 @@
 package cz.vity.freerapid.gui.managers;
 
 import com.jgoodies.binding.adapter.Bindings;
-import com.jgoodies.binding.adapter.SpinnerAdapterFactory;
+import com.jgoodies.binding.adapter.BoundedRangeAdapter;
+import com.jgoodies.binding.adapter.PreferencesAdapter;
 import com.jgoodies.binding.beans.PropertyAdapter;
 import com.jgoodies.binding.beans.PropertyConnector;
+import com.jgoodies.binding.value.ConverterFactory;
 import com.jgoodies.binding.value.DelayedReadValueModel;
 import com.jgoodies.binding.value.ValueModel;
 import cz.vity.freerapid.core.AppPrefs;
@@ -29,6 +31,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.NumberFormat;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
@@ -56,6 +59,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
     private PropertyChangeListener taskPCL;
 
     private Task activeTask = null;
+    private JSlider slider;
 
     /**
      * Konstruktor
@@ -137,19 +141,46 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
 
             final JPanel speedLimitPanel = new JPanel();
             speedLimitPanel.setLayout(new BoxLayout(speedLimitPanel, BoxLayout.LINE_AXIS));
-            speedLimitPanel.setSize(45, 15);
+            //speedLimitPanel.setSize(80, 15);
+            speedLimitPanel.setPreferredSize(new Dimension(170, 15));
             speedLimitPanel.setBorder(null);
             final JCheckBox speedLimiterEnabled = new JCheckBox();
+            speedLimiterEnabled.setName("speedLimiterEnabled");
             speedLimiterEnabled.setBorder(null);
-            speedLimiterEnabled.setText("");
+            speedLimiterEnabled.setText(null);
             final ValueModel valueModel = bind(speedLimiterEnabled, UserProp.SPEED_LIMIT_ENABLED, UserProp.SPEED_LIMIT_ENABLED_DEFAULT);
             speedLimitPanel.add(speedLimiterEnabled);
-            final JSpinner globalSpeedSpinner = new JSpinner();
-            globalSpeedSpinner.setBorder(null);
-            speedLimitPanel.add(globalSpeedSpinner);
-            speedLimitPanel.add(new JLabel(" kB"));
-            bind(globalSpeedSpinner, UserProp.SPEED_LIMIT, UserProp.SPEED_LIMIT_DEFAULT, 1, 99999, 10);
-            PropertyConnector.connectAndUpdate(valueModel, globalSpeedSpinner, "enabled");
+            final PreferencesAdapter speedAdapter = new PreferencesAdapter(AppPrefs.getPreferences(), UserProp.SPEED_LIMIT, UserProp.SPEED_LIMIT_DEFAULT);
+            slider = new JSlider(new BoundedRangeAdapter(speedAdapter, 0, 0, 250));
+            slider.setName("speedSlider");
+            slider.setPreferredSize(new Dimension(100, 15));
+            slider.setMaximumSize(new Dimension(100, 15));
+            slider.setFont(slider.getFont().deriveFont(6F));
+            slider.setBorder(BorderFactory.createEmptyBorder(0, 3, 0, 3));
+            slider.setSnapToTicks(true);
+
+            speedLimitPanel.add(slider);
+            final JLabel labelSpeed = new JLabel();
+            labelSpeed.setName("labelSpeed");
+            labelSpeed.setLabelFor(slider);
+
+            bindSpeedSlider(slider);
+
+            Bindings.bind(labelSpeed, ConverterFactory.createStringConverter(speedAdapter, NumberFormat.getIntegerInstance()));
+            labelSpeed.setAlignmentX(JLabel.RIGHT_ALIGNMENT);
+            labelSpeed.setPreferredSize(new Dimension(32, 15));
+            speedLimitPanel.add(labelSpeed);
+            labelSpeed.setBackground(Color.green);
+            final JLabel labelSpeedUnit = new JLabel();
+            labelSpeedUnit.setLabelFor(slider);
+            labelSpeedUnit.setName("labelSpeedUnit");
+            speedLimitPanel.add(labelSpeedUnit);
+
+            slider.setSize(45, 12);
+
+            PropertyConnector.connectAndUpdate(valueModel, slider, "enabled");
+            PropertyConnector.connectAndUpdate(valueModel, labelSpeed, "enabled");
+            PropertyConnector.connectAndUpdate(valueModel, labelSpeedUnit, "enabled");
 
             statusbar.add(speedLimitPanel, JXStatusBar.Constraint.ResizeBehavior.FIXED);
             statusbar.add(progress, JXStatusBar.Constraint.ResizeBehavior.FIXED);
@@ -183,20 +214,12 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
             dataManager.addPropertyChangeListener("state", this);
 
             AppPrefs.getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
-                public void preferenceChange(PreferenceChangeEvent evt) {
-                    final String key = evt.getKey();
-                    if (UserProp.SHOWINFO_IN_TITLE.equals(key)) {
-                        updateInfoStatus();
-                    } else if (UserProp.ANIMATE_ICON.equals(key)) {
-                        if (!AppPrefs.getProperty(UserProp.ANIMATE_ICON, UserProp.ANIMATE_ICON_DEFAULT))
-                            trayIconSupport.setImage(defaultIconImage);
-                        else
-                            updateIconAnimation();
-                    } else if (UserProp.CLIPBOARD_MONITORING.equals(key)) {
-                        updateClipboardMonitoring();
-                    } else if (UserProp.SHOW_MEMORY_INDICATOR.equals(key)) {
-                        updateMemoryIndicator();
-                    }
+                public void preferenceChange(final PreferenceChangeEvent evt) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            checkPropertyChange(evt);
+                        }
+                    });
                 }
             });
             //final ContentPanel panel = director.getDockingManager().getContentPanel();
@@ -205,6 +228,25 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
             updateMemoryIndicator();
         }
         return statusbar;
+    }
+
+    private void checkPropertyChange(PreferenceChangeEvent evt) {
+        final String key = evt.getKey();
+        if (UserProp.SHOWINFO_IN_TITLE.equals(key)) {
+            updateInfoStatus();
+        } else if (UserProp.ANIMATE_ICON.equals(key)) {
+            if (!AppPrefs.getProperty(UserProp.ANIMATE_ICON, UserProp.ANIMATE_ICON_DEFAULT))
+                trayIconSupport.setImage(defaultIconImage);
+            else
+                updateIconAnimation();
+        } else if (UserProp.CLIPBOARD_MONITORING.equals(key)) {
+            updateClipboardMonitoring();
+        } else if (UserProp.SHOW_MEMORY_INDICATOR.equals(key)) {
+            updateMemoryIndicator();
+        } else
+        if (UserProp.GLOBAL_SPEED_SLIDER_MAX.equals(key) || UserProp.GLOBAL_SPEED_SLIDER_MAX.equals(key) || UserProp.GLOBAL_SPEED_SLIDER_STEP.equals(key)) {
+            bindSpeedSlider(slider);
+        }
     }
 
     private void updateMemoryIndicator() {
@@ -322,13 +364,18 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
 
     }
 
-    private void bind(JSpinner spinner, String key, int defaultValue, int minValue, int maxValue, int step) {
-        spinner.setModel(SpinnerAdapterFactory.createNumberAdapter(
-                new MyPreferencesAdapter(key, defaultValue),
-                defaultValue,   // defaultValue
-                minValue,   // minValue
-                maxValue, // maxValue
-                step)); // step
+    private void bindSpeedSlider(JSlider slider) {
+        int minimum = AppPrefs.getProperty(UserProp.GLOBAL_SPEED_SLIDER_MIN, UserProp.GLOBAL_SPEED_SLIDER_MIN_DEFAULT);
+        int maximum = AppPrefs.getProperty(UserProp.GLOBAL_SPEED_SLIDER_MAX, UserProp.GLOBAL_SPEED_SLIDER_MAX_DEFAULT);
+        int step = AppPrefs.getProperty(UserProp.GLOBAL_SPEED_SLIDER_STEP, UserProp.GLOBAL_SPEED_SLIDER_STEP_DEFAULT);
+//        minimum = Math.min(minimum, maximum);
+//        maximum = Math.max(minimum, maximum);
+//        if (step > maximum - minimum) {
+//            step = Math.max(maximum - minimum / 10, 1);
+//        }
+        slider.setMinimum(minimum);
+        slider.setMaximum(maximum);
+        slider.setMinorTickSpacing(step);
     }
 
     private ValueModel bind(final JCheckBox checkBox, final String key, final Object defaultValue) {

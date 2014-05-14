@@ -45,6 +45,9 @@ public class MainApp extends SingleXFrameApplication {
     protected void initialize(String[] args) {
         if (checkInvalidPath()) return;
 
+        //apple stuff
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "FreeRapid Downloader " + Consts.VERSION);
+
         final CmdLine line = new CmdLine(this);
         final List<String> fileList = line.processCommandLine(args);
 
@@ -76,6 +79,7 @@ public class MainApp extends SingleXFrameApplication {
 
 
         System.getProperties().put("arguments", args);
+        System.setProperty("apple.laf.useScreenMenuBar", String.valueOf(AppPrefs.getProperty("apple.laf.useScreenMenuBar", true)));
 
         if (OneInstanceClient.checkInstance(fileList, appPrefs, getContext())) {
             this.exit();

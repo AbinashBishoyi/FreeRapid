@@ -23,6 +23,7 @@ import cz.vity.freerapid.utilities.OSDesktop;
 import cz.vity.freerapid.utilities.Utils;
 import org.jdesktop.application.ApplicationActionMap;
 import org.jdesktop.application.ApplicationContext;
+import org.jdesktop.application.ResourceMap;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.FilterPipeline;
@@ -48,6 +49,7 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.net.URL;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
@@ -126,7 +128,6 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
         manager.getDownloadFiles().addListDataListener(this);
         manager.addPropertyChangeListener(this);
-
     }
 
     private void readStates() {
@@ -768,6 +769,31 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         inputMap.put(SwingUtils.getKeyStroke(KeyEvent.VK_SPACE), "resumeAction");
         actionMap.put("resumeAction", Swinger.getAction("resumeAction"));
 
+
+        inputMap.put(SwingUtils.getKeyStroke(KeyEvent.VK_CONTEXT_MENU), "contextMenu");
+        actionMap.put("contextMenu", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                final Point point = new Point();
+                final Rectangle rect = table.getVisibleRect();
+
+                if (Swinger.getSelectedRows(table).length > 0) {
+                    final int row = table.getSelectionModel().getLeadSelectionIndex();
+                    final Rectangle cellRect = table.getCellRect(row, 0, true);
+                    cellRect.y += cellRect.height - 1;
+                    if (cellRect.y > rect.y && rect.y + rect.height > cellRect.y)
+                        point.y = cellRect.y;
+                    else if (cellRect.y < rect.y)
+                        point.y = rect.y;
+                    else
+                        point.y = rect.y + rect.height;
+                    point.x = cellRect.x;
+                } else {
+                    point.x = table.getCellRect(0, 0, true).x;
+                }
+                showPopMenu(new MouseEvent(table, 0, 0, 0, point.x, point.y, 1, true));
+            }
+        });
+
         inputMap.put(SwingUtils.getKeyStroke(KeyEvent.VK_ENTER), "smartEnterAction");
         actionMap.put("smartEnterAction", Swinger.getAction("smartEnterAction"));
 
@@ -820,6 +846,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     private void showPopMenu(MouseEvent e) {
         int[] selectedRows = getSelectedRows();//vraci model
+        if (selectedRows.length == 0)
+            return;
         ListSelectionModel selectionModel = table.getSelectionModel();
         int rowNumber = table.rowAtPoint(e.getPoint());//vraci view
         if (rowNumber != -1) {
@@ -845,7 +873,12 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         boolean removeEnabled = map.get("removeCompletedAction").isEnabled() || map.get("removeInvalidLinksAction").isEnabled() || map.get("removeSelectedAction").isEnabled();
         removeMenu.setEnabled(removeEnabled);
 
-        context.getResourceMap().injectComponent(removeMenu);
+        final ResourceMap rMap = context.getResourceMap();
+        rMap.injectComponent(removeMenu);
+        JMenu speedLimitMenu = new JMenu();
+        speedLimitMenu.setName("speedLimitMenu");
+        rMap.injectComponent(speedLimitMenu);
+
         popup.add(map.get("downloadInformationAction"));
         popup.addSeparator();
         popup.add(map.get("openFileAction"));
@@ -859,6 +892,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         popup.add(removeMenu);
         popup.addSeparator();
         popup.add(map.get("validateLinksAction"));
+        popup.add(speedLimitMenu);
         popup.addSeparator();
         popup.add(map.get("selectAllAction"));
         popup.add(map.get("invertSelectionAction"));
@@ -866,22 +900,41 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 //        popup.add(menu);
         JMenu forceMenu = new JMenu();
         forceMenu.setName("forceDownloadMenu");
-        context.getResourceMap().injectComponent(forceMenu);
+        rMap.injectComponent(forceMenu);
 
-        JMenu speedLimitMenu = new JMenu("Speed Limit");
-        final int[] limits = new int[]{1, 5, 10, 15, 25, 50, 100, 150, 250, 500, -1};
-        ButtonGroup group = new ButtonGroup();
-        final List<DownloadFile> files = this.manager.getSelectionToList(selectedRows);
-        for (int limit : limits) {
-            final JRadioButtonMenuItem radio = new JRadioButtonMenuItem(new SpeedLimitAction(limit));
-            group.add(radio);
-            radio.setAlignmentX(LEFT_ALIGNMENT);
-            speedLimitMenu.add(radio);
-            if (!files.isEmpty()) {
-                radio.setSelected(files.get(0).getSpeedLimit() == limit);
+        final String[] speedStrings = AppPrefs.getProperty(UserProp.SPEED_LIMIT_SPEEDS, UserProp.SPEED_LIMIT_SPEEDS_DEFAULT).split(",");
+        final List<Integer> speeds = new ArrayList<Integer>(speedStrings.length);
+        for (String s : speedStrings) {
+            try {
+                int num = (s.trim().isEmpty()) ? Integer.MAX_VALUE : Integer.parseInt(s);
+                if (num == 0)
+                    num = -1;
+                if (num >= -1)
+                    speeds.add(num);
+            } catch (NumberFormatException e1) {
+                //ignore
             }
         }
-        popup.add(speedLimitMenu);
+        final ButtonGroup group = new ButtonGroup();
+        final List<DownloadFile> files = this.manager.getSelectionToList(selectedRows);
+        if (!files.isEmpty() && !speeds.contains(files.get(0).getSpeedLimit())) {
+            speeds.add(files.get(0).getSpeedLimit());
+        }
+
+        for (int limit : speeds) {
+            if (limit == Integer.MAX_VALUE) {
+                speedLimitMenu.addSeparator();
+            } else {
+                String stValue = (limit == -1) ? rMap.getString("unlimitedSpeed") : rMap.getString("limitSpeed", limit);
+                final JRadioButtonMenuItem radio = new JRadioButtonMenuItem(new SpeedLimitAction(stValue, limit));
+                group.add(radio);
+                radio.setAlignmentX(LEFT_ALIGNMENT);
+                speedLimitMenu.add(radio);
+                if (!files.isEmpty()) {
+                    radio.setSelected(files.get(0).getSpeedLimit() == limit);
+                }
+            }
+        }
 
         boolean forceEnabled = isSelectedEnabled() && this.manager.hasDownloadFilesStates(selectedRows, DownloadsActions.forceEnabledStates);
         forceMenu.setEnabled(forceEnabled);
@@ -1055,12 +1108,9 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     private class SpeedLimitAction extends AbstractAction {
         private final int value;
 
-        public SpeedLimitAction(int value) {
+        public SpeedLimitAction(String stringValue, int value) {
             this.value = value;
-            if (value != -1) {
-                this.putValue(NAME, String.format("%skB", value));
-            } else
-                this.putValue(NAME, "Unlimited");
+            this.putValue(NAME, stringValue);
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -1088,7 +1138,6 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                 if (AppPrefs.getProperty(UserProp.DRAG_ON_RIGHT_MOUSE, UserProp.DRAG_ON_RIGHT_MOUSE_DEFAULT)) {
                     rowPosition = table.rowAtPoint(e.getPoint());
                     if (rowPosition != -1 && isSelectedRow(rowPosition)) {
-                        table.setCursor(DragSource.DefaultMoveDrop);
                         active = true;
                     }
                 }
@@ -1109,6 +1158,11 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         public void mouseDragged(MouseEvent e) {
             if (!active)
                 return;
+            try {
+                table.setCursor(DragSource.DefaultMoveDrop);
+            } catch (Throwable ex) {
+                //ignore JDK bug http://bugtracker.wordrider.net/task/957
+            }
             final int position = table.rowAtPoint(e.getPoint());
             if (position == -1)
                 return;
