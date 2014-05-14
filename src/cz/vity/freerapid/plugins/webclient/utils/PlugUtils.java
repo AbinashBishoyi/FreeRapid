@@ -145,16 +145,31 @@ public final class PlugUtils {
 
     public static String getParameter(String name, String content) throws PluginImplementationException {
         //(?: means no capturing group
-        Matcher matcher = Pattern.compile("name=(?:\"|')?" + name + "(?:\"|'|\\s).*?value=(?:\"|')?(.*?)(?:\"|'|\\s*>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE).matcher(content);
-        if (matcher.find()) {
-            return matcher.group(1);
-        } else {
-            matcher = Pattern.compile("value=(?:\"|')?(.*?)(?:\"|'|\\s).*?name=(?:\"|')?" + name + "(?:\"|'|\\s*>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE).matcher(content);
-            if (matcher.find()) {
-                return matcher.group(1);
-            } else throw new PluginImplementationException("Parameter " + name + " was not found");
+        Pattern parameterInputPattern = Pattern.compile("<input (.+?)>", Pattern.DOTALL | Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+        Pattern parameterNamePattern = Pattern.compile("name=(?:\"|')?(.*?)(?:\"|'|\\s|$)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+        Pattern parameterValuePattern = Pattern.compile("value=(?:\"|')?(.*?)(?:\"|'|\\s|$)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+        int start = 0;
+        Matcher matcher = parameterInputPattern.matcher(content);
+        while (matcher.find(start)) {
+            final String input = matcher.group(1);
+            final Matcher matchName = parameterNamePattern.matcher(input);
+            if (matchName.find()) {
+                String paramName = matchName.group(1);
+                if (name.toLowerCase().equals(paramName.toLowerCase())) {
+                    final Matcher matchValue = parameterValuePattern.matcher(input);
+
+                    if (matchValue.find()) {
+                        return matchValue.group(1);
+                    } else {
+                        return "";
+                    }
+
+                }
+            }
+            start = matcher.end();
         }
 
+        throw new PluginImplementationException("Parameter " + name + " was not found");
     }
 
     /**
@@ -242,7 +257,7 @@ public final class PlugUtils {
      * @param content        content to search
      * @param fileNameBefore string before file name
      * @param fileNameAfter  string after file name
-     * @throws file name was not found
+     * @throws PluginImplementationException file name was not found
      * @since 0.82
      */
     public static void checkName(HttpFile file, String content, String fileNameBefore, String fileNameAfter) throws PluginImplementationException {
@@ -270,7 +285,7 @@ public final class PlugUtils {
      * @param content        content to search
      * @param fileSizeBefore string before file name
      * @param fileSizeAfter  string after file name
-     * @throws file size string was not found
+     * @throws PluginImplementationException file size string was not found
      * @since 0.82
      */
     public static void checkFileSize(HttpFile file, String content, String fileSizeBefore, String fileSizeAfter) throws PluginImplementationException {
@@ -294,7 +309,7 @@ public final class PlugUtils {
      * @param stringBefore string before searched string
      * @param stringAfter  string after searched string
      * @return found string
-     * @throws PluginImplementationException
+     * @throws PluginImplementationException No string between stringBefore and stringAfter
      */
     public static String getStringBetween(String content, String stringBefore, String stringAfter) throws PluginImplementationException {
         final String before = Pattern.quote(stringBefore);
