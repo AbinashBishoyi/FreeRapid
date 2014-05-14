@@ -4,6 +4,7 @@ import cz.vity.freerapid.plugins.webclient.interfaces.FileStreamRecognizer;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpMethod;
 
+import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
@@ -82,7 +83,7 @@ public class DefaultFileStreamRecognizer implements FileStreamRecognizer {
         if (header != null) {
             final String contentType = header.getValue();
             if (contentType != null && !contentType.isEmpty()) {
-                return contentType;
+                return contentType.toLowerCase(Locale.ENGLISH);
             }
         }
         return EMPTY;
