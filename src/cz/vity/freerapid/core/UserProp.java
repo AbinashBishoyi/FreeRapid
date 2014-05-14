@@ -81,7 +81,7 @@ final public class UserProp {
     public static final boolean AUTOSAVE_ENABLED_DEFAULT = true;
 
     public static final String AUTOSAVE_TIME = "autosaveTime";
-    public static final int AUTOSAVE_TIME_DEFAULT = 10;//sekundy
+    public static final int AUTOSAVE_TIME_DEFAULT = 20;//seconds
 
     public static final String CLIPBOARD_MONITORING = "clipboardMonitoring";
     public static final boolean CLIPBOARD_MONITORING_DEFAULT = true;

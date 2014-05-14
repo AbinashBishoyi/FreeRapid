@@ -125,7 +125,7 @@ class FileListMaintainer {
 
     void saveToFile(ArrayListModel<DownloadFile> downloadFiles) {
         synchronized (saveFileLock) {
-            logger.fine("=====Saving queue into the XML file=====");
+            logger.info("=====Saving queue into the XML file=====");
             final LocalStorage localStorage = context.getLocalStorage();
             File dstFile = new File(localStorage.getDirectory(), FILES_LIST_XML);
             try {
@@ -135,25 +135,25 @@ class FileListMaintainer {
             } catch (IOException e) {
                 LogUtils.processException(logger, e);
             } finally {
-                logger.fine("=====Finishing saving queue into the XML file=====");
+                logger.info("=====Finishing saving queue into the XML file=====");
             }
 
         }
     }
 
     void saveListToFileOnBackground(final Collection<DownloadFile> downloadFiles) {
-        logger.info("--------saveListToBeansOnBackground------");
         final TaskService service = director.getTaskServiceManager().getTaskService(TaskServiceManager.WORK_WITH_FILE_SERVICE);
         service.execute(new Task(context.getApplication()) {
             protected Object doInBackground() throws Exception {
                 Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+                logger.info("--------saveListToBeansOnBackground------");
                 final ArrayListModel<DownloadFile> files;
                 synchronized (dataManager.getLock()) {
                     files = new ArrayListModel<DownloadFile>(downloadFiles);
                 }
 
                 saveToFile(files);
-
+                logger.info("--------saveListToBeansOnBackground end ------");
                 return null;
             }
 

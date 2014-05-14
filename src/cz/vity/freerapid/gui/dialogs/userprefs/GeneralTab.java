@@ -66,7 +66,7 @@ public class GeneralTab extends UserPreferencesTab {
         final LanguageAdapter adapter = new LanguageAdapter(LNG_PROPERTY, Lng.getSelectedLanguage());
         final SelectionInList<String> inList = new SelectionInList<String>(listModel, dialog.getModel().getBufferedModel(adapter));
         Bindings.bind(comboLng, inList);
-        comboLng.setRenderer(new LanguageComboCellRenderer(resourceMap));
+        comboLng.setRenderer(new LanguageComboCellRenderer(dialog.getApp().getContext().getResourceMap().getResourcesDir(), resourceMap));
     }
 
     @Action
@@ -311,9 +311,9 @@ public class GeneralTab extends UserPreferencesTab {
         private String path;
         private ResourceMap map;
 
-        private LanguageComboCellRenderer(ResourceMap map) {
+        private LanguageComboCellRenderer(String resourceDir, ResourceMap map) {
             this.map = map;
-            this.path = (map.getResourcesDir() + map.getString("flagsPath")).trim();
+            this.path = (resourceDir + map.getString("flagsPath")).trim();
         }
 
         @Override
