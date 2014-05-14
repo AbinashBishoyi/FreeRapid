@@ -1,9 +1,9 @@
-***********************************************************
-*   History of changes for FreeRapid Downloader           *
-*   WebSite: http://wordrider.net/freerapid               *
-*   Mail: info@wordrider.net (issue tracker is preffered) *
-*   Issue tracker: http://bugtracker.wordrider.net/       *
-***********************************************************
+**************************************************************
+*   History of changes for FreeRapid Downloader              *
+*   Website: http://wordrider.net/freerapid                  *
+*   Issue tracker: http://bugtracker.wordrider.net/          *
+*   Email: info@wordrider.net (issue tracker is preferred)   *
+**************************************************************
 Thanks to all individuals who reported bugs.
 
 Legend :
@@ -13,13 +13,14 @@ Fixed - indicates a bug fix
 
   Added : Plugin API
             - FileStreamRecognizer interface and accompanying methods for setting it
-  Changed : It's not necessary to restart FRD after plugin updates anymore!!
-  Changed : SwingApplication framework (SAF) was updated to BetterSwingApplication framework BSAF, which fixes some bugs
+            - Added support for <input type="image"> in setActionFromForm methods in MethodBuilder
+  Changed : It's not necessary to restart FRD after plugin updates anymore!
+  Changed : SwingApplication framework (SAF) was updated to BetterSwingApplication framework (BSAF), which fixes some bugs
   Changed : "Confirm deleting files" dialog is truncated to 20 files to avoid overly tall dialog which overflows screen
-  Fixed : Empty temporary files are deleted if there isn't enough disk space for download
   Fixed : Lots of exceptions in log in case a plugin dependency is missing
   Fixed : Proxy list not refreshing when changing the path to it in preferences dialog
   Fixed : Fails to startup if global speed limiter value is above 255
+  Fixed : Empty temporary files are deleted if there isn't enough disk space for download
 
 18th July 2010 - FreeRapid Downloader 0.85 Alpha 2
   Added : Enhanced clipboard monitoring support for URLs defined in reverse order eg.:
