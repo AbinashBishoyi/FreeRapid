@@ -299,6 +299,9 @@ final public class UserProp {
     public static final String CONNECTION_TIMEOUT = "connectionTimeoutMS";
     public static final int CONNECTION_TIMEOUT_DEFAULT = 120 * 1000;
 
+    public static final String ENABLE_DIRECT_DOWNLOADS = "enableDirectDownloads";
+    public static final boolean ENABLE_DIRECT_DOWNLOADS_DEFAULT = false;
+
 }
 
 

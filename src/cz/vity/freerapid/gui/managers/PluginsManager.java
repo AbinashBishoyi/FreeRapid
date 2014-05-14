@@ -1,5 +1,7 @@
 package cz.vity.freerapid.gui.managers;
 
+import cz.vity.freerapid.core.AppPrefs;
+import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.gui.dialogs.WrappedPluginData;
 import cz.vity.freerapid.gui.managers.exceptions.NotSupportedDownloadServiceException;
 import cz.vity.freerapid.gui.managers.exceptions.PluginIsNotEnabledException;
@@ -8,6 +10,7 @@ import cz.vity.freerapid.model.PluginMetaData;
 import cz.vity.freerapid.plugimpl.StandardDialogSupportImpl;
 import cz.vity.freerapid.plugimpl.StandardPluginContextImpl;
 import cz.vity.freerapid.plugimpl.StandardStorageSupportImpl;
+import cz.vity.freerapid.plugins.directdownload.DirectDownloadServiceImpl;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.plugins.webclient.interfaces.PluginContext;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
@@ -33,6 +36,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -41,10 +45,7 @@ import java.util.logging.Logger;
 public class PluginsManager {
     private final static Logger logger = Logger.getLogger(PluginsManager.class.getName());
 
-    //private Map<String, ShareDownloadService> loadedPlugins = new Hashtable<String, ShareDownloadService>();
-    //  private Map<String, Pattern> supportedURLs = new HashMap<String, Pattern>();
-
-    private Map<String, PluginMetaData> supportedPlugins = new HashMap<String, PluginMetaData>();
+    private final Map<String, PluginMetaData> supportedPlugins = new HashMap<String, PluginMetaData>();
 
     private final Object lock = new Object();
 
@@ -52,15 +53,9 @@ public class PluginsManager {
     private final ManagerDirector director;
     private PluginManager pluginManager;
     private PluginMetaDataManager pluginMetaDataManager;
-    private static final int MAX_ENTRIES = 10;
-//    private Map<String, PluginMetaData> mCache = new ConcurrentHashMap<String, PluginMetaData>(new LinkedHashMap<String, PluginMetaData>(MAX_ENTRIES, .75F, true) {
-//        protected boolean removeEldestEntry(Map.Entry eldest) {
-//            return size() > MAX_ENTRIES;
-//        }
-//    });
-//
 
-    private Map<String, PluginMetaData> pluginsCache = Collections.synchronizedMap(new LinkedHashMap<String, PluginMetaData>(MAX_ENTRIES, .75F, true) {
+    private final static int MAX_ENTRIES = 10;
+    private final Map<String, PluginMetaData> pluginsCache = Collections.synchronizedMap(new LinkedHashMap<String, PluginMetaData>(MAX_ENTRIES, .75F, true) {
         protected boolean removeEldestEntry(Map.Entry eldest) {
             return size() > MAX_ENTRIES;
         }
@@ -94,9 +89,8 @@ public class PluginsManager {
 
 
     private void findAndInitNewPlugins() {
-
         logger.info("Init Plugins Manager");
-//        final ExtendedProperties config = new ExtendedProperties(Utils.loadProperties("jpf.properties", true));
+
         final ObjectFactory objectFactory = ObjectFactory.newInstance();
         final ShadingPathResolver resolver = new ShadingPathResolver();
         try {
@@ -104,7 +98,6 @@ public class PluginsManager {
         } catch (Exception e) {
             LogUtils.processException(logger, e);
         }
-        //    pluginManager = objectFactory.createManager(objectFactory.createRegistry(), resolver);
         pluginManager = objectFactory.createManager(objectFactory.createRegistry(), resolver);
 
         initNewPlugins(searchExistingPlugins());
@@ -132,23 +125,6 @@ public class PluginsManager {
         }
         return true;
     }
-
-//    public void reregisterAll() {
-//        final PluginRegistry pluginRegistry = pluginManager.getRegistry();
-//        synchronized (lock) {
-//            final Collection<PluginDescriptor> desc = pluginRegistry.getPluginDescriptors();
-//            String[] ids = new String[desc.size()];
-//            int counter = 0;
-//            for (PluginDescriptor pluginDescriptor : desc) {
-//                final String id = pluginDescriptor.getId();
-//                ids[counter++] = id;
-//                pluginManager.deactivatePlugin(id);
-//            }
-//            pluginsCache.clear();
-//            pluginRegistry.unregister(ids);
-//            initNewPlugins(searchExistingPlugins());
-//        }
-//    }
 
     public void updateNewPlugins(Collection<WrappedPluginData> updatedPlugins) throws JpfException {
         if (updatedPlugins.isEmpty())
@@ -240,27 +216,34 @@ public class PluginsManager {
 
     private PluginManager.PluginLocation[] getPluginLocations(File[] plugins) {
         if (plugins == null)
-            throw new IllegalStateException("Plugins directory does not exists");
+            throw new IllegalStateException("Plugin directory does not exist");
         final int length = plugins.length;
-        final PluginManager.PluginLocation[] loc = new PluginManager.PluginLocation[length];
+        final PluginManager.PluginLocation[] loc = new PluginManager.PluginLocation[length + 1];
 
         for (int i = 0; i < length; i++) {
-
             try {
                 final String path = fileToUrl(plugins[i]).toExternalForm();
                 logger.info("Plugins path:" + path);
                 final URL context = new URL("jar:" + path + "!/");
                 final URL manifest = new URL("jar:" + path + "!/plugin.xml");
-
-                //loc[i] = StandardPluginLocation.create(plugins[i]);
                 loc[i] = new StandardPluginLocation(context, manifest);
             } catch (MalformedURLException e) {
                 LogUtils.processException(logger, e);
             }
-
-            //loc[i] = StandardPluginLocation.create(plugins[i]);
-            //logger.info("Plugin location: " + loc);
         }
+
+        try {
+            final String path = DirectDownloadServiceImpl.class.getResource("plugin.xml").toExternalForm();
+            logger.info("Direct download plugin: " + path);
+            final URL context = new URL(path.substring(0, path.lastIndexOf('/') + 1));
+            final URL manifest = new URL(path);
+            loc[length] = new StandardPluginLocation(context, manifest);
+        } catch (NullPointerException e) {
+            logger.log(Level.SEVERE, "Failed to load direct download plugin", e);
+        } catch (MalformedURLException e) {
+            LogUtils.processException(logger, e);
+        }
+
         return loc;
     }
 
@@ -269,11 +252,10 @@ public class PluginsManager {
         logger.info("Plugins dir: " + pluginsDir.getAbsolutePath());
 
         return pluginsDir.listFiles(new FilenameFilter() {
-
+            @Override
             public boolean accept(File dir, String name) {
                 return name.toLowerCase(Locale.ENGLISH).endsWith(".frp");
             }
-
         });
     }
 
@@ -315,7 +297,6 @@ public class PluginsManager {
      * Overuje, zda je dane URL podporovane mezi pluginy
      *
      * @param url
-     * @param monitoring if should count with user settings of clipboard monitoring
      * @return vraci v pripade, ze nejaky plugin podporuje dane URL, jinak false
      */
     public boolean isSupported(final URL url) {
@@ -352,7 +333,7 @@ public class PluginsManager {
                     }
                 }
             }
-            return false;
+            return AppPrefs.getProperty(UserProp.ENABLE_DIRECT_DOWNLOADS, UserProp.ENABLE_DIRECT_DOWNLOADS_DEFAULT);
         }
     }
 
@@ -404,6 +385,10 @@ public class PluginsManager {
         }
         if (disabledPlugin != null)
             throw new PluginIsNotEnabledException(disabledPlugin);
+
+        if (AppPrefs.getProperty(UserProp.ENABLE_DIRECT_DOWNLOADS, UserProp.ENABLE_DIRECT_DOWNLOADS_DEFAULT)) {
+            return DirectDownloadServiceImpl.getNameStatic();
+        }
         throw new NotSupportedDownloadServiceException();
     }
 
@@ -523,7 +508,7 @@ public class PluginsManager {
     private static File urlToFile(final URL plugin) throws MalformedURLException, URISyntaxException {
         final String s = plugin.getFile();
         final int i = s.lastIndexOf("!/");
-        if (i != -1) { //smells like a pontentional bug
+        if (i != -1) { //smells like a potential bug
             return new File(new URL(s.substring(0, i)).toURI());
         }
         return new File(plugin.toURI());

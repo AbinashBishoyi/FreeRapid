@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 1.0" "http://jpf.sourceforge.net/plugin_1_0.dtd">
+<plugin id="direct" version="1.0" vendor="ntoskrnl"
+        class="cz.vity.freerapid.plugins.directdownload.DirectDownloadServiceImpl">
+    <attributes>
+        <attribute id="minver" value="0"/>
+        <attribute id="maxver" value="100"/>
+        <attribute id="services" value="direct"/>
+        <attribute id="maxDownloads" value="100"/>
+    </attributes>
+
+    <runtime>
+        <library id="direct" path="/" type="code"/>
+    </runtime>
+</plugin>
