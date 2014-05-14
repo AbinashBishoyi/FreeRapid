@@ -277,8 +277,7 @@ public final class PlugUtils {
      * @param name    name of parameter
      * @param content <code>String</code> to search in
      * @return <code>String</code> value of parameter
-     * @throws cz.vity.freerapid.plugins.exceptions.PluginImplementationException
-     *          given name not found in given content
+     * @throws cz.vity.freerapid.plugins.exceptions.PluginImplementationException given name not found in given content
      */
     public static String getParameter(String name, String content) throws PluginImplementationException {
         //(?: means no capturing group
@@ -530,7 +529,6 @@ public final class PlugUtils {
      * @since 0.855
      */
     public static String suggestFilename(String stringURL) throws PluginImplementationException {
-        String filename;
         if (stringURL == null || stringURL.isEmpty()) {
             throw new PluginImplementationException("Error suggesting file name");
         }
