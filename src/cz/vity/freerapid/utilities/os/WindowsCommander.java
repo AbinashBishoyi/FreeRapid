@@ -1,14 +1,12 @@
 package cz.vity.freerapid.utilities.os;
 
-import com.jacob.activeX.ActiveXComponent;
-import com.jacob.com.LibraryLoader;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.*;
 import cz.vity.freerapid.core.Consts;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
+import cz.vity.freerapid.utilities.os.shelllink.ShellLink;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,10 +18,6 @@ import java.util.logging.Logger;
  */
 final class WindowsCommander extends AbstractSystemCommander {
     private final static Logger logger = Logger.getLogger(WindowsCommander.class.getName());
-
-    static {
-        System.setProperty(LibraryLoader.JACOB_DLL_PATH, new File("lib\\" + LibraryLoader.getPreferredDLLName() + ".dll").getAbsolutePath());
-    }
 
     WindowsCommander() {
     }
@@ -63,20 +57,12 @@ final class WindowsCommander extends AbstractSystemCommander {
         final String appPath = Utils.addFileSeparator(Utils.getAppPath());
         final String exe = appPath + Consts.WINDOWS_EXE_NAME;
         final String icon = appPath + Consts.WINDOWS_ICON_NAME;
-        ActiveXComponent shell = null;
-        ActiveXComponent shortcut = null;
-        try {
-            shell = new ActiveXComponent("WScript.Shell");
-            shortcut = new ActiveXComponent(shell.invoke("CreateShortcut", shortcutFile).getDispatch());
-            shortcut.setProperty("TargetPath", exe);
-            shortcut.setProperty("WorkingDirectory", appPath);
-            shortcut.setProperty("IconLocation", icon);
-            shortcut.setProperty("Arguments", arguments);
-            shortcut.invoke("Save");
-        } finally {
-            if (shell != null) shell.safeRelease();
-            if (shortcut != null) shortcut.safeRelease();
-        }
+        final ShellLink shellLink = new ShellLink(shortcutFile);
+        shellLink.setTarget(exe);
+        shellLink.setWorkingDirectory(appPath);
+        shellLink.setIconLocation(icon);
+        shellLink.setArguments(arguments);
+        shellLink.save();
         return true;
     }
 
@@ -140,21 +126,21 @@ final class WindowsCommander extends AbstractSystemCommander {
         final String stringToFind = caseSensitive ? windowTitle : windowTitle.toLowerCase();
         final boolean[] result = {false};
         User32.INSTANCE.EnumWindows(new WinUser.WNDENUMPROC() {
-            @Override
-            public boolean callback(final WinDef.HWND hwnd, final Pointer pointer) {
-                String title = getWindowTitle(hwnd);
-                if (title != null) {
-                    if (!caseSensitive) {
-                        title = title.toLowerCase();
+                    @Override
+                    public boolean callback(final WinDef.HWND hwnd, final Pointer pointer) {
+                        String title = getWindowTitle(hwnd);
+                        if (title != null) {
+                            if (!caseSensitive) {
+                                title = title.toLowerCase();
+                            }
+                            if (title.contains(stringToFind)) {
+                                result[0] = true;
+                                return false;
+                            }
+                        }
+                        return true;
                     }
-                    if (title.contains(stringToFind)) {
-                        result[0] = true;
-                        return false;
-                    }
-                }
-                return true;
-            }
-        }, Pointer.NULL);
+                }, Pointer.NULL);
         return result[0];
     }
 
@@ -162,15 +148,15 @@ final class WindowsCommander extends AbstractSystemCommander {
     public List<String> getTopLevelWindowsList() throws IOException {
         final List<String> list = new LinkedList<String>();
         User32.INSTANCE.EnumWindows(new WinUser.WNDENUMPROC() {
-            @Override
-            public boolean callback(final WinDef.HWND hwnd, final Pointer pointer) {
-                final String title = getWindowTitle(hwnd);
-                if (title != null) {
-                    list.add(title);
-                }
-                return true;
-            }
-        }, Pointer.NULL);
+                    @Override
+                    public boolean callback(final WinDef.HWND hwnd, final Pointer pointer) {
+                        final String title = getWindowTitle(hwnd);
+                        if (title != null) {
+                            list.add(title);
+                        }
+                        return true;
+                    }
+                }, Pointer.NULL);
         return list;
     }
 
