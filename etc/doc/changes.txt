@@ -20,6 +20,7 @@ FreeRapid Downloader 0.85 Alpha 4
   Changed : Upgraded Substance L&F to version 6.1 Final
   Changed : Removed redundant setting for automatic restart after plugin updates
   Changed : Speed limiter settings pane split in two to make clear a difference between global and file-specific settings
+  Changed : Updated commons-codec to v1.4
 
 8th August 2010 - FreeRapid Downloader 0.85 Alpha 3
   Added : Plugin API

@@ -1,8 +1,9 @@
 package cz.vity.freerapid.plugins.webclient.utils;
 
+import org.apache.commons.codec.binary.Hex;
+
 import java.io.*;
 import java.nio.ByteBuffer;
-import java.nio.LongBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
@@ -18,8 +19,7 @@ import java.util.zip.CRC32;
  * either as a byte array ({@link Hash#toBytes()})
  * or as a hex string ({@link Hash#toString()}).
  * <p>
- * Hash objects are immutable except for the byte array
- * returned by {@link Hash#toBytes()}.
+ * Hash objects are immutable.
  *
  * @author ntoskrnl
  */
@@ -52,12 +52,10 @@ public final class Hash {
     }
 
     /**
-     * The returned array is not immutable, and modification of it leads to undefined behavior.
-     *
      * @return result of the hash
      */
     public byte[] toBytes() {
-        return bytes;
+        return Arrays.copyOf(bytes, bytes.length);
     }
 
     /**
@@ -69,15 +67,7 @@ public final class Hash {
     @Override
     public String toString() {
         if (string == null) {
-            StringBuilder sb = new StringBuilder();
-            for (byte b : bytes) {
-                String s = Integer.toHexString(b & 0xff);
-                if (s.length() == 1) {
-                    sb.append('0');
-                }
-                sb.append(s);
-            }
-            string = sb.toString();
+            string = Hex.encodeHexString(bytes);
         }
         return string;
     }
@@ -87,7 +77,7 @@ public final class Hash {
         if (this == o) return true;
         if (o instanceof Hash) {
             Hash that = (Hash) o;
-            return this.getAlgorithm().equalsIgnoreCase(that.getAlgorithm()) && Arrays.equals(this.toBytes(), that.toBytes());
+            return this.algorithm.equalsIgnoreCase(that.algorithm) && Arrays.equals(this.bytes, that.bytes);
         }
         return false;
     }
@@ -321,11 +311,9 @@ public final class Hash {
     }
 
     private static byte[] crc32ToByteArray(long l) {
-        byte[] b = new byte[8];
-        ByteBuffer bb = ByteBuffer.wrap(b);
-        LongBuffer lb = bb.asLongBuffer();
-        lb.put(l);
-        return Arrays.copyOfRange(b, 4, 8);
+        byte[] b = new byte[4];
+        ByteBuffer.wrap(b).asIntBuffer().put((int) l);
+        return b;
     }
 
     /**
