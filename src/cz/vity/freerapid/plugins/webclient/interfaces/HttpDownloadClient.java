@@ -113,6 +113,11 @@ public interface HttpDownloadClient {
      */
     String getContentAsString();
 
-    //TODO javadoc since 0.849
+    /**
+     * Sets timeout for connection.
+     *
+     * @param timeout new timeout in milliseconds
+     * @since 0.85
+     */
     void setConnectionTimeOut(int timeout);
 }

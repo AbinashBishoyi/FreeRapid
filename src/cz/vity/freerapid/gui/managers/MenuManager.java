@@ -5,13 +5,13 @@ import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.gui.actions.FileActions;
 import cz.vity.freerapid.gui.actions.HelpActions;
+import cz.vity.freerapid.gui.actions.OptionsActions;
 import cz.vity.freerapid.gui.actions.ViewActions;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.swing.SwingUtils;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.swing.binding.BindUtils;
 import cz.vity.freerapid.utilities.Utils;
-import org.jdesktop.application.AbstractBean;
 import org.jdesktop.application.ApplicationActionMap;
 import org.jdesktop.application.ApplicationContext;
 
@@ -24,8 +24,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.List;
-import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.PreferenceChangeListener;
 
 
 /**
@@ -33,43 +31,33 @@ import java.util.prefs.PreferenceChangeListener;
  *
  * @author Vity
  */
-public class MenuManager extends AbstractBean {
+public class MenuManager {
     public final static String MENU_SEPARATOR = "---";
     private final static String SELECTED_TEXT_PROPERTY = "selectedText";
     private final static String RADIO = "*";
     private final static String RADIO2 = "*2";
     private final static String CHECKED = "!";
 
-    private final static String REFRESH_PROXY_LIST_ACTION_ENABLED_PROPERTY = "refreshProxyListActionEnabled";
-    private boolean refreshProxyListActionEnabled = false;
-
-    /**
-     * hlavni komponenta pro menu
-     */
-    private JMenuBar menuBar;
     private final ApplicationContext context;
     private final ManagerDirector director;
     private final FileActions fileActions;
+    private final OptionsActions optionsActions;
+    private JMenuBar menuBar;
     private JMenu useConnections;
-
-//    private final static String AUTOSEARCH_PROPERTY = "autosearch";
-//    private boolean isAutoSearchEnabled = false;
 
     public FileActions getFileActions() {
         return fileActions;
     }
-
-///    private JMenu autosearchSubmenu = null;
 
     public MenuManager(final ApplicationContext context, ManagerDirector director) {
         super();
         this.context = context;
         this.director = director;
         fileActions = new FileActions(context);
-        Swinger.initActions(this, context);
+        optionsActions = new OptionsActions();
         Swinger.initActions(fileActions, context);
-        ViewActions viewActions = new ViewActions();
-        Swinger.initActions(viewActions, context);
+        Swinger.initActions(optionsActions, context);
+        Swinger.initActions(new ViewActions(), context);
         Swinger.initActions(new HelpActions(), context);
     }
 
@@ -238,20 +226,6 @@ public class MenuManager extends AbstractBean {
         if (AppPrefs.getProperty(UserProp.AUTOSHUTDOWN_DISABLED_WHEN_EXECUTED, UserProp.AUTOSHUTDOWN_DISABLED_WHEN_EXECUTED_DEFAULT)) {
             AppPrefs.storeProperty(UserProp.AUTOSHUTDOWN, UserProp.AUTOSHUTDOWN_DISABLED);
         }
-
-        AppPrefs.getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
-            @Override
-            public void preferenceChange(final PreferenceChangeEvent evt) {
-                if (UserProp.USE_PROXY_LIST.equals(evt.getKey())) {
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            setRefreshProxyListActionEnabled(Boolean.parseBoolean(evt.getNewValue()));
-                        }
-                    });
-                }
-            }
-        });
     }
 
     private void selectAutoShutDownMenu(ApplicationActionMap map) {
@@ -392,7 +366,7 @@ public class MenuManager extends AbstractBean {
 
         final JMenuItem refreshProxyList = new JMenuItem();
         refreshProxyList.setName("refreshProxyList");
-        setRefreshProxyListActionEnabled(AppPrefs.getProperty(UserProp.USE_PROXY_LIST, UserProp.USE_PROXY_LIST_DEFAULT));
+        optionsActions.setRefreshProxyListActionEnabled(AppPrefs.getProperty(UserProp.USE_PROXY_LIST, UserProp.USE_PROXY_LIST_DEFAULT));
         refreshProxyList.setAction(context.getActionMap().get("refreshProxyList"));
         useConnections.add(refreshProxyList);
         useConnections.add(new JSeparator());
@@ -401,7 +375,6 @@ public class MenuManager extends AbstractBean {
             final JCheckBoxMenuItem item = new JCheckBoxMenuItem(settings.toString());
             final PropertyConnector propertyConnector = PropertyConnector.connect(settings, "enabled", item, "selected");
             propertyConnector.updateProperty2();
-            //item.setSelected(settings.isEnabled());
             item.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -411,21 +384,6 @@ public class MenuManager extends AbstractBean {
             });
             useConnections.add(item);
         }
-    }
-
-    @org.jdesktop.application.Action(enabledProperty = REFRESH_PROXY_LIST_ACTION_ENABLED_PROPERTY)
-    public void refreshProxyList() {
-        director.getClientManager().updateConnectionSettings();
-    }
-
-    public void setRefreshProxyListActionEnabled(boolean refreshProxyListActionEnabled) {
-        boolean oldValue = this.refreshProxyListActionEnabled;
-        this.refreshProxyListActionEnabled = refreshProxyListActionEnabled;
-        firePropertyChange(REFRESH_PROXY_LIST_ACTION_ENABLED_PROPERTY, oldValue, this.refreshProxyListActionEnabled);
-    }
-
-    public boolean isRefreshProxyListActionEnabled() {
-        return refreshProxyListActionEnabled;
     }
 
 }

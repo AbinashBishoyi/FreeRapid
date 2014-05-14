@@ -21,6 +21,7 @@ final class SpeedCellRenderer extends DefaultTableCellRenderer {
         if (downloadFile.getState() == DownloadState.DOWNLOADING) {
             if (downloadFile.getSpeed() >= 0) {
                 value = ContentPanel.bytesToAnother(downloadFile.getSpeed()) + "/s";
+                if (downloadFile.hasSpeedLimit()) value = value + " (L)";
             } else value = "0 B/s";
             //this.setToolTipText("Average speed " + bytesToAnother((long) downloadFile.getAverageSpeed()) + "/s");
         } else value = "";

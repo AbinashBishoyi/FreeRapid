@@ -11,7 +11,7 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
- 11th July 2010 - FreeRapid Downloader 0.85 Alfa 1
+11th July 2010 - FreeRapid Downloader 0.85 Alfa 1
   Added : New action in Remove menu: "Remove Completed Links and Deleted Files"
   Added : New user option: "Slim lines in History dialog"
   Added : Speed (bandwidth) Limiter
@@ -36,7 +36,7 @@ Fixed - indicates a bug fix
   Fixed : Inconsistent behavior of "Close to tray" option
   Fixed : file properties dialog (Information dialog) cannot be closed by OK button
 
- 29th October 2009 - FreeRapid Downloader 0.83 Update 1
+29th October 2009 - FreeRapid Downloader 0.83 Update 1
   Added : Romanian language [thanks to de-a dura lex]
   Added : Experimental: new -DtableSortable boolean internal property to enable sorting in the main table
           (default value is false, only for testers, see documentation how to use internal properties) 

@@ -174,7 +174,7 @@ public abstract class AbstractRunner implements PluginRunner {
      * @throws Exception if something goes horribly wrong
      * @see RtmpSession
      */
-    private boolean tryDownloadAndSaveFile(final RtmpSession rtmpSession) throws Exception {
+    protected boolean tryDownloadAndSaveFile(final RtmpSession rtmpSession) throws Exception {
         httpFile.setState(DownloadState.GETTING);
         logger.info("Starting RTMP download");
 
