@@ -103,6 +103,13 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     private JXTable table;
     private static String[] states;
+    private static final NumberFormat integerInstance = NumberFormat.getIntegerInstance();
+    private static final NumberFormat numberFormatInstance = NumberFormat.getInstance();
+
+    static {
+        numberFormatInstance.setMaximumFractionDigits(2);
+        numberFormatInstance.setMinimumFractionDigits(1);
+    }
 
     public ContentPanel(ApplicationContext context, ManagerDirector director) {
         this.context = context;
@@ -1009,6 +1016,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
 
     private void initComponents() {
+
         JScrollPane scrollPane = new JScrollPane();
         table = new JXTable();
 
@@ -1117,17 +1125,14 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     }
 
     public static String bytesToAnother(long bytes) {
-        final NumberFormat number = NumberFormat.getNumberInstance();
-        number.setMaximumFractionDigits(2);
-        number.setMinimumFractionDigits(1);
         if (bytes > (1024 * 1024 * 1024)) {
-            return number.format((float) bytes / (float) (1024 * 1024 * 1024)) + " GB";
+            return numberFormatInstance.format((float) bytes / (1024 * 1024 * 1024F)) + " GB";
         } else if (bytes > (1024 * 1024)) {
-            return number.format((float) bytes / (float) (1024 * 1024)) + " MB";
+            return numberFormatInstance.format((float) bytes / (1024 * 1024F)) + " MB";
         } else if (bytes >= 1024) {
-            return number.format((float) bytes / (float) (1024)) + " kB";
+            return numberFormatInstance.format((float) bytes / (1024F)) + " kB";
         } else {
-            return String.format("%s B", NumberFormat.getIntegerInstance().format(bytes));
+            return String.format("%s B", integerInstance.format(bytes));
         }
     }
 

@@ -29,7 +29,7 @@ import java.util.logging.Logger;
  *
  * @author Vity
  */
-@ProxyActions({"select-all", "copy", "cut", "paste"})
+@ProxyActions({"select-all", "copy", "cut", "paste", "delete"})
 public class FileActions extends AbstractBean {
     private final static Logger logger = Logger.getLogger(FileActions.class.getName());
 

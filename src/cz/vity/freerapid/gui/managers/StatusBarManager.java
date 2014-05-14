@@ -19,7 +19,6 @@ import cz.vity.freerapid.gui.content.ContentPanel;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.swing.TrayIconSupport;
 import cz.vity.freerapid.swing.binding.BindUtils;
-import cz.vity.freerapid.swing.components.MemoryIndicator;
 import cz.vity.freerapid.utilities.Utils;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.ResourceMap;
@@ -58,7 +57,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
     private Image downloadingIconImage;
     private TrayIconSupport trayIconSupport;
 
-    private MemoryIndicator indicator;
+    //private MemoryIndicator indicator;
     private PropertyChangeListener taskPCL;
 
     private Task activeTask = null;
@@ -131,8 +130,8 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
             progress = new JProgressBar();
 
             //  progress.setStringPainted(false);
-            indicator = new MemoryIndicator();
-            indicator.setPreferredSize(new Dimension(100, BAR_HEIGHT));
+            //indicator = new MemoryIndicator();
+            //indicator.setPreferredSize(new Dimension(100, BAR_HEIGHT));
             infoLabel.setPreferredSize(new Dimension(345, BAR_HEIGHT));
             clipboardMonitoring.setPreferredSize(new Dimension(17, BAR_HEIGHT));
             progress.setPreferredSize(new Dimension(progress.getPreferredSize().width + 35, BAR_HEIGHT));
@@ -177,7 +176,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
             });
             //final ContentPanel speedBarPanel = director.getDockingManager().getContentPanel();
             updateInfoStatus();
-            updateMemoryIndicator();
+            //updateMemoryIndicator();
         }
         return statusbar;
     }
@@ -266,7 +265,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
             else
                 updateIconAnimation();
         } else if (UserProp.SHOW_MEMORY_INDICATOR.equals(key)) {
-            updateMemoryIndicator();
+            //updateMemoryIndicator();
         } else if (UserProp.SPEED_LIMIT_ENABLED.equals(key)) {
             if (Boolean.TRUE.equals(Boolean.valueOf(evt.getNewValue())))
                 Swinger.inputFocus(slider);
@@ -276,14 +275,14 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
         }
     }
 
-    private void updateMemoryIndicator() {
-        final boolean memoryIndicator = AppPrefs.getProperty(UserProp.SHOW_MEMORY_INDICATOR, UserProp.SHOW_MEMORY_INDICATOR_DEFAULT);
-        indicator.setVisible(memoryIndicator);
-        if (memoryIndicator)
-            statusbar.add(indicator, JXStatusBar.Constraint.ResizeBehavior.FIXED);
-        else
-            statusbar.remove(indicator);
-    }
+//    private void updateMemoryIndicator() {
+//        final boolean memoryIndicator = AppPrefs.getProperty(UserProp.SHOW_MEMORY_INDICATOR, UserProp.SHOW_MEMORY_INDICATOR_DEFAULT);
+//        indicator.setVisible(memoryIndicator);
+//        if (memoryIndicator)
+//            statusbar.add(indicator, JXStatusBar.Constraint.ResizeBehavior.FIXED);
+//        else
+//            statusbar.remove(indicator);
+//    }
 
     private void setStatusBarVisible(boolean visible) {
         getStatusBar().setVisible(visible);

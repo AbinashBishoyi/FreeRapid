@@ -63,6 +63,7 @@ class EstTimeCellRenderer extends DefaultTableCellRenderer {
         }
         final Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         getAccessibleContext().setAccessibleName(table.getColumnName(column) + " " + value);
+        getAccessibleContext().setAccessibleDescription(table.getColumnName(column) + " " + value);
         return comp;
     }
 }

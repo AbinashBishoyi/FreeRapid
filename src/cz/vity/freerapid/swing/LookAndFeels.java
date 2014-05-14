@@ -171,6 +171,8 @@ public final class LookAndFeels {
                 }
             }
         }
+        final String crossSystem = UIManager.getSystemLookAndFeelClassName();
+        availableLaFs.add(new LaF(crossSystem, "System", "", false));
         return availableLaFs;
     }
 

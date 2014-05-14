@@ -41,6 +41,8 @@ abstract class AppDialog extends JDialog {
     }
 
     public void doClose() {
+        if (actionMap != null)
+            actionMap.remove(this);
         dispose();
     }
 

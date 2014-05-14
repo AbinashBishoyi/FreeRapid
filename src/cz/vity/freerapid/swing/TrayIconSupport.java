@@ -63,11 +63,15 @@ public class TrayIconSupport implements PropertyChangeListener {
         windowAdapter = new WindowAdapter() {
             @Override
             public void windowIconified(WindowEvent e) {
-                if (AppPrefs.getProperty(FWProp.SHOW_TRAY, true) && AppPrefs.getProperty(FWProp.MINIMIZE_TO_TRAY, false))
+                if (minimizeToTray())
                     frame.setVisible(false);
             }
         };
+
         frame.addWindowListener(windowAdapter);
+
+        if (minimizeToTray() && frame.getExtendedState() == JFrame.ICONIFIED)
+            frame.setVisible(false);
 
         Image image = (Utils.isWindows()) ? Swinger.getResourceMap().getImageIcon("trayIconImageWin").getImage() : frame.getIconImage();
         frame.addPropertyChangeListener(TITLE_PROPERTY, this);
@@ -100,6 +104,10 @@ public class TrayIconSupport implements PropertyChangeListener {
         } catch (AWTException e) {
             logger.log(Level.WARNING, "Cannot enable Tray icon - Tray icon is not supported on this system");
         }
+    }
+
+    private boolean minimizeToTray() {
+        return AppPrefs.getProperty(FWProp.SHOW_TRAY, true) && AppPrefs.getProperty(FWProp.MINIMIZE_TO_TRAY, false);
     }
 
     private void windowPlay(final JFrame frame, boolean toFront) {

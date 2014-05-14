@@ -101,7 +101,7 @@ public abstract class SingleXFrameApplication extends SingleFrameApplication {
             }
         }
         {//Vity's hack
-            final Point location = root.getLocation();
+            //   final Point location = root.getLocation();
             //System.out.println("location = " + location);
             final Dimension size = root.getPreferredSize();
             final boolean invalidWidth = root.getWidth() < size.width;
@@ -192,20 +192,22 @@ public abstract class SingleXFrameApplication extends SingleFrameApplication {
 
     @Override
     public void show(JFrame c) {
+        c.setSize(0, 0);
         super.show(c);
         final Point onScreen = c.getLocationOnScreen();
         final int x = Math.max(0, onScreen.x);
         final int y = Math.max(0, onScreen.y);
-
-        if ((c.getWidth() < 150) || (c.getHeight() < 20) || onScreen.x != x || onScreen.y != y) {
+//        final boolean isMaximized = c.getExtendedState() == JFrame.MAXIMIZED_BOTH;
+        if ((c.getWidth() < 150) || (c.getHeight() < 20)) {
             c.pack();
+        }
+        if (onScreen.x != x || onScreen.y != y) {
             if (!c.isLocationByPlatform()) {
                 Component owner = (c != getMainFrame()) ? getMainFrame()
                         : null;
                 c.setLocationRelativeTo(owner); // center the window
             }
         }
-
         c.getRootPane().putClientProperty("initialized", Boolean.TRUE);
     }
 

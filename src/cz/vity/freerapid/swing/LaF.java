@@ -72,6 +72,7 @@ public final class LaF {
         return (name != null ? name.hashCode() : 0);
     }
 
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -97,6 +98,7 @@ public final class LaF {
         //return false;
     }
 
+    @Override
     public final String toString() {
         return this.getName();
     }

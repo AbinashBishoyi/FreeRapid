@@ -1,5 +1,6 @@
 package cz.vity.freerapid.core;
 
+import cz.vity.freerapid.utilities.Utils;
 import org.apache.commons.cli2.CommandLine;
 import org.apache.commons.cli2.DisplaySetting;
 import org.apache.commons.cli2.Group;
@@ -11,6 +12,8 @@ import org.apache.commons.cli2.option.DefaultOption;
 import org.apache.commons.cli2.option.PropertyOption;
 import org.apache.commons.cli2.util.HelpFormatter;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 /**
@@ -36,9 +39,36 @@ final class CmdLine {
 
 
     @SuppressWarnings({"unchecked"})
-    public List<String> processCommandLine(final String[] args) {
+    public List<String> processCommandLine(String[] args) {
+        final String appPath = Utils.getAppPath();
+        final File startup = new File(appPath, "startup.properties");
+        if (startup.exists() && startup.isFile() && startup.canRead()) {
+            Scanner scanner = null;
+            final List<String> list = new LinkedList<String>();
+            try {
+                scanner = new Scanner(startup);
+                while (scanner.hasNextLine()) {
+                    final String line = scanner.nextLine().trim();
+                    if (!line.isEmpty() && !line.startsWith("#")) {
+                        list.add(line);
+                    }
+                }
+                if (!list.isEmpty()) {
+                    list.addAll(Arrays.asList(args));
+                    args = new String[list.size()];
+                    list.toArray(args);
+                }
+            }
+            catch (FileNotFoundException e) {
+                //ignore
+            } finally {
+                if (scanner != null)
+                    scanner.close();
+            }
+        }
         if (args.length == 0)
             return new LinkedList<String>();
+
         final DefaultOptionBuilder obuilder = new DefaultOptionBuilder();
         //new ArgumentBuilder();
         final GroupBuilder gbuilder = new GroupBuilder();

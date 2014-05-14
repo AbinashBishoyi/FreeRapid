@@ -80,6 +80,9 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     protected Void doInBackground() throws Exception {
         initDownloadThread();
 
+        if (AppPrefs.getProperty(UserProp.BLIND_MODE, UserProp.BLIND_MODE_DEFAULT))
+            Sound.playSound(getContext().getResourceMap().getString("fileAdded"));
+
         if (downloadFile.getDownloaded() < 0)
             downloadFile.setDownloaded(0);
         final int seconds = AppPrefs.getProperty(UserProp.ERROR_SLEEP_TIME, UserProp.ERROR_SLEEP_TIME_DEFAULT);
@@ -180,6 +183,9 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                 startPosition = startPositionObject;
                 downloadFile.getProperties().remove(DownloadClient.START_POSITION);
             }
+
+            if (AppPrefs.getProperty(UserProp.BLIND_MODE, UserProp.BLIND_MODE_DEFAULT))
+                Sound.playSound(getContext().getResourceMap().getString("startDownloadWav"));
 
             try {
                 cos = getFileOutputStream(storeFile, fileSize, startPosition);
