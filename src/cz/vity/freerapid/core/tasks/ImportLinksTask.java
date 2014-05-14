@@ -24,14 +24,13 @@ import java.util.logging.Logger;
 /**
  * @author ntoskrnl
  */
-public class ImportLinksTask extends CoreTask<Void, Void> {
+public class ImportLinksTask extends CoreTask<List<FileInfo>, Void> {
     private final static Logger logger = Logger.getLogger(ImportLinksTask.class.getName());
 
     private final MainApp app;
     private final ContainerPlugin plugin;
     private final File[] files;
     private final File saveToDirectory = new File(AppPrefs.getProperty(UserProp.LAST_COMBO_PATH, ""));//TODO!
-    private List<FileInfo> list;
 
     public ImportLinksTask(final MainApp app, final ContainerPlugin plugin, final File[] files) {
         super(app);
@@ -42,13 +41,13 @@ public class ImportLinksTask extends CoreTask<Void, Void> {
     }
 
     @Override
-    protected Void doInBackground() throws Exception {
+    protected List<FileInfo> doInBackground() throws Exception {
         int i = 0;
         setProgress(i, 0, files.length);
         final List<ConnectionSettings> settingsList = app.getManagerDirector().getClientManager().getAvailableConnections();
         plugin.setConnectionSettings(settingsList.isEmpty() ? null : settingsList.get(0));
         plugin.setDialogSupport(new StandardDialogSupportImpl(app.getContext()));
-        list = new LinkedList<FileInfo>();
+        final List<FileInfo> list = new LinkedList<FileInfo>();
         for (final File file : files) {
             message("importingLinks", Utils.shortenFileName(file));
             InputStream stream = null;
@@ -68,7 +67,7 @@ public class ImportLinksTask extends CoreTask<Void, Void> {
         if (list.isEmpty()) {
             throw new ContainerException("noLinksFound");
         }
-        return null;
+        return list;
     }
 
     @Override
@@ -90,7 +89,7 @@ public class ImportLinksTask extends CoreTask<Void, Void> {
     }
 
     @Override
-    protected void succeeded(final Void result) {
+    protected void succeeded(final List<FileInfo> list) {
         app.getManagerDirector().getDataManager().addLinksToQueueFromContainer(list, saveToDirectory, null, true);
     }
 
