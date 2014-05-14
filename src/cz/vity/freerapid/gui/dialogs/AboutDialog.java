@@ -5,34 +5,55 @@ import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import cz.vity.freerapid.core.Consts;
+import cz.vity.freerapid.gui.dialogs.abouteffect.VolleyExplosion;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.Browser;
 import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.application.Action;
+import org.pushingpixels.trident.Timeline;
+import org.pushingpixels.trident.TimelineScenario;
+import org.pushingpixels.trident.callback.TimelineScenarioCallback;
+import org.pushingpixels.trident.swing.SwingRepaintTimeline;
 
 import javax.swing.*;
 import java.applet.AudioClip;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.FileNotFoundException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.logging.Logger;
 
 /**
  * @author Vity
+ * @author KirillG
+ * Effect source code: http://kenai.com/projects/trident/pages/SimpleTimelineScenario
  */
+
 public class AboutDialog extends AppDialog {
     private final static Logger logger = Logger.getLogger(AboutDialog.class.getName());
     private JLabel xImagePanel;
     private JLabel infoLabel;
     private AudioClip audioClip;
+    private final Set<VolleyExplosion> volleys;
+    @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
+    private final Map<VolleyExplosion, TimelineScenario> volleyScenarios;
 
     public AboutDialog(Frame owner) throws HeadlessException {
         super(owner, true);
         this.setName("AboutDialog");
+        this.volleys = new HashSet<VolleyExplosion>();
+        this.volleyScenarios = new HashMap<VolleyExplosion, TimelineScenario>();
+
         try {
             initComponents();
             build();
@@ -42,6 +63,8 @@ public class AboutDialog extends AppDialog {
             if (buildNumber != null)
                 title = title + "  build #" + buildNumber;
             this.setTitle(title);
+            Timeline repaint = new SwingRepaintTimeline(this);
+            repaint.playLoop(Timeline.RepeatBehavior.LOOP);
 
         } catch (Exception e) {
             LogUtils.processException(logger, e);
@@ -75,6 +98,23 @@ public class AboutDialog extends AppDialog {
 //            }
 //        });
 
+
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                if ((getWidth() == 0) || (getHeight() == 0))
+                    return;
+                new Thread() {
+                    @Override
+                    public void run() {
+                        //noinspection ConstantConditions
+                        for (int i = 10; i >= 0; i--)
+                            addExplosions(5);
+
+                    }
+                }.start();
+            }
+        });
 
     }
 
@@ -128,6 +168,43 @@ public class AboutDialog extends AppDialog {
         }
     }
 
+    private void addExplosions(int count) {
+        final CountDownLatch latch = new CountDownLatch(count);
+
+        for (int i = 0; i < count; i++) {
+            int r = (int) (255 * Math.random());
+            int g = (int) (100 + 155 * Math.random());
+            int b = (int) (50 + 205 * Math.random());
+            Color color = new Color(r, g, b);
+
+            int x = 60 + (int) ((xImagePanel.getWidth() - 120) * Math.random());
+            int y = 60 + (int) ((xImagePanel.getHeight() - 120) * Math.random());
+            final VolleyExplosion exp = new VolleyExplosion(x, y, color);
+            synchronized (volleys) {
+                volleys.add(exp);
+                TimelineScenario scenario = exp.getExplosionScenario();
+                scenario.addCallback(new TimelineScenarioCallback() {
+                    @Override
+                    public void onTimelineScenarioDone() {
+                        synchronized (volleys) {
+                            volleys.remove(exp);
+                            volleyScenarios.remove(exp);
+                            latch.countDown();
+                        }
+                    }
+                });
+                volleyScenarios.put(exp, scenario);
+                scenario.play();
+            }
+        }
+
+        try {
+            latch.await();
+        } catch (Exception exc) {
+            //ignore
+        }
+    }
+
     @Action
     public void okBtnAction() {
         stopSound();
@@ -146,7 +223,17 @@ public class AboutDialog extends AppDialog {
 
         JPanel dialogPane = new JPanel();
         JPanel contentPanel = new JPanel();
-        xImagePanel = new JLabel();
+        xImagePanel = new JLabel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                synchronized (volleys) {
+                    for (VolleyExplosion exp : volleys) {
+                        exp.paint(g);
+                    }
+                }
+            }
+        };
         JPanel buttonBar = new JPanel();
         btnOK = new JButton();
         CellConstraints cc = new CellConstraints();
