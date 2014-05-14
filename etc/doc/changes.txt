@@ -18,14 +18,13 @@ Internal - indicates an internal change - information for FRD developers - nothi
           as usual.
   Added : Several translations were updated - thanks to all translators!
   Added : Downloaded files can be renamed within FRD
-  Added : Support for zooming captcha image (optionable in user preferences dialog)
+  Added : Support for zooming captcha image (enable in preferences dialog)
   Added : Progress bar while downloading plugin updates
-  Added : PGSLookAndFeel is bundled again (optionable in user preferences dialog)
+  Added : PGSLookAndFeel is bundled again (choose in preferences dialog)
   Added : Plugin API
            - A few new methods to MethodBuilder
            - FileStreamRecognizer improvements
            - Changed approach to unlimited cryptography
-  Changed : Updated all plugins to its latest versions
   Changed : Removed global simultaneous downloads limit
   Changed : Internal file list and download history storage backend changed to a much more robust database system.
             This should provide performance improvements for large lists, and the list should not be lost anymore
