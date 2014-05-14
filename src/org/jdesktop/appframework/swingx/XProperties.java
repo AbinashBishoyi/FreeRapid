@@ -153,7 +153,7 @@ public class XProperties {
          * @return
          */
         private boolean canRestore(ColumnState[] columnState, List<TableColumn> columns) {
-            if ((columnState == null) || (columnState.length != columns.size())) return false;
+            if ((columnState == null) || (columnState.length > columns.size())) return false;
             for (int i = 0; i < columnState.length; i++) {
                 if (columnState[i].getModelIndex() != columns.get(i).getModelIndex()) {
                     return false;

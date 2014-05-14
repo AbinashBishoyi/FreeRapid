@@ -105,6 +105,7 @@ public class ManagerDirector {
 
 
         this.rootContainer = new JPanel();
+        this.rootContainer.setName("JPanel1");
         this.rootContainer.setPreferredSize(new Dimension(700, 550));
 
         taskServiceManager = new TaskServiceManager(context);
