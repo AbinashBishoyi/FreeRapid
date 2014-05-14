@@ -158,7 +158,7 @@ public class ManagerDirector {
         inputDataManager.initProcessManagerQueue(); //loads file list from file, fills main table
         this.systemManager.initManager();
 
-        //linkStoreManager = new LinkStoreManager(ManagerDirector.this, context);
+        linkStoreManager = new LinkStoreManager(ManagerDirector.this, context);
         searchManager.loadSearchData();
         toolbarManager.initManager();
         clipboardMonitorManager.initManager();

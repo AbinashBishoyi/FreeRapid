@@ -365,6 +365,9 @@ final public class UserProp {
 
     public static final String CHAR_ENCODING_FOR_PROPERTIES_FILES = "charEncodingForPropertiesFiles";
 
+    public static final String OPEN_INCOMPLETE_FILES = "openIncompleteFiles";
+    public static final boolean OPEN_INCOMPLETE_FILES_DEFAULT = false;
+
 }
 
 
