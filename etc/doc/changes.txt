@@ -13,7 +13,7 @@ Fixed - indicates a bug fix
 
   Added : Plugin API
             - FileStreamRecognizer interface and accompanying methods for setting it
-  Changed : Appframework was updated to BSAF, which fixes some bugs
+  Changed : SwingApplication framework (SAF) was updated to BetterSwingApplication framework BSAF, which fixes some bugs
   Changed : "Confirm deleting files" dialog is truncated to 20 files to avoid overly tall dialog which overflows screen
   Fixed : Lots of exceptions in log in case a plugin dependency is missing
   Fixed : Proxy list not refreshing when changing the path to it in preferences dialog

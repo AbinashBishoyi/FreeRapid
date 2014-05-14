@@ -10,6 +10,7 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.beans.Beans;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -30,6 +31,7 @@ public class MethodBuilderTest {
         final URI uri = MethodBuilderTest.class.getResource("resources/MethodBuilderTest.html").toURI();
         content = Utils.loadFile(new File(uri), "Windows-1250");
         client = new DownloadClient();
+        Beans.setDesignTime(true);
         client.initClient(new ConnectionSettings());
         Locale.setDefault(new Locale("CS", "CZ"));
     }
