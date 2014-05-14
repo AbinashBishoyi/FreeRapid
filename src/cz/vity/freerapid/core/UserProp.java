@@ -291,5 +291,13 @@ final public class UserProp {
     public static final String SHOW_STATUSBAR = "showStatusbar";
     public static final String SHOW_TOOLBAR = "showToolbar";
 
+
     public static final boolean SHOW_TOOLBAR_DEFAULT = true;
+
+    public static final String CONNECTION_TIMEOUT = "connectionTimeoutMS";
+    public static final int CONNECTION_TIMEOUT_DEFAULT = 120 * 1000;
+
 }
+
+
+

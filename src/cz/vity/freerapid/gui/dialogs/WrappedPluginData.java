@@ -15,7 +15,7 @@ public class WrappedPluginData {
     private String version;
     private String services;
     private boolean aNew;
-
+    private boolean isPluginInUse;
 
     public WrappedPluginData(boolean selected, DownloadFile httpFile, Plugin pluginInfo) {
         this.selected = selected;
@@ -24,6 +24,7 @@ public class WrappedPluginData {
         this.author = pluginInfo.getVendor();
         version = pluginInfo.getVersion();
         services = pluginInfo.getServices();
+        isPluginInUse = false;
     }
 
     public boolean isSelected() {
@@ -66,4 +67,11 @@ public class WrappedPluginData {
         return aNew;
     }
 
+    public boolean isPluginInUse() {
+        return isPluginInUse;
+    }
+
+    public void setPluginInUse(boolean pluginInUse) {
+        isPluginInUse = pluginInUse;
+    }
 }

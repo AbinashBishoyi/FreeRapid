@@ -1,5 +1,7 @@
 package cz.vity.freerapid.plugins.webclient;
 
+import cz.vity.freerapid.core.AppPrefs;
+import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
 import cz.vity.freerapid.plugins.webclient.utils.HttpUtils;
@@ -85,11 +87,12 @@ public class DownloadClient implements HttpDownloadClient {
         final HttpClientParams clientParams = client.getParams();
         clientParams.setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
         clientParams.setParameter(HttpMethodParams.SINGLE_COOKIE_HEADER, true);
-        clientParams.setSoTimeout(120 * 1000);
-        clientParams.setConnectionManagerTimeout(120 * 1000);
+        final int timeout = AppPrefs.getProperty(UserProp.CONNECTION_TIMEOUT, UserProp.CONNECTION_TIMEOUT_DEFAULT);
+        clientParams.setSoTimeout(timeout);
+        clientParams.setConnectionManagerTimeout(timeout);
         clientParams.setHttpElementCharset("UTF-8");
         this.client.setHttpConnectionManager(new SimpleHttpConnectionManager(true));
-        this.client.getHttpConnectionManager().getParams().setConnectionTimeout(120 * 1000);
+        this.client.getHttpConnectionManager().getParams().setConnectionTimeout(timeout);
 
         HttpState initialState = new HttpState();
         HostConfiguration configuration = new HostConfiguration();

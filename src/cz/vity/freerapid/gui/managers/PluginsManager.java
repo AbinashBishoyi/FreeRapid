@@ -1,5 +1,6 @@
 package cz.vity.freerapid.gui.managers;
 
+import cz.vity.freerapid.gui.dialogs.WrappedPluginData;
 import cz.vity.freerapid.gui.managers.exceptions.NotSupportedDownloadServiceException;
 import cz.vity.freerapid.gui.managers.exceptions.PluginIsNotEnabledException;
 import cz.vity.freerapid.model.DownloadFile;
@@ -18,6 +19,7 @@ import org.java.plugin.ObjectFactory;
 import org.java.plugin.Plugin;
 import org.java.plugin.PluginManager;
 import org.java.plugin.registry.PluginDescriptor;
+import org.java.plugin.registry.PluginRegistry;
 import org.java.plugin.standard.ShadingPathResolver;
 import org.java.plugin.standard.StandardPluginLocation;
 import org.java.plugin.util.ExtendedProperties;
@@ -49,7 +51,7 @@ public class PluginsManager {
     private final ManagerDirector director;
     private PluginManager pluginManager;
     private PluginMetaDataManager pluginMetaDataManager;
-    private static final int MAX_ENTRIES = 4;
+    private static final int MAX_ENTRIES = 10;
 //    private Map<String, PluginMetaData> mCache = new ConcurrentHashMap<String, PluginMetaData>(new LinkedHashMap<String, PluginMetaData>(MAX_ENTRIES, .75F, true) {
 //        protected boolean removeEldestEntry(Map.Entry eldest) {
 //            return size() > MAX_ENTRIES;
@@ -108,16 +110,38 @@ public class PluginsManager {
         initNewPlugins(searchExistingPlugins());
     }
 
-    public void reRegisterPlugins(final File[] plugins) throws JpfException {
 
-//        if (pluginManager.isPluginActivated()) {
-//            pluginManager.getRegistry().unregister()
-//            pluginManager.publishPlugins(getPluginLocations(plugins));
-//        }
+    public boolean isPluginInUse(String id) {
+        if (hasPlugin(id)) {
+            final PluginRegistry pluginRegistry = pluginManager.getRegistry();
+            if (pluginRegistry.isPluginDescriptorAvailable(id)) {
+                final PluginDescriptor descr = pluginRegistry.getPluginDescriptor(id);
+                return pluginManager.isPluginActivated(descr) || pluginManager.isBadPlugin(descr) || pluginManager.isPluginActivating(descr);
+            }
+        }
+        return false;
+    }
+
+
+    public void reRegisterPlugins(Collection<WrappedPluginData> updatedPlugins) throws JpfException {
+        if (updatedPlugins.isEmpty())
+            return;
+        List<File> updatedPluginsFiles = new ArrayList<File>(updatedPlugins.size());
+        List<String> newPluginsIds = new ArrayList<String>(updatedPlugins.size());
+        for (WrappedPluginData updatedPlugin : updatedPlugins) {
+            updatedPluginsFiles.add(updatedPlugin.getHttpFile().getOutputFile());
+            newPluginsIds.add(updatedPlugin.getID());
+        }
+        final String[] ids = newPluginsIds.toArray(new String[newPluginsIds.size()]);
+        final PluginRegistry pluginRegistry = pluginManager.getRegistry();
+        pluginRegistry.unregister(ids);
+        initNewPlugins(updatedPluginsFiles.toArray(new File[updatedPluginsFiles.size()]));
     }
 
     public void initNewPlugins(final File[] plugins) {
-
+        if (plugins.length == 0) {
+            return;
+        }
         try {
 
             pluginManager.publishPlugins(getPluginLocations(plugins));

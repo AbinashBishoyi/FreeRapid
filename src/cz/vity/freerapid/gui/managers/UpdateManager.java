@@ -172,12 +172,12 @@ public class UpdateManager {
 
     public Task getDownloadPluginsTask(final List<WrappedPluginData> wrappedList) {
 
-        final List<DownloadFile> fileList = new LinkedList<DownloadFile>();
+        final List<WrappedPluginData> fileList = new LinkedList<WrappedPluginData>();
         for (WrappedPluginData data : wrappedList) {
             if (data.isSelected() && !updatedPluginsCode.contains(getUniqueId(data.getID(), data.getVersion()))) {
                 final DownloadFile httpFile = data.getHttpFile();
                 if (httpFile.getState() != DownloadState.COMPLETED)
-                    fileList.add(data.getHttpFile());
+                    fileList.add(data);
             }
         }
 
@@ -231,6 +231,9 @@ public class UpdateManager {
                 httpFile = getDownloadFileInstance(plugin);
                 final WrappedPluginData pluginData = new WrappedPluginData(checked, httpFile, plugin);
                 pluginData.setNew(isNew);
+                if (!isNew) {
+                    pluginData.setPluginInUse(pluginsManager.isPluginInUse(id));
+                }
                 result.add(pluginData);
             } catch (MalformedURLException e) {
                 //ignore this malformed file
@@ -240,7 +243,7 @@ public class UpdateManager {
         return result;
     }
 
-    private String getUniqueId(String id, String version) {
+    private static String getUniqueId(String id, String version) {
         return id + '@' + version;
     }
 
