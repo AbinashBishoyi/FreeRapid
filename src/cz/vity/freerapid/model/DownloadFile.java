@@ -8,6 +8,7 @@ import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.plugins.webclient.FileState;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
+import cz.vity.freerapid.utilities.FileUtils;
 import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.application.AbstractBean;
 
@@ -56,6 +57,8 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
     private int takenTokens;
     private volatile long realDownload;
     private volatile boolean resumeSupported = true;
+    private File storeFileDrive;
+
 
     static {
         try {
@@ -64,7 +67,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
                     info.getPropertyDescriptors();
             for (PropertyDescriptor pd : propertyDescriptors) {
                 final Object name = pd.getName();
-                if ("task".equals(name) || "speed".equals(name) || "shortTimeAvgSpeed".equals(name) || "connectionSettings".equals(name) || "tokens".equals(name) || "takenTokens".equals(name)) {
+                if ("task".equals(name) || "speed".equals(name) || "shortTimeAvgSpeed".equals(name) || "connectionSettings".equals(name) || "tokens".equals(name) || "takenTokens".equals(name) || "storeFileDrive".equals(name)) {
                     pd.setValue("transient", Boolean.TRUE);
                 }
             }
@@ -352,6 +355,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
      */
     public void setSaveToDirectory(File saveToDirectory) {
         this.saveToDirectory = saveToDirectory;
+        this.storeFileDrive = null;
     }
 
     /**
@@ -606,6 +610,17 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
 //        }
         return this.storeFile;
     }
+
+    public File getStoreFileDrive() {
+        if (storeFileDrive == null) {
+            final File saveTo = getSaveToDirectory();
+            if (saveTo != null) {
+                return storeFileDrive = FileUtils.getFileDrive(saveTo);
+            }
+            return null;
+        } else return storeFileDrive;
+    }
+
 
     @Override
     public void setStoreFile(File storeFile) {

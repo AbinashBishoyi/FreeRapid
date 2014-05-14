@@ -11,13 +11,18 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
+4th October 2009 - FreeRapid Downloader 0.83 Release Candidate 2
+  Changed : minor internal changes in plugins API 
+  Changed : optimizations: minimized size of SwingX library
+  Changed : updated plugins to their latest versions
+  Changed : new cancelOnEscape internal property to disable ESC keystroke for action Cancel
+
 20th September 2009 - FreeRapid Downloader 0.83 Release Candidate
   Added : startup.properties file in FRD's directory - see comments in this file for more details
   Added : registered new Substance 5.3 themes - Gemini, Magellan, Graphite Aqua 
   Changed : minor GUI speed optimizations
   Changed : upgraded Substance LaF to version 5.3
   Changed : updated plugins to their latest versions
-  Changed : updated all plugins to their actual states
   Fixed : Close To Tray bug  http://bugtracker.wordrider.net/task/1158 [thanks to kiwichick!]
   Fixed : restore window size to maximized state does not work  
 

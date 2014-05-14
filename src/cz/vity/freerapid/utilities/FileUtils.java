@@ -2,6 +2,7 @@ package cz.vity.freerapid.utilities;
 
 import cz.vity.freerapid.core.tasks.DownloadTask;
 
+import javax.swing.filechooser.FileSystemView;
 import java.io.*;
 import java.util.logging.Logger;
 
@@ -211,5 +212,14 @@ public class FileUtils {
         } catch (IOException e) {
             return file.getAbsolutePath();
         }
+    }
+
+    public static File getFileDrive(File file) {
+        //File.listRoots()
+        final FileSystemView fsView = FileSystemView.getFileSystemView();
+        while (!fsView.isDrive(file)) {
+            file = file.getParentFile();
+        }
+        return file;
     }
 }

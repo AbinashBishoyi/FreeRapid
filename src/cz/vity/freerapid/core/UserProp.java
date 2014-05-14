@@ -277,4 +277,8 @@ final public class UserProp {
 
     public static final String DEFAULT_CONNECTION_SOCKS = "defaultConnectionSocks";
     public static final boolean DEFAULT_CONNECTION_SOCKS_DEFAULT = false;
+
+    public static final String CANCEL_ON_ESCAPE = "cancelOnEscape";
+    public static final boolean CANCEL_ON_ESCAPE_DEFAULT = true;
+
 }

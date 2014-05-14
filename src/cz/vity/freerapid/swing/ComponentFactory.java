@@ -5,7 +5,6 @@ import cz.vity.freerapid.swing.components.EditorPaneLinkDetector;
 import cz.vity.freerapid.swing.components.PopdownButton;
 import cz.vity.freerapid.swing.models.NaiiveComboModel;
 import cz.vity.freerapid.swing.renderers.ComboBoxRenderer;
-import org.jdesktop.swingx.JXDatePicker;
 
 import javax.swing.*;
 import javax.swing.text.DateFormatter;
@@ -15,7 +14,6 @@ import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 
 /**
  * Trida slouzici k instanciovani upravenych zakladnich komponent
@@ -53,11 +51,11 @@ public class ComponentFactory {
         return spinner;
     }
 
-    public static JXDatePicker getDatePicker() {
-        final JXDatePicker picker = new JXDatePicker();
-        picker.setFormats(new SimpleDateFormat(Swinger.getResourceMap().getString("shortDateFormat")));
-        return picker;
-    }
+//    public static JXDatePicker getDatePicker() {
+//        final JXDatePicker picker = new JXDatePicker();
+//        picker.setFormats(new SimpleDateFormat(Swinger.getResourceMap().getString("shortDateFormat")));
+//        return picker;
+//    }
 
     public static JComboBox getComboBox() {
         JComboBox combo = new JComboBox(new NaiiveComboModel());

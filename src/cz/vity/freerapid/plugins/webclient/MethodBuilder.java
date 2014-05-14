@@ -313,18 +313,18 @@ public final class MethodBuilder {
     }
 
     /**
-     * Searches content for <code>&lt;Iframe&gt;</code> tag with given text and extracts the <code>src</code> attribute.<br/>
+     * Searches content for <code>&lt;iframe&gt;</code> tag or <code>&lt;frame&gt;</code> tag  with given text and extracts the <code>src</code> attribute.<br/>
      * <p>
      * <b>Content:</b><br/>
      * <code>&lt;iframe class="xx" src="http://blabla/" &gt</code>
      * <br /><b>Using:</b>
      * <code><br />setActionFromIFrameSrcWhereTagContains("class=\"xx\"")</code> - an action <code>http://blabla/</code> will be extracted<br/>
      * <i>also this is possible:</i>
-     * <code><br />setActionFromImgSrcWhereTagContains("/blabla")</code> - an action <code>http://blabla/</code> will be extracted<br/></p>
+     * <code><br />setActionFromIFrameSrcWhereTagContains("/blabla")</code> - an action <code>http://blabla/</code> will be extracted<br/></p>
      * <p/>
      * <p>All <code>&amp;amp;</code> entity is replaced to <code>&</code> by default.</p>
      *
-     * @param text a string searched in the <code>&lt;iframe&gt;</code> tag
+     * @param text a string searched in the <code>&lt;iframe&gt;</code> tag or <code>&lt;frame&gt;</code> tag
      * @return builder instance
      * @throws cz.vity.freerapid.plugins.exceptions.BuildMethodException
      *          when no such <code>&lt;Img&gt;</code> with text in the tag was found
@@ -332,7 +332,7 @@ public final class MethodBuilder {
      */
     public MethodBuilder setActionFromIFrameSrcWhereTagContains(final String text) throws BuildMethodException {
         if (iframePattern == null)
-            iframePattern = Pattern.compile("(<iframe(?:.*?)src\\s?=\\s?(?:\"|')(.+?)(?:\"|')(?:.*?)>)", Pattern.DOTALL | Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+            iframePattern = Pattern.compile("(<i?frame(?:.*?)src\\s?=\\s?(?:\"|')(.+?)(?:\"|')(?:.*?)>)", Pattern.DOTALL | Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
         final Matcher matcher = iframePattern.matcher(content);
         boolean found = false;
         int start = 0;

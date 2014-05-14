@@ -251,20 +251,9 @@ public class DownloadClient implements HttpDownloadClient {
 
     private InputStream processFileForDownload(HttpMethod method, HttpFile file) throws IOException {
 
-        boolean isStream = true;
-        final Header contentType = method.getResponseHeader("Content-Type");
-        if (contentType == null) {
-            isStream = false;
-            logger.warning("No Content-Type!");
-        } else {
-            final String value = contentType.getValue().toLowerCase(Locale.ENGLISH);
-            final boolean isImage = value.startsWith("image/");
-            final boolean isAudioVideo = value.startsWith("audio/") || value.startsWith("video/");
-            if (!value.startsWith("application/") && !isImage && !isAudioVideo) {
-                isStream = false;
-                logger.warning("Suspicious Content-Type:" + contentType.getValue());
-            }
-        }
+
+        final Header contentType = getContentType(method);
+        boolean isStream = checkContentTypeStream(method, true);
         final String fileName = HttpUtils.getFileName(method);
         if (fileName != null && !fileName.isEmpty()) {
             if (!client.getParams().isParameterTrue("dontUseHeaderFilename"))
@@ -329,6 +318,30 @@ public class DownloadClient implements HttpDownloadClient {
         return null;
     }
 
+    private Header getContentType(HttpMethod method) {
+        return method.getResponseHeader("Content-Type");
+    }
+
+    private boolean checkContentTypeStream(HttpMethod method, boolean showWarnings) {
+        boolean stream = true;
+        final Header contentType = getContentType(method);
+        if (contentType == null) {
+            stream = false;
+            if (showWarnings)
+                logger.warning("No Content-Type!");
+        } else {
+            final String value = contentType.getValue().toLowerCase(Locale.ENGLISH);
+            final boolean isImage = value.startsWith("image/");
+            final boolean isAudioVideo = value.startsWith("audio/") || value.startsWith("video/");
+            if (!value.startsWith("application/") && !isImage && !isAudioVideo) {
+                stream = false;
+                if (showWarnings)
+                    logger.warning("Suspicious Content-Type:" + contentType.getValue());
+            }
+        }
+        return stream;
+    }
+
 
     @Override
     public InputStream makeRequestForFile(HttpMethod method) throws IOException {
@@ -341,15 +354,7 @@ public class DownloadClient implements HttpDownloadClient {
         int statuscode = method.getStatusCode();
 
         if (statuscode == HttpStatus.SC_OK) {
-            final Header contentType = method.getResponseHeader("Content-Type");
-            if (contentType == null) {
-                logger.warning("No Content-Type!");
-            } else {
-                final String contentTypeValue = contentType.getValue();
-                if (!contentTypeValue.startsWith("application/") && !contentTypeValue.startsWith("image/")) {
-                    logger.warning("Suspicious Content-Type:" + contentTypeValue);
-                }
-            }
+            checkContentTypeStream(method, true);
 
             Header hce = method.getResponseHeader("Content-Encoding");
             if (null != hce) {
@@ -407,7 +412,6 @@ public class DownloadClient implements HttpDownloadClient {
             logger.severe("Status code > 500:" + statuscode);
         }
 
-        //TODO overeni, ze 
         if (allowRedirect && isRedirect && redirect != 1) {
             redirect = 1;
             Header header = method.getResponseHeader("location");
@@ -434,7 +438,12 @@ public class DownloadClient implements HttpDownloadClient {
             }
         } else {
             redirect = 0;
-            updateAsString(method);
+            if (!checkContentTypeStream(method, false)) {
+                updateAsString(method);
+            } else {
+                asString = "Text content type expected, but binary stream was found";
+                logger.warning(asString);
+            }
         }
         // logger.info("asString = " + asString);
 

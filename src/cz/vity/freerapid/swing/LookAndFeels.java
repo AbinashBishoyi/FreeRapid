@@ -91,7 +91,6 @@ public final class LookAndFeels {
                 selectedLookAndFeelClassName = s;
             } else
                 selectedLookAndFeelClassName = org.jdesktop.swingx.util.OS.isMacOSX() ? AQUA : DEFAULT_LAF;
-
         }
 
         final boolean opaque = AppPrefs.getProperty(FWProp.LOOK_AND_FEEL_OPAQUE_KEY, true);
@@ -171,8 +170,8 @@ public final class LookAndFeels {
                 }
             }
         }
-        final String crossSystem = UIManager.getSystemLookAndFeelClassName();
-        availableLaFs.add(new LaF(crossSystem, "System", "", false));
+        //final String crossSystem = UIManager.getSystemLookAndFeelClassName();
+        //availableLaFs.add(new LaF(crossSystem, "System", "", false));
         return availableLaFs;
     }
 

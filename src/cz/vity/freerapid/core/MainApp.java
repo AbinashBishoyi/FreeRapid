@@ -46,11 +46,18 @@ public class MainApp extends SingleXFrameApplication {
     protected void initialize(String[] args) {
         if (checkInvalidPath()) return;
 
-        //apple stuff
-        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "FreeRapid Downloader " + Consts.VERSION);
-
         final CmdLine line = new CmdLine(this);
+
         final List<String> fileList = line.processCommandLine(args);
+        try {
+            final SplashScreen splash = SplashScreen.getSplashScreen();
+            if (splash != null && line.isNosplash()) {
+                splash.close();
+            }
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
+
 
         try {
             LogUtils.initLogging((debug) ? Consts.LOGDEBUG : Consts.LOGDEFAULT);//logovani nejdrive
@@ -62,7 +69,7 @@ public class MainApp extends SingleXFrameApplication {
         minimizeOnStart = line.isMinimize();
 
         final String vm = System.getProperty("java.vm.vendor", "");
-        if (!vm.contains("Sun")) {
+        if (vm.toLowerCase(Locale.ENGLISH).contains("gcj")) {
             getLogger().log(Level.SEVERE, "Not using Sun Java" + vm);
             exitWithErrorMessage(String.format("You are not using Sun Java, but %s. See readme.txt for minimal requirements to run FreeRapid Downloader.", vm));
         }
@@ -86,23 +93,27 @@ public class MainApp extends SingleXFrameApplication {
 
 
         System.getProperties().put("arguments", args);
-        if (System.getProperty("mrj.version") != null)
-            System.setProperty("apple.laf.useScreenMenuBar", String.valueOf(AppPrefs.getProperty("apple.laf.useScreenMenuBar", true)));
+        //if (System.getProperty("mrj.version") != null)
+        System.setProperty("apple.laf.useScreenMenuBar", String.valueOf(AppPrefs.getProperty("apple.laf.useScreenMenuBar", true)));
 
         if (OneInstanceClient.checkInstance(fileList, appPrefs, getContext())) {
             this.exit();
             return;
         }
 
+        this.getContext().getResourceMap();
+        ResourceConverter.register(new ListItemsConvertor());
+
+        this.getContext().getTaskMonitor().setAutoUpdateForegroundTask(false);
+
         Lng.loadLangProperties();
 
         LookAndFeels.getInstance().loadLookAndFeelSettings();//inicializace LaFu, musi to byt pred vznikem hlavniho panelu
         //Swinger.initLaF(); //inicializace LaFu, musi to byt pred vznikem hlavniho panelu
+
         super.initialize(args);
 
-        ResourceConverter.register(new ListItemsConvertor());
-        this.getContext().getResourceMap();
-        this.getContext().getTaskMonitor().setAutoUpdateForegroundTask(false);
+
     }
 
     private boolean checkInvalidPath() {
@@ -152,6 +163,7 @@ public class MainApp extends SingleXFrameApplication {
         this.addExitListener(new MainAppExitListener());
         //this.getContext().getLocalStorage().load()
         final JFrame mainFrame = getMainFrame();
+
         show(mainFrame);
         getTrayIconSupport().setVisibleByDefault();
         setGlobalEDTExceptionHandler();
@@ -163,6 +175,7 @@ public class MainApp extends SingleXFrameApplication {
     private void initMainFrame() {
         ProxySelector.setDefault(null);
         final JFrame frame = getMainFrame();
+        frame.setVisible(false);
         if (AppPrefs.getProperty(FWProp.DECORATED_FRAMES, false)) {
             JFrame.setDefaultLookAndFeelDecorated(true);
             frame.setUndecorated(true);
@@ -216,6 +229,8 @@ public class MainApp extends SingleXFrameApplication {
      * @param args vstupni parametry pro program
      */
     public static void main(String[] args) {
+        //apple stuff
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "FreeRapid Downloader");
         //zde prijde overovani vstupnich pridavnych parametru
         Application.launch(MainApp.class, args); //spusteni
     }

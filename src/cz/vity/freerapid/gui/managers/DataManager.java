@@ -208,6 +208,12 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         return downloadFiles;
     }
 
+    public List<DownloadFile> getActualDownloadFiles() {
+        synchronized (lock) {
+            return Collections.unmodifiableList(new ArrayList<DownloadFile>(downloadFiles));
+        }
+    }
+
 
     @SuppressWarnings({"SuspiciousMethodCalls"})
     private int getIndex(DownloadFile file) {
@@ -325,19 +331,19 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                         //file.setState(DownloadState.CANCELLED);
                     }
                     file.setState(CANCELLED);
-                    file.setDownloaded(0);
-                    if (delete) {
+                    if (delete && file.getDownloaded() > 0) {
                         File outputFile = file.getStoreFile();
                         if (outputFile != null && outputFile.exists()) {
                             if (!outputFile.delete())
-                                logger.info("Deleting " + outputFile + " failed");
+                                logger.info("Deleting store file " + outputFile + " failed");
                         }
                         outputFile = file.getOutputFile();
                         if (outputFile != null && outputFile.exists()) {
                             if (!outputFile.delete())
-                                logger.info("Deleting " + outputFile + " failed");
+                                logger.info("Deleting output file " + outputFile + " failed");
                         }
                     }
+                    file.setDownloaded(0);
                 }
             }
         }

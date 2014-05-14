@@ -58,7 +58,9 @@ class GOCR {
         Scanner scanner = null;
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
-            final ImageEncoder encoder = ImageCodec.createImageEncoder("PNM", out, new PNMEncodeParam());
+            final PNMEncodeParam param = new PNMEncodeParam();
+            param.setRaw(false);
+            final ImageEncoder encoder = ImageCodec.createImageEncoder("PNM", out, param);
             assert encoder != null;
             encoder.encode(image);
 

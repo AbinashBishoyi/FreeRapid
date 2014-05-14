@@ -51,27 +51,6 @@ public final class AppPrefs {
         this.propertiesFileName = id.toLowerCase() + ".xml";
         AppPrefs.properties = loadProperties();
 
-        if (Utils.isWindows()) {
-            getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
-                public void preferenceChange(PreferenceChangeEvent evt) {
-                    logger.info("Property changed: " + evt.getKey());
-                    synchronized (syncLock) {
-                        if (!FWProp.PROXY_PASSWORD.equals(evt.getKey()))
-                            pendingChanges = true;
-                    }
-                }
-            });
-            syncTimer.schedule(new TimerTask() {
-                public void run() {
-                    synchronized (syncLock) {
-                        if (pendingChanges) {
-                            sync();
-                        }
-                    }
-                }
-            }, SYNC_INTERVAL * 1000, SYNC_INTERVAL * 1000);
-        }
-
         if (resetOptions) {
             try {
                 AppPrefs.properties.clear();
@@ -91,6 +70,27 @@ public final class AppPrefs {
                     AppPrefs.properties.remove(entry.getKey());
                 else AppPrefs.properties.put(entry.getKey(), value);
             }
+        }
+
+        if (Utils.isWindows()) {
+            getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
+                public void preferenceChange(PreferenceChangeEvent evt) {
+                    logger.info("Property changed: " + evt.getKey());
+                    synchronized (syncLock) {
+                        if (!FWProp.PROXY_PASSWORD.equals(evt.getKey()))
+                            pendingChanges = true;
+                    }
+                }
+            });
+            syncTimer.schedule(new TimerTask() {
+                public void run() {
+                    synchronized (syncLock) {
+                        if (pendingChanges) {
+                            sync();
+                        }
+                    }
+                }
+            }, SYNC_INTERVAL * 1000, SYNC_INTERVAL * 1000);
         }
     }
 

@@ -85,6 +85,14 @@ public class ConnectionSettings {
      * @param proxyURL
      * @param proxyPort
      */
+    public void setProxy(String proxyURL, int proxyPort) {
+        setProxy(proxyURL, proxyPort, Proxy.Type.HTTP);
+    }
+
+    /**
+     * @param proxyURL
+     * @param proxyPort
+     */
     public void setProxy(String proxyURL, int proxyPort, Proxy.Type proxyType) {
         this.proxyURL = proxyURL;
         this.proxyPort = proxyPort;

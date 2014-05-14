@@ -12,10 +12,10 @@ import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.os.OSCommand;
 import cz.vity.freerapid.utilities.os.SystemCommander;
 import cz.vity.freerapid.utilities.os.SystemCommanderFactory;
+import org.jdesktop.application.AbstractBean;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.ProxyActions;
-import org.jdesktop.beans.AbstractBean;
 
 import javax.swing.*;
 import java.awt.*;

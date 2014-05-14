@@ -261,7 +261,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     private String getFileList(List<DownloadFile> files) {
         final StringBuilder builder = new StringBuilder();
         for (DownloadFile file : files) {
-            if (file.getOutputFile() != null && file.getOutputFile().exists())
+            if (file.getOutputFile() != null && file.getDownloaded() > 0 && file.getOutputFile().exists())
                 builder.append('\n').append(Utils.shortenFileName(file.getOutputFile(), 60));
         }
 
@@ -795,8 +795,10 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
         actionMap.put("copy", Swinger.getAction("copyContent"));
 
-        inputMap.put(SwingUtils.getKeyStroke(KeyEvent.VK_ESCAPE), "deleteItem");
-        actionMap.put("deleteItem", Swinger.getAction("cancelAction"));
+        if (AppPrefs.getProperty(UserProp.CANCEL_ON_ESCAPE, UserProp.CANCEL_ON_ESCAPE_DEFAULT)) {
+            inputMap.put(SwingUtils.getKeyStroke(KeyEvent.VK_ESCAPE), "deleteItem");
+            actionMap.put("deleteItem", Swinger.getAction("cancelAction"));
+        }
 
         inputMap.put(SwingUtils.getShiftKeyStroke(KeyEvent.VK_DELETE), "deleteFileAction");
         actionMap.put("deleteFileAction", Swinger.getAction("deleteFileAction"));

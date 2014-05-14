@@ -4,7 +4,7 @@ import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.Consts;
 import cz.vity.freerapid.core.FWProp;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.jdesktop.beans.AbstractBean;
+import org.jdesktop.application.AbstractBean;
 import org.jdesktop.swingx.error.ErrorInfo;
 
 import java.io.PrintWriter;

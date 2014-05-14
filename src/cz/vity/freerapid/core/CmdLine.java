@@ -24,11 +24,13 @@ final class CmdLine {
     private Map<String, String> properties = new HashMap<String, String>(2);
     private boolean resetOptions;
     private boolean minimize;
+    private boolean nosplash;
 
     CmdLine(MainApp app) {
         this.app = app;
         resetOptions = false;
         minimize = false;
+        nosplash = false;
     }
 
     private void showVersion() {
@@ -80,6 +82,7 @@ final class CmdLine {
         final DefaultOption resetOption = obuilder.withShortName("r").withLongName("reset").withDescription("reset user properties to default values").create();
         final DefaultOption minimizeOption = obuilder.withShortName("m").withLongName("minim").withDescription("minimize main window on start").create();
         final DefaultOption portableOption = obuilder.withShortName("p").withLongName("portable").withDescription("configuration files will be stored in the 'config' folder, all file paths will be saved relatively to FRD folder (if possible) - useful for USB FLASH drives").create();
+        final DefaultOption noSplashOption = obuilder.withShortName("s").withLongName("nosplash").withDescription("splash screen will be hidden as soon as possible").create();
 
         final PropertyOption propertyOption = new PropertyOption();
 
@@ -108,6 +111,7 @@ final class CmdLine {
                 .withOption(resetOption)
                 .withOption(propertyOption)
                 .withOption(minimizeOption)
+                .withOption(noSplashOption)
                 .withOption(portableOption)
                 .create();
         Parser parser = new Parser();
@@ -127,6 +131,9 @@ final class CmdLine {
             }
             if (cmd.hasOption(minimizeOption)) {
                 this.minimize = true;
+            }
+            if (cmd.hasOption(noSplashOption)) {
+                this.nosplash = true;
             }
             if (cmd.hasOption(portableOption)) {
                 System.getProperties().put("portable", true);
@@ -180,5 +187,9 @@ final class CmdLine {
 
     public boolean isMinimize() {
         return minimize;
+    }
+
+    public boolean isNosplash() {
+        return nosplash;
     }
 }
