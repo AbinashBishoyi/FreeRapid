@@ -47,6 +47,11 @@ public final class LookAndFeels {
     private static final LookAndFeels instance = new LookAndFeels();
 
     /**
+     * default MacOS LaF
+     */
+    private static final String AQUA = "apple.laf.AquaLookAndFeel";
+
+    /**
      * Classloader pro look and feely
      */
     private ClassLoader classLoader = null;
@@ -75,7 +80,7 @@ public final class LookAndFeels {
         String selectedTheme = AppPrefs.getProperty(FWProp.THEME_SELECTED_KEY, DEFAULT_THEME);
         if (selectedLookAndFeelClassName == null) {
             final String s = Swinger.getResourceMap().getString("Application.lookAndFeelDefault", "").trim();
-            selectedLookAndFeelClassName = DEFAULT_LAF;
+            selectedLookAndFeelClassName = org.jdesktop.swingx.util.OS.isMacOSX() ? AQUA : DEFAULT_LAF;
             if ("system".equals(s)) {
                 selectedLookAndFeelClassName = UIManager.getSystemLookAndFeelClassName();
                 selectedTheme = null;
