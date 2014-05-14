@@ -5,9 +5,7 @@ import cz.vity.freerapid.plugins.webclient.interfaces.DialogSupport;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -61,45 +59,7 @@ public class CaptchaSupport {
      */
     public String getCaptcha(final String url) throws FailedToLoadCaptchaPictureException {
         try {
-            return dialogSupport.askForCaptcha(getImageIcon(url));
-        } catch (FailedToLoadCaptchaPictureException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new FailedToLoadCaptchaPictureException(e);
-        }
-    }
-
-    private Icon getImageIcon(final String url) throws FailedToLoadCaptchaPictureException {
-        try {
-            InputStream inputStream = null;
-
-            ByteArrayOutputStream out = null;
-            try {
-                inputStream = loadStream(url);
-                if (inputStream == null)
-                    throw new NullPointerException("InputStreamForCaptchaIsNull");
-                final byte buf[] = new byte[1024 * 4];
-                out = new ByteArrayOutputStream();
-                int len;
-                while ((len = inputStream.read(buf)) != -1) {
-                    out.write(buf, 0, len);
-                }
-                return new ImageIcon(out.toByteArray());
-            }
-            finally {
-                if (inputStream != null)
-                    try {
-                        inputStream.close();
-                    } catch (IOException e) {
-                        //ignore
-                    }
-                if (out != null)
-                    try {
-                        out.close();
-                    } catch (IOException e) {
-                        //ignore
-                    }
-            }
+            return dialogSupport.askForCaptcha(getCaptchaImage(url));
         } catch (FailedToLoadCaptchaPictureException e) {
             throw e;
         } catch (Exception e) {

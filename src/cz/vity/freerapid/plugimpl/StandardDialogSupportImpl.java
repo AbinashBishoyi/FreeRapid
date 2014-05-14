@@ -8,6 +8,7 @@ import cz.vity.freerapid.gui.dialogs.AccountDialog;
 import cz.vity.freerapid.plugins.webclient.hoster.PremiumAccount;
 import cz.vity.freerapid.plugins.webclient.interfaces.DialogSupport;
 import cz.vity.freerapid.swing.Swinger;
+import cz.vity.freerapid.utilities.Hq2x;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Sound;
 import org.jdesktop.appframework.swingx.SingleXFrameApplication;
@@ -98,10 +99,24 @@ public class StandardDialogSupportImpl implements DialogSupport {
 
     @Override
     public String askForCaptcha(final BufferedImage image) throws Exception {
-        return askForCaptcha(new ImageIcon(image));
+        synchronized (captchaLock) {
+            captchaResult = "";
+            if (!EventQueue.isDispatchThread()) {
+                SwingUtilities.invokeAndWait(new Runnable() {
+                    @Override
+                    public void run() {
+                        askCaptcha(image);
+                    }
+                });
+            } else askCaptcha(image);
+            return captchaResult;
+        }
     }
 
-    private void askCaptcha(Icon image) {
+    private void askCaptcha(BufferedImage image) {
+        if (AppPrefs.getProperty(UserProp.ZOOM_CAPTCHA_IMAGE, UserProp.ZOOM_CAPTCHA_IMAGE_DEFAULT)) {
+            image = Hq2x.zoom(image);
+        }
         boolean bringToFront = false;
         if (!QuietMode.getInstance().isActive() || !QuietMode.getInstance().isCaptchaDisabled()) {
             Swinger.bringToFront(((SingleFrameApplication) context.getApplication()).getMainFrame(), true);
@@ -117,7 +132,7 @@ public class StandardDialogSupportImpl implements DialogSupport {
             parentComponent = null;
         } else
             parentComponent = (bringToFront) ? null : ((SingleFrameApplication) context.getApplication()).getMainFrame();
-        captchaResult = (String) JOptionPane.showInputDialog(parentComponent, context.getResourceMap(DownloadTask.class).getString("InsertWhatYouSee"), context.getResourceMap(DownloadTask.class).getString("InsertCaptcha"), JOptionPane.PLAIN_MESSAGE, image, null, null);
+        captchaResult = (String) JOptionPane.showInputDialog(parentComponent, context.getResourceMap(DownloadTask.class).getString("InsertWhatYouSee"), context.getResourceMap(DownloadTask.class).getString("InsertCaptcha"), JOptionPane.PLAIN_MESSAGE, new ImageIcon(image), null, null);
     }
 
     private void getAccount(String title, PremiumAccount account, PremiumAccount[] result) {
@@ -129,26 +144,6 @@ public class StandardDialogSupportImpl implements DialogSupport {
             LogUtils.processException(logger, e);
         }
         result[0] = dialog.getAccount();
-    }
-
-    @Override
-    public String askForCaptcha(final Icon image) throws Exception {
-        synchronized (captchaLock) {
-            captchaResult = "";
-            if (!EventQueue.isDispatchThread()) {
-                SwingUtilities.invokeAndWait(new Runnable() {
-                    @Override
-                    public void run() {
-                        askCaptcha(image);
-                    }
-                });
-            } else askCaptcha(image);
-            if (image instanceof ImageIcon) {
-                ImageIcon icon = (ImageIcon) image;
-                icon.getImage().flush();
-            }
-            return captchaResult;
-        }
     }
 
     @Override

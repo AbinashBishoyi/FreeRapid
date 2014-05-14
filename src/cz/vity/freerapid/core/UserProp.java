@@ -376,6 +376,10 @@ final public class UserProp {
      */
     public static final String SELECT_DIR_DIALOG_OVERRIDE = "selectDirDialogOverride";
     public static final boolean SELECT_DIR_DIALOG_OVERRIDE_DEFAULT = false;
+
+    public static final String ZOOM_CAPTCHA_IMAGE = "zoomCaptchaImage";
+    public static final boolean ZOOM_CAPTCHA_IMAGE_DEFAULT = false;
+
 }
 
 
