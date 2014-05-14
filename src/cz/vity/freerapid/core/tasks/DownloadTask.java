@@ -240,7 +240,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                         fileOutputStream[0].flush();
                         break;
                     }
-                    final boolean ok = speedRegulator.takeTokens(downloadFile, len / 1024);
+                    final boolean ok = speedRegulator.takeTokens(downloadFile, (int) Math.round(len / 1024.0));
                     if (!ok) {
                         System.out.println("Going to sleep to slow down speed");
                         Thread.sleep(1000);

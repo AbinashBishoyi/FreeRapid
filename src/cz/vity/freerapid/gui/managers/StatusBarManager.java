@@ -143,6 +143,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
             speedLimitPanel.add(speedLimiterEnabled);
             final JSpinner globalSpeed = new JSpinner();
             speedLimitPanel.add(globalSpeed);
+            speedLimitPanel.add(new JLabel(" kB"));
             bind(globalSpeed, UserProp.SPEED_LIMIT, UserProp.SPEED_LIMIT_DEFAULT, 1, 99999, 10);
             PropertyConnector.connectAndUpdate(valueModel, globalSpeed, "enabled");
 

@@ -60,37 +60,41 @@ class SpeedRegulator {
                 for (DownloadFile file : downloading) {
                     if (!notSatisfied.contains(file)) //pokud neni v neuspojenych, jdeme na dalsiho
                         continue;
-                    final int set;
+                    int set;
                     final int lastTaken = file.getTakenTokens();
                     if (file.hasSpeedLimit()) { //pokud ma svuj lokalni limit
                         final int min = Math.min(file.getSpeedLimit() - file.getTokensLimit(), speedPerFile);
-                        if (lastTaken > 0) {
-                            set = Math.min(min, (int) (lastTaken * 1.3));
-                        } else if (lastTaken < 0) {
+                        if (lastTaken < 0 || downloadingCount == 1) {
                             set = min;
+                        } else if (lastTaken > 0) {
+                            set = Math.min(min, (int) (lastTaken * 1.3));
                         } else {
                             set = Math.min(min, 10);
                         }
-                        assert set > 0;
+                        assert set >= 0;
                         if (file.getTokensLimit() + set == file.getSpeedLimit())
                             notSatisfied.remove(file);
                     } else {
-                        if (lastTaken > 0) {
+                        if (lastTaken < 0 || downloadingCount == 1) { //pokud se jeste nezaclo stahovat nebo pokud stahuje pouze 1 soubor
+                            set = speedPerFile;
+                        } else if (lastTaken > 0) {
                             if (file.getTokensLimit() <= 0) //pokud je to prvni iterace while cyklu
                                 set = Math.min(speedPerFile, (int) (lastTaken * 1.3));
                             else { //pokud je to druha a dalsi iterace pridelovani v cyklu
                                 final int last = (int) (lastTaken * 1.3); //nesmime dovolit pridat vic nez je 1.3 * lastTaken - prakticky se to musi chovat jako kdyby byl nastaveny speedLimit na soubor, i kdyz na nej speedlimit neni
                                 set = Math.min(speedPerFile, Math.min(last, Math.abs(last - file.getTokensLimit())));
+                                if (set == 0)
+                                    set = 1;
                             }
-                        } else if (lastTaken < 0) {
-                            set = speedPerFile;
                         } else {
                             set = Math.min(speedPerFile, 10);
                         }
-                        assert set > 0;
+                        assert set >= 0;
                     }
                     available -= set;
                     file.setTokensLimit(file.getTokensLimit() + set);
+                    System.out.println("available = " + available);
+                    System.out.println("notSatisfied.size() = " + notSatisfied.size());
                 }
             }
             //docpu zbytky - do uspokojeni a dokud je co davat
