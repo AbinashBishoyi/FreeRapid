@@ -204,6 +204,7 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
         return priority;
     }
 
+
     public int getMaxAllowedDownloads() {
         return maxAllowedDownloads;
     }
@@ -216,12 +217,6 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
         Integer oldValue = this.priority;
         this.priority = value;
         firePropertyChange("priority", oldValue, value);
-    }
-
-    public void setMaxParallelDownloads(int maxParallelDownloads) {
-        int oldValue = this.maxParallelDownloads;
-        this.maxParallelDownloads = maxParallelDownloads;
-        firePropertyChange("maxParallelDownloads", oldValue, maxParallelDownloads);
     }
 
     public void setMaxAllowedDownloads(int maxAllowedDownloads) {
