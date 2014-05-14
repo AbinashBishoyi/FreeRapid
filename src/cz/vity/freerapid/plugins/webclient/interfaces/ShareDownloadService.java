@@ -23,14 +23,6 @@ public interface ShareDownloadService {
     String getId();
 
     /**
-     * Return max concurrently downloadable files through 1 IP on the representing service/hoster
-     * Since version 0.85 value is taken from file plugin.xml. 
-     * @return integer value max files per 1 IP
-     */
-    @Deprecated
-    int getMaxDownloadsFromOneIP();
-
-    /**
      * Checks whether implementation/service supports a check for file existence before downloading
      *
      * @return true if the implementation supports existence check, false otherwise

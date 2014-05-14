@@ -244,7 +244,7 @@ FreeRapid downloader je distribuován jako freeware. Pokud se Vám aplikace líbí a
 nìjakou finanèní èástkou za èas a zdroje vynaložené do vývoje , velmi nás to potìší.
 Jsme obyèejní studenti, kteøí musí platit webhosting, úèty za naše pøítelkynì atd...
 
-PayPal: http://wordrider.net/freerapid/paypal
+PayPal: http://vity.cz/freerapid/paypal
    nebo
 použijte bankovní úèet, jak je popsáno na domovské stránce http://wordrider.net/freerapid/donation.html
 

@@ -253,7 +253,7 @@ FreeRapid downloader is distributed as freeware, but if you wish to express your
 the author has spent developing, we do accept and appreciate monetary donations.
 We are students and we must pay for webhosting, bills for our girlfriends etc...
 
-PayPal: http://wordrider.net/freerapid/paypal
+PayPal: http://vity.cz/freerapid/paypal
    or
 use bank account described on the homepage http://wordrider.net/freerapid/donation.html
 
