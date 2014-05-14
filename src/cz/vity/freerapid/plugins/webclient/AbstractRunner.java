@@ -6,6 +6,7 @@ import cz.vity.freerapid.plugins.webclient.hoster.CaptchaSupport;
 import cz.vity.freerapid.plugins.webclient.interfaces.*;
 import cz.vity.freerapid.plugins.webclient.rtmp.RtmpClient;
 import cz.vity.freerapid.plugins.webclient.rtmp.RtmpSession;
+import cz.vity.freerapid.plugins.webclient.utils.HttpUtils;
 import cz.vity.freerapid.plugins.webclient.utils.PlugUtils;
 import cz.vity.freerapid.utilities.LogUtils;
 import org.apache.commons.httpclient.Cookie;
@@ -179,6 +180,12 @@ public abstract class AbstractRunner implements PluginRunner {
 
         httpFile.getProperties().remove(DownloadClient.START_POSITION);
         httpFile.getProperties().remove(DownloadClient.SUPPOSE_TO_DOWNLOAD);
+
+        final String fn = httpFile.getFileName();
+        if (fn == null || fn.isEmpty())
+            throw new IOException("No defined file name");
+        httpFile.setFileName(HttpUtils.replaceInvalidCharsForFileSystem(PlugUtils.unescapeHtml(fn), "_"));
+
         client.getHTTPClient().getParams().getBooleanParameter("noContentLengthAvailable", true);
 
         RtmpClient rtmpClient = null;
