@@ -6,7 +6,6 @@ import cz.vity.freerapid.utilities.Utils;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.URIException;
 import org.junit.Assert;
-import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,7 +15,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Locale;
 import java.util.Map;
-
 
 /**
  * @author Vity
@@ -53,7 +51,7 @@ public class MethodBuilderTest {
 
         try {
             methodBuilder.setActionFromAHrefWhereATagContains("Your AdX").getAction();
-            fail("Should throw exception - not such A tag");
+            Assert.fail("Should throw exception - not such A tag");
         } catch (BuildMethodException e) {
 
         }
@@ -72,7 +70,7 @@ public class MethodBuilderTest {
 
         try {
             methodBuilder.toGetMethod();
-            fail("Should throw exception - no URL base");
+            Assert.fail("Should throw exception - no URL base");
         } catch (BuildMethodException e) {
 
         }
@@ -112,12 +110,18 @@ public class MethodBuilderTest {
 
         action = methodBuilder.setActionFromFormByName("F1", true).getAction();
         Assert.assertEquals("Parsing Form tag", "./testAction/", action);
+        Map<String, String> params = methodBuilder.getParameters();
+
+        //TODO fails
+        //Assert.assertEquals("Correct tag parsing with spaces", null, params.get("button"));
+        //Assert.assertEquals("Correct tag parsing with spaces", "Free download", params.get("button test 1"));
+        //Assert.assertEquals("Correct tag parsing with spaces", "Free_download", params.get("button_test_2"));
 
         methodBuilder = getMethodBuilder();
         action = methodBuilder.setActionFromFormByName("downForm", true).getAction();
         Assert.assertEquals("Parsing Form tag", "http://www.badongo.com/cfile/8203387", action);
 
-        final Map<String, String> params = methodBuilder.getParameters();
+        params = methodBuilder.getParameters();
         //takovy parametr se tam nesmi vyskytovat
         Assert.assertEquals("Correct parameter parsing", Boolean.FALSE, params.containsKey("pamatovat"));
 
