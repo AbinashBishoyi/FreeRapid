@@ -30,7 +30,6 @@ import org.jdesktop.application.ApplicationContext;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
@@ -525,7 +524,7 @@ public class PluginsManager {
         final String s = plugin.getFile();
         final int i = s.lastIndexOf("!/");
         if (i != -1) { //smells like a pontentional bug
-            return new File(new URI(s.substring(0, i)));
+            return new File(new URL(s.substring(0, i)).toURI());
         }
         return new File(plugin.toURI());
     }
