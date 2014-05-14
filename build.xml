@@ -167,7 +167,7 @@
 
     <target name="compile" depends="clean, init" description="compiling source codes">
         <mkdir dir="${classes.dir}"/>
-        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="cp" optimize="false" target="1.6"
+        <javac debug="true" srcdir="${src.dir}" destdir="${classes.dir}" classpathref="cp" target="1.6"
                defaultexcludes="false" excludes="**/sandbox/**">
 
         </javac>
@@ -301,4 +301,24 @@
         <!--</zip>-->
     </target>
 
+    <taskdef name="jarbundler"
+             classname="net.sourceforge.jarbundler.JarBundler"/>
+
+    <!--todo chali you have to call target "dist" before this target-->
+    <target name="mac-os-package">
+        <jarbundler dir="${dist.dir}"
+                    name="FreeRapid"
+                    mainclass="cz.vity.freerapid.core.MainApp"
+                    icon="./${build.dir}/frd.icns"
+                vmoptions="-Djava.net.preferIPv4Stack=true -Xmx128m"
+                arguments="">
+            <jarfileset dir="./${build.dir}/lib"/>
+            <jarfileset dir="./${build.dir}" includes="frd.jar"/>
+            <jarfileset dir="./${build.dir}/lookandfeel"/>
+            <javafileset dir="./${build.dir}" includes="*/*.xml"/>
+            <javafileset dir="./${build.dir}" includes="*/*.txt"/>
+            <javafileset dir="./${build.dir}" includes="*/*.frp"/>
+            <javafileset dir="./${build.dir}" includes="*.properties"/>
+        </jarbundler>
+    </target>
 </project>
