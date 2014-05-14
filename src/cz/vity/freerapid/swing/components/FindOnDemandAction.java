@@ -149,7 +149,7 @@ abstract class FindOnDemandAction extends AbstractAction implements DocumentList
 
     public void keyTyped(KeyEvent e) {
         if (AppPrefs.getProperty(UserProp.SEARCH_ON_TYPE, UserProp.SEARCH_ON_TYPE_DEFAULT)) {
-            if (searchField.equals(e.getSource()))
+            if (e.getSource().equals(searchField))
                 return;
             final String s = String.valueOf(e.getKeyChar());
             if (e.getModifiers() == 0 || e.isShiftDown() && (Character.isLetterOrDigit(e.getKeyChar()) || s.matches("\\p{Punct}"))) {
