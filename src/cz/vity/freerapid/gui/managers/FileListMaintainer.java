@@ -106,6 +106,10 @@ class FileListMaintainer {
                 } else
                     file.setState(DownloadState.PAUSED);
             }
+            if (file.getDownloaded() <= 0)
+                file.setRealDownload(0);
+            else
+                file.setDownloaded(file.getRealDownload());
             file.resetSpeed();
             file.setTimeToQueued(-1);
             file.addPropertyChangeListener(dataManager);

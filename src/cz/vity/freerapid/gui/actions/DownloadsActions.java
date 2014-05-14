@@ -19,7 +19,7 @@ final public class DownloadsActions {
     /**
      * set of states in which user can press pause button
      */
-    public static EnumSet<DownloadState> pauseEnabledStates = EnumSet.of(DOWNLOADING, ERROR, SLEEPING, GETTING, QUEUED, WAITING, DISABLED, TESTING);
+    public static EnumSet<DownloadState> pauseEnabledStates = EnumSet.of(ERROR, SLEEPING, GETTING, QUEUED, WAITING, DISABLED, TESTING);
     /**
      * set of states in which user can press resume button
      */

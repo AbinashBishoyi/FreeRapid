@@ -55,6 +55,8 @@ public class DownloadClient implements HttpDownloadClient {
      * connection settings those are used for creating TCP/HTTP connections
      */
     private volatile ConnectionSettings settings;
+    public static final String START_POSITION = "startPosition";
+    public static final String SUPPOSE_TO_DOWNLOAD = "supposeToDownload";
 
 
     /**
@@ -109,7 +111,6 @@ public class DownloadClient implements HttpDownloadClient {
         method.setRequestHeader("Accept-Charset", "windows-1250,utf-8;q=0.7,*;q=0.7");
         //method.setRequestHeader("Accept-Charset", "utf-8, windows-1250;q=0.7,*;q=0.7");
         method.setRequestHeader("Accept-Encoding", "gzip,deflate");
-        method.setRequestHeader("Accept-Ranges", "bytes");
         method.setRequestHeader("Keep-Alive", "30");
         if (referer != null && referer.length() > 0)
             method.setRequestHeader("Referer", referer);
@@ -146,6 +147,8 @@ public class DownloadClient implements HttpDownloadClient {
             throw new NullPointerException("HttpMethod cannot be null");
         if (file == null)
             throw new NullPointerException("File cannot be null");
+        file.getProperties().remove(START_POSITION);
+        file.getProperties().remove(SUPPOSE_TO_DOWNLOAD);
         return makeRequestFile(method, file, 0, allowRedirect);
     }
 
@@ -215,7 +218,9 @@ public class DownloadClient implements HttpDownloadClient {
         final File storeFile = file.getStoreFile();
         if (storeFile != null && storeFile.exists()) {
             //velikost souboru muze byt preddelana, proto bereme minimum
-            method.addRequestHeader("Range", "bytes=" + Math.min(storeFile.length(), Math.max(file.getDownloaded(), 0)) + "-");
+            final long l = Math.max(file.getRealDownload(), 0);
+            if (l != 0)
+                method.addRequestHeader("Range", "bytes=" + l + "-");
         }
     }
 
@@ -265,19 +270,21 @@ public class DownloadClient implements HttpDownloadClient {
                 isStream = false;
                 logger.warning("No Content-Length in header");
             } else {
+                final Header acceptRangesHeader = method.getResponseHeader("Accept-Ranges");
+                file.setResumeSupported(acceptRangesHeader != null && "bytes".equals(acceptRangesHeader.getValue()));
                 final Long contentResponseLength = Long.valueOf(contentLength.getValue());
                 final Header contentRange = method.getResponseHeader("Content-Range");
                 if (contentRange != null) {
                     final String val = contentRange.getValue();
                     final Matcher matcher = Pattern.compile("(\\d+)-\\d+/(\\d+)").matcher(val);
                     if (matcher.find()) {
-                        file.getProperties().put("startPosition", Long.valueOf(matcher.group(1)));
+                        file.getProperties().put(START_POSITION, Long.valueOf(matcher.group(1)));
                         file.setFileSize(Long.valueOf(matcher.group(2)));
                     } else
-                        file.getProperties().put("startPosition", 0L);
+                        file.getProperties().put(START_POSITION, 0L);
                 } else
                     file.setFileSize(contentResponseLength);
-                file.getProperties().put("supposeToDownload", contentResponseLength);
+                file.getProperties().put(SUPPOSE_TO_DOWNLOAD, contentResponseLength);
             }
         }
 

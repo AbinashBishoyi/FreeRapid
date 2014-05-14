@@ -6,6 +6,7 @@ import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.gui.managers.TaskServiceManager;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.exceptions.*;
+import cz.vity.freerapid.plugins.webclient.DownloadClient;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.plugins.webclient.FileState;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
@@ -96,14 +97,10 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         client.getHTTPClient().getHttpConnectionManager().closeIdleConnections(0);
     }
 
-    protected OutputStream getFileOutputStream(final File f, final long fileSize) throws NotEnoughSpaceException, IOException {
+    private CountingOutputStream getFileOutputStream(final File f, final long fileSize, final long startPosition) throws NotEnoughSpaceException, IOException {
         if (f.getParentFile().getFreeSpace() < fileSize + 30 * 1024 * 1024) { //+ 30MB
             throw new NotEnoughSpaceException();
         }
-        Long startPosition = (Long) downloadFile.getProperties().get("startPosition");
-        if (startPosition == null)
-            startPosition = 0L;
-        downloadFile.getProperties().remove("startPosition");
 
         final OutputStream fos;
         if (AppPrefs.getProperty(UserProp.ANTI_FRAGMENT_FILES, UserProp.ANTI_FRAGMENT_FILES_DEFAULT)) {
@@ -124,7 +121,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
             }
         }
 
-        return new BufferedOutputStream(fos, AppPrefs.getProperty(UserProp.OUTPUT_FILE_BUFFER_SIZE, OUTPUT_FILE_BUFFER_SIZE));
+        return new CountingOutputStream(fos);
     }
 
     protected void initBackground() {
@@ -144,7 +141,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         final boolean temporary = useTemporaryFiles();
 
         setBuffer(new byte[AppPrefs.getProperty(UserProp.INPUT_BUFFER_SIZE, INPUT_BUFFER_SIZE)]);
-        OutputStream fileOutputStream = null;
+
         final String fileName = downloadFile.getFileName();
         File outputFile = downloadFile.getOutputFile();
         //outputFile = new File("d:/vystup.pdf");
@@ -158,6 +155,8 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 
         final SpeedRegulator speedRegulator = ((MainApp) this.getApplication()).getManagerDirector().getSpeedRegulator();
         final File saveToDirectory = downloadFile.getSaveToDirectory();
+        CountingOutputStream cos = null;
+        OutputStream fileOutputStream = null;
         try {
             if (!saveToDirectory.exists())
                 saveToDirectory.mkdirs();
@@ -168,12 +167,18 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                 downloadFile.setDownloaded(0);
             }
             final long fileSize = downloadFile.getFileSize();
-
-//            if (temporary)
-//                storeFile.deleteOnExit();
+            Long startPositionObject = (Long) downloadFile.getProperties().get(DownloadClient.START_POSITION);
+            final long startPosition;
+            if (startPositionObject == null) {
+                startPosition = 0L;
+            } else {
+                startPosition = startPositionObject;
+                downloadFile.getProperties().remove(DownloadClient.START_POSITION);
+            }
 
             try {
-                fileOutputStream = getFileOutputStream(storeFile, fileSize);
+                cos = getFileOutputStream(storeFile, fileSize, startPosition);
+                fileOutputStream = getBufferedOutputStream(cos);
                 if (isTerminated()) {
                     closeFileStream(fileOutputStream);
                     checkDeleteTempFile();
@@ -182,23 +187,28 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                 int len;
                 long counter = 0;
                 downloadFile.setState(DownloadState.DOWNLOADING);
-                Long suppose = (Long) downloadFile.getProperties().get("supposeToDownload");
+                Long suppose = (Long) downloadFile.getProperties().get(DownloadClient.SUPPOSE_TO_DOWNLOAD);
                 if (suppose == null)
                     suppose = downloadFile.getFileSize();
-                else downloadFile.getProperties().remove("supposeToDownload");
+                else downloadFile.getProperties().remove(DownloadClient.SUPPOSE_TO_DOWNLOAD);
+
+                logger.info("starting download from position " + startPosition);
+                downloadFile.setDownloaded(startPosition);
+                downloadFile.setRealDownload(downloadFile.getDownloaded());
 
                 speedRegulator.addDownloading(downloadFile, this);
                 //data downloading-------------------------------
                 byte[] buf = getBuffer();
                 while ((len = inputStream.read(buf)) != -1) {
                     fileOutputStream.write(buf, 0, len);
-                    counter += len;
+                    counter += len; //read from stream
+                    downloadFile.setRealDownload(startPosition + cos.count);//real written to disk
                     if (isTerminated()) {
                         fileOutputStream.flush();
                         break;
                     }
                     final boolean ok = speedRegulator.takeTokens(downloadFile, len);
-                    if (!ok && counter != fileSize) {
+                    if (!ok && counter != suppose) {
                         //System.out.println("Going to sleep to slow down speed");
                         Thread.sleep(1000);
                     }
@@ -208,31 +218,31 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                 if (!isTerminated()) {
                     if (counter != suppose)
                         throw new IOException("ErrorDuringDownload");
-                    downloadFile.setDownloaded(fileSize);
                 } else {
                     logger.info("File downloading was terminated");
                 }
             }
             catch (Throwable e) {
-                if (storeFile != null && storeFile.exists()) {
-                    closeFileStream(fileOutputStream);
-                    fileOutputStream = null;
-
-//                    if (!storeFile.delete())
-//                        logger.info("Failed to delete file during exception");
-                }
                 throw new Exception(e);
             }
             finally {
                 closeFileStream(fileOutputStream);
                 checkDeleteTempFile();
+                if (!wasInterrupted(downloadFile.getStoreFile()) && cos != null) {
+                    downloadFile.setRealDownload(startPosition + cos.count);//real written to disk
+                    downloadFile.setDownloaded(downloadFile.getRealDownload());
+                }
             }
         }
         finally {
-            //setSpeed(0);
+            closeFileStream(fileOutputStream);
             checkDeleteTempFile();
         }
 
+    }
+
+    private OutputStream getBufferedOutputStream(OutputStream out) {
+        return new BufferedOutputStream(out, AppPrefs.getProperty(UserProp.OUTPUT_FILE_BUFFER_SIZE, OUTPUT_FILE_BUFFER_SIZE));
     }
 
     protected boolean useTemporaryFiles() {
@@ -251,7 +261,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 
     private void checkDeleteTempFile() {
         final File storeFile = downloadFile.getStoreFile();
-        if (isTerminated() && storeFile != null && storeFile.exists() && (downloadFile.getState() == DownloadState.CANCELLED || downloadFile.getState() == DownloadState.DELETED)) {
+        if (wasInterrupted(storeFile)) {
             logger.info("Deleting partial file " + storeFile);
             //     storeFile.deleteOnExit();
             final boolean b = storeFile.delete();
@@ -261,6 +271,10 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         }
         if (downloadFile.getState() == DownloadState.CANCELLED)
             downloadFile.setDownloaded(0);
+    }
+
+    private boolean wasInterrupted(File storeFile) {
+        return isTerminated() && storeFile != null && storeFile.exists() && (downloadFile.getState() == DownloadState.CANCELLED || downloadFile.getState() == DownloadState.DELETED);
     }
 
     @Override
@@ -289,16 +303,6 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         }
         firePropertyChange("sleep", oldValue, newValue);
     }
-
-    //    protected void setAverageSpeed(float avgSpeed) {
-//        final float oldValue, newValue;
-//        synchronized (this) {
-//            oldValue = this.averageSpeed;
-//            this.averageSpeed = avgSpeed;
-//            newValue = this.averageSpeed;
-//        }
-//        firePropertyChange("averageSpeed", oldValue, newValue);
-//    }
 
     @Override
     protected void failed(Throwable cause) {

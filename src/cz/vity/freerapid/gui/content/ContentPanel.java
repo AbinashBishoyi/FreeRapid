@@ -669,7 +669,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             final boolean enabledResume = this.manager.hasAnyDownloadFilesStates(indexes, DownloadsActions.resumeEnabledStates);
             setResumeActionEnabled(enabledResume);
 
-            final boolean enabledPause = this.manager.hasAnyDownloadFilesStates(indexes, DownloadsActions.pauseEnabledStates);
+            final boolean enabledPause = this.manager.isPausable(indexes);
+
             setPauseActionEnabled(enabledPause);
 
             setValidateLinksEnabled(this.manager.hasAnyDownloadFilesStates(indexes, DownloadsActions.recheckExistingStates));
@@ -982,8 +983,6 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
 
     private void initComponents() {
-        // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-        // Generated using JFormDesigner Open Source Project license - unknown
         JScrollPane scrollPane = new JScrollPane();
         table = new JXTable();
 
@@ -995,7 +994,6 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             scrollPane.setViewportView(table);
         }
         add(scrollPane, BorderLayout.CENTER);
-        // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
 

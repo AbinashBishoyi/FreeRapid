@@ -232,7 +232,7 @@ final public class UserProp {
     public static final String HELP_URL = "HELP_URL";
 
     public static final String SHOW_CZO2009 = "czo2009";
-    public static final boolean SHOW_CZO2009_DEFAULT = true;
+    public static final boolean SHOW_CZO2009_DEFAULT = false;
 
     public static final String SPEED_LIMIT = "speedLimit";
     public static final int SPEED_LIMIT_DEFAULT = 250;

@@ -302,7 +302,11 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                     file.setState(CANCELLED);
                     file.setDownloaded(0);
                     if (delete) {
-                        final File outputFile = file.getOutputFile();
+                        File outputFile = file.getStoreFile();
+                        if (outputFile.exists()) {
+                            outputFile.delete();
+                        }
+                        outputFile = file.getOutputFile();
                         if (outputFile.exists()) {
                             outputFile.delete();
                         }
@@ -334,7 +338,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
             List<DownloadFile> toRemoveList = selectionToList(indexes);
             for (DownloadFile file : toRemoveList) {
                 final DownloadState state = file.getState();
-                if (DownloadsActions.pauseEnabledStates.contains(state)) {
+                if (DownloadsActions.pauseEnabledStates.contains(state) || (state == DOWNLOADING && file.isResumeSupported())) {
                     //boolean isProcessState = DownloadsActions.isProcessState(state);
                     final DownloadTask task = file.getTask();
                     file.setState(PAUSED);
@@ -679,4 +683,21 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         }
     }
 
+    public boolean isPausable(int[] indexes) {
+        synchronized (this.lock) {
+            if (indexes.length == 0)
+                return false;
+            for (int index : indexes) {
+                final DownloadFile file = downloadFiles.get(index);
+                final DownloadState s = file.getState();
+                if (DownloadsActions.pauseEnabledStates.contains(s))
+                    return true;
+                if (s == DownloadState.DOWNLOADING && file.isResumeSupported()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+    }
 }

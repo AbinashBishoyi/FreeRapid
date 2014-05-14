@@ -164,6 +164,7 @@ public final class SpeedRegulator implements PropertyChangeListener {
             final DownloadFileInfo info = downloading.get(file);
             info.counter += bytes;
             final int taken = file.getTakenTokens();
+//            System.out.println("kilobytes = " + kilobytes + " (" + info.task.getBuffer().length + ")");
             file.setTakenTokens((taken == -1) ? kilobytes : taken + kilobytes);
             return file.getTokensLimit() > file.getTakenTokens();
         }

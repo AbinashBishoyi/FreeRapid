@@ -147,4 +147,8 @@ public interface HttpFile {
     File getStoreFile();
 
     void setStoreFile(File storeFile);
+
+    long getRealDownload();
+
+    void setResumeSupported(boolean resumeSupported);
 }

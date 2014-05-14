@@ -54,6 +54,8 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
     private int speedLimit = -1;
     private volatile int tokens;
     private int takenTokens;
+    private volatile long realDownload;
+    private boolean resumeSupported = true;
 
     static {
         try {
@@ -607,5 +609,23 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
     @Override
     public void setStoreFile(File storeFile) {
         this.storeFile = storeFile;
+    }
+
+    public long getRealDownload() {
+        return realDownload;
+    }
+
+    public void setRealDownload(long realDownload) {
+        this.realDownload = realDownload;
+    }
+
+    public boolean isResumeSupported() {
+        return resumeSupported;
+    }
+
+    public void setResumeSupported(boolean resumeSupported) {
+        final boolean oldValue = this.resumeSupported;
+        this.resumeSupported = resumeSupported;
+        firePropertyChange("resumeSupported", oldValue, this.resumeSupported);
     }
 }
