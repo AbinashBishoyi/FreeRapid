@@ -1028,7 +1028,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         action.actionPerformed(new ActionEvent(table, 0, "paste"));
     }
 
-    @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
+    @org.jdesktop.application.Action(enabledProperty = COMPLETED_OK_ACTION_ENABLED_PROPERTY)
     public void renameAction() {
         final int[] selectedRows = table.getSelectedRows();
         if (selectedRows.length == 0) {
