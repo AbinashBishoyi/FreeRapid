@@ -882,7 +882,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         if (!validated())
             return;
 
-        final boolean updateProxyConnectionList = isBuffering(UserProp.PROXY_LIST_PATH) || isBuffering(UserProp.USE_PROXY_LIST);
+        final boolean updateProxyConnectionList = isBuffering(UserProp.USE_PROXY_LIST) || isBuffering(UserProp.PROXY_LIST_PATH) || !AppPrefs.getProperty(UserProp.PROXY_LIST_PATH, "").equals(fieldProxyListPath.getText());
         updateDefaultConnection = updateDefaultConnection || isBuffering(UserProp.USE_DEFAULT_CONNECTION);
 
         AppPrefs.storeProperty(UserProp.PLUGIN_CHECK_URL_SELECTED, comboPluginServers.getSelectedItem().toString());

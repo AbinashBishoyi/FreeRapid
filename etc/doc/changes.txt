@@ -11,6 +11,11 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
+  Added : Plugin API
+            - FileStreamRecognizer interface and accompanying methods for setting it
+  Fixed : Lots of exceptions in log in case a plugin dependency is missing
+  Fixed : Proxy list not refreshing when changing the path to it in preferences dialog
+
 18th July 2010 - FreeRapid Downloader 0.85 Alpha 2
   Added : Enhanced clipboard monitoring support for URLs defined in reverse order eg.:
            http://www.agaleradodownload.com/download/d/?0PPJOQ2X=d?/moc.daolpuagem.www//:ptth
@@ -24,9 +29,8 @@ Fixed - indicates a bug fix
   Changed : Removed Kunstoff and PGS LookAndFeel (too old and not updated), upgraded Substance LaF to version 6.0
   Changed : Default FRD Look And Feel is set to JTattoo AERO
   Fixed : Wrong file is deleted when cancelling a download in some cases, see http://bugtracker.wordrider.net/task/1306
-  Fixed : Reinserting links when switching to premium plugin is not necessary anymore 
-
-  Fixed regressions against FreeRapid Downloader 0.85 Alpha 1
+  Fixed : Reinserting links when switching to premium plugin is not necessary anymore
+  Fixed : Regressions in FreeRapid Downloader 0.85 Alpha 1
      - Look and Feel reverts to Quaqua on every startup
      - Plugins - clipboard monitoring status is not properly set
      - "ClassCastException" in links history dialog     
