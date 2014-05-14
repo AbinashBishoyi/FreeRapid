@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <project name="FreeRapid Downloader" default="all" basedir=".">
     <property name="application" value="FreeRapid"/>
-    <property name="version" value="0.83-beta4"/>
+    <property name="version" value="0.83-rc"/>
     <property name="version.name" value="${application}-${version}"/>
     <property name="mainclass" value="cz.vity.freerapid.core.MainApp"/>
     <property name="mainjar.file" value="frd.jar"/>

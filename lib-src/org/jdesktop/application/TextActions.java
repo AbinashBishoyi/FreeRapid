@@ -49,6 +49,7 @@ class TextActions extends AbstractBean {
     private boolean cutEnabled = false;     // see setCutEnabled
     private boolean pasteEnabled = false;   // see setPasteEnabled
     private boolean deleteEnabled = false;  // see setDeleteEnabled
+    private boolean selectAllEnabled = false;  // see setSelectAllEnabled
 
     public TextActions(ApplicationContext context) {
         this.context = context;
@@ -93,6 +94,7 @@ class TextActions extends AbstractBean {
             setCutEnabled(false);
             setPasteEnabled(false);
             setDeleteEnabled(false);
+            setSelectAllEnabled(false);
         }
     }
 
@@ -122,16 +124,21 @@ class TextActions extends AbstractBean {
 
     private void updateTextActions(JTextComponent text) {
         Caret caret = text.getCaret();
-        boolean selection = (caret.getDot() != caret.getMark());
+        final int dot = caret.getDot();
+        final int mark = caret.getMark();
+        boolean selection = (dot != mark);
         boolean editable = text.isEditable();
+        setCopyEnabled(selection);
+        setCutEnabled(editable && selection);
+        setDeleteEnabled(editable && selection);
+        final int length = text.getDocument().getLength();
+        setSelectAllEnabled(editable && (Math.abs(mark - dot) != length));
         try {
             boolean data = getClipboard().isDataFlavorAvailable(DataFlavor.stringFlavor);
-            setCopyEnabled(selection);
-            setCutEnabled(editable && selection);
-            setDeleteEnabled(editable && selection);
             setPasteEnabled(editable && data);
         } catch (IllegalStateException e) {
             //ignore
+            setPasteEnabled(editable);
         }
     }
 
@@ -248,4 +255,24 @@ class TextActions extends AbstractBean {
         this.deleteEnabled = deleteEnabled;
         firePropertyChange("deleteEnabled", oldValue, this.deleteEnabled);
     }
+
+    @Action(enabledProperty = "selectAllEnabled", name = "select-all")
+    public void selectAll(ActionEvent e) {
+        Object src = e.getSource();
+        if (src instanceof JTextComponent) {
+            invokeTextAction((JTextComponent) src, DefaultEditorKit.selectAllAction);
+        }
+    }
+
+    public boolean isSelectAllEnabled() {
+        return selectAllEnabled;
+    }
+
+    public void setSelectAllEnabled(boolean selectAllEnabled) {
+        boolean oldValue = this.selectAllEnabled;
+        this.selectAllEnabled = selectAllEnabled;
+        firePropertyChange("selectAllEnabled", oldValue, this.selectAllEnabled);
+    }
+
+
 }

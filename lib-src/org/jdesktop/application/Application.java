@@ -113,7 +113,7 @@ import java.util.logging.Logger;
  * @see UIManager#setLookAndFeel
  */
 
-@ProxyActions({"cut", "copy", "paste", "delete"})
+@ProxyActions({"cut", "copy", "paste", "delete", "select-all"})
 
 public abstract class Application extends AbstractBean {
     private static final Logger logger = Logger.getLogger(Application.class.getName());
