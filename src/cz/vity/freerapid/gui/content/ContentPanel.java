@@ -69,6 +69,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     private static final int COLUMN_AVERAGE_SPEED = 7;
     private static final int COLUMN_SERVICE = 8;
     private static final int COLUMN_PROXY = 9;
+    private static final int COLUMN_DESCRIPTION = 10;
 
     private final ApplicationContext context;
     private final ManagerDirector director;
@@ -807,7 +808,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     @SuppressWarnings({"unchecked"})
     private void initTable() {
         table.setName("mainTable");
-        final String[] columns = (String[]) context.getResourceMap().getObject("mainTableColumns", String[].class);
+        final String[] columns = Swinger.getList(context.getResourceMap(), "mainTableColumns", 11);
         table.setModel(new CustomTableModel(manager.getDownloadFiles(), columns));
         table.setAutoCreateColumnsFromModel(false);
 
@@ -870,7 +871,9 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         tableColumnModel.getColumn(COLUMN_AVERAGE_SPEED).setCellRenderer(new AverageSpeedCellRenderer());
         tableColumnModel.getColumn(COLUMN_SERVICE).setCellRenderer(new ServiceCellRenderer(director));
         tableColumnModel.getColumn(COLUMN_PROXY).setCellRenderer(new ConnectionCellRenderer(context));
-
+        final TableColumnExt columnDescription = (TableColumnExt) tableColumnModel.getColumn(COLUMN_DESCRIPTION);
+        columnDescription.setCellRenderer(new DescriptionCellRenderer(context));
+        columnDescription.setVisible(false);
 
         table.addMouseListener(new MouseAdapter() {
             @Override

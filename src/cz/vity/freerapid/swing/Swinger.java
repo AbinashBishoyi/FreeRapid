@@ -137,6 +137,15 @@ public class Swinger {
         return getContext().getActionMap(aClass, actionsObject);
     }
 
+
+    public static String[] getList(ResourceMap resourceMap, final String key, final int valueCount) {
+        final String[] list = new String[valueCount];
+        for (int i = 0; i < valueCount; i++) {
+            list[i] = resourceMap.getString(key + "_" + i);
+        }
+        return list;
+    }
+
     private static ApplicationContext getContext() {
         return Application.getInstance().getContext();
     }

@@ -174,11 +174,7 @@ abstract class AppFrame extends JFrame {
 
     protected String[] getList(final String key, final int valueCount) {
         final ResourceMap resourceMap = getResourceMap();
-        final String[] list = new String[valueCount];
-        for (int i = 0; i < valueCount; i++) {
-            list[i] = resourceMap.getString(key + "_" + i);
-        }
-        return list;
+        return Swinger.getList(resourceMap, key, valueCount);
     }
 
     protected boolean validateNonEmpty(final JTextComponent component) {

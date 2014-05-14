@@ -13,7 +13,7 @@
     <lng name="Español" code="ES" icon="es.gif"/>
     <lng name="Slovenčina" code="SK" icon="sk.gif"/>
     <lng name="简体中文" code="ZH" country="CN" icon="cn.gif"/>
-    <lng name="正體中文" code="ZH" country="TW" icon="tw.gif"/>
+    <!--<lng name="正體中文" code="ZH" country="TW" icon="tw.gif"/>-->
     <lng name="日本語" code="JP" icon="jp.gif"/>
     <lng name="Bahasa Indonesia" code="IN" icon="id.gif"/>
     <lng name="Polski" code="PL" icon="pl.gif"/>
