@@ -8,6 +8,7 @@ import cz.vity.freerapid.gui.managers.TaskServiceManager;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.exceptions.*;
 import cz.vity.freerapid.plugins.webclient.DownloadClient;
+import cz.vity.freerapid.plugins.webclient.DownloadClientConsts;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.plugins.webclient.FileState;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
@@ -239,7 +240,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                 }
                 //-----------------------------------------------
                 if (!isTerminated()) {
-                    if (client.getHTTPClient().getParams().isParameterTrue("noContentLengthAvailable")) {
+                    if (client.getHTTPClient().getParams().isParameterTrue(DownloadClientConsts.NO_CONTENT_LENGTH_AVAILABLE)) {
                         downloadFile.setFileSize(counter);
                     } else {
                         if (counter != suppose) {

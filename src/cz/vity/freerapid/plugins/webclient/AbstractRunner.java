@@ -325,13 +325,35 @@ public abstract class AbstractRunner implements PluginRunner {
     }
 
     /**
-     * Sets client parameter for handling requests
+     * Sets HTTP client parameter
      *
      * @param parameterName  name of parameter
-     * @param parameterValue parameter's value
+     * @param parameterValue value of parameter
      */
     protected void setClientParameter(String parameterName, Object parameterValue) {
         client.getHTTPClient().getParams().setParameter(parameterName, parameterValue);
+    }
+
+    /**
+     * Sets HTTP client parameter
+     *
+     * @param parameterName  name of parameter
+     * @param parameterValue value of parameter
+     * @since 0.85
+     */
+    protected void setClientParameter(String parameterName, int parameterValue) {
+        client.getHTTPClient().getParams().setIntParameter(parameterName, parameterValue);
+    }
+
+    /**
+     * Sets HTTP client parameter.
+     *
+     * @param parameterName  name of parameter
+     * @param parameterValue value of parameter
+     * @since 0.85
+     */
+    protected void setClientParameter(String parameterName, boolean parameterValue) {
+        client.getHTTPClient().getParams().setBooleanParameter(parameterName, parameterValue);
     }
 
     /**
@@ -343,7 +365,7 @@ public abstract class AbstractRunner implements PluginRunner {
      */
     protected void setPageEncoding(String encoding) {
         this.encoding = encoding;
-        setClientParameter("pageCharset", encoding);
+        setClientParameter(DownloadClientConsts.PAGE_CHARSET, encoding);
         client.getHTTPClient().getParams().setHttpElementCharset(encoding);
     }
 

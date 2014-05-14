@@ -220,7 +220,7 @@ public class DownloadClient implements HttpDownloadClient {
                     newuri = "http://" + method.getURI().getHost() + newuri;
 
                 logger.info("Redirect target: " + newuri);
-                if (client.getParams().getBooleanParameter("useRefererWhenRedirect", false)) {
+                if (client.getParams().getBooleanParameter(DownloadClientConsts.USE_REFERER_WHEN_REDIRECT, false)) {
                     setReferer(newuri);
                 }
 
@@ -263,9 +263,9 @@ public class DownloadClient implements HttpDownloadClient {
         boolean isStream = checkContentTypeStream(method, true);
         final String fileName = HttpUtils.getFileName(method);
         if (fileName != null && !fileName.isEmpty()) {
-            if (!client.getParams().isParameterTrue("dontUseHeaderFilename"))
+            if (!client.getParams().isParameterTrue(DownloadClientConsts.DONT_USE_HEADER_FILENAME))
                 file.setFileName(fileName);
-            if (client.getParams().isParameterTrue("noContentTypeInHeader"))
+            if (client.getParams().isParameterTrue(DownloadClientConsts.NO_CONTENT_TYPE_IN_HEADER))
                 isStream = true;
         } else {
             if (method.getResponseHeader("Content-Range") == null)
@@ -278,15 +278,15 @@ public class DownloadClient implements HttpDownloadClient {
         file.setFileName(HttpUtils.replaceInvalidCharsForFileSystem(PlugUtils.unescapeHtml(fn), "_"));
 
         //server sends eg. text/plain for binary data
-        if (!isStream && contentType != null && client.getParams().isParameterSet("considerAsStream")) {
-            final String ct = client.getParams().getParameter("considerAsStream").toString();
+        if (!isStream && contentType != null && client.getParams().isParameterSet(DownloadClientConsts.CONSIDER_AS_STREAM)) {
+            final String ct = client.getParams().getParameter(DownloadClientConsts.CONSIDER_AS_STREAM).toString();
             if (contentType.getValue().equalsIgnoreCase(ct)) {
                 logger.info("considering as stream '" + ct + "'");
                 isStream = true;
             }
         }
 
-        if (isStream && client.getParams().isParameterFalse("noContentLengthAvailable")) {
+        if (isStream && client.getParams().isParameterFalse(DownloadClientConsts.NO_CONTENT_LENGTH_AVAILABLE)) {
             final Header contentLength = method.getResponseHeader("Content-Length");
             if (contentLength == null) {
                 isStream = false;
@@ -305,7 +305,7 @@ public class DownloadClient implements HttpDownloadClient {
                         file.getProperties().put(START_POSITION, 0L);
                     file.setResumeSupported(true);
                 } else {
-                    if (!client.getParams().isParameterTrue("ignoreAcceptRanges")) {
+                    if (!client.getParams().isParameterTrue(DownloadClientConsts.IGNORE_ACCEPT_RANGES)) {
                         final Header acceptRangesHeader = method.getResponseHeader("Accept-Ranges");
                         if (file.isResumeSupported())
                             file.setResumeSupported(acceptRangesHeader != null && "bytes".equals(acceptRangesHeader.getValue()));
@@ -438,7 +438,7 @@ public class DownloadClient implements HttpDownloadClient {
                 }
 
                 logger.info("Redirect target: " + newuri);
-                if (client.getParams().getBooleanParameter("useRefererWhenRedirect", false)) {
+                if (client.getParams().getBooleanParameter(DownloadClientConsts.USE_REFERER_WHEN_REDIRECT, false)) {
                     setReferer(newuri);
                 }
                 GetMethod redirect = getGetMethod(newuri);
@@ -606,7 +606,7 @@ public class DownloadClient implements HttpDownloadClient {
     }
 
     protected String getContentPageCharset() {
-        final Object o = getHTTPClient().getParams().getParameter("pageCharset");
+        final Object o = getHTTPClient().getParams().getParameter(DownloadClientConsts.PAGE_CHARSET);
         if (o == null) {
             return "UTF-8";
         }
@@ -636,7 +636,7 @@ public class DownloadClient implements HttpDownloadClient {
         return asString;
     }
 
-    //TODO javadoc since 0.849
+    @Override
     public void setConnectionTimeOut(int timeout) {
         this.timeout = timeout;
     }
