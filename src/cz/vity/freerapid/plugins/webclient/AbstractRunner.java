@@ -1,8 +1,10 @@
 package cz.vity.freerapid.plugins.webclient;
 
 import cz.vity.freerapid.plugins.exceptions.BuildMethodException;
+import cz.vity.freerapid.plugins.exceptions.PluginImplementationException;
 import cz.vity.freerapid.plugins.webclient.hoster.CaptchaSupport;
 import cz.vity.freerapid.plugins.webclient.interfaces.*;
+import cz.vity.freerapid.plugins.webclient.utils.JsonMapper;
 import cz.vity.freerapid.plugins.webclient.utils.PlugUtils;
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpMethod;
@@ -190,6 +192,20 @@ public abstract class AbstractRunner implements PluginRunner {
      */
     protected String getContentAsString() {
         return client.getContentAsString();
+    }
+
+    /**
+     * Returns last response from server as specific object instance - eg. using JSON
+     *
+     * @return text response from server
+     * @since 0.855
+     */
+    protected <T> T getContentAsObject(Class<T> objectClass) throws PluginImplementationException {
+        final String contentAsString = getContentAsString();
+        if (contentAsString == null) {
+            return null;
+        }
+        return new JsonMapper().deserialize(contentAsString, objectClass);
     }
 
     /**

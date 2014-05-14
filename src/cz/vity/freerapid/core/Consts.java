@@ -92,7 +92,7 @@ public class Consts {
     /**
      * version of API
      */
-    public static final String APIVERSION = "0.854";
+    public static final String APIVERSION = "0.855";
     public static final String PLUGINSSTATUS_URL = "http://wordrider.net/freerapid/plugins.html";
     public static final String SEARCH_ENGINES_URL = "https://addons.mozilla.org/en-US/firefox/search-engines/";
 

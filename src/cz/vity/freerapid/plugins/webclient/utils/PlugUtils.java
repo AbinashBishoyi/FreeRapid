@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Locale;
@@ -517,6 +519,32 @@ public final class PlugUtils {
         before = Pattern.quote(Utils.rtrim(before)).replaceAll("\n", "\\\\E\\\\s*\\\\Q");
         after = Pattern.quote(Utils.ltrim(after)).replaceAll("\n", "\\\\E\\\\s*\\\\Q");
         return matcher(before + "\\s*" + middle + "\\s*" + after, content);
+    }
+
+    /**
+     * Returns file name suggestion from URL
+     *
+     * @param stringURL URL in string form
+     * @return file name suggestion
+     * @throws PluginImplementationException Error suggesting file name
+     * @since 0.855
+     */
+    public static String suggestFilename(String stringURL) throws PluginImplementationException {
+        String filename;
+        if (stringURL == null || stringURL.isEmpty()) {
+            throw new PluginImplementationException("Error suggesting file name");
+        }
+
+        try {
+            String path = new URL(stringURL).getPath();
+            final int i = path.lastIndexOf("/");
+            if (i < 0) {
+                throw new PluginImplementationException("Error suggesting file name");
+            }
+            return URLDecoder.decode(path.substring(i + 1), "UTF-8");
+        } catch (Exception e) {
+            throw new PluginImplementationException("Error suggesting file name");
+        }
     }
 
 }

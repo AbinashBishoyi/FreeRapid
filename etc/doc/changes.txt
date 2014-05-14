@@ -17,9 +17,10 @@ Internal - indicates an internal change - information for FRD developers - nothi
   Fixed: Recent files combobox uses [by Tong2Shot - thanks!]
   Fixed : widen up main frame's status bar's info label a bit as it got truncated on some LaFs that use bold font.
           [by Tong2Shot - thanks!]
-  Fixed : improved replaceInvalidCharsForFileSystem [by Ntoskrnl]
+  Fixed : plugins API - improved replaceInvalidCharsForFileSystem [by Ntoskrnl]
   Changed : French translation, Bahasa Indonesia translation
   Changed: rotate proxy per host [by Serge Baranov - thanks!]
+  Added: plugins API - support for JSON parsing
 
 
 15th September 2013 - FreeRapid Downloader 0.9 Update 3
