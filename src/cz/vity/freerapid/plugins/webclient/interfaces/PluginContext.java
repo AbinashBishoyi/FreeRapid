@@ -20,4 +20,12 @@ public interface PluginContext {
      * @return instance of ConfigurationStorageSupport
      */
     ConfigurationStorageSupport getConfigurationStorageSupport();
+
+    /**
+     * Returns instance of maintain support
+     *
+     * @return from a place where you can maintain queue
+     */
+    MaintainQueueSupport getQueueSupport();
+
 }

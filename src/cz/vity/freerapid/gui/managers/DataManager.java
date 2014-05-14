@@ -15,6 +15,8 @@ import cz.vity.freerapid.plugins.webclient.DownloadState;
 import static cz.vity.freerapid.plugins.webclient.DownloadState.*;
 import cz.vity.freerapid.plugins.webclient.FileState;
 import static cz.vity.freerapid.plugins.webclient.FileState.NOT_CHECKED;
+import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
+import cz.vity.freerapid.plugins.webclient.interfaces.MaintainQueueSupport;
 import cz.vity.freerapid.swing.Swinger;
 import org.jdesktop.application.AbstractBean;
 import org.jdesktop.application.Application;
@@ -27,13 +29,17 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * @author Vity
  */
-public class DataManager extends AbstractBean implements PropertyChangeListener, ListDataListener {
-    //private final static Logger logger = Logger.getLogger(DataManager.class.getName());
+public class DataManager extends AbstractBean implements PropertyChangeListener, ListDataListener, MaintainQueueSupport {
+    private final static Logger logger = Logger.getLogger(DataManager.class.getName());
 
     private final ArrayListModel<DownloadFile> downloadFiles = new ArrayListModel<DownloadFile>();
 
@@ -642,6 +648,31 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
             for (DownloadFile file : toRemoveList) {
                 file.setState(DELETED);
             }
+        }
+    }
+
+    @Override
+    public boolean addLinksToQueue(HttpFile parentFile, List<URI> uriList) {
+        List<DownloadFile> files = new LinkedList<DownloadFile>();
+        final boolean dontAddNotSupported = AppPrefs.getProperty(UserProp.DONT_ADD_NOTSUPPORTED_FROMCRYPTER, UserProp.DONT_ADD_NOTSUPPORTED_FROMCRYPTER_DEFAULT);
+        for (URI uri : uriList) {
+            try {
+                final URL url = uri.toURL();
+                if (dontAddNotSupported && !pluginsManager.isSupported(url))
+                    continue;
+                final DownloadFile downloadFile = new DownloadFile(url, parentFile.getSaveToDirectory(), parentFile.getDescription());
+                downloadFile.setPluginID("");
+                downloadFile.setState(QUEUED);
+                files.add(downloadFile);
+            } catch (MalformedURLException e) {
+                logger.warning("File with URI " + uri.toString() + " cannot be added to queue");
+            }
+        }
+        try {
+            addToList(files);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 }

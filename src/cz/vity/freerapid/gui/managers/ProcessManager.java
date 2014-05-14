@@ -340,6 +340,7 @@ public class ProcessManager extends Thread {
     }
 
     private void finishedDownloading(final DownloadFile file, final HttpDownloadClient client, final DownloadService downloadService, final DownloadTask task, final boolean runCheck) {
+
         synchronized (manipulation) {
             if (runCheck) {
                 downloadService.finishedTestingFile(file);
@@ -361,7 +362,6 @@ public class ProcessManager extends Thread {
                         file.setState(QUEUED);
                     } else error = DownloadTaskError.NOT_RECOVERABLE_DOWNLOAD_ERROR;
                 }
-
                 final DownloadState state = file.getState();
                 int errorAttemptsCount = file.getErrorAttemptsCount();
                 if ((state == ERROR && errorAttemptsCount != 0) || (state == SLEEPING)) {
@@ -384,7 +384,26 @@ public class ProcessManager extends Thread {
                 }
             }
         }
+
+        checkCompleted(file);
         wakeUp();
+    }
+
+    private void checkCompleted(DownloadFile file) {
+        if (file.getState() == COMPLETED) {
+            boolean remove = false;
+            if (Boolean.TRUE.equals(file.getProperties().get("removeCompleted"))) {
+                remove = true;
+            } else {
+                final boolean removeCompleted = AppPrefs.getProperty(UserProp.REMOVE_COMPLETED_DECRYPTER, UserProp.REMOVE_COMPLETED_DECRYPTER_DEFAULT);
+                final PluginMetaData data = pluginsManager.getPluginMetadata(file.getPluginID());
+                if (removeCompleted && data.isRemoveCompleted()) {
+                    remove = true;
+                }
+            }
+            if (remove)
+                dataManager.removeSelected(Arrays.asList(file));
+        }
     }
 
     public void queueUpdated() {

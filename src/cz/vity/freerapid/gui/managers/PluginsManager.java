@@ -45,12 +45,14 @@ public class PluginsManager {
     private final Object lock = new Object();
 
     private final ApplicationContext context;
+    private final ManagerDirector director;
     private PluginManager pluginManager;
     private PluginMetaDataManager pluginMetaDataManager;
 
 
-    public PluginsManager(ApplicationContext context) {
+    public PluginsManager(ApplicationContext context, ManagerDirector director) {
         this.context = context;
+        this.director = director;
         pluginMetaDataManager = new PluginMetaDataManager(context);
 
         this.context.getApplication().addExitListener(new Application.ExitListener() {
@@ -269,7 +271,7 @@ public class PluginsManager {
     }
 
     private PluginContext createPluginContext() {
-        return StandardPluginContextImpl.create(new StandardDialogSupportImpl(context), new StandardStorageSupportImpl(context));
+        return StandardPluginContextImpl.create(new StandardDialogSupportImpl(context), new StandardStorageSupportImpl(context), director.getDataManager());
     }
 
     public List<PluginMetaData> getSupportedPlugins() {

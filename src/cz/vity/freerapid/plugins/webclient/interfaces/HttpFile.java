@@ -3,7 +3,9 @@ package cz.vity.freerapid.plugins.webclient.interfaces;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.plugins.webclient.FileState;
 
+import java.io.File;
 import java.net.URL;
+import java.util.Map;
 
 /**
  * A JavaBean that represents file that is downloaded from the Internet.
@@ -87,6 +89,7 @@ public interface HttpFile {
 
     /**
      * Sets plugin ID associated with this file
+     * If pluginID is an empty string, the plugin ID selected automatically.
      *
      * @param pluginID plugin ID
      */
@@ -126,4 +129,18 @@ public interface HttpFile {
      * @param downloaded file size in bytes
      */
     void setDownloaded(long downloaded);
+
+    /**
+     * Returns target save directory
+     *
+     * @return directory
+     */
+    File getSaveToDirectory();
+
+    /**
+     * Getter for property 'properties'.
+     *
+     * @return Value for property 'properties'.
+     */
+    Map<String, Object> getProperties();
 }

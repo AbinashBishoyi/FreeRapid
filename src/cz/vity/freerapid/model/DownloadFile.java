@@ -98,11 +98,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
         setFileType(FileTypeIconProvider.identifyFileType(fileName));
     }
 
-    /**
-     * Getter for property 'saveToDirectory'.
-     *
-     * @return Value for property 'saveToDirectory'.
-     */
+    @Override
     public File getSaveToDirectory() {
         return saveToDirectory;
     }
@@ -532,13 +528,8 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
 
     }
 
-    /**
-     * Getter for property 'properties'.
-     *
-     * @return Value for property 'properties'.
-     */
     public Map<String, Object> getProperties() {
-        return properties;
+        return this.properties;
     }
 
     /**

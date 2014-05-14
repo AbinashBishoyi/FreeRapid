@@ -218,5 +218,11 @@ final public class UserProp {
     public static final String TRIM_DESCRIPTION_FOR_FILES = "trimDescription";
     public static final boolean TRIM_DESCRIPTION_FOR_FILES_DEFAULT = true;
 
+    public static final String REMOVE_COMPLETED_DECRYPTER = "removeCompletedCrypter";
+    public static final boolean REMOVE_COMPLETED_DECRYPTER_DEFAULT = true;
+
+    public static final String DONT_ADD_NOTSUPPORTED_FROMCRYPTER = "dontAddNotSupportedFromCrypter";
+    public static final boolean DONT_ADD_NOTSUPPORTED_FROMCRYPTER_DEFAULT = true;
+
 
 }

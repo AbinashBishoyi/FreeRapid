@@ -2,6 +2,7 @@ package cz.vity.freerapid.plugimpl;
 
 import cz.vity.freerapid.plugins.webclient.interfaces.ConfigurationStorageSupport;
 import cz.vity.freerapid.plugins.webclient.interfaces.DialogSupport;
+import cz.vity.freerapid.plugins.webclient.interfaces.MaintainQueueSupport;
 import cz.vity.freerapid.plugins.webclient.interfaces.PluginContext;
 
 /**
@@ -16,6 +17,7 @@ public class StandardPluginContextImpl implements PluginContext {
      * instance of storage locale support
      */
     private ConfigurationStorageSupport storageSupport;
+    private final MaintainQueueSupport queueSupport;
 
 
     /**
@@ -25,9 +27,10 @@ public class StandardPluginContextImpl implements PluginContext {
         return storageSupport;
     }
 
-    private StandardPluginContextImpl(DialogSupport dialogSupport, ConfigurationStorageSupport storageSupport) {
+    private StandardPluginContextImpl(DialogSupport dialogSupport, ConfigurationStorageSupport storageSupport, MaintainQueueSupport queueSupport) {
         this.dialogSupport = dialogSupport;
         this.storageSupport = storageSupport;
+        this.queueSupport = queueSupport;
     }
 
     /**
@@ -44,8 +47,11 @@ public class StandardPluginContextImpl implements PluginContext {
      * @param storageSupport instance of local confiration storage support
      * @return new instance of PluginContext
      */
-    public static PluginContext create(DialogSupport dialogSupport, ConfigurationStorageSupport storageSupport) {
-        return new StandardPluginContextImpl(dialogSupport, storageSupport);
+    public static PluginContext create(DialogSupport dialogSupport, ConfigurationStorageSupport storageSupport, MaintainQueueSupport queueSupport) {
+        return new StandardPluginContextImpl(dialogSupport, storageSupport, queueSupport);
     }
 
+    public MaintainQueueSupport getQueueSupport() {
+        return queueSupport;
+    }
 }

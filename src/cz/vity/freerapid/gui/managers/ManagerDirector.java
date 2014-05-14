@@ -89,7 +89,7 @@ public class ManagerDirector {
 
         this.fileHistoryManager = new FileHistoryManager(this, context);
 
-        this.pluginsManager = new PluginsManager(context);
+        this.pluginsManager = new PluginsManager(context, this);
 
         this.updateManager = new UpdateManager(this, context);
 

@@ -29,6 +29,7 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
     private String www;
     private boolean premium;
     private boolean favicon;
+    private boolean removeCompleted;
 
     static {
         try {
@@ -66,6 +67,7 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
         www = DescriptorUtils.getAttribute("www", Consts.WEBURL, descriptor);
         premium = DescriptorUtils.getAttribute("premium", false, descriptor);
         favicon = DescriptorUtils.getAttribute("faviconImage", null, descriptor) != null;
+        removeCompleted = DescriptorUtils.getAttribute("removeCompleted", false, descriptor);
     }
 
 
@@ -162,6 +164,9 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
         return favicon;
     }
 
+    public boolean isRemoveCompleted() {
+        return removeCompleted;
+    }
 
     public String toString() {
         return "PluginMetaData{" +
