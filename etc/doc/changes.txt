@@ -12,11 +12,14 @@ Changed - indicates a change in usage or behavior of FreeRapid Downloader
 Fixed - indicates a bug fix
 Internal - indicates an internal change - information for FRD developers - nothing important for users
 
-23th October 2012 - FreeRapid Downloader 0.9 Beta2
-  Changed : file rename action is limited to file in COMPLETED state
+23rd October 2012 - FreeRapid Downloader 0.9 Beta 2
+  Added : The Armenian translation was enabled
+  Changed : The Traditional Chinese translation had to be disabled as two files were found to be corrupted
+  Changed : Internal - All translations are now encoded in UTF-8 for consistency
+  Changed : File rename action is limited to files in COMPLETED state
+  Fixed : Miscellaneous bugs and regressions
 
-
-10th October 2012 - FreeRapid Downloader 0.9 Beta
+10th October 2012 - FreeRapid Downloader 0.9 Beta 1
   Added : After in-depth consideration, all non-updated translations were enabled, bringing the total number of
           supported languages to 31. Missing strings will appear in English. Updates to translations are warmly welcome,
           as usual.
