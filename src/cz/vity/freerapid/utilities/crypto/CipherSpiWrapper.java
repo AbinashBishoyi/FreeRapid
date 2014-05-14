@@ -10,7 +10,7 @@ import java.security.spec.AlgorithmParameterSpec;
 /**
  * @author ntoskrnl
  */
-final class CipherSpiWrapper extends CipherSpi {
+final class CipherSpiWrapper {
 
     private static final Method engineSetMode;
     private static final Method engineSetPadding;
@@ -75,11 +75,7 @@ final class CipherSpiWrapper extends CipherSpi {
     }
 
     public static CipherSpiWrapper wrap(final CipherSpi wrapped) {
-        if (wrapped instanceof CipherSpiWrapper) {
-            return (CipherSpiWrapper) wrapped;
-        } else {
-            return new CipherSpiWrapper(wrapped);
-        }
+        return new CipherSpiWrapper(wrapped);
     }
 
     private final CipherSpi wrapped;
@@ -89,7 +85,6 @@ final class CipherSpiWrapper extends CipherSpi {
         this.wrapped = wrapped;
     }
 
-    @Override
     public void engineSetMode(final String mode) throws NoSuchAlgorithmException {
         try {
             engineSetMode.invoke(wrapped, mode);
@@ -106,7 +101,6 @@ final class CipherSpiWrapper extends CipherSpi {
         }
     }
 
-    @Override
     public void engineSetPadding(final String padding) throws NoSuchPaddingException {
         try {
             engineSetPadding.invoke(wrapped, padding);
@@ -123,7 +117,6 @@ final class CipherSpiWrapper extends CipherSpi {
         }
     }
 
-    @Override
     public int engineGetBlockSize() {
         try {
             return (Integer) engineGetBlockSize.invoke(wrapped);
@@ -138,7 +131,6 @@ final class CipherSpiWrapper extends CipherSpi {
         }
     }
 
-    @Override
     public int engineGetOutputSize(int inputLen) {
         try {
             return (Integer) engineGetOutputSize.invoke(wrapped, inputLen);
@@ -153,7 +145,6 @@ final class CipherSpiWrapper extends CipherSpi {
         }
     }
 
-    @Override
     public byte[] engineGetIV() {
         try {
             return (byte[]) engineGetIV.invoke(wrapped);
@@ -168,7 +159,6 @@ final class CipherSpiWrapper extends CipherSpi {
         }
     }
 
-    @Override
     public AlgorithmParameters engineGetParameters() {
         try {
             return (AlgorithmParameters) engineGetParameters.invoke(wrapped);
@@ -183,7 +173,6 @@ final class CipherSpiWrapper extends CipherSpi {
         }
     }
 
-    @Override
     public void engineInit(final int mode, final Key key, final SecureRandom random) throws InvalidKeyException {
         try {
             engineInit1.invoke(wrapped, mode, key, random);
@@ -200,7 +189,6 @@ final class CipherSpiWrapper extends CipherSpi {
         }
     }
 
-    @Override
     public void engineInit(final int mode, final Key key, final AlgorithmParameterSpec params, final SecureRandom random) throws InvalidKeyException, InvalidAlgorithmParameterException {
         try {
             engineInit2.invoke(wrapped, mode, key, params, random);
@@ -219,7 +207,6 @@ final class CipherSpiWrapper extends CipherSpi {
         }
     }
 
-    @Override
     public void engineInit(final int mode, final Key key, final AlgorithmParameters params, final SecureRandom random) throws InvalidKeyException, InvalidAlgorithmParameterException {
         try {
             engineInit3.invoke(wrapped, mode, key, params, random);
@@ -238,7 +225,6 @@ final class CipherSpiWrapper extends CipherSpi {
         }
     }
 
-    @Override
     public byte[] engineUpdate(final byte[] input, final int inputOffset, final int inputLen) {
         try {
             return (byte[]) engineUpdate1.invoke(wrapped, input, inputOffset, inputLen);
@@ -253,7 +239,6 @@ final class CipherSpiWrapper extends CipherSpi {
         }
     }
 
-    @Override
     public int engineUpdate(final byte[] input, final int inputOffset, final int inputLen, final byte[] output, final int outputOffset) throws ShortBufferException {
         try {
             return (Integer) engineUpdate2.invoke(wrapped, input, inputOffset, inputLen, output, outputOffset);
@@ -270,7 +255,6 @@ final class CipherSpiWrapper extends CipherSpi {
         }
     }
 
-    @Override
     public int engineUpdate(final ByteBuffer input, final ByteBuffer output) throws ShortBufferException {
         try {
             return (Integer) engineUpdate3.invoke(wrapped, input, output);
@@ -287,7 +271,6 @@ final class CipherSpiWrapper extends CipherSpi {
         }
     }
 
-    @Override
     public byte[] engineDoFinal(final byte[] input, final int inputOffset, final int inputLen) throws IllegalBlockSizeException, BadPaddingException {
         try {
             return (byte[]) engineDoFinal1.invoke(wrapped, input, inputOffset, inputLen);
@@ -306,7 +289,6 @@ final class CipherSpiWrapper extends CipherSpi {
         }
     }
 
-    @Override
     public int engineDoFinal(final byte[] input, final int inputOffset, final int inputLen, final byte[] output, final int outputOffset) throws ShortBufferException, IllegalBlockSizeException, BadPaddingException {
         try {
             return (Integer) engineDoFinal2.invoke(wrapped, input, inputOffset, inputLen, output, outputOffset);
@@ -327,7 +309,6 @@ final class CipherSpiWrapper extends CipherSpi {
         }
     }
 
-    @Override
     public int engineDoFinal(final ByteBuffer input, final ByteBuffer output) throws ShortBufferException, IllegalBlockSizeException, BadPaddingException {
         try {
             return (Integer) engineDoFinal3.invoke(wrapped, input, output);
@@ -348,7 +329,6 @@ final class CipherSpiWrapper extends CipherSpi {
         }
     }
 
-    @Override
     public byte[] engineWrap(final Key key) throws IllegalBlockSizeException, InvalidKeyException {
         try {
             return (byte[]) engineWrap.invoke(wrapped, key);
@@ -367,7 +347,6 @@ final class CipherSpiWrapper extends CipherSpi {
         }
     }
 
-    @Override
     public Key engineUnwrap(final byte[] wrappedKey, final String wrappedKeyAlgorithm, final int wrappedKeyType) throws InvalidKeyException, NoSuchAlgorithmException {
         try {
             return (Key) engineUnwrap.invoke(wrapped, wrappedKey, wrappedKeyAlgorithm, wrappedKeyType);
@@ -386,7 +365,6 @@ final class CipherSpiWrapper extends CipherSpi {
         }
     }
 
-    @Override
     public int engineGetKeySize(final Key key) throws InvalidKeyException {
         try {
             return (Integer) engineGetKeySize.invoke(wrapped, key);
@@ -409,9 +387,12 @@ final class CipherSpiWrapper extends CipherSpi {
     }
 
     @Override
-    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     public boolean equals(final Object obj) {
-        return wrapped.equals(obj);
+        if (obj instanceof CipherSpiWrapper) {
+            return wrapped.equals(((CipherSpiWrapper) obj).wrapped);
+        } else {
+            return wrapped.equals(obj);
+        }
     }
 
     @Override

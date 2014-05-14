@@ -644,11 +644,10 @@ public class Cipher {
     private final static int I_PARAMS = 3;
     private final static int I_CERT = 4;
 
-    private void implInit(CipherSpi thisSpi0, int type, int opmode, Key key,
+    private void implInit(CipherSpiWrapper thisSpi, int type, int opmode, Key key,
                           AlgorithmParameterSpec paramSpec, AlgorithmParameters params,
                           SecureRandom random) throws InvalidKeyException,
             InvalidAlgorithmParameterException {
-        CipherSpiWrapper thisSpi = CipherSpiWrapper.wrap(thisSpi0);
         switch (type) {
             case I_KEY:
                 thisSpi.engineInit(opmode, key, random);
@@ -706,10 +705,10 @@ public class Cipher {
                         thisSpi = (CipherSpi) s.newInstance(null);
                     }
                     tr.setModePadding(thisSpi);
-                    implInit(thisSpi, initType, opmode, key, paramSpec,
-                            params, random);
                     provider = s.getProvider();
-                    this.spi = CipherSpiWrapper.wrap(thisSpi);
+                    spi = CipherSpiWrapper.wrap(thisSpi);
+                    implInit(spi, initType, opmode, key, paramSpec,
+                            params, random);
                     firstService = null;
                     serviceIterator = null;
                     transforms = null;
