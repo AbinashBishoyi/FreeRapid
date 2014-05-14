@@ -25,10 +25,10 @@ public class SystemManager {
     public SystemManager(ManagerDirector director, ApplicationContext context) {
         this.director = director;
         this.context = context;
-        init();
+
     }
 
-    private void init() {
+    void initManager() {
         final PropertyChangeListener pcl = new PropertyChangeListener() {
             private boolean lastState = false;
 

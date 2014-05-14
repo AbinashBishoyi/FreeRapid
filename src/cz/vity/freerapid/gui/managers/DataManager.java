@@ -135,12 +135,14 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         fileListMaintainer.saveToFile(downloadFiles);
     }
 
+    public void initProcessManagerInstance() {
+        processManager = new ProcessManager(director, context);
+    }
 
-    public void initProcessManager() {
+    public void initProcessManagerQueue() {
         synchronized (lock) {
             fileListMaintainer.loadListToBean(downloadFiles);
         }
-        processManager = new ProcessManager(director, context);
         processManager.start();
         if (AppPrefs.getProperty(UserProp.AUTOSAVE_ENABLED, UserProp.AUTOSAVE_ENABLED_DEFAULT)) {
 

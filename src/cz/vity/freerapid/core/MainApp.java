@@ -121,6 +121,11 @@ public class MainApp extends SingleXFrameApplication {
 
     }
 
+    @Override
+    protected void ready() {
+        director.guiIsReady();
+    }
+
     private boolean checkInvalidPath() {
         final String path = Utils.getAppPath();//Utils pouzivaji AppPrefs i logovani
         int index = path.indexOf('+');
@@ -226,6 +231,7 @@ public class MainApp extends SingleXFrameApplication {
             startCheckNewVersion();
     }
 
+        
 
     private void setGlobalEDTExceptionHandler() {
         final GlobalEDTExceptionHandler eh = new GlobalEDTExceptionHandler();

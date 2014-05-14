@@ -43,9 +43,6 @@ public class ClipboardMonitorManager extends Thread implements ClipboardOwner {
         synchronized (this) {
             threadSuspended = true;
         }
-
-        init();
-
     }
 
 
@@ -116,7 +113,10 @@ public class ClipboardMonitorManager extends Thread implements ClipboardOwner {
 //        return KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow() != null;
 //    }
 
-    private void init() {
+    /**
+     * Init of this manager. Should be called just once.
+     */
+    void initManager() {
         currentClipboardData = "";
         try {
             this.urlFlavor = new DataFlavor(URL_LIST_MIME_TYPE);

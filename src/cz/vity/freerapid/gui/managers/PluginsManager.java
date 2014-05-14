@@ -86,21 +86,27 @@ public class PluginsManager {
                 }
             }
         });
-        findAndInitNewPlugins();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+              findAndInitNewPlugins();
+            }
+        }).start();
     }
 
     private void findAndInitNewPlugins() {
         logger.info("Init Plugins Manager");
 
-        final ObjectFactory objectFactory = ObjectFactory.newInstance();
-        final ShadingPathResolver resolver = new ShadingPathResolver();
-        try {
-            resolver.configure(new ExtendedProperties());
-        } catch (Exception e) {
-            LogUtils.processException(logger, e);
+        synchronized (lock) {
+            final ObjectFactory objectFactory = ObjectFactory.newInstance();
+            final ShadingPathResolver resolver = new ShadingPathResolver();
+            try {
+                resolver.configure(new ExtendedProperties());
+            } catch (Exception e) {
+                LogUtils.processException(logger, e);
+            }
+            pluginManager = objectFactory.createManager(objectFactory.createRegistry(), resolver);
         }
-        pluginManager = objectFactory.createManager(objectFactory.createRegistry(), resolver);
-
         initNewPlugins(searchExistingPlugins());
     }
 

@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 public class SearchManager {
     private final static String SEARCH_DIR = "search";
     private final static Logger logger = Logger.getLogger(SearchManager.class.getName());
-    private List<SearchItem> searchItems;
+    private List<SearchItem> searchItems = Collections.emptyList();
     private int filesCount = -1;
     private long lastModified = -1;
 
