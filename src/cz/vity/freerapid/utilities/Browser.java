@@ -54,10 +54,13 @@ public class Browser {
     }
 
     public static void openBrowser(URL url) {
-        if (!Desktop.isDesktopSupported())
+        if (!Desktop.isDesktopSupported() || !Desktop.getDesktop().isSupported(Desktop.Action.BROWSE))
             return;
         try {
             Desktop.getDesktop().browse(url.toURI());
+        } catch (IOException e) {
+            //ignore
+            //http://bugtracker.wordrider.net/task/477
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Opening browser failed", e);
             Swinger.showErrorDialog("errorOpeningBrowser", e);
