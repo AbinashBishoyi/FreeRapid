@@ -22,7 +22,7 @@ final public class SystemCommanderFactory {
             if (Utils.isWindows()) {
                 commander = new WindowsCommander();
             } else {
-                commander = new LinuxCmdUtils(context.getLocalStorage().getDirectory());
+                commander = new UnixCommander(context.getLocalStorage().getDirectory());
             }
         }
         return commander;

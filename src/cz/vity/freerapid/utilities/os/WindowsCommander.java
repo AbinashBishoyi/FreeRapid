@@ -1,7 +1,9 @@
 package cz.vity.freerapid.utilities.os;
 
 import com.sun.jna.Native;
+import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
+import com.sun.jna.WString;
 import com.sun.jna.platform.win32.*;
 import com.sun.jna.win32.StdCallLibrary;
 import cz.vity.freerapid.core.Consts;
@@ -18,10 +20,20 @@ import java.util.logging.Logger;
  * @author Ladislav Vitasek
  * @author ntoskrnl
  */
-final class WindowsCommander extends AbstractSystemCommander {
+class WindowsCommander extends AbstractSystemCommander {
     private final static Logger logger = Logger.getLogger(WindowsCommander.class.getName());
 
     WindowsCommander() {
+        try {
+            final Shell32 shell32 = (Shell32) Native.loadLibrary("shell32", Shell32.class);
+            shell32.SetCurrentProcessExplicitAppUserModelID(new WString(Consts.PRODUCT));
+        } catch (final UnsatisfiedLinkError e) {
+            //fails on systems earlier than Windows 7
+        }
+    }
+
+    private static interface Shell32 extends StdCallLibrary {
+        public NativeLong SetCurrentProcessExplicitAppUserModelID(WString appID);
     }
 
     @Override

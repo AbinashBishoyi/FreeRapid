@@ -13,13 +13,18 @@ import java.util.logging.Logger;
 /**
  * @author Ladislav Vitasek
  */
-class LinuxCmdUtils extends AbstractSystemCommander {
-    private static final String SYSTEM_COMMAND_PROPERTIES_FILE = "syscmd.properties";
-    private final static Logger logger = Logger.getLogger(LinuxCmdUtils.class.getName());
+class UnixCommander extends AbstractSystemCommander {
+    private final static String SYSTEM_COMMAND_PROPERTIES_FILE = "syscmd.properties";
+    private final static Logger logger = Logger.getLogger(UnixCommander.class.getName());
 
     private Properties commands;
 
-    LinuxCmdUtils(final File homeDirectory) {
+    UnixCommander(final File homeDirectory) {
+        if (System.getProperty("javax.net.ssl.trustStore", "").startsWith("/etc/ssl/")) {
+            // https://bugs.launchpad.net/ubuntu/+source/openjdk-6/+bug/224455
+            logger.warning("Possible SSL problem, javax.net.ssl.trustStore points to directory requiring higher access rights. Trying workaround.");
+            System.setProperty("javax.net.ssl.trustStore", System.getProperty("java.io.tmpdir", " "));
+        }
         init(homeDirectory);
     }
 
@@ -31,7 +36,9 @@ class LinuxCmdUtils extends AbstractSystemCommander {
             file = new File(Utils.getAppPath(), SYSTEM_COMMAND_PROPERTIES_FILE);
             if (file.isFile() && file.exists()) {
                 commands = Utils.loadProperties(file.getAbsolutePath(), false);
-            } else commands = new Properties();
+            } else {
+                commands = new Properties();
+            }
         }
     }
 
