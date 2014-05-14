@@ -24,6 +24,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
@@ -37,6 +38,10 @@ public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
     private static final String VERSION__PARAM = "version";
     private static final String PRODUCT_PARAM = "product";
     private static final String APIVERSION_PARAM = "apiversion";
+    private static final String PARAM_LANGUAGE = "lang";
+    private static final String PARAM_VERSION_ONLY = "versiononly";
+    private static final String PARAM_COUNTRY = "country";
+
     private static int failed = 0;
     private String newVersionURL;
     private ConnectResult result;
@@ -77,6 +82,11 @@ public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
             postMethod.addParameter(PRODUCT_PARAM, Consts.PRODUCT);
             postMethod.addParameter(VERSION__PARAM, Consts.VERSION);
             postMethod.addParameter(APIVERSION_PARAM, Consts.APIVERSION);
+            postMethod.addParameter(PARAM_VERSION_ONLY, Consts.VERSION);
+            final Locale locale = Locale.getDefault();
+            postMethod.addParameter(PARAM_LANGUAGE, locale.getLanguage());
+            postMethod.addParameter(PARAM_COUNTRY, locale.getCountry());
+
             method = postMethod;
         }
         message("message.connecting");

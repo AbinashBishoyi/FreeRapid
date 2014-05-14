@@ -52,10 +52,16 @@ final class OneInstanceClient {
                         }
                     }
                 }
+                //Testing ESET - first run of app ever - if it's blocked -> eset (high probability) or port is used by another app
+                if (AppPrefs.getProperty(UserProp.SHOW_PAYPAL_REQUEST, MainApp.BUILD_REQUEST - 1) != MainApp.BUILD_REQUEST) {
+                    logger.warning("Detecting ESET - disabling OneInstance functionality");
+                    AppPrefs.storeProperty(FWProp.ONEINSTANCE, false);
+                    return false;
+                }
                 logger.info("Application is already running. Exiting");
                 return true;
             } else {
-                logger.info("No other instance is running - first start");
+                logger.info("No other instance is running - first instance");
                 oneInstanceServerStart(prefs, context);
             }
         } catch (IOException e) {

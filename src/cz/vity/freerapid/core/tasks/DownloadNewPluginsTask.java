@@ -62,6 +62,16 @@ public class DownloadNewPluginsTask extends DownloadTask {
         if (!dir.canWrite()) {
             throw new IOException(getResourceMap().getString("pluginsDirectoryIsNotWriteable"));
         }
+        try {
+            final File tempFile = File.createTempFile("detect", "writeableplugins", dir);
+            final boolean b = tempFile.delete();
+            if (!b) {
+                tempFile.deleteOnExit();
+            }
+        } catch (Exception e) {
+            throw new IOException(getResourceMap().getString("pluginsDirectoryIsNotWriteable"));
+        }
+
         boolean success = false;
         for (WrappedPluginData data : fileList) {
             if (isCancelled())

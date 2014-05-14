@@ -39,6 +39,7 @@ public class MainApp extends SingleXFrameApplication {
     private AppPrefs appPrefs;
 
     private boolean minimizeOnStart = false;
+    public static final int BUILD_REQUEST = 2;
 
 //    private static Logger logger = null;
 
@@ -78,7 +79,7 @@ public class MainApp extends SingleXFrameApplication {
         final Map<String, String> map = line.getProperties();
         if (Utils.isWindows() && (new java.io.File("C:/Program files/Eset").exists() || new java.io.File("D:/Program files/Eset").exists())) {
             if (!map.containsKey(FWProp.ONEINSTANCE)) {
-                getLogger().info("Detecting ESET - disabling OneInstance functionality");
+                getLogger().warning("Detecting ESET - disabling OneInstance functionality");
                 map.put(FWProp.ONEINSTANCE, "false");
             }
         }
@@ -142,7 +143,7 @@ public class MainApp extends SingleXFrameApplication {
     private void checkBugs() {
         final String jvm = System.getProperty("java.version");
         getLogger().info("You are running FRD with JVM version = " + System.getProperty("java.version") + " - (min 1.6.0_07 is required)");
-        if (jvm.equals("1.6.0_0") || System.getProperty("java.version").equals("1.6.0-beta")) {
+        if ("1.6.0_0".equals(jvm) || "1.6.0-beta".equals(System.getProperty("java.version"))) {
             exitWithErrorMessage("errorInvalidJRE");
         }
     }
@@ -183,9 +184,9 @@ public class MainApp extends SingleXFrameApplication {
     }
 
     private void paypalRequest() {
-        if (AppPrefs.getProperty(UserProp.SHOW_PAYPAL_REQUEST, 1) != 2) {
+        if (AppPrefs.getProperty(UserProp.SHOW_PAYPAL_REQUEST, BUILD_REQUEST - 1) != BUILD_REQUEST) {
             int res = Swinger.getChoiceYesNo(this.getContext().getResourceMap().getString("paypalSupportAction.Action.shortDescription"));
-            AppPrefs.storeProperty(UserProp.SHOW_PAYPAL_REQUEST, 2);
+            AppPrefs.storeProperty(UserProp.SHOW_PAYPAL_REQUEST, BUILD_REQUEST);
             if (res == Swinger.RESULT_YES) {
                 Browser.openBrowser(AppPrefs.getProperty(UserProp.PAYPAL, UserProp.PAYPAL_DEFAULT));
             }

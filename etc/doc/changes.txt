@@ -11,6 +11,12 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid Downloader
 Fixed - indicates a bug fix
 
+
+FreeRapid Downloader 0.85 Update 1
+  Changed: enhanced ESET antivirius detection, which is blocking FRD to start
+  Changed: enhanced detection of not writable plugins directory
+  Fixed: Linux - cannot connect server problem - frd.sh was updated
+
 16th November 2010 - FreeRapid Downloader 0.85 build 555
   Changed: UA translation is now available
   Fixed: plugin updates glitch

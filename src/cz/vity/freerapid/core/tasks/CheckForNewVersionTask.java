@@ -19,6 +19,7 @@ import org.jdesktop.application.ResourceMap;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
@@ -28,6 +29,9 @@ public class CheckForNewVersionTask extends CoreTask<ConnectResult, Void> {
     private final static Logger logger = Logger.getLogger(CheckForNewVersionTask.class.getName());
 
     private static final String PARAM_VERSION = "version";
+    private static final String PARAM_LANGUAGE = "lang";
+    private static final String PARAM_VERSION_ONLY = "versiononly";
+    private static final String PARAM_COUNTRY = "country";
 
     private final boolean showInfoMessages;
     private static int counter = 0;
@@ -62,6 +66,10 @@ public class CheckForNewVersionTask extends CoreTask<ConnectResult, Void> {
         client.initClient(connectionSettingses.get(0));
         PostMethod postMethod = client.getPostMethod(url);
         postMethod.addParameter(PARAM_VERSION, Consts.APPVERSION);
+        postMethod.addParameter(PARAM_VERSION_ONLY, Consts.VERSION);
+        final Locale locale = Locale.getDefault();
+        postMethod.addParameter(PARAM_LANGUAGE, locale.getLanguage());
+        postMethod.addParameter(PARAM_COUNTRY, locale.getCountry());
         logger.info("Connected to the web, Writing params");
         message("message.connect.status.checking");
         if (client.makeRequest(postMethod, true) != HttpStatus.SC_OK)
