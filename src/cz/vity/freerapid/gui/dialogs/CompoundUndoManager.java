@@ -18,7 +18,7 @@ import java.awt.event.KeyEvent;
 /**
  * @author Vity
  */
-class CompoundUndoManager extends UndoManager implements UndoableEditListener {
+public class CompoundUndoManager extends UndoManager implements UndoableEditListener {
     public CompoundEdit compoundEdit;
     private JTextComponent editor;
     private int lastOffset;

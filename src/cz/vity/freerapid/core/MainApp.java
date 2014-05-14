@@ -35,8 +35,8 @@ import java.util.logging.Logger;
  */
 public class MainApp extends SingleXFrameApplication {
 
-    public static final int BUILD_REQUEST = 11;
-    public static final int PLUGINS_VERSION = 10;
+    public static final int BUILD_REQUEST = 13;
+    public static final int PLUGINS_VERSION = 11;
     static boolean debug = false;
     private ManagerDirector director;
     private TrayIconSupport trayIconSupport = null;
@@ -145,7 +145,7 @@ public class MainApp extends SingleXFrameApplication {
 
     private void checkBugs() {
         final String jvm = System.getProperty("java.version");
-        getLogger().info("You are running FRD with JVM version = " + System.getProperty("java.version") + " - (min 1.6.0_07 is required)");
+        getLogger().info("You are running FRD with JVM version = " + System.getProperty("java.home") + "  " +System.getProperty("java.version") + " - (min 1.6.0_07 is required)");
         if ("1.6.0_0".equals(jvm) || "1.6.0-beta".equals(System.getProperty("java.version"))) {
             exitWithErrorMessage("errorInvalidJRE");
         }

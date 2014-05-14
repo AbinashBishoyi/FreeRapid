@@ -1,57 +1,54 @@
 <launch4jConfig>
-    <dontWrapJar>true</dontWrapJar>
-    <headerType>gui</headerType>
-    <obj>w32api/crt2.o</obj>
-    <obj>head/guihead.o</obj>
-    <obj>head/head.o</obj>
-    <lib>w32api/libmingw32.a</lib>
-    <lib>w32api/libgcc.a</lib>
-    <lib>w32api/libmsvcrt.a</lib>
-    <lib>w32api/libkernel32.a</lib>
-    <lib>w32api/libuser32.a</lib>
-    <lib>w32api/libadvapi32.a</lib>
-    <lib>w32api/libshell32.a</lib>
-    <jar>frd.jar</jar>
-    <outfile>C:\develope\freerapid\etc\frd.exe</outfile>
-    <errTitle></errTitle>
-    <cmdLine></cmdLine>
-    <chdir></chdir>
-    <priority>normal</priority>
-    <downloadUrl>http://java.com/download</downloadUrl>
-    <supportUrl></supportUrl>
-    <customProcName>true</customProcName>
-    <stayAlive>false</stayAlive>
-    <manifest></manifest>
-    <icon>C:\develope\freerapid\etc\frd.ico</icon>
-    <jre>
-        <path></path>
-        <minVersion>1.6.0</minVersion>
-        <maxVersion></maxVersion>
-        <jdkPreference>preferJre</jdkPreference>
-        <initialHeapSize>32</initialHeapSize>
-        <maxHeapSize>128</maxHeapSize>
-    </jre>
-    <versionInfo>
-        <fileVersion>0.8.2.0</fileVersion>
-        <txtFileVersion>0.8.2.0</txtFileVersion>
-        <fileDescription>File Downloader</fileDescription>
-        <copyright>Vity 2009</copyright>
-        <productVersion>0.8.2.0</productVersion>
-        <txtProductVersion>0.8.2.0</txtProductVersion>
-        <productName>FreeRapid Downloader</productName>
-        <companyName>Vity</companyName>
-        <internalName>FreeRapid</internalName>
-        <originalFilename>frd.exe</originalFilename>
-    </versionInfo>
-    <messages>
-        <startupErr>An error occurred while starting the application.</startupErr>
-        <bundledJreErr>This application was configured to use a bundled Java Runtime Environment but the runtime is
-            missing or corrupted.
+  <dontWrapJar>true</dontWrapJar>
+  <headerType>gui</headerType>
+  <obj>w32api/crt2.o</obj>
+  <obj>head/guihead.o</obj>
+  <obj>head/head.o</obj>
+  <lib>w32api/libmingw32.a</lib>
+  <lib>w32api/libgcc.a</lib>
+  <lib>w32api/libmsvcrt.a</lib>
+  <lib>w32api/libkernel32.a</lib>
+  <lib>w32api/libuser32.a</lib>
+  <lib>w32api/libadvapi32.a</lib>
+  <lib>w32api/libshell32.a</lib>
+  <jar>frd.jar</jar>
+  <outfile>C:\develope\freerapid\etc\frd.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir></chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl></supportUrl>
+  <customProcName>true</customProcName>
+  <stayAlive>false</stayAlive>
+  <manifest></manifest>
+  <icon>C:\develope\freerapid\etc\frd.ico</icon>
+  <jre>
+    <path></path>
+    <minVersion>1.6.0</minVersion>
+    <maxVersion></maxVersion>
+    <jdkPreference>preferJre</jdkPreference>
+    <initialHeapSize>32</initialHeapSize>
+    <maxHeapSize>160</maxHeapSize>
+  </jre>
+  <versionInfo>
+    <fileVersion>0.9.2.0</fileVersion>
+    <txtFileVersion>0.9.2.0</txtFileVersion>
+    <fileDescription>File Downloader</fileDescription>
+    <copyright>Vity 2009-2013</copyright>
+    <productVersion>0.9.2.0</productVersion>
+    <txtProductVersion>0.9.2.0</txtProductVersion>
+    <productName>FreeRapid Downloader</productName>
+    <companyName>Vity</companyName>
+    <internalName>FreeRapid</internalName>
+    <originalFilename>frd.exe</originalFilename>
+  </versionInfo>
+  <messages>
+    <startupErr>An error occurred while starting the application.</startupErr>
+    <bundledJreErr>This application was configured to use a bundled Java Runtime Environment but the runtime is missing or corrupted.
         </bundledJreErr>
-        <jreVersionErr>This application requires a Java Runtime Environment</jreVersionErr>
-        <launcherErr>The registry refers to a nonexistent Java Runtime Environment installation or the runtime is
-            corrupted.
-        </launcherErr>
-        <instanceAlreadyExistsMsg>An application instance is already running.</instanceAlreadyExistsMsg>
-    </messages>
+    <jreVersionErr>This application requires a Java Runtime Environment</jreVersionErr>
+    <launcherErr>The registry refers to a nonexistent Java Runtime Environment installation or the runtime is corrupted.      </launcherErr>
+    <instanceAlreadyExistsMsg>An application instance is already running.</instanceAlreadyExistsMsg>
+  </messages>
 </launch4jConfig>

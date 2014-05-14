@@ -6,6 +6,7 @@ import com.jgoodies.binding.value.ValueModel;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.gui.SearchField;
+import cz.vity.freerapid.gui.dialogs.CompoundUndoManager;
 import cz.vity.freerapid.gui.managers.search.SearchItem;
 import cz.vity.freerapid.swing.SwingUtils;
 import cz.vity.freerapid.swing.Swinger;
@@ -114,7 +115,7 @@ public class ToolbarManager implements PropertyChangeListener {
         toolbar.add(getButton(Swinger.getAction("bottomAction")));
         toolbar.add(Box.createGlue());
         searchField = new SearchField(context);
-
+        new CompoundUndoManager(searchField);
         searchField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <project name="FreeRapid Downloader" default="all" basedir=".">
     <property name="application" value="FreeRapid"/>
-    <property name="version" value="0.9u2"/>
+    <property name="version" value="0.9u3"/>
     <property name="version.name" value="${application}-${version}"/>
     <property name="mainclass" value="cz.vity.freerapid.core.MainApp"/>
     <property name="mainjar.file" value="frd.jar"/>
@@ -108,6 +108,8 @@
             <mapper type="glob" from="*.properties" to="*.stripped">
             </mapper>
         </copy>
+
+        <replace dir="${classes.dir}" encoding="UTF-8" includes="**/MainApp*.stripped" casesensitive="true" token="##version##" value="${version}" description="replacing version token" />
 
         <native2AsciiExt src="${classes.dir}" encoding="utf-8" includes="**/?*.stripped"
                          dest="${classes.dir}" ext=".properties"/>
@@ -279,6 +281,7 @@
             <fileset dir="out/production/freerapid" includes="**/?*.properties" excludes="${ignoreProperties}"/>
         </delete>
 
+        <replace encoding="UTF-8" dir="out/production/freerapid" includes="**/MainApp*.stripped" casesensitive="true" token="##version##" value="${version}" description="replacing version token" />
         <native2AsciiExt src="${src.dir}" encoding="utf-8" includes="**/?*.properties"
                          excludes="${ignoreProperties}"
                          dest="out/production/freerapid" ext=".properties"/>
@@ -353,17 +356,17 @@
     </target>
 
     <target name="reverseResources" description="Target reverse all properties into UTF-8 encoded files">
-        <native2AsciiExt src="c:/temp/korejstina" encoding="utf-8" includes="**/?*.properties" excludes="${ignoreProperties}"
-                         dest="c:/temp/korejstina2" ext=".properties2" reverse="true"/>
+        <native2AsciiExt src="c:/temp/fr" encoding="utf-8" includes="**/?*.properties" excludes="${ignoreProperties}"
+                         dest="c:/temp/fr2" ext=".properties2" reverse="true"/>
 
         <!--<native2AsciiExt src="${src.dir}" encoding="UTF-16LE" includes="${unicodeResources}"-->
         <!--dest="${src.dir}" ext=".properties2" reverse="true"/>-->
 
-        <copy todir="c:/temp/korejstina2" overwrite="true" encoding="utf-8">
-            <fileset dir="c:/temp/korejstina2" includes="**/?*.properties2"/>
+        <copy todir="c:/temp/fr2" overwrite="true" encoding="utf-8">
+            <fileset dir="c:/temp/fr2" includes="**/?*.properties2"/>
             <mapper type="glob" from="*.properties2" to="*.properties">
             </mapper>
         </copy>
-        <delete dir="c:/temp/korejstina2" includes="**/?*.properties2"/>
+        <delete dir="c:/temp/fr2" includes="**/?*.properties2"/>
     </target>
 </project>

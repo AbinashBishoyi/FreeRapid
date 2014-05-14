@@ -24,7 +24,7 @@ public class FileTypeIconProvider {
     private ResourceMap map;
     private final static Logger logger = Logger.getLogger(FileTypeIconProvider.class.getName());
     private static Pattern pattern;
-    private static Pattern fileNamePattern = Pattern.compile("/([^/]*?\\.(zip|rar|avi|wmv|mp3))\\.html?", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+    private static Pattern fileNamePattern = Pattern.compile("/([^/]*?(\\.|-)(zip|rar|avi|wmv|mp3?|srt|sub|apk))\\.html?", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
     private static Pattern encoded = Pattern.compile("%[A-Z0-9]{2}%");
     //    private static final String DEFAULT_EXTENSION = "unknown";
     private final Map<String, Icon> systemLargeIcons = new Hashtable<String, Icon>();
@@ -78,7 +78,7 @@ public class FileTypeIconProvider {
             if (!s.isEmpty())
                 return s;
         }
-        String s = url.replaceAll("\\:", "_").trim();
+        String s = url.replace(":", "_").trim();
         if (s.startsWith("?"))
             s = s.substring(1);
         if (s.isEmpty()) {
