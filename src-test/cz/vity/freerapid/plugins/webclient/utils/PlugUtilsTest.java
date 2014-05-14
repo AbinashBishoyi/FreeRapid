@@ -45,6 +45,7 @@ public class PlugUtilsTest {
         assertEquals("File size from MB", PlugUtils.getFileSizeFromString("\t  2500 MB"), 2500 * 1024 * 1024L);
         assertEquals("File size from GB", PlugUtils.getFileSizeFromString("  2 \t500 GB"), 2500 * 1024L * 1024 * 1024L);
         assertEquals("File size from bytes", PlugUtils.getFileSizeFromString(" 2500 byTes"), 2500);
+        assertEquals("File size from bytes", PlugUtils.getFileSizeFromString(" 2500 KbyTes"), 2500 * 1024);
         assertEquals("File size from bytes", PlugUtils.getFileSizeFromString("321 B"), 321);
         assertEquals("File size with dot in a number", PlugUtils.getFileSizeFromString("25.00 kb"), new BigDecimal("25.00").multiply(BigDecimal.valueOf(1024L)).setScale(0, RoundingMode.UP).longValue());
         assertEquals("File size remove spaces", PlugUtils.getFileSizeFromString("   25     kB   "), 25 * 1024);
