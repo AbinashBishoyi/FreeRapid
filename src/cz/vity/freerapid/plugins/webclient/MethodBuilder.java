@@ -109,7 +109,7 @@ public final class MethodBuilder {
         final Matcher formMatcher = getFormMatcher();
         int start = 0;
         boolean found = false;
-        final Pattern namePattern = Pattern.compile("(?:name|id)=(?:\"|')?" + formIDOrName + "(?:\"|'|\\s|>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+        final Pattern namePattern = Pattern.compile("(?:name|id)=(?:\"|')?" + formIDOrName + "(?:\"|'|\\s|>|$)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         while (formMatcher.find(start)) {
             final String title = formMatcher.group(FORM_MATCHER_TITLE_GROUP);
             if (namePattern.matcher(title).find()) {
