@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,7 +38,7 @@ public class DownloadNewPluginsTask extends DownloadTask {
     private final List<WrappedPluginData> fileList;
     private final boolean beQuiet;
     private static boolean restartIsRequiredToUpdateSomePlugins = false;
-    private List<File> newPluginsFiles = new ArrayList<File>();
+    //    private List<File> newPluginsFiles = new ArrayList<File>();
     private Collection<WrappedPluginData> updatedPlugins = new LinkedList<WrappedPluginData>();
 
     public DownloadNewPluginsTask(ManagerDirector director, ApplicationContext context, List<WrappedPluginData> fileList, boolean beQuiet) {
@@ -76,11 +75,7 @@ public class DownloadNewPluginsTask extends DownloadTask {
                 setDownloadFile(file);
                 downloadFile.setSaveToDirectory(dir);
                 processFile(file);
-                if (data.isNew()) {
-                    newPluginsFiles.add(data.getHttpFile().getOutputFile());
-                } else {
-                    updatedPlugins.add(data);
-                }
+                updatedPlugins.add(data);
                 success = true;
             } catch (Exception e) {
                 file.setState(DownloadState.ERROR);
@@ -114,7 +109,7 @@ public class DownloadNewPluginsTask extends DownloadTask {
 
     private void updatePlugins() throws JpfException {
         final PluginsManager pluginsManager = director.getPluginsManager();
-        pluginsManager.reregisterAll();
+        pluginsManager.updateNewPlugins(updatedPlugins);
     }
 
     @Override
@@ -185,7 +180,7 @@ public class DownloadNewPluginsTask extends DownloadTask {
             }
         } else {
             if (!beQuiet) {
-                if (!updatedPlugins.isEmpty() || !newPluginsFiles.isEmpty()) {
+                if (!updatedPlugins.isEmpty()) {
                     Swinger.showInformationDialog(getResourceMap().getString("installedSuccessFully"));
                 }
             }

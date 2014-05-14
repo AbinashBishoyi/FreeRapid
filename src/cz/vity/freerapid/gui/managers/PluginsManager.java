@@ -1,5 +1,6 @@
 package cz.vity.freerapid.gui.managers;
 
+import cz.vity.freerapid.gui.dialogs.WrappedPluginData;
 import cz.vity.freerapid.gui.managers.exceptions.NotSupportedDownloadServiceException;
 import cz.vity.freerapid.gui.managers.exceptions.PluginIsNotEnabledException;
 import cz.vity.freerapid.model.DownloadFile;
@@ -13,6 +14,7 @@ import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
+import org.java.plugin.JpfException;
 import org.java.plugin.ObjectFactory;
 import org.java.plugin.Plugin;
 import org.java.plugin.PluginManager;
@@ -28,6 +30,7 @@ import org.jdesktop.application.ApplicationContext;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 import java.util.logging.Logger;
@@ -130,42 +133,69 @@ public class PluginsManager {
         return true;
     }
 
-    public void reregisterAll() {
-        final PluginRegistry pluginRegistry = pluginManager.getRegistry();
-        synchronized (lock) {
-            final Collection<PluginDescriptor> desc = pluginRegistry.getPluginDescriptors();
-            String[] ids = new String[desc.size()];
-            int counter = 0;
-            for (PluginDescriptor pluginDescriptor : desc) {
-                final String id = pluginDescriptor.getId();
-                ids[counter++] = id;
-                pluginManager.deactivatePlugin(id);
-            }
-            pluginsCache.clear();
-            pluginRegistry.unregister(ids);
-            initNewPlugins(searchExistingPlugins());
-        }
-    }
-
-//    public void reRegisterPlugins(Collection<WrappedPluginData> updatedPlugins) throws JpfException {
-//        if (updatedPlugins.isEmpty())
-//            return;
-//        List<File> updatedPluginsFiles = new ArrayList<File>(updatedPlugins.size());
-//        List<String> newPluginsIds = new ArrayList<String>(updatedPlugins.size());
-//        for (WrappedPluginData updatedPlugin : updatedPlugins) {
-//            updatedPluginsFiles.add(updatedPlugin.getHttpFile().getOutputFile());
-//            newPluginsIds.add(updatedPlugin.getID());
-//        }
-//        final String[] ids = newPluginsIds.toArray(new String[newPluginsIds.size()]);
+//    public void reregisterAll() {
 //        final PluginRegistry pluginRegistry = pluginManager.getRegistry();
 //        synchronized (lock) {
-//            logger.info("Unregistering plugins " + Arrays.toString(ids));
+//            final Collection<PluginDescriptor> desc = pluginRegistry.getPluginDescriptors();
+//            String[] ids = new String[desc.size()];
+//            int counter = 0;
+//            for (PluginDescriptor pluginDescriptor : desc) {
+//                final String id = pluginDescriptor.getId();
+//                ids[counter++] = id;
+//                pluginManager.deactivatePlugin(id);
+//            }
+//            pluginsCache.clear();
 //            pluginRegistry.unregister(ids);
-//            initNewPlugins(updatedPluginsFiles.toArray(new File[updatedPluginsFiles.size()]));
+//            initNewPlugins(searchExistingPlugins());
 //        }
 //    }
 
-    public void initNewPlugins(final File[] plugins) {
+    public void updateNewPlugins(Collection<WrappedPluginData> updatedPlugins) throws JpfException {
+        if (updatedPlugins.isEmpty())
+            return;
+        final PluginRegistry pluginRegistry = pluginManager.getRegistry();
+        Set<String> updatedIds = new HashSet<String>();
+        List<File> updatedPluginsFiles = new ArrayList<File>(updatedPlugins.size());
+        synchronized (lock) {
+            for (WrappedPluginData updatedPlugin : updatedPlugins) {
+                final String id = updatedPlugin.getID();
+                if (pluginRegistry.isPluginDescriptorAvailable(id)) {
+                    updatedIds.add(id);
+                    //this is a plugin update, we have to select also all dependants to unregister and register them again
+                    final PluginDescriptor descriptor = pluginRegistry.getPluginDescriptor(id);
+                    final Collection<PluginDescriptor> dependencies = pluginRegistry.getDependingPlugins(descriptor);
+                    for (PluginDescriptor dependency : dependencies) {
+                        logger.info("Found dependency update for plugin " + id + " - dependency plugin " + dependency.getId());
+                        updatedIds.add(dependency.getId());
+                    }
+                } else {
+                    //this is a quite new plugin
+                    updatedPluginsFiles.add(updatedPlugin.getHttpFile().getOutputFile());
+                }
+            }
+            for (String id : updatedIds) {
+                if (pluginRegistry.isPluginDescriptorAvailable(id)) {
+                    final PluginDescriptor descriptor = pluginRegistry.getPluginDescriptor(id);
+                    try {
+                        updatedPluginsFiles.add(new File(descriptor.getLocation().toURI()));
+                    } catch (URISyntaxException e) {
+                        //it happened to me once, but not reproducable
+                        logger.severe("Descriptor location " + descriptor.getLocation() + " cannot be converted to URI!!");
+                        LogUtils.processException(logger, e);
+                    }
+                }
+            }
+
+
+            final String[] ids = updatedIds.toArray(new String[updatedIds.size()]);
+            logger.info("Unregistering plugins " + Arrays.toString(ids));
+            pluginRegistry.unregister(ids);
+            pluginsCache.clear();
+            initNewPlugins(updatedPluginsFiles.toArray(new File[updatedPluginsFiles.size()]));
+        }
+    }
+
+    private void initNewPlugins(final File[] plugins) {
         if (plugins.length == 0) {
             return;
         }

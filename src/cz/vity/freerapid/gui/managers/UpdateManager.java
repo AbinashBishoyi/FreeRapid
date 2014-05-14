@@ -35,7 +35,7 @@ public class UpdateManager {
 
     private final ManagerDirector director;
     private final ApplicationContext context;
-    private Set<String> updatedPluginsCode = new HashSet<String>();
+    //   private Set<String> updatedPluginsCode = new HashSet<String>();
 
     private Timer timer;
 
@@ -145,7 +145,7 @@ public class UpdateManager {
                 break;
             case UserProp.PLUGIN_UPDATE_METHOD_AUTO:
             case UserProp.PLUGIN_UPDATE_METHOD_AUTO_RESTART:
-                downloadUpdate(datas, quiet, method);
+                downloadUpdate(datas, quiet);
                 break;
             default:
                 break;
@@ -159,7 +159,7 @@ public class UpdateManager {
         app.prepareDialog(dialog, true);
     }
 
-    private void downloadUpdate(List<WrappedPluginData> pluginList, boolean quiet, int method) {
+    private void downloadUpdate(List<WrappedPluginData> pluginList, boolean quiet) {
         final Task task = getDownloadPluginsTask(pluginList, quiet);
         if (task != null)
             executeUpdateTask(task);
@@ -175,11 +175,12 @@ public class UpdateManager {
         return downloadFile;
     }
 
+    @SuppressWarnings({"UnnecessaryLocalVariable"})
     public Task getDownloadPluginsTask(final List<WrappedPluginData> wrappedList, boolean quiet) {
 
         final List<WrappedPluginData> fileList = new LinkedList<WrappedPluginData>();
         for (WrappedPluginData data : wrappedList) {
-            if (data.isSelected() && !updatedPluginsCode.contains(getUniqueId(data.getID(), data.getVersion()))) {
+            if (data.isSelected() /*&& !updatedPluginsCode.contains(getUniqueId(data.getID(), data.getVersion()))*/) {
                 final DownloadFile httpFile = data.getHttpFile();
                 if (httpFile.getState() != DownloadState.COMPLETED)
                     fileList.add(data);
@@ -190,21 +191,21 @@ public class UpdateManager {
             return null;
         final DownloadNewPluginsTask newPluginsTask = new DownloadNewPluginsTask(director, context, fileList, quiet);
 
-        newPluginsTask.addTaskListener(new TaskListener.Adapter<Void, Long>() {
-            @Override
-            public void succeeded(TaskEvent<Void> event) {
-                super.succeeded(event);
-            }
-
-            @Override
-            public void finished(TaskEvent<Void> event) {
-                for (WrappedPluginData data : wrappedList) {
-                    if (data.getHttpFile().getState() == DownloadState.COMPLETED) {
-                        updatedPluginsCode.add(getUniqueId(data.getID(), data.getVersion()));
-                    }
-                }
-            }
-        });
+//        newPluginsTask.addTaskListener(new TaskListener.Adapter<Void, Long>() {
+//            @Override
+//            public void succeeded(TaskEvent<Void> event) {
+//                super.succeeded(event);
+//            }
+//
+//            @Override
+//            public void finished(TaskEvent<Void> event) {
+//                for (WrappedPluginData data : wrappedList) {
+//                    if (data.getHttpFile().getState() == DownloadState.COMPLETED) {
+//                        updatedPluginsCode.add(getUniqueId(data.getID(), data.getVersion()));
+//                    }
+//                }
+//            }
+//        });
 
         return newPluginsTask;
     }
@@ -219,8 +220,8 @@ public class UpdateManager {
         List<WrappedPluginData> result = new LinkedList<WrappedPluginData>();
         for (Plugin plugin : list) {
             final String id = plugin.getId();
-            if (updatedPluginsCode.contains(getUniqueId(id, plugin.getVersion())))
-                continue;
+//            if (updatedPluginsCode.contains(getUniqueId(id, plugin.getVersion())))
+//                continue;
             final boolean isNew = !pluginsManager.hasPlugin(id);
             if (!isNew) {
                 final PluginMetaData data = pluginsManager.getPluginMetadata(id);
@@ -247,6 +248,7 @@ public class UpdateManager {
         return result;
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     private static String getUniqueId(String id, String version) {
         return id + '@' + version;
     }
