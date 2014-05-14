@@ -42,6 +42,10 @@ sortbyServerAction.Action.smallIcon=${iconsPath}sort_small.gif
 
 
 New:
+manageSearchEngines.Action.text=&Manage search engines...
+manageSearchEngines.Action.shortDescription=Open search engine selection page in web browser
+howToManageSearchEngines=To add a new search engine, browse this site and make your choice.\nRight-click the download link and choose "Save linked content as" (or something similar),\nand save the file into the "search" folder inside FRD's root folder.
+
 checkPluginStatuses.Action.text=&Plugin status
 checkPluginStatuses.Action.shortDescription=Check the status of plugins in web browser
 

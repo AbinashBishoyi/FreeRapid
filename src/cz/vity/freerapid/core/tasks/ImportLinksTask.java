@@ -31,6 +31,7 @@ public class ImportLinksTask extends CoreTask<Void, Void> {
     private final ContainerPlugin plugin;
     private final File[] files;
     private final File saveToDirectory = new File(AppPrefs.getProperty(UserProp.LAST_COMBO_PATH, ""));//TODO!
+    private List<FileInfo> list;
 
     public ImportLinksTask(final MainApp app, final ContainerPlugin plugin, final File[] files) {
         super(app);
@@ -47,7 +48,7 @@ public class ImportLinksTask extends CoreTask<Void, Void> {
         final List<ConnectionSettings> settingsList = app.getManagerDirector().getClientManager().getAvailableConnections();
         plugin.setConnectionSettings(settingsList.isEmpty() ? null : settingsList.get(0));
         plugin.setDialogSupport(new StandardDialogSupportImpl(app.getContext()));
-        final List<FileInfo> list = new LinkedList<FileInfo>();
+        list = new LinkedList<FileInfo>();
         for (final File file : files) {
             message("importingLinks", Utils.shortenFileName(file));
             InputStream stream = null;
@@ -67,7 +68,6 @@ public class ImportLinksTask extends CoreTask<Void, Void> {
         if (list.isEmpty()) {
             throw new ContainerException("noLinksFound");
         }
-        app.getManagerDirector().getDataManager().addLinksToQueueFromContainer(list, saveToDirectory, null, true);
         return null;
     }
 
@@ -87,6 +87,11 @@ public class ImportLinksTask extends CoreTask<Void, Void> {
         } else {
             Swinger.showErrorMessage(getResourceMap(), "otherProblem", Utils.getThrowableDescription(cause));
         }
+    }
+
+    @Override
+    protected void succeeded(final Void result) {
+        app.getManagerDirector().getDataManager().addLinksToQueueFromContainer(list, saveToDirectory, null, true);
     }
 
 }
