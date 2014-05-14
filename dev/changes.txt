@@ -1,4 +1,7 @@
 Version 0.85->0.85u1
+
+UserPreferencesDialog.properties
+===================================
 checkUseRecycleBin.text=Use system recycle &bin for deleting files
 
 
@@ -9,7 +12,7 @@ ImportLinksTask.properties
 
 
 UpdateDialog.properties
-============================
+===================================
 New:
 stateOldPlugin=NOT SUPPORTED
 
