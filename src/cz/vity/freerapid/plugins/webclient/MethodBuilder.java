@@ -52,6 +52,7 @@ public final class MethodBuilder {
     private HttpDownloadClient client;
 
     private Map<String, String> parameters = new LinkedHashMap<String, String>(4);
+    private Map<String, String> headers = new LinkedHashMap<String, String>(2);
     private String referer;
     private String action;
     private HttpMethodEnum postMethod = HttpMethodEnum.POST;
@@ -71,37 +72,6 @@ public final class MethodBuilder {
     private static Pattern imgPattern;
     private static Pattern iframePattern;
     private boolean updateWww = false;
-    private boolean ajax = false;
-
-    /**
-     * Getter for property 'ajax' - whether to add AJAX headers to the method (X-Requested-With: XMLHttpRequest)
-     * @since 0.87
-     * @return True if AJAX headers are on
-     */
-    public boolean isAjax() {
-        return ajax;
-    }
-
-    /**
-     * Sets AJAX headers for the method to be on.  (X-Requested-With: XMLHttpRequest)
-     * @since 0.87
-     * @return builder instance
-     */
-    public MethodBuilder setAjax() {
-        return setAjax(true);
-    }
-
-    /**
-     * Sets AJAX headers for the method on/off.  (X-Requested-With: XMLHttpRequest)
-     * @param ajax True if the method is executed by AJAX - XMLHttpRequest webbrowser object
-     * @since 0.87
-     * @return builder instance
-     */
-    public MethodBuilder setAjax(boolean ajax) {
-        this.ajax = ajax;
-        return this;
-    }
-
 
     /**
      * Returns actual set POST or GET method extracted from result. <br /> Its value is used in <code>toMethod()</code> method.<br/>
@@ -691,9 +661,7 @@ public final class MethodBuilder {
         }
         uri = checkURI(s);
         HttpMethod getMethod = client.getGetMethod(uri);
-        if (ajax) {
-            getMethod.addRequestHeader("X-Requested-With", "XMLHttpRequest");
-        }
+        setAdditionalHeaders(getMethod);
         return getMethod;
     }
 
@@ -882,9 +850,7 @@ public final class MethodBuilder {
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
             postMethod.addParameter(entry.getKey(), (encodeParameters) ? encode(entry.getValue()) : entry.getValue());
         }
-        if (ajax) {
-            postMethod.addRequestHeader("X-Requested-With", "XMLHttpRequest");
-        }
+        setAdditionalHeaders(postMethod);
         return postMethod;
     }
 
@@ -1023,6 +989,53 @@ public final class MethodBuilder {
      */
     public Map<String, String> getParameters() {
         return parameters;
+    }
+
+    /**
+     * Returns additional header map - name/value
+     *
+     * @return hash map with key pair name and value
+     * @since 0.87
+     */
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
+
+    /**
+     * Sets an additional HTTP header for the method.
+     *
+     * @param name  name of header to set; cannot be null
+     * @param value value of header to set; set to null to remove
+     * @return builder instance
+     * @since 0.87
+     */
+    public MethodBuilder setHeader(final String name, final String value) {
+        if (name == null) {
+            throw new NullPointerException("name");
+        }
+        headers.put(name, value);
+        return this;
+    }
+
+    private void setAdditionalHeaders(final HttpMethod method) {
+        for (final Map.Entry<String, String> entry : headers.entrySet()) {
+            if (entry.getValue() != null) {
+                method.setRequestHeader(entry.getKey(), entry.getValue());
+            } else {
+                method.removeRequestHeader(entry.getKey());
+            }
+        }
+    }
+
+    /**
+     * Sets AJAX headers for the method. (X-Requested-With: XMLHttpRequest)
+     *
+     * @return builder instance
+     * @since 0.87
+     */
+    public MethodBuilder setAjax() {
+        setHeader("X-Requested-With", "XMLHttpRequest");
+        return this;
     }
 
     /**
