@@ -31,7 +31,7 @@ public class FileLogFormatter extends Formatter {
         sb.append(record.getLevel().getName());
         sb.append(": ");
         sb.append(message);
-        sb.append('\n');
+        sb.append(LogFormatter.LINE_SEPARATOR);
         if (record.getThrown() != null) {
             try {
                 StringWriter sw = new StringWriter();
