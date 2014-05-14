@@ -1,14 +1,12 @@
 package cz.vity.freerapid.utilities.os;
 
 import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.User32;
-import com.sun.jna.platform.win32.WinDef;
-import com.sun.jna.platform.win32.WinUser;
+import com.sun.jna.platform.win32.*;
 import cz.vity.freerapid.core.Consts;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
+import net.jimmc.jshortcut.JShellLink;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,48 +18,13 @@ import java.util.logging.Logger;
  */
 final class WindowsCommander extends AbstractSystemCommander {
     private final static Logger logger = Logger.getLogger(WindowsCommander.class.getName());
-    private final static String PATH = "tools/nircmd/nircmd.exe";
 
     WindowsCommander() {
     }
 
-    private boolean createDesktopShortcut() {
-        //shortcut [filename] [folder] [shortcut title] {arguments} {icon file} {icon resource number} {ShowCmd} {Start In Folder} {Hot Key}
-        return createShortCut(Consts.APPVERSION, "", "~$folder.desktop$", "");
-    }
-
-    private boolean createStartMenuShortcut() {
-        return createShortCut(Consts.APPVERSION, "", "~$folder.programs$", "");
-    }
-
-    private boolean createStartupShortcut() {
-        return createShortCut(Consts.APPVERSION, "-m", "~$folder.startup$", "\"\" \"min\"");
-    }
-
-    private boolean createQuickLaunchShortcut() {
-        return createShortCut(Consts.APPVERSION, "", "~$folder.appdata$\\Microsoft\\Internet Explorer\\Quick Launch", "");
-    }
-
-    private boolean startNewApplicationInstance() {
-        final String exe;
-        if (!System.getProperties().containsKey("exePath")) {
-            final String appPath = Utils.getAppPath();
-            final String appSep = Utils.addFileSeparator(appPath);
-            exe = appSep + Consts.WINDOWS_EXE_NAME;
-        } else {
-            exe = System.getProperty("exePath");
-        }
-        return run(exe + " " + Utils.getApplicationArguments(), false);
-    }
-
-    private boolean createShortCut(final String shortcutTitle, final String arguments, final String type, final String moreCommands) {
-        final String appPath = Utils.getAppPath();
-        final String appSep = Utils.addFileSeparator(appPath);
-        final String exe = appSep + Consts.WINDOWS_EXE_NAME;
-        final String icon = appSep + Consts.WINDOWS_ICON_NAME;
-
-        final String cmd = String.format("shortcut \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" %s", exe, type, shortcutTitle, arguments, icon, moreCommands);
-        return runCommand(cmd, true);
+    @Override
+    public boolean isSupported(final OSCommand command) {
+        return true;
     }
 
     @Override
@@ -70,13 +33,13 @@ final class WindowsCommander extends AbstractSystemCommander {
             throw new IllegalArgumentException("OS command " + shortCutCommand + " is not a shortcut command");
         switch (shortCutCommand) {
             case CREATE_DESKTOP_SHORTCUT:
-                return createDesktopShortcut();
+                return createShortCut(Shell32Util.getFolderPath(ShlObj.CSIDL_DESKTOP));
             case CREATE_QUICKLAUNCH_SHORTCUT:
-                return createQuickLaunchShortcut();
+                return createShortCut(Utils.addFileSeparator(Shell32Util.getFolderPath(ShlObj.CSIDL_APPDATA)) + "Microsoft\\Internet Explorer\\Quick Launch");
             case CREATE_STARTMENU_SHORTCUT:
-                return createStartMenuShortcut();
+                return createShortCut(Shell32Util.getFolderPath(ShlObj.CSIDL_PROGRAMS));
             case CREATE_STARTUP_SHORTCUT:
-                return createStartupShortcut();
+                return createShortCut(Shell32Util.getFolderPath(ShlObj.CSIDL_STARTUP), "-m");
             default:
                 assert false;
                 break;
@@ -84,14 +47,38 @@ final class WindowsCommander extends AbstractSystemCommander {
         return false;
     }
 
+    private boolean createShortCut(final String folder) {
+        return createShortCut(folder, null);
+    }
+
+    private boolean createShortCut(final String folder, final String arguments) {
+        final String appPath = Utils.addFileSeparator(Utils.getAppPath());
+        final String exe = appPath + Consts.WINDOWS_EXE_NAME;
+        final String icon = appPath + Consts.WINDOWS_ICON_NAME;
+        try {
+            final JShellLink link = new JShellLink();
+            link.setPath(exe);
+            link.setWorkingDirectory(appPath);
+            link.setIconLocation(icon);
+            link.setArguments(arguments);
+            link.setName(Consts.APPVERSION);
+            link.setFolder(folder);
+            link.save();
+            return true;
+        } catch (Exception e) {
+            LogUtils.processException(logger, e);
+            return false;
+        }
+    }
+
     @Override
     public boolean shutDown(final OSCommand shutDownCommand, final boolean force) {
-        if (!OSCommand.shutDownCommands.contains(shutDownCommand))
+        if (!OSCommand.shutDownCommands.contains(shutDownCommand)) {
             throw new IllegalArgumentException("OS command " + shutDownCommand + " is not a shut down command");
-        if (shutDownCommand == OSCommand.RESTART_APPLICATION) {
-            return startNewApplicationInstance();
         }
         switch (shutDownCommand) {
+            case RESTART_APPLICATION:
+                return startNewApplicationInstance();
             case HIBERNATE:
                 return WindowsShutdownUtils.hibernate();
             case STANDBY:
@@ -107,14 +94,16 @@ final class WindowsCommander extends AbstractSystemCommander {
         return false;
     }
 
-    @Override
-    public boolean isSupported(OSCommand command) {
-        return true;
-    }
-
-    private static boolean runCommand(final String cmd, final boolean waitForResult) {
-        final String command = Utils.addFileSeparator(Utils.getAppPath()) + PATH;
-        return run("\"" + new File(command).getPath() + "\" " + cmd, waitForResult);
+    private boolean startNewApplicationInstance() {
+        final String exe;
+        if (!System.getProperties().containsKey("exePath")) {
+            final String appPath = Utils.getAppPath();
+            final String appSep = Utils.addFileSeparator(appPath);
+            exe = appSep + Consts.WINDOWS_EXE_NAME;
+        } else {
+            exe = System.getProperty("exePath");
+        }
+        return run(exe + " " + Utils.getApplicationArguments(), false);
     }
 
     private static boolean run(final String cmd, final boolean waitForResult) {

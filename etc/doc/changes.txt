@@ -14,6 +14,7 @@ Internal - indicates an internal change - information for FRD developers - nothi
 
 FreeRapid Downloader 0.85 Update 2
   Added : Support for Portuguese language - thanks to all translators!
+  Changed : Internal - NirCmd is not used anymore for native Windows actions
 
 1st January 2011 - FreeRapid Downloader 0.85 Update 1
   Added : Support for Polish, Bulgarian, Korean, Portuguese (Brasil), Finnish and Hebrew languages - thanks to all translators!
