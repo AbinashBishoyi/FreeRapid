@@ -66,6 +66,7 @@ public class MenuManager extends AbstractBean {
         this.context = context;
         this.director = director;
         fileActions = new FileActions(context);
+        Swinger.initActions(this, context);
         Swinger.initActions(fileActions, context);
         ViewActions viewActions = new ViewActions();
         Swinger.initActions(viewActions, context);
@@ -413,7 +414,7 @@ public class MenuManager extends AbstractBean {
     }
 
     @org.jdesktop.application.Action(enabledProperty = REFRESH_PROXY_LIST_ACTION_ENABLED_PROPERTY)
-    private void refreshProxyList() {
+    public void refreshProxyList() {
         director.getClientManager().updateConnectionSettings();
     }
 
