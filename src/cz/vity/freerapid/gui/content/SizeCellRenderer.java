@@ -16,13 +16,14 @@ class SizeCellRenderer extends DefaultTableCellRenderer {
     private final String sizeRendererProgress;
     private final String sizeRendererUnknown;
     private final String sizeRendererInBytes;
+    private NumberFormat numberFormatter;
 
     SizeCellRenderer(ApplicationContext context) {
         final ResourceMap map = context.getResourceMap();
         sizeRendererProgress = map.getString("sizeRendererProgress");
         sizeRendererUnknown = map.getString("sizeRendererUnknown");
         sizeRendererInBytes = map.getString("sizeRendererInBytes");
-
+        numberFormatter = NumberFormat.getIntegerInstance();
     }
 
     @Override
@@ -34,7 +35,8 @@ class SizeCellRenderer extends DefaultTableCellRenderer {
                 value = String.format(sizeRendererProgress, ContentPanel.bytesToAnother(downloadFile.getDownloaded()), ContentPanel.bytesToAnother(fs));
             else
                 value = ContentPanel.bytesToAnother(fs);
-            this.setToolTipText(String.format(sizeRendererInBytes, NumberFormat.getIntegerInstance().format(fs)));
+
+            this.setToolTipText(String.format(sizeRendererInBytes, numberFormatter.format(fs)));
         } else {
             value = sizeRendererUnknown;
             this.setToolTipText(null);

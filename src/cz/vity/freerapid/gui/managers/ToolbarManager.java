@@ -15,6 +15,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Calendar;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
@@ -102,7 +103,7 @@ public class ToolbarManager implements PropertyChangeListener {
 //        toolbar.add(new ToolbarSeparator());
 //        toolbar.add(getButton(Swinger.getAction("quit")));
         toolbar.add(Box.createGlue());
-        final AbstractButton btn = getButton(Swinger.getAction("paypalSupportAction"));
+        AbstractButton btn = getButton(Swinger.getAction("paypalSupportAction"));
         btn.putClientProperty("noChange", true);
         btn.setOpaque(false);
         btn.setRolloverEnabled(false);
@@ -110,6 +111,20 @@ public class ToolbarManager implements PropertyChangeListener {
         btn.setText(null);
         btn.setBorder(new EmptyBorder(0, 0, 0, 0));
         if (AppPrefs.getProperty(UserProp.SHOW_PAYPAL, UserProp.SHOW_PAYPAL_DEFAULT)) {
+            toolbar.add(btn);
+        }
+        toolbar.add(Box.createGlue());
+        btn = getButton(Swinger.getAction("czoSupportAction"));
+        btn.putClientProperty("noChange", true);
+        btn.setOpaque(false);
+        btn.setRolloverEnabled(false);
+        btn.setBackground(null);
+        btn.setText(null);
+        btn.setBorder(new EmptyBorder(0, 0, 0, 0));
+        final Calendar after = Calendar.getInstance();
+        after.set(2009, Calendar.MAY, 18);
+        boolean isAfter = Calendar.getInstance().after(after);
+        if (AppPrefs.getProperty(UserProp.SHOW_CZO2009, UserProp.SHOW_CZO2009_DEFAULT) && !isAfter) {
             toolbar.add(btn);
         }
         toolbar.add(Box.createHorizontalStrut(18));
@@ -233,9 +248,5 @@ public class ToolbarManager implements PropertyChangeListener {
         //labelWorkingProgress.setBusy(enabled);
     }
 
-    @org.jdesktop.application.Action
-    public void paypalSupportAction() {
-
-    }
 
 }

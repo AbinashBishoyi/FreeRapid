@@ -73,4 +73,10 @@ public class HelpActions {
         updateManager.checkUpdate(false);
     }
 
+
+    @org.jdesktop.application.Action
+    public void czoSupportAction() {
+        Browser.openBrowser("http://cos.root.cz/hlasovani/");
+    }
+
 }
