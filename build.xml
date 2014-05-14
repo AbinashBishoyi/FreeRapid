@@ -39,6 +39,9 @@
     <fileset id="jars" dir="${lib.dir}" includes="**/*"/>
     <fileset id="devjars" dir="dev/lib" includes="**/*"/>
 
+    <taskdef name="native2AsciiExt" classpath="${dev.dir}/ant-tasks/vityanttasks.jar"
+             classname="cz.vity.ant.tasks.Native2AsciiExt"/>
+
     <patternset id="compiler.resources">
         <!--<include name="**/?*.properties"/>-->
         <include name="**/?*.xml"/>
@@ -92,11 +95,11 @@
             </mapper>
         </copy>
 
-        <native2ascii src="${classes.dir}" encoding="utf-8" includes="**/?*.stripped"
-                      dest="${classes.dir}" ext=".properties"/>
+        <native2AsciiExt src="${classes.dir}" encoding="utf-8" includes="**/?*.stripped"
+                         dest="${classes.dir}" ext=".properties"/>
 
-        <native2ascii src="${src.dir}" encoding="unicode" includes="**/?*_zh*.properties,**/?*_ja*.properties"
-                      dest="${classes.dir}" ext=".properties"/>
+        <native2AsciiExt src="${src.dir}" encoding="unicode" includes="**/?*_zh*.properties,**/?*_ja*.properties"
+                         dest="${classes.dir}" ext=".properties"/>
 
         <delete>
             <fileset dir="${classes.dir}" includes="**/?*.stripped"/>
@@ -253,12 +256,12 @@
             <fileset dir="out/production/freerapid" includes="**/?*.properties" excludes="${ignoreProperties}"/>
         </delete>
 
-        <native2ascii src="${src.dir}" encoding="unicode" includes="**/?*_zh*.properties,**/?*_ja*.properties"
-                      dest="out/production/freerapid" ext=".properties"/>
+        <native2AsciiExt src="${src.dir}" encoding="unicode" includes="**/?*_zh*.properties,**/?*_ja*.properties"
+                         dest="out/production/freerapid" ext=".properties"/>
 
-        <native2ascii src="${src.dir}" encoding="utf-8" includes="**/?*.properties"
-                      excludes="${ignoreProperties},**/?*_zh*.properties,**/?*_ja*.properties"
-                      dest="out/production/freerapid" ext=".properties"/>
+        <native2AsciiExt src="${src.dir}" encoding="utf-8" includes="**/?*.properties"
+                         excludes="${ignoreProperties},**/?*_zh*.properties,**/?*_ja*.properties"
+                         dest="out/production/freerapid" ext=".properties"/>
     </target>
 
 
