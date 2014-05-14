@@ -96,8 +96,6 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                 fileListMaintainer.doShutDown();//run all tasks, stop accepting new ones
             }
         });
-        updateCompleted();
-        downloadFiles.addListDataListener(this);
     }
 
     private void exitDownloading() {
@@ -147,6 +145,8 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         synchronized (lock) {
             fileListMaintainer.loadListToBean(downloadFiles);
         }
+        updateCompleted();
+        downloadFiles.addListDataListener(this);
         processManager.start();
         if (AppPrefs.getProperty(UserProp.AUTOSAVE_ENABLED, UserProp.AUTOSAVE_ENABLED_DEFAULT)) {
 
