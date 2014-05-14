@@ -184,6 +184,8 @@ class WindowsShellLink {
         public Pointer SetDescription;
         public Pointer GetWorkingDirectory;
         public Pointer SetWorkingDirectory;
+        public Pointer GetArguments;
+        public Pointer SetArguments;
         public Pointer GetHotkey;
         public Pointer SetHotkey;
         public Pointer GetShowCmd;
@@ -192,8 +194,6 @@ class WindowsShellLink {
         public Pointer SetIconLocation;
         public Pointer SetRelativePath;
         public Pointer Resolve;
-        public Pointer GetArguments;
-        public Pointer SetArguments;
         public Pointer SetPath;
 
         public static class ByReference extends IShellLinkWVtbl implements Structure.ByReference {
