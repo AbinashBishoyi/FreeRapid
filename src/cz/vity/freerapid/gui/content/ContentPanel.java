@@ -807,7 +807,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
 //        table.setHorizontalScrollEnabled(false);
         table.setAutoResizeMode(AppPrefs.getProperty(UserProp.TABLE_COLUMNS_RESIZE, UserProp.TABLE_COLUMNS_RESIZE_DEFAULT));
-        table.setEditable(false);
+        table.setEditable(true);
+        table.setAutoStartEditOnKeyStroke(false);
         table.setColumnControlVisible(true);
         table.setColumnSelectionAllowed(false);
         final DefaultRowSorter sorter = (DefaultRowSorter) table.getRowSorter();
@@ -1026,16 +1027,15 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         }
 
         final int selectedRow = selectedRows[0];
-        final DownloadFile valueAt = (DownloadFile) table.getValueAt(selectedRow, COLUMN_NAME);
+        final int selectedColumn = table.convertColumnIndexToView(COLUMN_NAME);
+        final DownloadFile valueAt = (DownloadFile) table.getValueAt(selectedRow, selectedColumn);
         if (valueAt.getFileName() == null) {
             return;
         }
         final String backup = valueAt.getFileName();
         final File originalOuputFile = valueAt.getOutputFile();
         final boolean wasExisting = originalOuputFile.exists();
-        table.setEditable(true);
-        final boolean result = table.editCellAt(selectedRow, COLUMN_NAME);//takes UI rows, not model
-        table.setEditable(false);
+        final boolean result = table.editCellAt(selectedRow, selectedColumn);//takes UI rows, not model
         if (!result)
             return;
         final TableCellEditor cellEditor = table.getCellEditor();
@@ -1063,8 +1063,14 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         }
     }
 
-    private void renameFile(RenameFileNameEditor source, File originalOuputFile, String backup, int selectedRow) {
-        //change file name physically on disk
+    /**
+     * Change file name physically on disk
+     * @param source editor
+     * @param originalOuputFile original name before editing
+     * @param backupFileName original file name
+     * @param row index of selected row
+     */
+    private void renameFile(RenameFileNameEditor source, File originalOuputFile, String backupFileName, int selectedRow) {
         boolean succeeded;
         final DownloadFile resultDownloadFile = (DownloadFile) source.getCellEditorValue();
         final File out = resultDownloadFile.getOutputFile();
@@ -1083,8 +1089,10 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             succeeded = originalOuputFile.renameTo(out);
         }
         if (!succeeded) {
-            resultDownloadFile.setFileName(backup);
-            table.setValueAt(resultDownloadFile, selectedRow, COLUMN_NAME);
+            resultDownloadFile.setFileName(backupFileName);
+            table.setValueAt(resultDownloadFile, selectedRow, table.convertColumnIndexToView(COLUMN_NAME));
+        } else {
+            scrollToVisible(false);
         }
     }
 
