@@ -311,6 +311,9 @@ final public class UserProp {
     public static final String AUTO_START_DOWNLOADS_FROM_DECRYPTER = "autoStartDownloadsFromDecrypter";
     public static final boolean AUTO_START_DOWNLOADS_FROM_DECRYPTER_DEFAULT = true;
 
+    public static final String TABLE_COLUMNS_RESIZE = "tableColumnsResize";
+    public static final int TABLE_COLUMNS_RESIZE_DEFAULT = javax.swing.JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS;
+
 }
 
 

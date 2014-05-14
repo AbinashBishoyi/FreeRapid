@@ -752,6 +752,9 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         final String[] columns = (String[]) context.getResourceMap().getObject("mainTableColumns", String[].class);
         table.setModel(new CustomTableModel(manager.getDownloadFiles(), columns));
         table.setAutoCreateColumnsFromModel(false);
+
+//        table.setHorizontalScrollEnabled(false);
+        table.setAutoResizeMode(AppPrefs.getProperty(UserProp.TABLE_COLUMNS_RESIZE, UserProp.TABLE_COLUMNS_RESIZE_DEFAULT));
         table.setEditable(false);
         table.setColumnControlVisible(true);
         table.setColumnSelectionAllowed(false);
