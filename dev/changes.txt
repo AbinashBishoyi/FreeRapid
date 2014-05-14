@@ -1,4 +1,10 @@
-Version 0.83->0.84
+Version 0.83->0.85
+
+UpdateDialog.properties
+============================
+new:
+stateOldPlugin=NOT SUPPORTED
+
 InformationDialog.properties
 ===================================
 Changed:

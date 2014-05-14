@@ -67,16 +67,24 @@ public class DownloadNewPluginsTask extends DownloadTask {
             if (isCancelled())
                 break;
             final DownloadFile file = data.getHttpFile();
-            try {
-                setDownloadFile(file);
-                downloadFile.setSaveToDirectory(dir);
-                processFile(file);
+            if (data.isToBeDeleted()) { //remove plugin
+                file.setState(DownloadState.COMPLETED);
+                file.setFileSize(10);//to make progress 100%
+                file.setDownloaded(10);
                 updatedPlugins.add(data);
                 success = true;
-            } catch (Exception e) {
-                file.setState(DownloadState.ERROR);
-                setFileErrorMessage(e);
-                LogUtils.processException(logger, e);
+            } else { //regular update
+                try {
+                    setDownloadFile(file);
+                    downloadFile.setSaveToDirectory(dir);
+                    processFile(file);
+                    updatedPlugins.add(data);
+                    success = true;
+                } catch (Exception e) {
+                    file.setState(DownloadState.ERROR);
+                    setFileErrorMessage(e);
+                    LogUtils.processException(logger, e);
+                }
             }
         }
         message("DownloadNewPluginsTask.reloadingPlugins");

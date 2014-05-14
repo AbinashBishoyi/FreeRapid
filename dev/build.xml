@@ -11,12 +11,15 @@
     <target name="shrink">
         <taskdef name="yguard" classname="com.yworks.yguard.YGuardTask" classpath="ant-tasks/yguard.jar"/>
         <yguard>
-            <inoutpair in="mina-core-2.0.0-RC1.jar" out="mina-core-2.0.0-RC1-sh.jar"/>
+            <inoutpair in="mina-core-2.0.0.jar" out="mina-core-2.0.0-sh.jar"/>
             <shrink logfile="${shrinklog}">
                 <keep>
                     <class classes="private" methods="private" fields="private">
                         <patternset>
+
                             <include name="cz.*"/>
+                            <include name="org.apache.mina.transport.socket.nio.NioProcessor"/>
+                            <include name="org.apache.mina.proxy.handlers.socks.*"/>
                         </patternset>
                     </class>
                 </keep>

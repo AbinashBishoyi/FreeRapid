@@ -80,7 +80,6 @@ public class ProcessManager extends Thread {
 
     @Override
     public void run() {
-        logger.severe(Utils.dumpStackTraces());
         this.setName("ProcessManagerThread");
         this.setUncaughtExceptionHandler(new GlobalEDTExceptionHandler());
 

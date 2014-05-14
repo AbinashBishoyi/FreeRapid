@@ -11,9 +11,10 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid Downloader
 Fixed - indicates a bug fix
 
-
 FreeRapid Downloader 0.85 Alpha 4
   Added : New LookAndFeel skins - Substance Office Black 2007 and Substance Mariner
+  Added : downgrade of plugin is made automatically if necessary
+  Added : new internal property removeNotSupportedPlugins to remove not supported plugins automatically (default value is false)
   Added : Plugin API
            - Hash class with functions to calculate hashes
            - Base URL is automatically parsed from fileURL during init
@@ -22,9 +23,9 @@ FreeRapid Downloader 0.85 Alpha 4
   Changed : Upgraded SwingX library to version 1.6.2
   Changed : Removed redundant setting for automatic restart after plugin updates
   Changed : Speed limiter settings pane split in two to make clear a difference between global and file-specific settings
-  Changed : Updated commons-codec to v1.4
+  Changed : Updated commons-codec library to v1.4
   Changed : RTMP plugin - major update
-            - Upgraded to MINA v2
+            - Upgraded to MINA v2 final
             - Support for SOCKS proxies
   Fixed : Exception when starting an RTMP download with file pre-allocation enabled
 

@@ -400,6 +400,9 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
         private Object getStatus(WrappedPluginData item) {
             final DownloadState state = item.getHttpFile().getState();
             if (state == DownloadState.PAUSED || state == DownloadState.QUEUED) {
+                if (item.isToBeDeleted()) {
+                    return getResourceMap().getString("stateOldPlugin");
+                }
                 if (item.isNew()) {
                     return getResourceMap().getString("stateNew");
                 } else

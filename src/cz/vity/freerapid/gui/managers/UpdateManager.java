@@ -13,6 +13,7 @@ import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.xmlimport.ver1.Plugin;
+import org.java.plugin.registry.Version;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.Task;
 import org.jdesktop.application.TaskEvent;
@@ -197,16 +198,30 @@ public class UpdateManager {
         final PluginsManager pluginsManager = director.getPluginsManager();
         final boolean downloadNotExisting = AppPrefs.getProperty(UserProp.DOWNLOAD_NOT_EXISTING_PLUGINS, UserProp.DOWNLOAD_NOT_EXISTING_PLUGINS_DEFAULT);
         List<WrappedPluginData> result = new LinkedList<WrappedPluginData>();
+        Set<String> supportedPluginsIdByServer = new HashSet<String>(list.size());
         for (Plugin plugin : list) {
             final String id = plugin.getId();
+            supportedPluginsIdByServer.add(id);
 //            if (updatedPluginsCode.contains(getUniqueId(id, plugin.getVersion())))
 //                continue;
+            final Version newVersion = Version.parse(plugin.getVersion());
+            plugin.setVersion(newVersion.toString());
+
             final boolean isNew = !pluginsManager.hasPlugin(id);
             if (!isNew) {
-                final PluginMetaData data = pluginsManager.getPluginMetadata(id);
-                if (!data.isUpdatesEnabled())
+                final Version oldVersion = Version.parse(pluginsManager.getPluginMetadata(id).getVersion());
+                logger.info("id = " + id + "  oldVersion = " + oldVersion + "  newVersion = " + newVersion);
+                //is newer or newer was replaced with an older version again == versions are being ignored
+                if (newVersion.equals(oldVersion))
                     continue;
+                final PluginMetaData data = pluginsManager.getPluginMetadata(id);
+                logger.info("found new plugin with id =" + id);
+                if (!data.isUpdatesEnabled()) {
+                    logger.info("It's disabled to download new plugins, ignoring " + id);
+                    continue;
+                }
             }
+
             final DownloadFile httpFile;
             final boolean checked = downloadNotExisting || !isNew;
             if (!checked && !selectAll)
@@ -224,6 +239,30 @@ public class UpdateManager {
                 LogUtils.processException(logger, e);
             }
         }
+
+        final boolean removeNotSupportedPLugins = AppPrefs.getProperty(UserProp.REMOVE_NOT_SUPPORTED_PLUGINS, UserProp.REMOVE_NOT_SUPPORTED_PLUGINS_DEFAULT);
+        if (removeNotSupportedPLugins) {
+            final List<PluginMetaData> dataList = pluginsManager.getSupportedPlugins();
+            for (PluginMetaData data : dataList) {
+                //plugin will be deleted
+                if (!supportedPluginsIdByServer.contains(data.getId())) {
+                    final Plugin plugin = new Plugin();
+                    plugin.setId(data.getId());
+                    plugin.setVersion(data.getVersion());
+                    plugin.setVendor(data.getVendor());
+                    plugin.setServices(data.getServices());
+                    plugin.setUrl(data.getWWW());
+                    plugin.setFilename("xxxx.frp");
+                    plugin.setFilesize(0);
+                    plugin.setPremium(String.valueOf(data.isPremium()));
+                    final DownloadFile httpFile = new DownloadFile();
+                    httpFile.setState(DownloadState.QUEUED);
+                    final WrappedPluginData pluginData = new WrappedPluginData(true, httpFile, plugin);
+                    pluginData.setToBeDeleted(true);
+                    result.add(pluginData);
+                }
+            }
+        }
         return result;
     }
 
@@ -231,5 +270,6 @@ public class UpdateManager {
     private static String getUniqueId(String id, String version) {
         return id + '@' + version;
     }
+
 
 }

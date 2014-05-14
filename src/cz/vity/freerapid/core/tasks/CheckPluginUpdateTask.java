@@ -6,7 +6,6 @@ import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.exceptions.NoAvailableConnection;
 import cz.vity.freerapid.gui.managers.ClientManager;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
-import cz.vity.freerapid.gui.managers.PluginsManager;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadClient;
 import cz.vity.freerapid.swing.Swinger;
@@ -17,7 +16,6 @@ import cz.vity.freerapid.xmlimport.ver1.Plugins;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.java.plugin.registry.Version;
 import org.jdesktop.application.ApplicationContext;
 
 import java.net.ConnectException;
@@ -83,24 +81,8 @@ public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
         if (isCancelled())
             throw new InterruptedException();
         final Plugins rootPlugins = new XMLBind().loadPluginList(client.getContentAsString());
-        final List<Plugin> plugins = rootPlugins.getPlugin();
-        final PluginsManager pluginsManager = director.getPluginsManager();
-        for (Plugin plugin : plugins) {
-            final String id = plugin.getId();
-            final Version newVersion = Version.parse(plugin.getVersion());
-            plugin.setVersion(newVersion.toString());
-            if (pluginsManager.hasPlugin(id)) {
-                final Version oldVersion = Version.parse(pluginsManager.getPluginMetadata(id).getVersion());
-                logger.info("id = " + id + "  oldVersion = " + oldVersion + "  newVersion = " + newVersion);
-                if (newVersion.isGreaterThan(oldVersion))
-                    newPlugins.add(plugin);
-            } else {
-                logger.info("found new plugin with id =" + id);
-                newPlugins.add(plugin);
-            }
-
-        }
-        return newPlugins;
+        return rootPlugins.getPlugin();
+        //return newPlugins;
     }
 
     @Override

@@ -136,9 +136,26 @@ public class PluginsManager {
             for (WrappedPluginData updatedPlugin : updatedPlugins) {
                 final String id = updatedPlugin.getID();
                 if (pluginRegistry.isPluginDescriptorAvailable(id)) {
+                    final PluginDescriptor descriptor = pluginRegistry.getPluginDescriptor(id);
+                    if (updatedPlugin.isToBeDeleted()) {
+                        try {
+                            final File file = urlToFile(descriptor.getLocation());
+                            final boolean b = file.delete();
+                            if (!b) {
+                                logger.severe("Failed to delete plugin file " + file.getAbsolutePath());
+                            }
+                            logger.info(id + " " + updatedPlugin.getVersion() + " should be deleted");
+                            updatedIds.add(id);
+                            supportedPlugins.remove(id);
+                        } catch (Exception e) {
+                            LogUtils.processException(logger, e);
+                            updatedPlugin.getHttpFile().setState(DownloadState.ERROR);
+                        }
+                        continue;
+                    }
                     updatedIds.add(id);
                     //this is a plugin update, we have to select also all dependants to unregister and register them again
-                    final PluginDescriptor descriptor = pluginRegistry.getPluginDescriptor(id);
+
                     final Collection<PluginDescriptor> dependencies = pluginRegistry.getDependingPlugins(descriptor);
                     for (PluginDescriptor dependency : dependencies) {
                         logger.info("Found dependency update for plugin " + id + " - dependency plugin " + dependency.getId());
@@ -173,6 +190,7 @@ public class PluginsManager {
             final String[] ids = updatedIds.toArray(new String[updatedIds.size()]);
             logger.info("Unregistering plugins " + Arrays.toString(ids));
             pluginRegistry.unregister(ids);
+            logger.info("Clearing plugin cache");
             pluginsCache.clear();
             initNewPlugins(updatedPluginsFiles.toArray(new File[updatedPluginsFiles.size()]));
         }
