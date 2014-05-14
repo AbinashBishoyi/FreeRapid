@@ -49,6 +49,19 @@ public class PluginsManager {
     private final ManagerDirector director;
     private PluginManager pluginManager;
     private PluginMetaDataManager pluginMetaDataManager;
+    private static final int MAX_ENTRIES = 4;
+//    private Map<String, PluginMetaData> mCache = new ConcurrentHashMap<String, PluginMetaData>(new LinkedHashMap<String, PluginMetaData>(MAX_ENTRIES, .75F, true) {
+//        protected boolean removeEldestEntry(Map.Entry eldest) {
+//            return size() > MAX_ENTRIES;
+//        }
+//    });
+//
+
+    private Map<String, PluginMetaData> pluginsCache = Collections.synchronizedMap(new LinkedHashMap<String, PluginMetaData>(MAX_ENTRIES, .75F, true) {
+        protected boolean removeEldestEntry(Map.Entry eldest) {
+            return size() > MAX_ENTRIES;
+        }
+    });
 
 
     public PluginsManager(ApplicationContext context, ManagerDirector director) {
@@ -236,12 +249,39 @@ public class PluginsManager {
     public boolean isSupported(final URL url, boolean monitoring) {
         final String s = url.toExternalForm();
         synchronized (lock) {
+            final PluginMetaData[] datas = getCachedPlugins();
+            for (int i = datas.length - 1; i >= 0; i--) {
+                PluginMetaData pluginMetaData = datas[i];
+                if (pluginMetaData.isSupported(s)) {
+                    addToCache(pluginMetaData);
+                    logger.info("Cache hit");
+                    if (pluginMetaData.isEnabled()) {
+                        return !monitoring || pluginMetaData.isClipboardMonitored();
+                    }
+                }
+            }
             for (PluginMetaData pluginMetaData : supportedPlugins.values()) {
-                if (pluginMetaData.isSupported(s) && pluginMetaData.isEnabled())
-                    return !monitoring || pluginMetaData.isClipboardMonitored();
+                if (pluginMetaData.isSupported(s)) {
+                    addToCache(pluginMetaData);
+                    if (pluginMetaData.isEnabled()) {
+                        return !monitoring || pluginMetaData.isClipboardMonitored();
+                    }
+                }
             }
             return false;
         }
+    }
+
+    private void addToCache(PluginMetaData pluginMetaData) {
+        pluginsCache.put(pluginMetaData.getId(), pluginMetaData);
+    }
+
+    private PluginMetaData[] getCachedPlugins() {
+        final Collection<PluginMetaData> cached = pluginsCache.values();
+        final int cacheSize = cached.size();
+        final PluginMetaData[] datas = new PluginMetaData[cacheSize];
+        cached.toArray(datas);
+        return datas;
     }
 
     /**
@@ -255,12 +295,27 @@ public class PluginsManager {
     public String getServiceIDForURL(URL url) throws NotSupportedDownloadServiceException {
         final String s = url.toExternalForm();
         PluginMetaData disabledPlugin = null;
-        for (PluginMetaData value : this.supportedPlugins.values()) {
-            if (value.isSupported(s)) {
-                if (!value.isEnabled()) {
-                    disabledPlugin = value;
+        final PluginMetaData[] plugins = getCachedPlugins();
+
+        //iterate through last used
+        for (int i = plugins.length - 1; i >= 0; i--) {
+            PluginMetaData plugin = plugins[i];
+            if (plugin.isSupported(s)) {
+                addToCache(plugin);
+                logger.info("Cache hit");
+                if (plugin.isEnabled()) {
+                    return plugin.getId();
+                }
+            }
+        }
+        //iterate through all plugins
+        for (PluginMetaData plugin : this.supportedPlugins.values()) {
+            if (plugin.isSupported(s)) {
+                addToCache(plugin);
+                if (!plugin.isEnabled()) {
+                    disabledPlugin = plugin;
                 } else
-                    return value.getId();
+                    return plugin.getId();
             }
         }
         if (disabledPlugin != null)
@@ -361,4 +416,5 @@ public class PluginsManager {
     public boolean hasPlugin(String id) {
         return supportedPlugins.containsKey(id);
     }
+
 }
