@@ -19,6 +19,7 @@ import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.FileUtils;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
+import jlibs.core.util.ReverseComparator;
 import org.java.plugin.JpfException;
 import org.java.plugin.ObjectFactory;
 import org.java.plugin.Plugin;
@@ -433,7 +434,7 @@ public class PluginsManager {
             //iterate through all plugins
             final Collection<PluginMetaData> values = this.supportedPlugins.values();
             final PluginMetaData[] pluginMetaDatas = values.toArray(new PluginMetaData[values.size()]);
-            Arrays.sort(pluginMetaDatas, new PriorityComparator());
+            Arrays.sort(pluginMetaDatas, new ReverseComparator<PluginMetaData>(new PriorityComparator()));
             for (PluginMetaData plugin : pluginMetaDatas) {
                 if (plugin.isSupported(s)) {
                     if (!plugin.isEnabled()) {

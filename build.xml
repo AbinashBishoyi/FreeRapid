@@ -176,13 +176,13 @@
     <target name="compile" depends="clean, init" description="compiling source codes">
         <mkdir dir="${classes.dir}"/>
         <javac debug="true" srcdir="${src.dir}" destdir="${classes.dir}" classpathref="cp" source="1.6" target="1.6"
-               defaultexcludes="false" excludes="**/sandbox/**" includeantruntime="true">
+               defaultexcludes="false" excludes="**/sandbox/**" includeantruntime="true" encoding="UTF-8">
 
         </javac>
 
         <mkdir dir="${build.tests}"/>
         <javac srcdir="${src.tests}" destdir="${build.tests}" classpathref="test-cp" optimize="false" source="1.6"
-               target="1.6" includeantruntime="true">
+               target="1.6" includeantruntime="true" encoding="UTF-8">
             <classpath location="${classes.dir}"/>
         </javac>
 
