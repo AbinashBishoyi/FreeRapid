@@ -42,23 +42,38 @@ final class ProgressBarCellRenderer extends JProgressBar implements TableCellRen
         final DownloadFile downloadFile = (DownloadFile) value;
 
         final DownloadState state = downloadFile.getState();
-        if (state == DownloadState.DOWNLOADING || state == DownloadState.GETTING || state == DownloadState.WAITING) {
-            this.setBackground(BG_GREEN);
-        } else if (state == DownloadState.CANCELLED || state == DownloadState.ERROR || state == DownloadState.DELETED) {
-            this.setBackground(BG_RED);
-        } else if (state == DownloadState.PAUSED || state == DownloadState.DISABLED) {
-            this.setBackground(BG_BLACK);
-        } else if (state == DownloadState.QUEUED) {
-            this.setBackground(BG_ORANGE);
-        } else if (state == DownloadState.SLEEPING) {
-            this.setBackground(BG_BLUE);
-        } else if (state == DownloadState.SKIPPED) {
-            this.setBackground(BG_GREY);
-        } else if (state == DownloadState.COMPLETED) {
-            this.setBackground(null);
-            // this.setBackground(Color.GREEN);
-        } else
-            this.setBackground(BG_BLACK);
+        switch (state) {
+            case DOWNLOADING:
+            case GETTING:
+            case WAITING:
+                this.setBackground(BG_GREEN);
+                break;
+            case CANCELLED:
+            case ERROR:
+            case DELETED:
+                this.setBackground(BG_RED);
+                break;
+            case PAUSED:
+            case DISABLED:
+                this.setBackground(BG_BLACK);
+                break;
+            case QUEUED:
+                this.setBackground(BG_ORANGE);
+                break;
+            case SLEEPING:
+            case HOLD_ON:
+                this.setBackground(BG_BLUE);
+                break;
+            case SKIPPED:
+                this.setBackground(BG_GREY);
+                break;
+            case COMPLETED:
+                this.setBackground(null);
+                break;
+            default:
+                this.setBackground(BG_BLACK);
+                break;
+        }
 
         final int toQueued = downloadFile.getTimeToQueued();
         if ((state == DownloadState.ERROR || state == DownloadState.SLEEPING) && toQueued >= 0) {

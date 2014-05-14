@@ -43,6 +43,7 @@ removeCompletedAndDeletedAction.Action.smallIcon=${iconsPath}clean.png
 speedLimitIsEnabled=Speed limit is enabled and set to value %s/s
 
 SKIPPED=SKIPPED
+HOLD_ON=HOLD ON
 
 refreshProxyList.Action.text=&Refresh proxy list
 refreshProxyList.Action.shortDescription=Refresh the list of proxies

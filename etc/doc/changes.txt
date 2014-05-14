@@ -15,6 +15,7 @@ Fixed - indicates a bug fix
             - FileStreamRecognizer interface and accompanying methods for setting it
   Fixed : Lots of exceptions in log in case a plugin dependency is missing
   Fixed : Proxy list not refreshing when changing the path to it in preferences dialog
+  Fixed : Fails to startup if global speed limiter value is above 255
 
 18th July 2010 - FreeRapid Downloader 0.85 Alpha 2
   Added : Enhanced clipboard monitoring support for URLs defined in reverse order eg.:

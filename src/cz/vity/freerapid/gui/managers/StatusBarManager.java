@@ -208,7 +208,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
         PropertyConnector.connectAndUpdate(ConverterFactory.createBooleanNegator(valueModel), cp, "collapsed");
 
         final ValueModel speedAdapter = BindUtils.getReadOnlyPrefsValueModel(UserProp.SPEED_LIMIT, UserProp.SPEED_LIMIT_DEFAULT);
-        slider = new JSlider(new BoundedRangeAdapter(speedAdapter, 0, 0, 255));
+        slider = new JSlider(new BoundedRangeAdapter(speedAdapter, 0, 0, Integer.MAX_VALUE));
         slider.setName("speedSlider");
         slider.setPreferredSize(new Dimension(100, BAR_HEIGHT));
         slider.setMaximumSize(new Dimension(100, BAR_HEIGHT));
@@ -263,8 +263,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
         } else if (UserProp.SPEED_LIMIT_ENABLED.equals(key)) {
             if (Boolean.TRUE.equals(Boolean.valueOf(evt.getNewValue())))
                 Swinger.inputFocus(slider);
-        } else
-        if (UserProp.GLOBAL_SPEED_SLIDER_MAX.equals(key) || UserProp.GLOBAL_SPEED_SLIDER_MAX.equals(key) || UserProp.GLOBAL_SPEED_SLIDER_STEP.equals(key)) {
+        } else if (UserProp.GLOBAL_SPEED_SLIDER_MAX.equals(key) || UserProp.GLOBAL_SPEED_SLIDER_MAX.equals(key) || UserProp.GLOBAL_SPEED_SLIDER_STEP.equals(key)) {
             bindSpeedSlider(slider);
         }
     }

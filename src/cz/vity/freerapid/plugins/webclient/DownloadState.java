@@ -11,6 +11,10 @@ public enum DownloadState {
      */
     PAUSED,
     /**
+     * file is waiting for other downloads (for "run when current downloads complete" actions) or external process to complete
+     */
+    HOLD_ON,
+    /**
      * file is queued in the front for downloading
      */
     QUEUED,

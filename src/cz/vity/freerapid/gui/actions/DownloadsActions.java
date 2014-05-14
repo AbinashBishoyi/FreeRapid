@@ -14,19 +14,20 @@ final public class DownloadsActions {
     private final static int priorities[] = new int[DownloadState.values().length];
 
     static {
-        priorities[DownloadState.DOWNLOADING.ordinal()] = 0;
-        priorities[DownloadState.GETTING.ordinal()] = 10;
-        priorities[DownloadState.TESTING.ordinal()] = 20;
-        priorities[DownloadState.WAITING.ordinal()] = 30;
-        priorities[DownloadState.QUEUED.ordinal()] = 40;
-        priorities[DownloadState.SLEEPING.ordinal()] = 50;
-        priorities[DownloadState.ERROR.ordinal()] = 60;
-        priorities[DownloadState.PAUSED.ordinal()] = 70;
-        priorities[DownloadState.DISABLED.ordinal()] = 80;
-        priorities[DownloadState.SKIPPED.ordinal()] = 90;
-        priorities[DownloadState.CANCELLED.ordinal()] = 100;
-        priorities[DownloadState.COMPLETED.ordinal()] = 110;
-        priorities[DownloadState.DELETED.ordinal()] = 1000;
+        priorities[DOWNLOADING.ordinal()] = 0;
+        priorities[GETTING.ordinal()] = 10;
+        priorities[TESTING.ordinal()] = 20;
+        priorities[WAITING.ordinal()] = 30;
+        priorities[QUEUED.ordinal()] = 40;
+        priorities[SLEEPING.ordinal()] = 50;
+        priorities[ERROR.ordinal()] = 60;
+        priorities[HOLD_ON.ordinal()] = 70;
+        priorities[PAUSED.ordinal()] = 80;
+        priorities[DISABLED.ordinal()] = 90;
+        priorities[SKIPPED.ordinal()] = 100;
+        priorities[CANCELLED.ordinal()] = 110;
+        priorities[COMPLETED.ordinal()] = 120;
+        priorities[DELETED.ordinal()] = 1000;
     }
 
     /**
@@ -42,19 +43,19 @@ final public class DownloadsActions {
     /**
      * set of states in which user can press resume button
      */
-    public static EnumSet<DownloadState> resumeEnabledStates = EnumSet.of(ERROR, SLEEPING, CANCELLED, SKIPPED, PAUSED, DISABLED);
+    public static EnumSet<DownloadState> resumeEnabledStates = EnumSet.of(ERROR, SLEEPING, CANCELLED, SKIPPED, HOLD_ON, PAUSED, DISABLED);
     /**
      * set of states in which user can press cancel button
      */
-    public static EnumSet<DownloadState> cancelEnabledStates = EnumSet.of(COMPLETED, ERROR, SLEEPING, DOWNLOADING, GETTING, WAITING, PAUSED, DISABLED, TESTING, SKIPPED);
+    public static EnumSet<DownloadState> cancelEnabledStates = EnumSet.of(COMPLETED, ERROR, SLEEPING, DOWNLOADING, GETTING, WAITING, HOLD_ON, PAUSED, DISABLED, TESTING, SKIPPED);
     /**
      * set of states in which user can press force download action
      */
-    public static EnumSet<DownloadState> forceEnabledStates = EnumSet.of(ERROR, SLEEPING, QUEUED, PAUSED, CANCELLED, SKIPPED, DISABLED);
+    public static EnumSet<DownloadState> forceEnabledStates = EnumSet.of(ERROR, SLEEPING, QUEUED, HOLD_ON, PAUSED, CANCELLED, SKIPPED, DISABLED);
     /**
      * set of states in which user can press validate links download action
      */
-    public static EnumSet<DownloadState> recheckExistingStates = EnumSet.of(ERROR, QUEUED, PAUSED, CANCELLED, SKIPPED, DISABLED);
+    public static EnumSet<DownloadState> recheckExistingStates = EnumSet.of(ERROR, QUEUED, HOLD_ON, PAUSED, CANCELLED, SKIPPED, DISABLED);
     /**
      * states those indicates that file is completed
      */
