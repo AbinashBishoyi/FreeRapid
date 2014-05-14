@@ -1,11 +1,14 @@
 package cz.vity.freerapid.utilities.os;
 
+import com.jacob.activeX.ActiveXComponent;
+import com.jacob.com.LibraryLoader;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.*;
 import cz.vity.freerapid.core.Consts;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,6 +21,10 @@ import java.util.logging.Logger;
 final class WindowsCommander extends AbstractSystemCommander {
     private final static Logger logger = Logger.getLogger(WindowsCommander.class.getName());
 
+    static {
+        System.setProperty(LibraryLoader.JACOB_DLL_PATH, new File("lib\\" + LibraryLoader.getPreferredDLLName() + ".dll").getAbsolutePath());
+    }
+
     WindowsCommander() {
     }
 
@@ -28,8 +35,9 @@ final class WindowsCommander extends AbstractSystemCommander {
 
     @Override
     public boolean createShortCut(final OSCommand shortCutCommand) {
-        if (!OSCommand.shortCutCommands.contains(shortCutCommand))
+        if (!OSCommand.shortCutCommands.contains(shortCutCommand)) {
             throw new IllegalArgumentException("OS command " + shortCutCommand + " is not a shortcut command");
+        }
         switch (shortCutCommand) {
             case CREATE_DESKTOP_SHORTCUT:
                 return createShortCut(Shell32Util.getFolderPath(ShlObj.CSIDL_DESKTOP));
@@ -51,23 +59,25 @@ final class WindowsCommander extends AbstractSystemCommander {
     }
 
     private boolean createShortCut(final String folder, final String arguments) {
+        final String shortcutFile = folder + "\\" + Consts.APPVERSION + ".lnk";
         final String appPath = Utils.addFileSeparator(Utils.getAppPath());
         final String exe = appPath + Consts.WINDOWS_EXE_NAME;
         final String icon = appPath + Consts.WINDOWS_ICON_NAME;
+        ActiveXComponent shell = null;
+        ActiveXComponent shortcut = null;
         try {
-            final net.jimmc.jshortcut.JShellLink link = new net.jimmc.jshortcut.JShellLink();
-            link.setPath(exe);
-            link.setWorkingDirectory(appPath);
-            link.setIconLocation(icon);
-            link.setArguments(arguments);
-            link.setName(Consts.APPVERSION);
-            link.setFolder(folder);
-            link.save();
-            return true;
-        } catch (Exception e) {
-            LogUtils.processException(logger, e);
-            return false;
+            shell = new ActiveXComponent("WScript.Shell");
+            shortcut = new ActiveXComponent(shell.invoke("CreateShortcut", shortcutFile).getDispatch());
+            shortcut.setProperty("TargetPath", exe);
+            shortcut.setProperty("WorkingDirectory", appPath);
+            shortcut.setProperty("IconLocation", icon);
+            shortcut.setProperty("Arguments", arguments);
+            shortcut.invoke("Save");
+        } finally {
+            if (shell != null) shell.safeRelease();
+            if (shortcut != null) shortcut.safeRelease();
         }
+        return true;
     }
 
     @Override
