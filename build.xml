@@ -85,7 +85,6 @@
     </pathconvert>
 
 
-
     <target name="build" depends="compile, tests" description="building">
         <buildnumber file="build.txt"/>
 
@@ -103,10 +102,10 @@
         </copy>
 
         <native2AsciiExt src="${classes.dir}" encoding="utf-8" includes="**/?*.stripped"
-        dest="${classes.dir}" ext=".properties" />
+                         dest="${classes.dir}" ext=".properties"/>
 
         <native2AsciiExt src="${src.dir}" encoding="unicode" includes="${unicodeResources}"
-        dest="${classes.dir}" ext=".properties"/>
+                         dest="${classes.dir}" ext=".properties"/>
 
         <delete>
             <fileset dir="${classes.dir}" includes="**/?*.stripped"/>
@@ -122,7 +121,7 @@
                 <attribute name="SplashScreen-Image" value="${splash}"/>
             </manifest>
             <fileset dir="${classes.dir}" includes="**/*"
-            excludes="**/services/**,**/sandbox/**, **/**/?*.properties,**/**/?*.java"/>
+                     excludes="**/services/**,**/sandbox/**, **/**/?*.properties,**/**/?*.java"/>
         </jar>
         <mkdir dir="${build.dir}/${lib.dir}"/>
         <!--<mkdir dir="${build.dir}/help"/>-->
@@ -157,7 +156,6 @@
             <fileset dir="${classes.dir}" includes="**/**/Utils**"/>
             <fileset dir="${classes.dir}" includes="**/**/LogUtils**"/>
             <fileset dir="${classes.dir}" includes="**/**/Crc32**"/>
-            <fileset dir="${classes.dir}" includes="**/**/crypto/**"/>
         </jar>
 
         <zip file="${dist.dir}/plugin-api-src.zip" compress="true">
@@ -166,7 +164,6 @@
             <fileset dir="${src.dir}" includes="**/**/Utils**"/>
             <fileset dir="${src.dir}" includes="**/**/LogUtils**"/>
             <fileset dir="${src.dir}" includes="**/**/Crc32**"/>
-            <fileset dir="${src.dir}" includes="**/**/crypto/**"/>
         </zip>
 
     </target>
@@ -277,10 +274,11 @@
         </delete>
 
         <native2AsciiExt src="${src.dir}" encoding="utf-8" includes="${unicodeResources}"
-        dest="out/production/freerapid" ext=".properties"/>
+                         dest="out/production/freerapid" ext=".properties"/>
 
-        <native2AsciiExt src="${src.dir}" encoding="utf-8" includes="**/?*.properties" excludes="${ignoreProperties},${unicodeResources}"
-        dest="out/production/freerapid" ext=".properties"/>
+        <native2AsciiExt src="${src.dir}" encoding="utf-8" includes="**/?*.properties"
+                         excludes="${ignoreProperties},${unicodeResources}"
+                         dest="out/production/freerapid" ext=".properties"/>
     </target>
 
 
@@ -307,8 +305,8 @@
     </target>
 
     <taskdef name="jarbundler"
-    classpath="./dev/ant-tasks/jarbundler.jar"
-    classname="net.sourceforge.jarbundler.JarBundler"/>
+             classpath="./dev/ant-tasks/jarbundler.jar"
+             classname="net.sourceforge.jarbundler.JarBundler"/>
 
     <!--todo chali you have to call target "dist" before this target-->
     <!--this task is platform depend, you can use it only on mac os x-->
@@ -319,8 +317,8 @@
                     name="FreeRapid"
                     mainclass="cz.vity.freerapid.core.MainApp"
                     icon="./${build.dir}/frd.icns"
-                vmoptions="-Djava.net.preferIPv4Stack=true -Xmx128m"
-                arguments="">
+                    vmoptions="-Djava.net.preferIPv4Stack=true -Xmx128m"
+                    arguments="">
             <jarfileset dir="./${build.dir}/lib"/>
             <jarfileset dir="./${build.dir}" includes="frd.jar"/>
             <jarfileset dir="./${build.dir}/lookandfeel"/>
@@ -344,13 +342,13 @@
                          dest="${src.dir}" ext=".properties2" reverse="true"/>
 
         <!--<native2AsciiExt src="${src.dir}" encoding="UTF-16LE" includes="${unicodeResources}"-->
-                         <!--dest="${src.dir}" ext=".properties2" reverse="true"/>-->
+        <!--dest="${src.dir}" ext=".properties2" reverse="true"/>-->
 
         <copy todir="${src.dir}" overwrite="true" encoding="utf-8">
-            <fileset dir="${src.dir}" includes="**/?*.properties2" />
+            <fileset dir="${src.dir}" includes="**/?*.properties2"/>
             <mapper type="glob" from="*.properties2" to="*.properties">
             </mapper>
         </copy>
-        <delete dir="${src.dir}" includes="**/?*.properties2" />
+        <delete dir="${src.dir}" includes="**/?*.properties2"/>
     </target>
 </project>
