@@ -15,7 +15,7 @@
     <!--<lng name="正體字" code="ZH" country="TW" icon="taiwan.gif"/>-->
     <!--<lng name="日本語" code="JP" icon="japan.gif"/>-->
     <!--<lng name="Bahasa Indonesia" code="IN" icon="indonesia.gif"/>-->
-    <!--<lng name="Polski" code="PL" icon="poland.gif"/>-->
+    <lng name="Polski" code="PL" icon="poland.gif"/>
     <lng name="Українська" code="UA" icon="ukraine.gif"/>
     <!--<lng name="Italiano" code="IT" icon="italy.gif"/>-->
     <!--<lng name="Dansk" code="DA" icon="denmark.gif"/>-->
