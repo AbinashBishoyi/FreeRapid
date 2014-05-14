@@ -113,7 +113,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         final long freeSpace = f.getUsableSpace();
         logger.info("Free space on disk: " + freeSpace);
         final int minDiskSpace = AppPrefs.getProperty(UserProp.MIN_DISK_SPACE, UserProp.MIN_DISK_SPACE_DEFAULT);
-        if (freeSpace < fileSize + (minDiskSpace * 1024 * 1024L)) { //+ 30MB
+        if (freeSpace < fileSize + (minDiskSpace * 1024 * 1024L) - (f.exists() ? f.length():0)) { //+ 30MB
             if (f.exists() && f.length() == 0) {
                 if (!f.delete()) {
                     logger.warning("Cannot delete temporary file");
