@@ -33,7 +33,7 @@ Fixed - indicates a bug fix
   Changed : improved clipboard monitoring for URLs violating with RFC
   Changed : Estimated time of arrival (ETA) counted based on the average speed of last 20 seconds
   Changed : readme.txt files moved to 'doc' folder
-  Changed : improved clipboard monitoring algorithm for URLs algorithm (to catch links with '...') 
+  Changed : improved clipboard monitoring algorithm for URLs (to catch links with '...') 
   Fixed : support for only X bytes long files (eg. 515B)
   Fixed : UI - UserPreferences dialog - OK not enabled when changed How to update plugins combobox [reported by Alex]
   Fixed : shutdown commands don't not work properly on FRD path with spaces

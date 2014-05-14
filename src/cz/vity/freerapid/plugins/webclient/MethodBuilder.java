@@ -660,10 +660,11 @@ public final class MethodBuilder {
 
     private String checkURI(String url) throws BuildMethodException {
         final String uriCharset = client.getHTTPClient().getParams().getUriCharset();
+        logger.info("Converting " + url + " with  URI charset is " + uriCharset);
         try {
             return new org.apache.commons.httpclient.URI(url, true, uriCharset).toString();
         } catch (URIException e) {
-            logger.warning(String.format("Invalid URL - '%s' does not match URI specification", url));
+            logger.warning(String.format("Invalid URL - '%s' does not match URI specification with URI charset %s", url, uriCharset));
             try {
                 return new org.apache.commons.httpclient.URI(URIUtil.encodePathQuery(url, encoding), true, uriCharset).toString();
             } catch (URIException e1) {

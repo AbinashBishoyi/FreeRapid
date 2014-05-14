@@ -33,7 +33,7 @@ public class MethodBuilderTest {
     }
 
     @Test
-    public void testSetActionFromAHrefWhereATagContains() throws BuildMethodException {
+    public void testSetActionFromAHrefWhereATagContains() throws BuildMethodException, URIException {
         final MethodBuilder methodBuilder = getMethodBuilder();
         String action = methodBuilder.setActionFromAHrefWhereATagContains("Download file").getAction();
         Assert.assertEquals("Parsing A tag", "http://dl1u.savefile.com/aca4c18942687b57f454185120bb2f45/plugins.zip", action);
@@ -53,6 +53,10 @@ public class MethodBuilderTest {
         } catch (BuildMethodException e) {
 
         }
+
+        final HttpMethod httpMethod = getMethodBuilder().setActionFromAHrefWhereATagContains("DownloadX").setEncodePathAndQuery(false).toHttpMethod();
+        final String s = httpMethod.getURI().toString();
+        Assert.assertEquals("Already escaped URL", "http://amsterdam1.plunder.com/x/$Hk_DHNZ4fql0CtbcEkIGUzKWpW3hllTA/aa77fb32d1/Cesk%c3%bd%20test.zip", s);
 
     }
 
