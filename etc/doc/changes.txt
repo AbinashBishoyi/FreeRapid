@@ -19,8 +19,10 @@ FreeRapid Downloader 0.85 Alpha 4
            - Hash class with functions to calculate hashes
            - Base URL is automatically parsed from fileURL during init
            - Support for unlimited cryptography
-  Added : A few new user options
-  Added : Support for direct downloads
+  Added : A few new user options:
+            - Start downloads from decrypters and folders automatically
+            - Bring application to the top when clipboard monitoring detects links
+  Added : Support for direct downloads (you have to enable this feature in User settings dialog)
   Changed : Upgraded Substance L&F to version 6.1 Final
   Changed : Upgraded Quaqua L&F to version 7.2.1
   Changed : Upgraded SwingX library to version 1.6.2
@@ -30,6 +32,8 @@ FreeRapid Downloader 0.85 Alpha 4
             - Upgraded to MINA v2 final
             - Support for SOCKS proxies
   Changed : Options for plugin update methods were shuffled around a bit to make them more logical
+  Changed : New icon for global speed limit
+  Changed : priority meaning - higher number = higher priority since this version
   Fixed : Exception when starting an RTMP download with file pre-allocation enabled
   Fixed : Problems with links containing '#' character
 

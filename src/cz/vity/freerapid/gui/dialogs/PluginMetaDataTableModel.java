@@ -87,7 +87,7 @@ class PluginMetaDataTableModel extends AbstractTableModel implements ListDataLis
             case COLUMN_MAX_PARALEL_DOWNLOADS:
                 return data.getMaxAllowedDownloads();
             case COLUMN_PRIORITY:
-                return data.getPriority();
+                return data.getPluginPriority();
             case COLUMN_WWW:
                 return SwingXUtils.createLink(data.getWWW());
             default:
@@ -108,7 +108,7 @@ class PluginMetaDataTableModel extends AbstractTableModel implements ListDataLis
         } else if (columnIndex == COLUMN_UPDATE) {
             data.setUpdatesEnabled((Boolean) aValue);
         } else if (columnIndex == COLUMN_PRIORITY) {
-            data.setPriority((Integer) aValue);
+            data.setPluginPriority((Integer) aValue);
         } else if (columnIndex == COLUMN_MAX_PARALEL_DOWNLOADS) {
             data.setMaxAllowedDownloads((Integer) aValue);
         } else if (columnIndex == COLUMN_CLIPBOARD_MONITORED) {

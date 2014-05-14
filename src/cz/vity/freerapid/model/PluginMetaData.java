@@ -34,7 +34,7 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
     private boolean removeCompleted;
     private boolean resumeSupported;
     private int maxParallelDownloads;
-    private int priority;
+    private int pluginPriority;
     private int maxAllowedDownloads;
     private boolean clipboardMonitored;
     private boolean libraryPlugin;
@@ -61,7 +61,7 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
         this.enabled = true;
         this.clipboardMonitored = true;
         this.updatesEnabled = true;
-        this.priority = -1;
+        this.pluginPriority = -1;
         this.maxAllowedDownloads = -1;
         this.libraryPlugin = false;
     }
@@ -83,8 +83,8 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
         removeCompleted = DescriptorUtils.getAttribute("removeCompleted", false, descriptor);
         maxParallelDownloads = DescriptorUtils.getAttribute("maxDownloads", 1, descriptor);
         libraryPlugin = DescriptorUtils.getAttribute("libraryPlugin", false, descriptor) || maxParallelDownloads == 0;
-        if (priority == -1)
-            priority = DescriptorUtils.getAttribute("priority", (premium) ? 100 : 1000, descriptor);
+        if (pluginPriority == -1)
+            pluginPriority = DescriptorUtils.getAttribute("priority", (premium) ? 1000 : 100, descriptor);
         if (libraryPlugin) {
             supportedURL = NOPE_URL_MATCHER;
         } else {
@@ -216,8 +216,16 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
         return maxParallelDownloads;
     }
 
-    public int getPriority() {
-        return priority;
+    public int getPluginPriority() {
+        return pluginPriority;
+    }
+
+    @Deprecated
+    /**
+     * because of XMLserialization in 0.85a3 - to 0.85a4
+     */
+    public void setPriority(int value) {
+        //this.setPluginPriority(value);   
     }
 
 
@@ -229,9 +237,9 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
         return clipboardMonitored;
     }
 
-    public void setPriority(int value) {
-        Integer oldValue = this.priority;
-        this.priority = value;
+    public void setPluginPriority(int value) {
+        Integer oldValue = this.pluginPriority;
+        this.pluginPriority = value;
         firePropertyChange("priority", oldValue, value);
     }
 

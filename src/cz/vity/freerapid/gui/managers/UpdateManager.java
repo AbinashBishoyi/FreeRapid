@@ -115,7 +115,12 @@ public class UpdateManager {
     }
 
     private void updateDetected(List<Plugin> availablePlugins, boolean quiet) {
-        int method = AppPrefs.getProperty(UserProp.PLUGIN_UPDATE_METHOD, UserProp.PLUGIN_UPDATE_METHOD_DEFAULT);
+        int method;
+        if (!quiet) {
+            //called from menu
+            method = UserProp.PLUGIN_UPDATE_METHOD_DIALOG;
+        } else
+            method = AppPrefs.getProperty(UserProp.PLUGIN_UPDATE_METHOD, UserProp.PLUGIN_UPDATE_METHOD_DEFAULT);
         final List<WrappedPluginData> datas;
         if (method == UserProp.PLUGIN_UPDATE_METHOD_AUTO || method == UserProp.PLUGIN_UPDATE_METHOD_QUIET)
             datas = generateUpdateData(availablePlugins, false);
@@ -152,9 +157,16 @@ public class UpdateManager {
     }
 
     private void showUpdateDialog(List<WrappedPluginData> result, boolean startAutomatically) {
-        final UpdateDialog dialog = new UpdateDialog(this.director.getMainFrame(), this.director, startAutomatically);
+        final UpdateDialog dialog = new UpdateDialog(this.director.getMainFrame(), this.director);
         dialog.initData(result);
         final MainApp app = (MainApp) context.getApplication();
+        if (startAutomatically) {
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    dialog.okBtnAction();
+                }
+            });
+        }
         app.prepareDialog(dialog, true);
     }
 

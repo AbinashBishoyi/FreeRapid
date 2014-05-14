@@ -40,9 +40,19 @@ New:
 checkPluginStatuses.Action.text=&Plugin status
 checkPluginStatuses.Action.shortDescription=Check the status of plugins in web browser
 
+speedLimitMenu.text=Set Download &Limit
+speedLimitMenu.icon=${iconsPath}globalspeedlimit.gif
+limitSpeed=%s kB/s
+unlimitedSpeed=Unlimited
+labelSpeedUnit.text=kB/s
+
+labelSpeedBtn.icon=${iconsPath}globalspeedlimit.gif
+labelSpeedBtn.toolTipText=Enable/Disable global speed limit for all files
+
 globalSpeedLimitAction.Action.text=&Global speed limit
 globalSpeedLimitAction.Action.shortDescription=${labelSpeedBtn.toolTipText}
 globalSpeedLimitAction.Action.smallIcon=${labelSpeedBtn.icon}
+globalSpeedLimitAction.Action.accelerator=F9
 
 removeCompletedAndDeletedAction.Action.text=Remove Completed Links and De&leted Files
 removeCompletedAndDeletedAction.Action.accelerator =shortcut L

@@ -54,16 +54,13 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
 
     private ArrayListModel<WrappedPluginData> listModel = new ArrayListModel<WrappedPluginData>();
 
-    public UpdateDialog(Frame owner, ManagerDirector managerDirector, boolean startAutomatically) throws HeadlessException {
+    public UpdateDialog(Frame owner, ManagerDirector managerDirector) throws HeadlessException {
         super(owner, true);
         this.managerDirector = managerDirector;
         this.setName("UpdateDialog");
         try {
             initComponents();
             build();
-            if (startAutomatically) {
-                okBtnAction();
-            }
         } catch (Exception e) {
             LogUtils.processException(logger, e);
             doClose();

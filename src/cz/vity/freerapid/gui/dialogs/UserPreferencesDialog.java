@@ -76,8 +76,8 @@ import java.util.logging.Logger;
  */
 public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
     private final static Logger logger = Logger.getLogger(UserPreferencesDialog.class.getName());
-    private static final int MINIMUM_PRIORITY = 1000;
-    private static final int MAXIMUM_PRIORITY = 1;
+    private static final int MINIMUM_PRIORITY = 1;
+    private static final int MAXIMUM_PRIORITY = 10000;
 
     private MyPresentationModel model;
     private static final String CARD_PROPERTY = "card";
@@ -144,11 +144,11 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         final PluginMetaData data = ((PluginMetaDataTableModel) pluginTable.getModel()).getMetaValueAt(rows[0]);
         final java.util.List<PluginMetaData> dataList = getSortedPriorityPluginList();
         final int i = dataList.indexOf(data);
-        if (i == -1 || i == 0) {
+        if (i == -1 || dataList.size() - 1 == i) {
             return;
         }
-        final PluginMetaData higherPriorityPlugin = dataList.get(i - 1);
-        data.setPriority(Math.max(MAXIMUM_PRIORITY, higherPriorityPlugin.getPriority() - 1));
+        final PluginMetaData lowerPriorityPlugin = dataList.get(i + 1);
+        data.setPluginPriority(Math.min(MAXIMUM_PRIORITY, lowerPriorityPlugin.getPluginPriority() + 1));
     }
 
     @org.jdesktop.application.Action
@@ -161,20 +161,17 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         final PluginMetaData data = ((PluginMetaDataTableModel) pluginTable.getModel()).getMetaValueAt(rows[0]);
         final java.util.List<PluginMetaData> dataList = getSortedPriorityPluginList();
         final int i = dataList.indexOf(data);
-        if (i == -1 || dataList.size() - 1 == i) {
+        if (i == -1 || i == 0) {
             return;
         }
-        final PluginMetaData lowerPriorityPlugin = dataList.get(i + 1);
-        data.setPriority(Math.min(MINIMUM_PRIORITY, lowerPriorityPlugin.getPriority() + 1));
+        final PluginMetaData higherPriorityPlugin = dataList.get(i - 1);
+        data.setPluginPriority(Math.max(MINIMUM_PRIORITY, higherPriorityPlugin.getPluginPriority() - 1));
+
     }
 
     private java.util.List<PluginMetaData> getSortedPriorityPluginList() {
         java.util.List<PluginMetaData> datas = getSupportedPlugins();
-        Collections.sort(datas, new Comparator<PluginMetaData>() {
-            public int compare(PluginMetaData o1, PluginMetaData o2) {
-                return new Integer(o1.getPriority()).compareTo(o2.getPriority());
-            }
-        });
+        Collections.sort(datas, new PriorityComparator());
         return datas;
     }
 
@@ -324,7 +321,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                             ((PluginMetaDataTableModel) pluginTable.getModel()).fireTableRowsUpdated(row, row);
                         }
                     });
-                    bind(pluginDetailPanel.getSpinnerPluginPriority(), 1, MAXIMUM_PRIORITY, MINIMUM_PRIORITY, 1, beanModel.getValueModel("priority"));
+                    bind(pluginDetailPanel.getSpinnerPluginPriority(), 1, MINIMUM_PRIORITY, MAXIMUM_PRIORITY, 1, beanModel.getValueModel("pluginPriority"));
                     final int max = data.getMaxParallelDownloads();
                     bind(pluginDetailPanel.getSpinnerMaxPluginConnections(), 1, 1, max, 1, beanModel.getValueModel("maxAllowedDownloads"));
                     pluginDetailPanel.getSpinnerMaxPluginConnections().setEnabled(max > 1);
@@ -419,6 +416,8 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         }.install(pluginTable);
 //        registerKeyboardAction(focusFilterAction, ctrlF);
 
+
+        ((DefaultRowSorter) pluginTable.getRowSorter()).setComparator(PluginMetaDataTableModel.COLUMN_PRIORITY, Collections.reverseOrder());
     }
 
     private void buildPopmenuButton(final JPopupMenu popupMenu) {
@@ -2338,7 +2337,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                 }
                 model.setMaximum(maxParallel);
             } else {
-                model.setMaximum(MINIMUM_PRIORITY);
+                model.setMaximum(MAXIMUM_PRIORITY);
             }
             spinner.setValue(value);
             return spinner;
@@ -2359,4 +2358,9 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
     }
 
 
+    private static class PriorityComparator implements Comparator<PluginMetaData> {
+        public int compare(PluginMetaData o1, PluginMetaData o2) {
+            return new Integer(o1.getPluginPriority()).compareTo(o2.getPluginPriority());
+        }
+    }
 }
