@@ -27,22 +27,15 @@ public class Swinger {
     private static final String MESSAGE_ERROR_TITLE_CODE = "errorMessage";
     private static final String MESSAGE_CONFIRM_TITLE_CODE = "confirmMessage";
     private static final String MESSAGE_INFORMATION_TITLE_CODE = "informationMessage";
-    //private static final String MESSAGE_WARNING_TITLE_CODE = "warningMessage";
     private static final String MESSAGE_BTN_YES_CODE = "message.button.yes";
     private static final String MESSAGE_BTN_NO_CODE = "message.button.no";
     private static final String MESSAGE_BTN_OK_CODE = "message.button.ok";
-    public static final String MESSAGE_BTN_CANCEL_CODE = "message.button.cancel";
+    private static final String MESSAGE_BTN_CANCEL_CODE = "message.button.cancel";
 
     public static final int RESULT_NO = 1;
     public static final int RESULT_YES = 0;
     public static final int RESULT_CANCEL = 1;
     public static final int RESULT_OK = 0;
-
-    //    // Create an AlphaComposite with 50% translucency.
-//    Composite alphaComp = AlphaComposite.getInstance(
-//                              AlphaComposite.SRC_OVER, 0.5f);
-    // http://java.sun.com/products/jfc/tsc/articles/swing2d/
-
 
     private Swinger() {
     }
@@ -88,7 +81,6 @@ public class Swinger {
                 null, new Object[]{map.getString(MESSAGE_BTN_OK_CODE), map.getString(MESSAGE_BTN_CANCEL_CODE)},
                 map.getString(MESSAGE_BTN_OK_CODE));
     }
-
 
     /**
      * Vrati obrazek podle key property v resourcu
@@ -139,7 +131,6 @@ public class Swinger {
         return action;
     }
 
-
     public static ActionMap getActionMap(Class aClass, Object actionsObject) {
         return getContext().getActionMap(aClass, actionsObject);
     }
@@ -161,6 +152,10 @@ public class Swinger {
     }
 
     public static int showOptionDialog(ResourceMap map, final int messageType, final String titleCode, final String messageCode, final String[] buttons, final Object... args) {
+        return showOptionDialog(map, true, messageType, titleCode, messageCode, buttons, args);
+    }
+
+    public static int showOptionDialog(ResourceMap map, final boolean bringToFront, final int messageType, final String titleCode, final String messageCode, final String[] buttons, final Object... args) {
         final ResourceMap mainMap = getResourceMap();
         final Object[] objects = new Object[buttons.length];
         for (int i = 0; i < buttons.length; i++) {
@@ -169,8 +164,9 @@ public class Swinger {
             objects[i] = s;
         }
         final Frame frame = getActiveFrame();
-        bringToFront(frame, true);
-        Toolkit.getDefaultToolkit().beep();
+        if (bringToFront) {
+            bringToFront(frame, true);
+        }
         return JOptionPane.showOptionDialog(getActiveWindowComponent(), map.getString(messageCode, args), mainMap.getString(titleCode), JOptionPane.NO_OPTION, messageType, null, objects, objects[0]);
     }
 
@@ -213,6 +209,7 @@ public class Swinger {
 
     public static void inputFocus(final JComponent field) {
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 field.grabFocus();
                 field.requestFocus();
@@ -226,10 +223,8 @@ public class Swinger {
         column.setIdentifier(name);
         if (renderer != null)
             column.setCellRenderer(renderer);
-        //column.setHeaderValue(name);
         if (width != -1) {
             column.setPreferredWidth(width);
-            //column.setWidth(width);
         }
         if (minWidth != -1)
             column.setMinWidth(width);
@@ -274,8 +269,6 @@ public class Swinger {
         final ResourceMap map = getResourceMap();
         final ErrorInfo errorInfo = new ErrorInfo(map.getString(MESSAGE_ERROR_TITLE_CODE), (isMesssageResourceKey) ? map.getString(message) : message, null, "EDT Thread", e, Level.SEVERE, null);
         final JXErrorPane pane = new JXErrorPane();
-//        pane.setName("ErrorPane");
-//        map.injectComponents(pane);
         if (showErrorReporter)
             pane.setErrorReporter(new SubmitErrorReporter());
 
@@ -289,7 +282,6 @@ public class Swinger {
             return getActiveFrame();
         return window;
     }
-
 
     public static JComponent getTitleComponent(final String title) {
         return getTitleComponent(new JLabel(title));
@@ -311,7 +303,6 @@ public class Swinger {
         toolBar.setOpaque(false);
         toolBar.add(label, new GridBagConstraints(0, 0, 1, 2, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 4, 0, 2), 0, 0));
         toolBar.add(new JSeparator(SwingConstants.HORIZONTAL), new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(4, 0, 0, 0), 0, 0));
-//        toolBar.add(new JSeparator(SwingConstants.HORIZONTAL), new GridBagConstraints(1, 1, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
         return toolBar;
     }
 
@@ -350,59 +341,6 @@ public class Swinger {
         return frames.length > 0 ? frames[0] : null;
     }
 
-//    private static int showOptionDialog(Component parentComponent,
-//                                        Object message, String title, int optionType, int messageType,
-//                                        Icon icon, Object[] options, Object initialValue)
-//            throws HeadlessException {
-//        JOptionPane pane = new JOptionPane(message, messageType, optionType, icon, options, initialValue);
-//
-//        pane.setInitialValue(initialValue);
-//        pane.setComponentOrientation(((parentComponent == null) ?
-//                JOptionPane.getRootFrame() : parentComponent).getComponentOrientation());
-//
-//        final JDialog dialog = pane.createDialog(parentComponent, title);
-//
-//
-////        pane.getRootPane().getInputMap().put(SwingUtils.getKeyStroke(KeyEvent.VK_ENTER"), "smartEnterAction");
-////        pane.getRootPane().getActionMap().put("smartEnterAction", new AbstractAction() {
-////            public void actionPerformed(ActionEvent e) {
-////                final Component focusOwner = dialog.getFocusOwner();
-////                if (focusOwner instanceof AbstractButton) {
-////                    doButtonAction((AbstractButton) focusOwner, new ActionEvent(focusOwner, 0, "Enter"));
-////                }
-////            }
-////        });
-//
-//
-//        pane.selectInitialValue();
-//        dialog.setVisible(true);
-//        dialog.dispose();
-//
-//        Object selectedValue = pane.getValue();
-//
-//        if (selectedValue == null)
-//            return JOptionPane.CLOSED_OPTION;
-//        if (options == null) {
-//            if (selectedValue instanceof Integer)
-//                return (Integer) selectedValue;
-//            return JOptionPane.CLOSED_OPTION;
-//        }
-//        for (int counter = 0, maxCounter = options.length;
-//             counter < maxCounter; counter++) {
-//            if (options[counter].equals(selectedValue))
-//                return counter;
-//        }
-//        return JOptionPane.CLOSED_OPTION;
-//    }
-//
-//    private static void doButtonAction(final AbstractButton button, final ActionEvent actionEvent) {
-//        button.doClick();
-//        final Action action = button.getAction();
-//        if (action != null && action.isEnabled())
-//            action.actionPerformed(actionEvent);
-//    }
-//
-
     public static int[] getSelectedRows(final JTable table) {
         final int[] ints = table.getSelectedRows();
 
@@ -421,7 +359,6 @@ public class Swinger {
 
     }
 
-
     public static String getMessageFromException(ResourceMap map, Throwable cause) {
         final String localizedMessage = cause.getLocalizedMessage();
         final String msg;
@@ -439,7 +376,6 @@ public class Swinger {
         }
         return msg;
     }
-
 
     public static int convertRowIndexToView(JTable table, int row) {
         if (row <= -1 || row >= table.getModel().getRowCount())

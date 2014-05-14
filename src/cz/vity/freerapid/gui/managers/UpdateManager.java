@@ -2,6 +2,7 @@ package cz.vity.freerapid.gui.managers;
 
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.MainApp;
+import cz.vity.freerapid.core.QuietMode;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.CheckPluginUpdateTask;
 import cz.vity.freerapid.core.tasks.DownloadNewPluginsTask;
@@ -134,7 +135,8 @@ public class UpdateManager {
         }
 
         if (method == UserProp.PLUGIN_UPDATE_ASK_FOR_METHOD) {
-            final int res = Swinger.showOptionDialog(context.getResourceMap(), JOptionPane.QUESTION_MESSAGE, "informationMessage", "updatesFoundMessage", new String[]{"updateWithDetails", "updateNowButton", "updateCancel"});
+            final boolean bringToFront = !QuietMode.getInstance().isActive() || !QuietMode.getInstance().isDialogsDisabled();
+            final int res = Swinger.showOptionDialog(context.getResourceMap(), bringToFront, JOptionPane.QUESTION_MESSAGE, "informationMessage", "updatesFoundMessage", new String[]{"updateWithDetails", "updateNowButton", "updateCancel"});
             if (res == 0)
                 method = UserProp.PLUGIN_UPDATE_METHOD_DIALOG;
             else if (res == 1)
@@ -162,6 +164,7 @@ public class UpdateManager {
         final MainApp app = (MainApp) context.getApplication();
         if (startAutomatically) {
             SwingUtilities.invokeLater(new Runnable() {
+                @Override
                 public void run() {
                     dialog.okBtnAction();
                 }
@@ -278,6 +281,5 @@ public class UpdateManager {
     private static String getUniqueId(String id, String version) {
         return id + '@' + version;
     }
-
 
 }

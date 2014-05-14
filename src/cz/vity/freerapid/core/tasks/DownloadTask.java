@@ -2,6 +2,7 @@ package cz.vity.freerapid.core.tasks;
 
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.MainApp;
+import cz.vity.freerapid.core.QuietMode;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.gui.FRDUtils;
 import cz.vity.freerapid.gui.managers.TaskServiceManager;
@@ -113,7 +114,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         final long freeSpace = f.getUsableSpace();
         logger.info("Free space on disk: " + freeSpace);
         final int minDiskSpace = AppPrefs.getProperty(UserProp.MIN_DISK_SPACE, UserProp.MIN_DISK_SPACE_DEFAULT);
-        if (freeSpace < fileSize + (minDiskSpace * 1024 * 1024L) - (f.exists() ? f.length():0)) { //+ 30MB
+        if (freeSpace < fileSize + (minDiskSpace * 1024 * 1024L) - (f.exists() ? f.length() : 0)) { //+ 30MB
             if (f.exists() && f.length() == 0) {
                 if (!f.delete()) {
                     logger.warning("Cannot delete temporary file");
@@ -260,14 +261,11 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                 } else {
                     logger.info("File downloading was terminated");
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 throw e;
-            }
-            catch (Throwable e) {
+            } catch (Throwable e) {
                 throw new IOException("ErrorDuringDownload", e);
-            }
-            finally {
+            } finally {
                 closeFileStream(fileOutputStream);
                 checkDeleteTempFile();
                 if (!wasInterrupted(downloadFile.getStoreFile()) && cos != null) {
@@ -275,8 +273,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                     downloadFile.setDownloaded(downloadFile.getRealDownload());
                 }
             }
-        }
-        finally {
+        } finally {
             closeFileStream(fileOutputStream);
             checkDeleteTempFile();
         }
@@ -500,7 +497,8 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     }
 
     private int showFileAlreadyExistsDialog() {
-        return Swinger.showOptionDialog(getResourceMap(), JOptionPane.QUESTION_MESSAGE, "errorMessage", "fileAlreadyExists", new String[]{"renameFile", "overWriteFile", "skipFile"}, downloadFile.getOutputFile());
+        final boolean bringToFront = !QuietMode.getInstance().isActive() || !QuietMode.getInstance().isDialogsDisabled();
+        return Swinger.showOptionDialog(getResourceMap(), bringToFront, JOptionPane.QUESTION_MESSAGE, "errorMessage", "fileAlreadyExists", new String[]{"renameFile", "overWriteFile", "skipFile"}, downloadFile.getOutputFile());
     }
 
     private void setCompleted() {

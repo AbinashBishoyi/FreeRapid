@@ -51,7 +51,11 @@ public class Sound {
     }
 
     public static void playSound(final String clip) {
-        if (!QuietMode.getInstance().isSoundsDisabled() || !QuietMode.getInstance().isActive()) {
+        playSound(clip, true);
+    }
+
+    public static void playSound(final String clip, final boolean considerQuietMode) {
+        if (!considerQuietMode || (!QuietMode.getInstance().isSoundsDisabled() || !QuietMode.getInstance().isActive())) {
             final AudioClip audioClip = getCachedAudioClip(clip);
             if (audioClip == null)
                 logger.warning("Unable to load " + clip);

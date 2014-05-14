@@ -1,9 +1,6 @@
 package cz.vity.freerapid.swing;
 
-import cz.vity.freerapid.core.AppPrefs;
-import cz.vity.freerapid.core.FWProp;
-import cz.vity.freerapid.core.MainApp;
-import cz.vity.freerapid.core.UserProp;
+import cz.vity.freerapid.core.*;
 import cz.vity.freerapid.utilities.Utils;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.ResourceMap;
@@ -120,7 +117,6 @@ public class TrayIconSupport implements PropertyChangeListener {
             if (!toFront) {
                 // Set the iconified bit
                 state |= Frame.ICONIFIED;
-
                 // Iconify the frame
                 frame.setExtendedState(state);
             }
@@ -137,7 +133,6 @@ public class TrayIconSupport implements PropertyChangeListener {
     private PopupMenu buildPopmenu(final MainApp app, ResourceMap map) {
         PopupMenu popup = new PopupMenu();
 
-        //final Action quitAction = actionMap.get("quit");
         MenuItem defaultItem = new MenuItem(map.getString("trayQuit"));
         MenuItem restoreItem = new MenuItem(map.getString("trayRestore"));
 
@@ -150,6 +145,15 @@ public class TrayIconSupport implements PropertyChangeListener {
             }
         });
 
+        final CheckboxMenuItem quietMode = new CheckboxMenuItem(map.getString("quietModeActionTray"));
+        quietMode.setState(QuietMode.getInstance().isEnabled());
+        quietMode.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                final boolean b = quietMode.getState();
+                QuietMode.getInstance().setEnabled(b);
+            }
+        });
+
         final CheckboxMenuItem hideWhenMinimizedItem = new CheckboxMenuItem(map.getString("trayHideWhenMinimized"));
         hideWhenMinimizedItem.setState(AppPrefs.getProperty(FWProp.MINIMIZE_TO_TRAY, false));
 
@@ -159,6 +163,8 @@ public class TrayIconSupport implements PropertyChangeListener {
                     hideWhenMinimizedItem.setState(AppPrefs.getProperty(FWProp.MINIMIZE_TO_TRAY, false));
                 } else if (UserProp.CLIPBOARD_MONITORING.equals(evt.getKey())) {
                     clipboardMonitoring.setState(AppPrefs.getProperty(UserProp.CLIPBOARD_MONITORING, UserProp.CLIPBOARD_MONITORING_DEFAULT));
+                } else if (UserProp.QUIET_MODE_ENABLED.equals(evt.getKey())) {
+                    quietMode.setState(QuietMode.getInstance().isEnabled());
                 }
             }
         });
@@ -189,6 +195,7 @@ public class TrayIconSupport implements PropertyChangeListener {
         popup.add(restoreItem);
         popup.addSeparator();
         popup.add(clipboardMonitoring);
+        popup.add(quietMode);
         popup.addSeparator();
         popup.add(hideWhenMinimizedItem);
         popup.addSeparator();
@@ -240,4 +247,5 @@ public class TrayIconSupport implements PropertyChangeListener {
             trayIcon.setImage(iconImage);
         }
     }
+
 }
