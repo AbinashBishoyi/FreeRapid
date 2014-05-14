@@ -53,29 +53,46 @@ Rùzné:
  - Drag&Drop URL adres
 -  jednoduché rozhraní pro programování aplikací (API) pro pøidání dalších služeb jako pluginy
 
-V souèasné dobì jsou podporovány následující služby:
- -  Rapidshare.com (+ premium úèet)
- -  MegaUpload.com
- -  Megarotic.com and Sexuploader.com
- -  NetLoad.in
- -  MediaFire.com
- -  FileFactory.com
- -  Uploaded.to
- -  DepositFiles.com
- -  Share-online.biz
- -  Egoshare.com
- -  Easy-share.com
- -  XtraUpload.de
- -  Shareator.com
- -  SaveFile.com
- -  Load.to
- -  Iskladka.cz
- -  HellShare.com
- -  QuickShare.cz
- -  FlyShare.cz
- -  Edisk.cz
- -  Uloz.to
- -  Upnito.sk
+V souèasné dobì jsou podporovány následující služby (øazeno abecednì):
+
+ - 2shared.com                             - RapidShare.com
+ - 4shared.com                             - RapidShare.com premium
+ - badongo.com                             - rapidshare.de
+ - bagruj.cz                               - rapidshareuser
+ - bitroad.net                             - savefile.com
+ - cobrashare.sk                           - sendspace.com
+ - czshare.com                             - share-rapid
+ - czshare.com_profi                       - shareator.com
+ - dataup.de                               - shareonline.biz
+ - depositfiles.com                        - stream.cz
+ - easyshare.com                           - subory.sk
+ - edisk.cz                                - tinyurl.com
+ - egoshare.com                            - uloz.cz
+ - enterupload.com                         - uloz.to
+ - filebase.to                             - ulozisko.sk
+ - filefactory.com                         - ultrashare.net
+ - fileflyer.com                           - uploadbox.com
+ - filesend.net                            - uploaded.to
+ - flyshare.cz                             - uploading.com
+ - hellshare.com                           - uploadjockey.com
+ - hellshare.com_full                      - upnito.sk
+ - hotfile.com                             - uppit.com
+ - ifile.it                                - usercash.com
+ - indowebster.com                         - webshare.net
+ - iskladka.cz                             - wiiupload.net    
+ - jandown.com                             - wikiupload.com
+ - kewlshare.com                           - xtraupload.de
+ - leteckaposta.cz                         - yourfiles.biz
+ - letitbit.net                            - youtube.com
+ - linkbucks.com                           - ziddu.com
+ - load.to                                 - zippyshare.com
+ - mediafire.com                           - zshare.net
+ - megaupload.com
+ - nahraj.cz
+ - netload.in
+ - paid4share.com
+ - quickshare.cz
+ - radikal.ru
 
 Pozn.: Tento seznam nemusí být vždy aktuální - aktuální seznam lze nalézt na http://wordrider.net/freerapid
 

@@ -11,7 +11,7 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
-14th April 2009 - FreeRapid Downloader 0.82 released
+15th April 2009 - FreeRapid Downloader 0.82 released
   Added : many new plugins coming with 0.82 like Badongo.com, HotFile.com, WikiUpload.com, Paid4share.com,
           improved YouTube plugin, [thanks to all plugin developers] => 70 plugins for you!
   Added : Turkish translation [thanks to Ugur Karaman]

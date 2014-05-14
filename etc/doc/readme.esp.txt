@@ -36,22 +36,44 @@ Misc.:
  - Arrastrar y Soltar URLs
 
 Los serivicios soportados actualmente son:
- -  Rapidshare.com
- -  FileFactory.com
- -  Uploaded.to
- -  MegaUpload.com
- -  DepositFiles.com
- -  NetLoad.in
- -  Megarotic.com and Sexuploader.com
- -  Share-online.biz
- -  Egoshare.com
- -  Easy-share.com
- -  Letibit.net
- -  XtraUpload.de
- -  Shareator.com
- -  Load.to
- -  Iskladka.cz
- -  Uloz.t
+           - 2shared.com                             - RapidShare.com
+           - 4shared.com                             - RapidShare.com premium
+           - badongo.com                             - rapidshare.de
+           - bagruj.cz                               - rapidshareuser
+           - bitroad.net                             - savefile.com
+           - cobrashare.sk                           - sendspace.com
+           - czshare.com                             - share-rapid
+           - czshare.com_profi                       - shareator.com
+           - dataup.de                               - shareonline.biz
+           - depositfiles.com                        - stream.cz
+           - easyshare.com                           - subory.sk
+           - edisk.cz                                - tinyurl.com
+           - egoshare.com                            - uloz.cz
+           - enterupload.com                         - uloz.to
+           - filebase.to                             - ulozisko.sk
+           - filefactory.com                         - ultrashare.net
+           - fileflyer.com                           - uploadbox.com
+           - filesend.net                            - uploaded.to
+           - flyshare.cz                             - uploading.com
+           - hellshare.com                           - uploadjockey.com
+           - hellshare.com_full                      - upnito.sk
+           - hotfile.com                             - uppit.com
+           - ifile.it                                - usercash.com
+           - indowebster.com                         - webshare.net
+           - iskladka.cz                             - wiiupload.net
+           - jandown.com                             - wikiupload.com
+           - kewlshare.com                           - xtraupload.de
+           - leteckaposta.cz                         - yourfiles.biz
+           - letitbit.net                            - youtube.com
+           - linkbucks.com                           - ziddu.com
+           - load.to                                 - zippyshare.com
+           - mediafire.com                           - zshare.net
+           - megaupload.com
+           - nahraj.cz
+           - netload.in
+           - paid4share.com
+           - quickshare.cz
+           - radikal.ru
 
  II.    Requicitos del sistema
 =======================================
