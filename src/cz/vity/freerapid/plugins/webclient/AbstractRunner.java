@@ -61,6 +61,12 @@ public abstract class AbstractRunner implements PluginRunner {
     private boolean initialized = false;
 
     /**
+     * Referer
+     */
+
+    private String referer;
+
+    /**
      * Constructs a new AbstractRunner.
      */
     public AbstractRunner() {
@@ -167,6 +173,7 @@ public abstract class AbstractRunner implements PluginRunner {
      * @see org.apache.commons.httpclient.HttpStatus#SC_OK
      */
     protected boolean makeRequest(HttpMethod method) throws IOException {
+        referer = method.getURI().toString();
         return client.makeRequest(method, false) == HttpStatus.SC_OK;
     }
 
@@ -180,6 +187,7 @@ public abstract class AbstractRunner implements PluginRunner {
      * @see org.apache.commons.httpclient.HttpStatus#SC_OK
      */
     protected boolean makeRedirectedRequest(HttpMethod method) throws IOException {
+        referer = method.getURI().toString();
         return client.makeRequest(method, true) == HttpStatus.SC_OK;
     }
 
@@ -233,7 +241,7 @@ public abstract class AbstractRunner implements PluginRunner {
      * @since 0.82
      */
     protected MethodBuilder getMethodBuilder() throws BuildMethodException {
-        return new MethodBuilder(client).setBaseURL(getBaseURL());
+        return new MethodBuilder(client).setBaseURL(getBaseURL()).setReferer(referer);
     }
 
     /**
