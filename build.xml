@@ -164,10 +164,8 @@
         </javac>
 
         <mkdir dir="${build.tests}"/>
-        <javac srcdir="${src.tests}" destdir="${build.tests}" classpathref="cp" optimize="on" target="1.6">
-            <classpath location="${classes.dir}">
-
-            </classpath>
+        <javac srcdir="${src.tests}" destdir="${build.tests}" classpathref="cp" optimize="false" target="1.6">
+            <classpath location="${classes.dir}"/>
         </javac>
 
         <!-- zkopirovani resourcu -->
@@ -220,6 +218,13 @@
 
 
     <target name="tests" depends="compile">
+        <copy todir="${build.tests}">
+            <fileset dir="${src.tests}">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+
         <mkdir dir="${reports.tests}"/>
         <junit printsummary="yes" haltonfailure="yes">
             <classpath>
