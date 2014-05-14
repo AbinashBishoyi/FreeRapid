@@ -18,11 +18,8 @@ import cz.vity.freerapid.plugins.webclient.FileState;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
 import cz.vity.freerapid.plugins.webclient.interfaces.MaintainQueueSupport;
 import cz.vity.freerapid.swing.Swinger;
-import cz.vity.freerapid.swing.binding.MyPreferencesAdapter;
 import cz.vity.freerapid.utilities.FileUtils;
 import cz.vity.freerapid.utilities.Utils;
-import cz.vity.freerapid.utilities.os.SystemCommander;
-import cz.vity.freerapid.utilities.os.SystemCommanderFactory;
 import org.apache.commons.httpclient.URIException;
 import org.jdesktop.application.AbstractBean;
 import org.jdesktop.application.Application;
@@ -169,33 +166,8 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                 }
             }
         });
-
-        initStandbyPrevention();
     }
 
-    private void initStandbyPrevention() {
-        final SystemCommander commander = SystemCommanderFactory.getInstance().getSystemCommanderInstance(context);
-        MyPreferencesAdapter preferencesAdapter = new MyPreferencesAdapter(UserProp.PREVENT_STANDBY_WHILE_DOWNLOADING, UserProp.PREVENT_STANDBY_WHILE_DOWNLOADING_DEFAULT);
-        PropertyAdapter<DataManager> propertyAdapter = new PropertyAdapter<DataManager>(this, DATA_CHANGED_PROPERTY, true);
-        DelayedReadValueModel delayedReadValueModel = new DelayedReadValueModel(propertyAdapter, 200, true);
-        final PropertyChangeListener pcl = new PropertyChangeListener() {
-            private boolean lastState = false;
-
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                final boolean newState =
-                        AppPrefs.getProperty(UserProp.PREVENT_STANDBY_WHILE_DOWNLOADING, UserProp.PREVENT_STANDBY_WHILE_DOWNLOADING_DEFAULT)
-                                && !checkAllComplete();
-                if (newState != lastState) {
-                    lastState = newState;
-                    logger.fine("preventSystemStandby(" + newState + ")");
-                    commander.preventSystemStandby(newState);
-                }
-            }
-        };
-        preferencesAdapter.addValueChangeListener(pcl);
-        delayedReadValueModel.addValueChangeListener(pcl);
-    }
 
     public void addToQueue(List<DownloadFile> files) {
         synchronized (lock) {

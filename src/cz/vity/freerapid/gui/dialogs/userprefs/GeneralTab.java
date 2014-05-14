@@ -9,6 +9,7 @@ import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
 import cz.vity.freerapid.core.*;
 import cz.vity.freerapid.swing.Swinger;
+import cz.vity.freerapid.utilities.Utils;
 import cz.vity.freerapid.utilities.os.OSCommand;
 import cz.vity.freerapid.utilities.os.SystemCommander;
 import cz.vity.freerapid.utilities.os.SystemCommanderFactory;
@@ -155,6 +156,7 @@ public class GeneralTab extends UserPreferencesTab {
         checkAutoShutDownDisabledWhenExecuted.setName("checkAutoShutDownDisabledWhenExecuted");
         checkPreventStandbyWhileDownloading = new JCheckBox();
         checkPreventStandbyWhileDownloading.setName("checkPreventStandbyWhileDownloading");
+        checkPreventStandbyWhileDownloading.setEnabled(Utils.isWindows());
         JLabel labelIfFilenameExists = new JLabel();
         labelIfFilenameExists.setName("labelIfFilenameExists");
         comboFileExists = new JComboBox();

@@ -135,7 +135,7 @@ public class DownloadClient implements HttpDownloadClient {
         if (client.getParams().isParameterSet(DownloadClientConsts.USER_AGENT)) {
             method.setRequestHeader("User-Agent", client.getParams().getParameter(DownloadClientConsts.USER_AGENT).toString());
         } else
-            method.setRequestHeader("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.2.12) Gecko/20101026 Firefox/3.6.12");
+            method.setRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:7.0) Gecko/20100101 Firefox/7.0");
         method.setRequestHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         method.setRequestHeader("Accept-Language", "cs,en-us;q=0.7,en;q=0.3");
         method.setRequestHeader("Accept-Charset", "windows-1250,utf-8;q=0.7,*;q=0.7");

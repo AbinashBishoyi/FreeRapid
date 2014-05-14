@@ -24,7 +24,7 @@ monitorClipboardAction.Action.accelerator=F7
 UserPreferencesDialog.properties
 ===================================
 Added:
-checkPreventStandbyWhileDownloading.text=Prevent standby while downloading
+checkPreventStandbyWhileDownloading.text=Prevent standby while downloading (Windows only)
 
 alertsPanelQM.tab.title=Quiet Mode
 

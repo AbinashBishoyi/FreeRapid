@@ -70,6 +70,7 @@ public class ManagerDirector {
     private LinkStoreManager linkStoreManager;
 
     private SearchManager searchManager;
+    private SystemManager systemManager;
 
     static {
         // Fix for JDK 6 bug ICO vs WBMP
@@ -130,6 +131,7 @@ public class ManagerDirector {
         this.clipboardMonitorManager = new ClipboardMonitorManager(context, this);
 
         this.inputDataManager.initProcessManager();
+        this.systemManager = new SystemManager(this, context);
 
         linkStoreManager = new LinkStoreManager(this, context);
 
@@ -224,5 +226,9 @@ public class ManagerDirector {
 
     public SearchManager getSearchManager() {
         return searchManager;
+    }
+
+    public SystemManager getSystemManager() {
+        return systemManager;
     }
 }

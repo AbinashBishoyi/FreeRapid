@@ -15,7 +15,7 @@ public class Consts {
     /**
      * Version
      */
-    public static final String VERSION = "0.85u1";
+    public static final String VERSION = "0.86";
 
     /**
      * verze a jmeno programu
@@ -83,7 +83,7 @@ public class Consts {
     /**
      * version of API
      */
-    public static final String APIVERSION = "0.851";
+    public static final String APIVERSION = "0.852";
     public static final String PLUGINSSTATUS_URL = "http://wordrider.net/freerapid/plugins.html";
     public static final String SEARCH_ENGINES_URL = "https://addons.mozilla.org/en-US/firefox/search-engines/";
 

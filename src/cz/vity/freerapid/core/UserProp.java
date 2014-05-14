@@ -357,7 +357,7 @@ final public class UserProp {
     public static final boolean QUIET_MODE_PLAY_SOUND_ON_ACTIVATE_DEFAULT = false;
 
     public static final String PREVENT_STANDBY_WHILE_DOWNLOADING = "preventStandbyWhileDownloading";
-    public static final boolean PREVENT_STANDBY_WHILE_DOWNLOADING_DEFAULT = true;
+    public static final boolean PREVENT_STANDBY_WHILE_DOWNLOADING_DEFAULT = false;
 
 }
 
