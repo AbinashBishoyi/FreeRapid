@@ -37,6 +37,22 @@ public interface ShareDownloadService {
     boolean supportsRunCheck();
 
     /**
+     * This method is called before method run() and it's called only once after plugin initialization.<br />
+     * Here you should make things needed necessary to run only once (like CAPTCHA recognition etc.).
+     *
+     * @since 0.83
+     */
+    void pluginInit();
+
+    /**
+     * This method is called when plugin is unloaded from main program. <br />
+     * Here you should free allocated resources in plugin.
+     *
+     * @since 0.83
+     */
+    void pluginStop();
+
+    /**
      * Returns small icon (16x16) that represents service on the web
      *
      * @return small icon, null if there is no associated icon

@@ -203,15 +203,15 @@ public class MainApp extends SingleXFrameApplication {
         Thread.currentThread().setUncaughtExceptionHandler(eh);
     }
 
-    @Override
-    protected void injectSessionProperties() {
-        super.injectSessionProperties();
+//    @Override
+//    protected void injectSessionProperties() {
+//        super.injectSessionProperties();
 //        SessionStorage storage = getContext().getSessionStorage();
 //        storage.putProperty(JXStatusBar.class, new StorageProperties.XStatusBarProperty());
 //        storage.putProperty(JToolBar.class, new StorageProperties.JToolbarProperty());
 //        storage.putProperty(JXMultiSplitPane.class, new StorageProperties.XMultipleSplitPaneProperty());
 //        new StorageProperties().registerPersistenceDelegates();
-    }
+//    }
 
     /**
      * Vraci komponentu hlavniho panelu obsahujici dalsi komponenty

@@ -192,7 +192,6 @@ public abstract class SingleXFrameApplication extends SingleFrameApplication {
 
     @Override
     public void show(JFrame c) {
-        c.setSize(0, 0);
         super.show(c);
         final Point onScreen = c.getLocationOnScreen();
         final int x = Math.max(0, onScreen.x);
@@ -230,6 +229,7 @@ public abstract class SingleXFrameApplication extends SingleFrameApplication {
         JXFrame xFrame = new JXFrame();
         ApplicationContext appContext = getContext();
         String title = appContext.getResourceMap().getString("Application.title");
+        xFrame.setStartPosition(JXFrame.StartPosition.Manual);
         xFrame.setTitle(title);
         xFrame.setName("mainFrame");
         return xFrame;

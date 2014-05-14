@@ -549,8 +549,6 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         if (!AppPrefs.getProperty(UserProp.SHOW_COMPLETED, true)) {
             rowSorter.setRowFilter(new StateFilter());
         } else rowSorter.setRowFilter(null);
-
-
     }
 
     private boolean isCancelledExisting() {
@@ -714,13 +712,14 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         table.setEditable(false);
         table.setColumnControlVisible(true);
         table.setColumnSelectionAllowed(false);
-        table.setSortable(false);
+        table.setSortable(AppPrefs.getProperty(UserProp.TABLE_SORTABLE, UserProp.TABLE_SORTABLE_DEFAULT));
         //table.setColumnMargin(10);
         final WinampMoveStyle w = new WinampMoveStyle();
         table.addMouseListener(w);
         table.addMouseMotionListener(w);
         table.setUpdateSelectionOnSort(false);
         table.setSortsOnUpdates(false);
+
 
         table.setTransferHandler(new URLTransferHandler(director) {
             @Override

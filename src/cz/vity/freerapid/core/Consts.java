@@ -15,7 +15,7 @@ public class Consts {
     /**
      * Version
      */
-    public static final String VERSION = "0.83 RC2";
+    public static final String VERSION = "0.83";
 
     /**
      * verze a jmeno programu
@@ -83,7 +83,7 @@ public class Consts {
     /**
      * version of API
      */
-    public static final String APIVERSION = "0.82";
+    public static final String APIVERSION = "0.83";
 
     /**
      * Od teto tridy se nebudou delat zadne instance

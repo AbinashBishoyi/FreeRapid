@@ -269,7 +269,7 @@ class TextActions extends AbstractBean {
     }
 
     public void setSelectAllEnabled(boolean selectAllEnabled) {
-        boolean oldValue = this.selectAllEnabled;
+        final boolean oldValue = this.selectAllEnabled;
         this.selectAllEnabled = selectAllEnabled;
         firePropertyChange("selectAllEnabled", oldValue, this.selectAllEnabled);
     }

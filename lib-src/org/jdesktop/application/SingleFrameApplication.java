@@ -79,7 +79,7 @@ import java.util.logging.Logger;
  */
 public abstract class SingleFrameApplication extends Application {
     private static final Logger logger = Logger.getLogger(SingleFrameApplication.class.getName());
-    private ResourceMap appResources = null;
+    //  private ResourceMap appResources = null;
 
     /**
      * Return the JFrame used to show this application.
@@ -166,7 +166,7 @@ public abstract class SingleFrameApplication extends Application {
         getContext().getResourceMap().injectComponents(root);
     }
 
-    private void initRootPaneContainer(RootPaneContainer c) {
+    protected void initRootPaneContainer(RootPaneContainer c) {
         JComponent rootPane = c.getRootPane();
         // These initializations are only done once
         Object k = "SingleFrameApplication.initRootPaneContainer";
@@ -193,16 +193,13 @@ public abstract class SingleFrameApplication extends Application {
             root.addComponentListener(new FrameBoundsListener());
         }
         // If the window's size doesn't appear to have been set, do it
-        if ((root instanceof Window) && ((root.getWidth() == 0) || (root.getHeight() == 0))) {
+        if (root instanceof Window) {
             Window window = (Window) root;
             window.pack();
             if (!window.isLocationByPlatform()) {
                 Component owner = (c != mainFrame) ? mainFrame : null;
                 window.setLocationRelativeTo(owner);  // center the window
             }
-        }
-        // Restore session state
-        if (root instanceof Window) {
             String filename = sessionFilename((Window) root);
             if (filename != null) {
                 try {
@@ -330,7 +327,7 @@ public abstract class SingleFrameApplication extends Application {
         catch (Exception ignore) {
         }
         if (getWindowsM != null) {
-            Window[] windows = null;
+            Window[] windows;
             try {
                 windows = (Window[]) getWindowsM.invoke(null);
             }

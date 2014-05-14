@@ -58,10 +58,12 @@ public final class AppPrefs {
                 LogUtils.processException(logger, e);
             }
         }
-        final String blindMode = System.getProperty("javax.accessibility.assistive_technologies", null);
-        if (blindMode != null) {
-            storeProperty(UserProp.BLIND_MODE, true);
-            storeProperty(UserProp.PLUGIN_UPDATE_METHOD, UserProp.PLUGIN_UPDATE_METHOD_AUTO);
+        if (!getProperty(UserProp.IGNORE_BLIND_MODE, UserProp.IGNORE_BLIND_MODE_DEFAULT)) {
+            final String blindMode = System.getProperty("javax.accessibility.assistive_technologies", null);
+            if (blindMode != null) {
+                logger.info("Detecting blindMode " + blindMode);
+                storeProperty(UserProp.BLIND_MODE, true);
+            }
         }
         if (!properties.isEmpty()) {
             for (Map.Entry<String, String> entry : properties.entrySet()) {

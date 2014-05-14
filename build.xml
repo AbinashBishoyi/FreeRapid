@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <project name="FreeRapid Downloader" default="all" basedir=".">
     <property name="application" value="FreeRapid"/>
-    <property name="version" value="0.83-rc2"/>
+    <property name="version" value="0.83"/>
     <property name="version.name" value="${application}-${version}"/>
     <property name="mainclass" value="cz.vity.freerapid.core.MainApp"/>
     <property name="mainjar.file" value="frd.jar"/>
@@ -127,7 +127,7 @@
         <copy todir="${build.dir}/${lib.dir}">
             <fileset dir="${lib.dir}" includes="**/*"/>
         </copy>
-        <jar jarfile="${build.dir}/${lib.dir}/languages.jar" compress="false">
+        <jar jarfile="${build.dir}/${lib.dir}/languages.jar" compress="true">
             <manifest>
                 <attribute name="Build-Date" value="${TODAY}"/>
             </manifest>

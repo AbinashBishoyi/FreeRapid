@@ -48,7 +48,7 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
     }
 
     @Override
-    protected void doStart() throws Exception {
+    final protected void doStart() throws Exception {
         final PluginDescriptor desc = this.getDescriptor();
         final PluginAttribute attribute = desc.getAttribute("urlRegex");
         pattern = Pattern.compile(attribute.getValue(), Pattern.CASE_INSENSITIVE);
@@ -68,12 +68,22 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
                 }
             }
         }
+        pluginInit();
+    }
+
+    @Override
+    public void pluginInit() {
 
     }
 
     @Override
-    protected void doStop() throws Exception {
+    public void pluginStop() {
 
+    }
+
+    @Override
+    final protected void doStop() throws Exception {
+        pluginStop();
     }
 
     @Override

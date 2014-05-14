@@ -42,6 +42,9 @@ public class UpdateManager {
     public UpdateManager(ManagerDirector director, ApplicationContext context) {
         this.director = director;
         this.context = context;
+        if (AppPrefs.getProperty(UserProp.BLIND_MODE, UserProp.BLIND_MODE_DEFAULT)) {
+            AppPrefs.storeProperty(UserProp.PLUGIN_UPDATE_METHOD, UserProp.PLUGIN_UPDATE_METHOD_AUTO);
+        }
         initListeners();
         initUpdateTimer();
     }

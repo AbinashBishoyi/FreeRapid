@@ -141,7 +141,7 @@ public class ProcessManager extends Thread {
             } else {
                 if (forceDownload)
                     return true;
-                final int maxDownloads = AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT);
+                final int maxDownloads = Math.min(AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT), ClientManager.MAX_DOWNLOADING);
                 return maxDownloads > downloading;
             }
         }
