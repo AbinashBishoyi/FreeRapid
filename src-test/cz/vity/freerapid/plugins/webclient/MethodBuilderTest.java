@@ -12,6 +12,7 @@ import org.junit.Test;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -28,6 +29,7 @@ public class MethodBuilderTest {
         content = Utils.loadFile(new File(uri));
         client = new DownloadClient();
         client.initClient(new ConnectionSettings());
+        Locale.setDefault(new Locale("CS", "CZ"));
     }
 
     @Test
