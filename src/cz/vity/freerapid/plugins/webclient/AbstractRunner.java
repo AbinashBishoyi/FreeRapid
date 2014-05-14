@@ -343,6 +343,16 @@ public abstract class AbstractRunner implements PluginRunner {
     }
 
     /**
+     * Set up allowed content types which identifies file streams.
+     * @param allowedContentType content types - e.g.: "text/plain", "application/xml"
+     * @param forbiddenContentTypes - do not consider this content types as file streams
+     * @since 0.85
+     */
+    protected void setFileStreamContentTypes(String[] allowedContentType, String[] forbiddenContentTypes) {
+        setClientParameter(DownloadClientConsts.FILE_STREAM_RECOGNIZER, new DefaultFileStreamRecognizer(allowedContentType, forbiddenContentTypes, false));
+    }
+
+    /**
      * Method uses given method parameter to connect to the server and tries to download.<br />
      * Method updates download state of HttpFile automatically - sets <code>DownloadState.GETTING</code> and then <code>DownloadState.DOWNLOADING</code>
      *

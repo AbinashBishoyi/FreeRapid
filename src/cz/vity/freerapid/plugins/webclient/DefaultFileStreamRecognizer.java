@@ -21,10 +21,12 @@ import java.util.logging.Logger;
 public class DefaultFileStreamRecognizer implements FileStreamRecognizer {
     private final static Logger logger = Logger.getLogger(DefaultFileStreamRecognizer.class.getName());
     private final String[] allowedValues;
+    private final String[] forbiddenValues;
     private final boolean exactMatch;
 
     public DefaultFileStreamRecognizer() {
         allowedValues = new String[0];
+        forbiddenValues = new String[0];
         exactMatch = false;
     }
 
@@ -34,8 +36,19 @@ public class DefaultFileStreamRecognizer implements FileStreamRecognizer {
      * @param exactMatch whether only <code>allowedValues</code> should be considered as file stream
      */
     public DefaultFileStreamRecognizer(String[] allowedValues, boolean exactMatch) {
+        this(allowedValues, new String[0], exactMatch);
+    }
+
+    /**
+     * Constructor
+     * @param allowedValues allowed values for content type identifying filestream. One of allowed value can be NULL.
+     * @param forbiddenValues whether only <code>forbiddenValues</code> should NOT be considered as file stream. One of allowed value can be NULL.
+     * @param exactMatch whether only <code>allowedValues</code> should be considered as file stream
+     */
+    public DefaultFileStreamRecognizer(String[] allowedValues, String[] forbiddenValues, boolean exactMatch) {
         this.allowedValues = allowedValues;
         this.exactMatch = exactMatch;
+        this.forbiddenValues = forbiddenValues;
     }
 
     public boolean isStream(HttpMethod method, boolean showWarnings) {
@@ -65,6 +78,20 @@ public class DefaultFileStreamRecognizer implements FileStreamRecognizer {
                 }
             }
         }
+        for (String s : forbiddenValues) {
+            if (s == null) {
+                if (value == null) {
+                    return false;
+                }
+            } else {
+                if (value != null) {
+                    s = s.toLowerCase(Locale.ENGLISH);
+                    if (value.startsWith(s)) {
+                        return false;
+                    }
+                }
+            }
+        }
         if (found) {
             return true;
         } else if (exactMatch) {
@@ -76,8 +103,11 @@ public class DefaultFileStreamRecognizer implements FileStreamRecognizer {
         if (contentType == null || value == null) {
             return false;
         } else {
-            boolean stream = true;
+            if (isApplicationXML(value)) {
+                return false;
+            }
             final boolean isImage = value.startsWith("image/");
+            boolean stream = true;
             final boolean isAudioVideo = value.startsWith("audio/") || value.startsWith("video/");
             if (!value.startsWith("application/") && !isImage && !isAudioVideo) {
                 stream = false;
@@ -91,5 +121,9 @@ public class DefaultFileStreamRecognizer implements FileStreamRecognizer {
 
     protected Header getContentType(HttpMethod method) {
         return method.getResponseHeader("Content-Type");
+    }
+
+    private static boolean isApplicationXML(String value) {
+        return value.startsWith("application/") && value.lastIndexOf("xml") > 0;
     }
 }
