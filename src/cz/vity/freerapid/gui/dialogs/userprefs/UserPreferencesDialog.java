@@ -27,8 +27,8 @@ import org.jdesktop.swinghelper.buttonpanel.JXButtonPanel;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
 /**
@@ -39,7 +39,7 @@ public class UserPreferencesDialog extends AppDialog {
     private static final Logger logger = Logger.getLogger(UserPreferencesDialog.class.getName());
     private static final String CARD_PROPERTY = "card";
     private final ManagerDirector managerDirector;
-    private final List<UserPreferencesTab> tabs = new LinkedList<UserPreferencesTab>();
+    private final HashMap<Card, UserPreferencesTab> tabs = new LinkedHashMap<Card, UserPreferencesTab>();
     private MyPresentationModel model;
     private Trigger trigger;
     private boolean updateQueue = false;
@@ -124,9 +124,7 @@ public class UserPreferencesDialog extends AppDialog {
         final javax.swing.Action actionOK = map.get("okBtnAction");
         PropertyConnector connector = PropertyConnector.connect(model, PresentationModel.PROPERTYNAME_BUFFERING, actionOK, "enabled");
         connector.updateProperty2();
-        for (final UserPreferencesTab tab : tabs) {
-            tab.init();
-        }
+
         setAction(btnOK, "okBtnAction");
         setAction(btnCancel, "cancelBtnAction");
     }
@@ -149,6 +147,12 @@ public class UserPreferencesDialog extends AppDialog {
 
     void showCard(Card card) {
         assert card != null;
+        final UserPreferencesTab tab = tabs.get(card);
+        if (!tab.isInitialized()) {
+            tab.init();
+            tab.setInitialized(true);
+        }
+        
         final CardLayout cardLayout = (CardLayout) panelCard.getLayout();
         cardLayout.show(panelCard, card.toString());
         AppPrefs.storeProperty(FWProp.USER_SETTINGS_SELECTED_CARD, card.toString());
@@ -185,8 +189,10 @@ public class UserPreferencesDialog extends AppDialog {
     public void okBtnAction() {
         if (!validated())
             return;
-        for (final UserPreferencesTab tab : tabs) {
-            tab.apply();
+        for (final UserPreferencesTab tab : tabs.values()) {
+            if (tab.isInitialized()) {
+                tab.apply();
+            }
         }
         trigger.triggerCommit();
         if (updateQueue)
@@ -195,7 +201,10 @@ public class UserPreferencesDialog extends AppDialog {
     }
 
     private boolean validated() {
-        for (final UserPreferencesTab tab : tabs) {
+        for (final UserPreferencesTab tab : tabs.values()) {
+            if (!tab.isInitialized()) {
+                continue;
+            }
             if (!tab.validated()) {
                 return false;
             }
@@ -205,8 +214,10 @@ public class UserPreferencesDialog extends AppDialog {
 
     @Action
     public void cancelBtnAction() {
-        for (final UserPreferencesTab tab : tabs) {
-            tab.cancel();
+        for (final UserPreferencesTab tab : tabs.values()) {
+            if (tab.isInitialized()) {
+                tab.cancel();
+            }
         }
         doClose();
     }
@@ -308,15 +319,16 @@ public class UserPreferencesDialog extends AppDialog {
                     final PluginsTab pluginsTab = new PluginsTab(this, managerDirector);
                     final MiscTab miscTab = new MiscTab(this);
 
-                    tabs.add(generalTab);
-                    tabs.add(connectionsTab);
-                    tabs.add(alertsTab);
-                    tabs.add(viewsTab);
-                    tabs.add(pluginsTab);
-                    tabs.add(miscTab);
-                    for (final UserPreferencesTab tab : tabs) {
+                    tabs.put(Card.CARD1, generalTab);
+                    tabs.put(Card.CARD2, connectionsTab);
+                    tabs.put(Card.CARD3, alertsTab);
+                    tabs.put(Card.CARD4, viewsTab);
+                    tabs.put(Card.CARD6, pluginsTab);
+                    tabs.put(Card.CARD5, miscTab);
+                    for (final UserPreferencesTab tab : tabs.values()) {
                         tab.build(cc);
                     }
+
 
                     panelCard.setLayout(new CardLayout());
                     panelCard.add(generalTab, "CARD1");

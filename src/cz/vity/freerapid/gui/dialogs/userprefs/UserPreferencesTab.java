@@ -20,6 +20,8 @@ public abstract class UserPreferencesTab extends JPanel {
     protected final UserPreferencesDialog dialog;
     protected final ResourceMap resourceMap;
     protected final ActionMap actionMap;
+    protected boolean initialized = false;
+
 
     protected UserPreferencesTab(final UserPreferencesDialog dialog) {
         this.dialog = dialog;
@@ -123,4 +125,11 @@ public abstract class UserPreferencesTab extends JPanel {
         Bindings.bind(combobox, inList);
     }
 
+    public boolean isInitialized() {
+        return initialized;
+    }
+
+    public void setInitialized(boolean initialized) {
+        this.initialized = initialized;
+    }
 }

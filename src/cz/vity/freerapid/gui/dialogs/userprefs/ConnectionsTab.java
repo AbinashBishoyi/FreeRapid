@@ -24,6 +24,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 
 /**
@@ -42,6 +44,13 @@ public class ConnectionsTab extends UserPreferencesTab {
     @Override
     public void init() {
         ValueModel valueModel = bind(checkUseProxyList, UserProp.USE_PROXY_LIST, UserProp.USE_PROXY_LIST_DEFAULT);
+
+        checkUseProxyList.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Checked");
+            }
+        });
         PropertyConnector.connectAndUpdate(valueModel, fieldProxyListPath, "enabled");
         PropertyConnector.connectAndUpdate(valueModel, btnProxyListPathSelect, "enabled");
 
