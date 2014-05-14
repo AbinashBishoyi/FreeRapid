@@ -24,7 +24,7 @@ public class FileTypeIconProvider {
     private final static Logger logger = Logger.getLogger(FileTypeIconProvider.class.getName());
 
     private final static Pattern fileExtensionPattern = Pattern.compile("[\\.\\-_]([a-z\\d]+?)$");
-    private final static Pattern fileNamePattern = Pattern.compile("/([^/]*?(\\.|-)(zip|rar|avi|wmv|mp3?|srt|sub|apk))\\.html?", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+    private final static Pattern fileNamePattern = Pattern.compile("/([^/]*?(\\.|-)(zip|rar|avi|wmv|mp\\d?|srt|sub|apk))\\.html?", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
     private final static Pattern encodedPattern = Pattern.compile("%[A-Z0-9]{2}%");
 
     private final Map<String, Icon> systemIcons = new ConcurrentHashMap<String, Icon>();
