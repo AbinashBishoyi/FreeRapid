@@ -3,7 +3,7 @@ package cz.vity.freerapid.gui.actions;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
-import cz.vity.freerapid.gui.dialogs.UserPreferencesDialog;
+import cz.vity.freerapid.gui.dialogs.userprefs.UserPreferencesDialog;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.os.OSCommand;
