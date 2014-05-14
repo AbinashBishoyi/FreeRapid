@@ -134,8 +134,9 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         table.setColumnMargin(10);
         table.setRolloverEnabled(true);
 
-        if (AppPrefs.getProperty(UserProp.BIG_ICON_IN_HISTORY, UserProp.BIG_ICON_IN_HISTORY_DEFAULT))
+        if (!AppPrefs.getProperty(UserProp.SLIM_LINES_IN_HISTORY, UserProp.SLIM_LINES_IN_HISTORY_DEFAULT)) {
             table.setRowHeight(36);
+        }
         table.setShowGrid(true, false);
 
         table.setColumnSelectionAllowed(false);
@@ -912,7 +913,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
 
         public FileNameCellRenderer(FileTypeIconProvider iconProvider) {
             this.iconProvider = iconProvider;
-            this.bigIcon = AppPrefs.getProperty(UserProp.BIG_ICON_IN_HISTORY, UserProp.BIG_ICON_IN_HISTORY_DEFAULT);
+            this.bigIcon = !AppPrefs.getProperty(UserProp.SLIM_LINES_IN_HISTORY, UserProp.SLIM_LINES_IN_HISTORY_DEFAULT);
         }
 
 

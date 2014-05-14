@@ -124,8 +124,8 @@ final public class UserProp {
     public static final int REMOVE_COMPLETED_DOWNLOADS_IMMEDIATELY = 1;
     public static final int REMOVE_COMPLETED_DOWNLOADS_AT_STARTUP = 2;
 
-    public static final String BIG_ICON_IN_HISTORY = "historyBiggerLine";
-    public static final boolean BIG_ICON_IN_HISTORY_DEFAULT = true;
+    public static final String SLIM_LINES_IN_HISTORY = "historySlimLines";
+    public static final boolean SLIM_LINES_IN_HISTORY_DEFAULT = false;
 
     public static final String SHOW_PROGRESS_IN_PROGRESSBAR = "showPercentProgress";
     public static final boolean SHOW_PROGRESS_IN_PROGRESSBAR_DEFAULT = false;

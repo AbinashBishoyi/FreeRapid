@@ -10,6 +10,8 @@ removeCompletedAndDeletedAction.Action.smallIcon=${iconsPath}clean.png
 UserPreferencesDialog.properties
 ====================================
 New:
+checkSlimLinesInHistory.text=Show slim lines in History dialog
+
 priorityUpAction.Action.text=
 priorityUpAction.Action.shortDescription=Set higher plugin priority
 priorityUpAction.Action.smallIcon=${iconsPath}priority_up.gif

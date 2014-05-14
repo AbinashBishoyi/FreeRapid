@@ -693,6 +693,8 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         bind(checkForFileExistenceBeforeDownload, UserProp.TEST_FILE, UserProp.TEST_FILE_DEFAULT);
         bind(checkServiceAsIconOnly, UserProp.SHOW_SERVICES_ICONS, UserProp.SHOW_SERVICES_ICONS_DEFAULT);
 
+        bind(checkSlimLinesInHistory, UserProp.SLIM_LINES_IN_HISTORY, UserProp.SLIM_LINES_IN_HISTORY_DEFAULT);
+
         bind(checkRecheckFilesOnStart, UserProp.RECHECK_FILES_ON_START, UserProp.RECHECK_FILES_ON_START_DEFAULT);
 
         bind(checkPrepareFile, UserProp.ANTI_FRAGMENT_FILES, UserProp.ANTI_FRAGMENT_FILES_DEFAULT);
@@ -1102,9 +1104,11 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
         checkForFileExistenceBeforeDownload = new JCheckBox();
         checkServiceAsIconOnly = new JCheckBox();
-        checkServiceAsIconOnly = new JCheckBox();
         checkForFileExistenceBeforeDownload.setName("checkForFileExistenceBeforeDownload");
         checkServiceAsIconOnly.setName("checkServiceAsIconOnly");
+
+        checkSlimLinesInHistory = new JCheckBox();
+        checkSlimLinesInHistory.setName("checkSlimLinesInHistory");
 
         checkConfirmExiting.setName("checkConfirmExiting");
         checkConfirmFileDeletion.setName("checkConfirmFileDeletion");
@@ -1709,9 +1713,12 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                                             FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                                             FormFactory.PREF_COLSPEC,
                                             FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                            FormFactory.PREF_COLSPEC,
+                                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                                             new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
                                     },
                                     new RowSpec[]{
+                                            FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.DEFAULT_ROWSPEC,
                                             FormFactory.DEFAULT_ROWSPEC,
@@ -1733,6 +1740,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                             panelAppearanceBuilder.add(checkShowTitle, cc.xywh(3, 7, 7, 1));
                             panelAppearanceBuilder.add(checkShowToolbarText, cc.xywh(3, 8, 7, 1));
                             panelAppearanceBuilder.add(checkServiceAsIconOnly, cc.xywh(3, 9, 7, 1));
+                            panelAppearanceBuilder.add(checkSlimLinesInHistory, cc.xywh(3, 10, 7, 1));
                         }
 
                         //======== panel System tray ========
@@ -1991,6 +1999,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
     private JCheckBox checkProcessFromTop;
     private JCheckBox checkForFileExistenceBeforeDownload;
     private JCheckBox checkServiceAsIconOnly;
+    private JCheckBox checkSlimLinesInHistory;
 
     private JCheckBox checkRecheckFilesOnStart;
 
@@ -2073,6 +2082,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
     private static class PluginConnectionAllowedRenderer extends DefaultTableCellRenderer {
         // implements javax.swing.table.TableCellRenderer
+
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             if (value == null) {
@@ -2092,6 +2102,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         private final JSpinner spinner = new JSpinner();
 
         // Initializes the spinner.
+
         public SpinnerEditor() {
             final SpinnerNumberModel model = new SpinnerNumberModel();
             spinner.setModel(model);
@@ -2112,6 +2123,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         }
 
         // Prepares the spinner component and returns it.
+
         public Component getTableCellEditorComponent(JTable table, Object value,
                                                      boolean isSelected, int row, int column) {
             row = table.convertRowIndexToModel(row);
@@ -2134,12 +2146,14 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         }
 
         // Enables the editor only for double-clicks.
+
         public boolean isCellEditable(EventObject evt) {
             //return !(evt instanceof MouseEvent) || ((MouseEvent) evt).getClickCount() >= 1;
             return true;
         }
 
         // Returns the spinners current value.
+
         public Object getCellEditorValue() {
             return spinner.getValue();
         }

@@ -11,6 +11,8 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
+  Added : New action in Remove menu: "Remove Completed Links and Deleted Files"
+  Added : New user option: "Show slim lines in History dialog"
   Fixed : Problem with downloading txt files + using description, see http://wordrider.net/forum/read.php?7,4681,4696
 
  29th October 2009 - FreeRapid Downloader 0.83 Update 1
@@ -105,10 +107,10 @@ Fixed - indicates a bug fix
   Added : Greek translation [thanks to Spyros K.]
   Added : Arabic translation [thanks to Salah adel]
   Added : Dutch translation [thanks to mastermystery4ever]
-  Added : Croatian translation [thanks to Željko Mitroviæ]
-  Added : Slovenian translation [thanks to Tomaž Curk]
+  Added : Croatian translation [thanks to ï¿½eljko Mitroviï¿½]
+  Added : Slovenian translation [thanks to Tomaï¿½ Curk]
   Added : internal - plugin API - support for using SSL in plugins
-  Added : French version of readme.txt [thanks to Jean-François]
+  Added : French version of readme.txt [thanks to Jean-Franï¿½ois]
   Added : Information (fileinfo) dialog - allow to create non existing folder like in NewLinks dialog
   Added : czech user guide for Menu-Help (F1)
   Added : based on locale country flag for english translation
@@ -196,7 +198,7 @@ Fixed - indicates a bug fix
   Changed : automatic disabling connection if there are Connect exceptions - if there are more available connections
             then restart downloading (neccessary to set intern property disableConnectionOnException to value true)
   Changed : autoreconnect time bottom limit set to 1
-  Changed : UI - open folder (Ctrl+Enter) on file which hasn’t been yet downloaded  [requested by Tuiz] 
+  Changed : UI - open folder (Ctrl+Enter) on file which hasnï¿½t been yet downloaded  [requested by Tuiz] 
   Changed : UI - choose another file by right click [requested by Tuiz]
   Fixed : problem with connecting when proxies had a same port [reported by Peter, thanks]
   Fixed : MS Windows: FRD does not start minimized from Start Up shortcut  (=> added new switch -m to start FRD minimized)

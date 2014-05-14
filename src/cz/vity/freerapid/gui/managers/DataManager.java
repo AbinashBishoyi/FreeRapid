@@ -482,7 +482,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         synchronized (lock) {
             List<DownloadFile> toRemoveList = new LinkedList<DownloadFile>();
             for (DownloadFile file : downloadFiles) {
-                if (file.getState() == COMPLETED && !file.getOutputFile().exists()) {
+                if (file.getState() == COMPLETED && (file.getOutputFile() == null || !file.getOutputFile().exists())) {
                     toRemoveList.add(file);
                 }
             }
