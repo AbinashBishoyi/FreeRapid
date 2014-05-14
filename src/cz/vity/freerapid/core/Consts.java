@@ -15,7 +15,7 @@ public class Consts {
     /**
      * Version
      */
-    public static final String VERSION = "0.85alpha2";
+    public static final String VERSION = "0.85alpha3";
 
     /**
      * verze a jmeno programu
@@ -55,7 +55,7 @@ public class Consts {
      */
     public static final String WEBURL_SUBMIT_ERROR = "http://wordrider.net/posterror.php";
 
-    public static final int DEFAULT_RECENT_FILES_MAX_COUNT = 7;
+    //public static final int DEFAULT_RECENT_FILES_MAX_COUNT = 7;
 
     public static final String WEBURL_CHECKNEWVERSION = "http://wordrider.net/checkfrd.php";
 
