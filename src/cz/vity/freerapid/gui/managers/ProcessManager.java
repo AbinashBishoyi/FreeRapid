@@ -270,7 +270,7 @@ public class ProcessManager extends Thread {
 
         final HttpDownloadClient client;
         synchronized (downloadingLock) {
-            client = clientManager.popWorkingClient();
+            client = clientManager.popClient();
             setDownloading(downloading.intValue(), downloading.incrementAndGet());
             client.setConnectionTimeOut(AppPrefs.getProperty(UserProp.CONNECTION_TIMEOUT, UserProp.CONNECTION_TIMEOUT_DEFAULT));
             client.initClient(settings);
@@ -386,7 +386,7 @@ public class ProcessManager extends Thread {
                 downloadService.finishedDownloading(client);
             }
             synchronized (downloadingLock) {
-                clientManager.pushWorkingClient(client);
+                clientManager.pushClient();
                 setDownloading(downloading.intValue(), downloading.decrementAndGet());
             }
 

@@ -17,7 +17,10 @@ import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.ProxySelector;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -33,7 +36,6 @@ public class ClientManager {
     private final static Logger logger = Logger.getLogger(ClientManager.class.getName());
 
     private final List<ConnectionSettings> availableConnections = new ArrayList<ConnectionSettings>(2);
-    private Stack<HttpDownloadClient> workingClientsPool = new Stack<HttpDownloadClient>();
     private static final String PROXY_LIST_DEFAULT_PATH = new File(Utils.getAppPath(), "proxy.list").getAbsolutePath();
     public static final int MAX_DOWNLOADING = 10;
 
@@ -256,18 +258,17 @@ public class ClientManager {
         }
     }
 
-    public synchronized HttpDownloadClient popWorkingClient() {
+    public synchronized HttpDownloadClient popClient() {
         if (popCount.intValue() < MAX_DOWNLOADING) {
             popCount.incrementAndGet();
-            if (workingClientsPool.isEmpty()) {
-                return new DownloadClient();
-            } else return workingClientsPool.pop();
-        } else throw new IllegalStateException("Cannot pop more connections");
+            return new DownloadClient();
+        } else {
+            throw new IllegalStateException("Cannot pop more connections");
+        }
     }
 
-    public synchronized void pushWorkingClient(HttpDownloadClient client) {
+    public synchronized void pushClient() {
         popCount.decrementAndGet();
-        workingClientsPool.add(client);
     }
 
 //    private int getMaxDownloads() {
