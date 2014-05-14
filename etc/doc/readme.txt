@@ -14,7 +14,7 @@
 *      by Ladislav Vitasek aka Vity                          *
 *   Website/Forum/Bugtracker: http://wordrider.net/freerapid *
 *   Mail: info@wordrider.net - suggestions                   *
-*   Last change: 14th November 2010                          *
+*   Last change: 29th October 2011                           *
 **************************************************************
 
 =======================================
@@ -214,6 +214,9 @@ Always close FRD properly otherwise you can loose your file list (eg. Windows sh
 
 - Windows tray icon disappear when explorer.exe crashes
     X solution is unknown at this time
+
+- FRD's GUI looks crazy on some systems (probably because of graphics drivers, DX problems...)
+    X uncomment line #-DdecoratedFrames=false in startup.properties file
 
 - Splash screen blinks for some time on start - Windows
     X Solution is unknown at this time      

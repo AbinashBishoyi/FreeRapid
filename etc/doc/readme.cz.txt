@@ -12,10 +12,10 @@
 *                                                            *
 *                                                            *
 *     FreeRapid Downloader                                   *
-*      - Ladislav Vitásek alias Vity (c) 2008-2010           *
+*      - Ladislav Vitásek alias Vity (c) 2008-2011           *
 *Dom.stránka/Forum/Bugtracker: http://wordrider.net/freerapid*
 *E-Mail: info@wordrider.net - návrhy                         *
-*Poslední zmìna: 2010-11-14                                  *
+*Poslední zmìna: 2011-10-29                                  *
 **************************************************************
 
 Dùležité - než zaènete èíst dále!!!:
@@ -203,6 +203,8 @@ IV.    Známé problémy a omezení
     X jediným øešením tohoto problému by mohl být pøechod JRE na verzi 1.6.0_10-rc èi novìjší
 - Splash screen pøi startu na pár sekund bliká
     X øesení je prozatím neznámé
+- Nìkteøí uživatelé hlásili problém se zobrazením hlavního okna
+    X odkomentujte položku #-DdecoratedFrames=false
 - Nelze updatovat pluginy na Windows Vista/7 pokud je FRD adresáø umístìn v adresáøi 'Program files'
     X pøesuòte adresáø FRD do jiného adresáøe nebo spuste frd.exe s administrátorskými právy
       (pravé tlaèítko->vlastnosti->Spustit jako administrátor)
