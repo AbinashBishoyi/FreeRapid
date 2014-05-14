@@ -13,6 +13,7 @@ Fixed - indicates a bug fix
 Internal - indicates an internal change - information for FRD developers - nothing important for users
 
 24th February 2013 - FreeRapid Downloader 0.9 Update 2
+  Added : Option to open downloading file (User preferences dialog -> Misc->Advanced)
   Added : UI - Select all/select none support in Update plugins dialog
   Added : UI - Main table - new 'Date' column, older downloads have this column empty
   Added : UI - Download history dialog - new 'Connection' and 'Avg. speed' columns,

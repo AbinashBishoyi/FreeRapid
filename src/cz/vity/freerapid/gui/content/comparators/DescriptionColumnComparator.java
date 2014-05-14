@@ -9,17 +9,29 @@ import java.util.Comparator;
  * @author Vity
  */
 public final class DescriptionColumnComparator implements Comparator<DownloadFile> {
-    @Override
-    public final int compare(DownloadFile o1, DownloadFile o2) {
-        return Collator.getInstance().compare(getValue(o1), getValue(o2));
+
+    private Collator collator;
+
+    public DescriptionColumnComparator() {
+        collator = Collator.getInstance();
     }
 
-    private String getValue(DownloadFile downloadFile) {
-        final String fn = downloadFile.getDescription();
-        if (fn != null && !fn.isEmpty()) {
-            return fn;
-        } else {
-            return NameColumnComparator.getValue(downloadFile);
+    @Override
+    public final int compare(DownloadFile o1, DownloadFile o2) {
+        final String val1 = o1.getDescription();
+        final String val2 = o2.getDescription();
+        if (val1 == null && val2 == null) {
+            return 0;
         }
+        if (val1 == null) {
+            return -1;
+        }
+        if (val2 == null) {
+            return 1;
+        }
+
+        return collator.compare(val1, val2);
     }
+
+
 }

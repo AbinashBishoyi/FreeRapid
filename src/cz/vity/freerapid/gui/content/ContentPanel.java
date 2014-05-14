@@ -33,7 +33,7 @@ import org.jdesktop.swingx.table.TableColumnExt;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableColumn;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -857,33 +857,30 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 //        columnID.setCellRenderer(new IDCellRenderer());
 //        columnID.setMaxWidth(30);
 //        columnID.setWidth(30);
-        final TableColumn colName = tableColumnModel.getColumn(COLUMN_NAME);
+        final TableColumnExt colName = (TableColumnExt) tableColumnModel.getColumn(COLUMN_NAME);
         colName.setCellEditor(new RenameFileNameEditor(director.getFileTypeIconProvider()));
         colName.setCellRenderer(new NameURLCellRenderer(director.getFileTypeIconProvider()));
+        colName.setComparator(new NameColumnComparator());
         colName.setWidth(150);
         colName.setMinWidth(50);
         tableColumnModel.getColumn(COLUMN_PROGRESSBAR).setCellRenderer(new ProgressBarCellRenderer(context));
-        final TableColumn column = tableColumnModel.getColumn(COLUMN_CHECKED);
+        final TableColumnExt column = (TableColumnExt) tableColumnModel.getColumn(COLUMN_CHECKED);
+        column.setComparator(new CheckedColumnComparator());
         column.setMaxWidth(30);
         column.setWidth(30);
         column.setCellRenderer(new CheckedCellRenderer(context));
 
-        ((TableColumnExt) tableColumnModel.getColumn(COLUMN_CHECKED)).setToolTipText(context.getResourceMap().getString("checkedColumnTooltip"));
-        tableColumnModel.getColumn(COLUMN_PROGRESS).setCellRenderer(new ProgressCellRenderer());
-        tableColumnModel.getColumn(COLUMN_STATE).setCellRenderer(new EstTimeCellRenderer(context));
-        tableColumnModel.getColumn(COLUMN_SIZE).setCellRenderer(new SizeCellRenderer(context));
-        tableColumnModel.getColumn(COLUMN_SPEED).setCellRenderer(new SpeedCellRenderer(context));
-        tableColumnModel.getColumn(COLUMN_AVERAGE_SPEED).setCellRenderer(new AverageSpeedCellRenderer());
-        tableColumnModel.getColumn(COLUMN_SERVICE).setCellRenderer(new ServiceCellRenderer(director));
-        tableColumnModel.getColumn(COLUMN_PROXY).setCellRenderer(new ConnectionCellRenderer(context));
-        final TableColumnExt columnDescription = (TableColumnExt) tableColumnModel.getColumn(COLUMN_DESCRIPTION);
-        columnDescription.setCellRenderer(new DescriptionCellRenderer(context));
-
-        final TableColumnExt columnDate = (TableColumnExt) tableColumnModel.getColumn(COLUMN_DATE_INSERTED);
-        columnDate.setCellRenderer(new DateCellRenderer());
-
-        columnDescription.setVisible(false);
-        columnDate.setVisible(false);
+        final TableColumnExt columnExt = (TableColumnExt) tableColumnModel.getColumn(COLUMN_CHECKED);
+        columnExt.setToolTipText(context.getResourceMap().getString("checkedColumnTooltip"));
+        initColumn(COLUMN_PROGRESS, new ProgressCellRenderer(), new ProgressColumnComparator());
+        initColumn(COLUMN_STATE, new EstTimeCellRenderer(context), new EstTimeColumnComparator());
+        initColumn(COLUMN_SIZE, new SizeCellRenderer(context), new SizeColumnComparator());
+        initColumn(COLUMN_SPEED, new SpeedCellRenderer(context), new SpeedColumnComparator());
+        initColumn(COLUMN_AVERAGE_SPEED, new AverageSpeedCellRenderer(), new AvgSpeedColumnComparator());
+        initColumn(COLUMN_SERVICE, new ServiceCellRenderer(director), new ServiceColumnComparator());
+        initColumn(COLUMN_PROXY, new ConnectionCellRenderer(context), new ConnectionColumnComparator());
+        final TableColumnExt columnDescription = initColumn(COLUMN_DESCRIPTION, new DescriptionCellRenderer(context), new DescriptionColumnComparator());
+        final TableColumnExt columnDate = initColumn(COLUMN_DATE_INSERTED, new DateCellRenderer(), new DateColumnComparator());
 
         table.addMouseListener(new MouseAdapter() {
             @Override
@@ -895,6 +892,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                 }
             }
         });
+
 
         final boolean b = AppPrefs.getProperty(UserProp.TABLE_SORTABLE, UserProp.TABLE_SORTABLE_DEFAULT);
         table.setSortable(b);
@@ -917,6 +915,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         }
         table.setUpdateSelectionOnSort(b);
 
+        columnDescription.setVisible(false);
+        columnDate.setVisible(false);
 
         table.packAll();
 
@@ -1017,6 +1017,14 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         }.install(table);
 
     }
+
+    private TableColumnExt initColumn(int columnIndex, TableCellRenderer tableCellRenderer, Comparator comparator) {
+        final TableColumnExt column = (TableColumnExt) table.getColumn(columnIndex);
+        column.setCellRenderer(tableCellRenderer);
+        column.setComparator(comparator);
+        return column;
+    }
+
 
     @org.jdesktop.application.Action
     public void smartEnterAction() {
