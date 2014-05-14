@@ -285,8 +285,8 @@ final public class UserProp {
     public static final boolean TABLE_SORTABLE_DEFAULT = true;
 
 
-    public static final String IGNORE_BLIND_MODE = "ignoreBlindMode";
-    public static final boolean IGNORE_BLIND_MODE_DEFAULT = false;
+    public static final String DETECT_BLIND_MODE = "detectBlindMode";
+    public static final boolean DETECT_BLIND_MODE_DEFAULT = false;
 
     public static final boolean SHOW_STATUSBAR_DEFAULT = true;
     public static final String SHOW_STATUSBAR = "showStatusbar";

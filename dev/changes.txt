@@ -33,6 +33,8 @@ removeCompletedAndDeletedAction.Action.accelerator =shortcut L
 removeCompletedAndDeletedAction.Action.shortDescription = Remove all completed downloads whose files do not exist
 removeCompletedAndDeletedAction.Action.smallIcon=${iconsPath}clean.png
 
+speedLimitIsEnabled=Speed limit is enabled and set to value %s/s
+
 SKIPPED=SKIPPED
 
 refreshProxyList.Action.text=&Refresh proxy list
@@ -48,8 +50,9 @@ labelSpeedSliderMinValue.text=Global speed limiter minimum value
 labelSpeedSliderMaxValue.text=maximum value
 labelSpeedSliderStep.text=step
 labelSpeedSliderKbps.text=kB/s
-labelFileSpeedLimiterValues.text=Values for file speed limiter
+labelFileSpeedLimiterValues.text=Values for file speed limiter (kB/s)
 fieldFileSpeedLimiterValues.toolTipText=Separate values with commas. Two commas indicate a menu separator. 0 means unlimited.
+labelFileSpeedLimiterValuesDesc.text=<html><small>Separate values with commas.<br/>Two commas indicate a menu separator. 0 means unlimited.</small></html>
 
 checkSlimLinesInHistory.text=Slim lines in History dialog
 
@@ -67,8 +70,14 @@ labelAuthor.text=Author:
 labelVersion.text=Version:
 labelServices.text=Services:
 labelPriority.text=Priority:
-labelMaxConnections.text=Max connections:
+labelMaxConnections.text=Max downloads:
 
+
+clipboardMonitoringMenu.text=&Clipboard monitoring
+selectAllCMAction.Action.text=&Enable All
+selectAllCMAction.Action.smallIcon=${iconsPath}checks.png
+deSelectAllCMAction.Action.text=&Disable All
+deSelectAllCMAction.Action.smallIcon=${iconsPath}uncheck.png
 
 Changed:
 

@@ -58,7 +58,7 @@ public final class AppPrefs {
                 LogUtils.processException(logger, e);
             }
         }
-        if (!getProperty(UserProp.IGNORE_BLIND_MODE, UserProp.IGNORE_BLIND_MODE_DEFAULT)) {
+        if (getProperty(UserProp.DETECT_BLIND_MODE, getProperty(UserProp.BLIND_MODE, false))) {
             final String blindMode = System.getProperty("javax.accessibility.assistive_technologies", null);
             if (blindMode != null) {
                 logger.info("Detecting blindMode " + blindMode);
@@ -77,7 +77,9 @@ public final class AppPrefs {
         if (Utils.isWindows()) {
             getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
                 public void preferenceChange(PreferenceChangeEvent evt) {
-                    logger.info("Property changed: " + evt.getKey());
+                    if (logger.isLoggable(Level.INFO)) {
+                        logger.info("Property changed: " + evt.getKey());
+                    }
                     synchronized (syncLock) {
                         if (!FWProp.PROXY_PASSWORD.equals(evt.getKey()))
                             pendingChanges = true;
@@ -271,7 +273,8 @@ public final class AppPrefs {
 
         final File userFile = new File(storageDir, propertiesFileName);
         if (!(userFile.exists())) {
-            logger.log(Level.CONFIG, "File with user settings " + userFile + " was not found. First run. Using default settings");
+            if (logger.isLoggable(Level.CONFIG))
+                logger.log(Level.CONFIG, "File with user settings " + userFile + " was not found. First run. Using default settings");
             return Preferences.userRoot().node(getUserNode());
         }
         InputStream inputStream = null;

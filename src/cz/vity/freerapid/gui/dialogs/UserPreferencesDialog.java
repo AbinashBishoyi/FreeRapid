@@ -95,6 +95,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
     private boolean pluginOptionsEnabled;
     private JTabbedPane pluginTabbedPane;
     private LaF backupLaF;
+    private static final int MIN_FIRST_PLUGIN_COLUMN_WIDTH = 26;
 
 
     private static enum Card {
@@ -351,17 +352,17 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         pluginTable.setAutoStartEditOnKeyStroke(true);
         ///pluginTable.set
 
-        TableColumn tableColumn = Swinger.updateColumn(pluginTable, "X", PluginMetaDataTableModel.COLUMN_ACTIVE, 22, 22, null);
-        tableColumn.setWidth(22);
-        tableColumn.setMaxWidth(22);
+        TableColumn tableColumn = Swinger.updateColumn(pluginTable, "X", PluginMetaDataTableModel.COLUMN_ACTIVE, MIN_FIRST_PLUGIN_COLUMN_WIDTH, MIN_FIRST_PLUGIN_COLUMN_WIDTH, null);
+        tableColumn.setWidth(MIN_FIRST_PLUGIN_COLUMN_WIDTH);
+        tableColumn.setMaxWidth(MIN_FIRST_PLUGIN_COLUMN_WIDTH);
         //((DefaultCellEditor)tableColumn.getCellEditor()).setToolTipText("asasdasd");
-        tableColumn = Swinger.updateColumn(pluginTable, "U", PluginMetaDataTableModel.COLUMN_UPDATE, 22, 22, null);
-        tableColumn.setWidth(22);
-        tableColumn.setMaxWidth(22);
+        tableColumn = Swinger.updateColumn(pluginTable, "U", PluginMetaDataTableModel.COLUMN_UPDATE, MIN_FIRST_PLUGIN_COLUMN_WIDTH, MIN_FIRST_PLUGIN_COLUMN_WIDTH, null);
+        tableColumn.setWidth(MIN_FIRST_PLUGIN_COLUMN_WIDTH);
+        tableColumn.setMaxWidth(MIN_FIRST_PLUGIN_COLUMN_WIDTH);
 
-        tableColumn = Swinger.updateColumn(pluginTable, "C", PluginMetaDataTableModel.COLUMN_CLIPBOARD_MONITORED, 22, 22, null);
-        tableColumn.setWidth(22);
-        tableColumn.setMaxWidth(22);
+        tableColumn = Swinger.updateColumn(pluginTable, "C", PluginMetaDataTableModel.COLUMN_CLIPBOARD_MONITORED, MIN_FIRST_PLUGIN_COLUMN_WIDTH, MIN_FIRST_PLUGIN_COLUMN_WIDTH, null);
+        tableColumn.setWidth(MIN_FIRST_PLUGIN_COLUMN_WIDTH);
+        tableColumn.setMaxWidth(MIN_FIRST_PLUGIN_COLUMN_WIDTH);
 
         pluginTable.setRolloverEnabled(true);
 
@@ -427,7 +428,9 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         getResourceMap().injectComponent(updatesMenu);
         final JMenu activityMenu = menuManager.createMenu("activityMenu", actionMap, "selectAllActivityAction", "deSelectAllActivityAction");
         getResourceMap().injectComponent(activityMenu);
-        final Object[] objects = {"copyPluginListAction", "copyPluginListWithVersionAction", "copySupportedSitesListAction", MenuManager.MENU_SEPARATOR, activityMenu, updatesMenu};
+        final JMenu cmMenu = menuManager.createMenu("clipboardMonitoringMenu", actionMap, "selectAllCMAction", "deSelectAllCMAction");
+        getResourceMap().injectComponent(cmMenu);
+        final Object[] objects = {"copyPluginListAction", "copyPluginListWithVersionAction", "copySupportedSitesListAction", MenuManager.MENU_SEPARATOR, activityMenu, updatesMenu, cmMenu};
         menuManager.processMenu(popupMenu, "", actionMap, objects);
     }
 
@@ -1072,6 +1075,16 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         checkOrUncheckPlugin(Boolean.FALSE, PluginMetaDataTableModel.COLUMN_ACTIVE);
     }
 
+    @org.jdesktop.application.Action
+    public void selectAllCMAction() {
+        checkOrUncheckPlugin(Boolean.TRUE, PluginMetaDataTableModel.COLUMN_CLIPBOARD_MONITORED);
+    }
+
+    @org.jdesktop.application.Action
+    public void deSelectAllCMAction() {
+        checkOrUncheckPlugin(Boolean.FALSE, PluginMetaDataTableModel.COLUMN_CLIPBOARD_MONITORED);
+    }
+
 
     @Override
     public void doClose() {
@@ -1254,6 +1267,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         JLabel labelSpeedSliderKbps1 = new JLabel();
         JLabel labelSpeedSliderKbps2 = new JLabel();
         JLabel labelSpeedSliderKbps3 = new JLabel();
+        JLabel labelFileSpeedLimiterValuesDesc = new JLabel();
         fieldFileSpeedLimiterValues = new JTextField();
         JLabel labelFileSpeedLimiterValues = new JLabel();
         JLabel labelRequiresRestart = new JLabel();
@@ -2007,6 +2021,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
                             labelFileSpeedLimiterValues.setName("labelFileSpeedLimiterValues");
                             fieldFileSpeedLimiterValues.setName("fieldFileSpeedLimiterValues");
+                            labelFileSpeedLimiterValuesDesc.setName("labelFileSpeedLimiterValuesDesc");
 
                             PanelBuilder panelSpeedLimiterBuilder = new PanelBuilder(new FormLayout(
                                     new ColumnSpec[]{
@@ -2042,6 +2057,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
                             panelSpeedLimiterBuilder.add(labelFileSpeedLimiterValues, cc.xy(9, 1));
                             panelSpeedLimiterBuilder.add(fieldFileSpeedLimiterValues, cc.xy(9, 3));
+                            panelSpeedLimiterBuilder.add(labelFileSpeedLimiterValuesDesc, cc.xy(9, 5));
                         }
 
                         //---- labelRequiresRestart ----

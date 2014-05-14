@@ -797,7 +797,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         tableColumnModel.getColumn(COLUMN_PROGRESS).setCellRenderer(new ProgressCellRenderer());
         tableColumnModel.getColumn(COLUMN_STATE).setCellRenderer(new EstTimeCellRenderer(context));
         tableColumnModel.getColumn(COLUMN_SIZE).setCellRenderer(new SizeCellRenderer(context));
-        tableColumnModel.getColumn(COLUMN_SPEED).setCellRenderer(new SpeedCellRenderer());
+        tableColumnModel.getColumn(COLUMN_SPEED).setCellRenderer(new SpeedCellRenderer(context));
         tableColumnModel.getColumn(COLUMN_AVERAGE_SPEED).setCellRenderer(new AverageSpeedCellRenderer());
         tableColumnModel.getColumn(COLUMN_SERVICE).setCellRenderer(new ServiceCellRenderer(director));
         tableColumnModel.getColumn(COLUMN_PROXY).setCellRenderer(new ConnectionCellRenderer(context));

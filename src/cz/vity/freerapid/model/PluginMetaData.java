@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
  */
 final public class PluginMetaData extends AbstractBean implements Comparable<PluginMetaData> {
     private final static Logger logger = Logger.getLogger(PluginMetaData.class.getName());
+    private final static Pattern NOPE_URL_MATCHER = Pattern.compile("&&&XXX&&&");
 
     private String id;
     private boolean updatesEnabled;
@@ -36,6 +37,7 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
     private int priority;
     private int maxAllowedDownloads;
     private boolean clipboardMonitored;
+    private boolean libraryPlugin;
 
     static {
         try {
@@ -44,7 +46,7 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
                     info.getPropertyDescriptors();
             for (PropertyDescriptor pd : propertyDescriptors) {
                 final Object name = pd.getName();
-                if ("supportedURL".equals(name) || "descriptor".equals(name) || "www".equals(name) || "services".equals(name) || "hasOptions".equals(name) || "premium".equals(name) || "favicon".equals(name) || "resumeSupported".equals(name) || "maxParallelDownloads".equals(name)) {
+                if ("supportedURL".equals(name) || "descriptor".equals(name) || "www".equals(name) || "services".equals(name) || "hasOptions".equals(name) || "premium".equals(name) || "favicon".equals(name) || "resumeSupported".equals(name) || "maxParallelDownloads".equals(name) || "libraryPlugin".equals(name)) {
                     pd.setValue("transient", Boolean.TRUE);
                 }
             }
@@ -61,6 +63,7 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
         this.updatesEnabled = true;
         this.priority = -1;
         this.maxAllowedDownloads = -1;
+        this.libraryPlugin = false;
     }
 
     public PluginMetaData(PluginDescriptor descriptor) {
@@ -72,7 +75,6 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
 
     public void setPluginDescriptor(PluginDescriptor descriptor) {
         this.descriptor = descriptor;
-        supportedURL = Pattern.compile(DescriptorUtils.getAttribute("urlRegex", "XX", descriptor), Pattern.CASE_INSENSITIVE);
         hasOptions = DescriptorUtils.getAttribute("hasOptions", false, descriptor);
         services = DescriptorUtils.getAttribute("services", getId(), descriptor).toLowerCase(Locale.ENGLISH);
         www = DescriptorUtils.getAttribute("www", Consts.WEBURL, descriptor);
@@ -80,15 +82,27 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
         favicon = DescriptorUtils.getAttribute("faviconImage", null, descriptor) != null;
         removeCompleted = DescriptorUtils.getAttribute("removeCompleted", false, descriptor);
         maxParallelDownloads = DescriptorUtils.getAttribute("maxDownloads", 1, descriptor);
+        libraryPlugin = DescriptorUtils.getAttribute("libraryPlugin", false, descriptor) || maxParallelDownloads == 0;
         if (priority == -1)
             priority = DescriptorUtils.getAttribute("priority", (premium) ? 100 : 1000, descriptor);
-        if (maxAllowedDownloads > 1)
+        if (libraryPlugin) {
+            supportedURL = NOPE_URL_MATCHER;
+        } else {
+            supportedURL = Pattern.compile(DescriptorUtils.getAttribute("urlRegex", "&&&XX&&&", descriptor), Pattern.CASE_INSENSITIVE);
+        }
+        if (maxAllowedDownloads > 1) {
             maxAllowedDownloads = Math.min(maxParallelDownloads, maxAllowedDownloads);
-        else if (maxAllowedDownloads == -1) maxAllowedDownloads = maxParallelDownloads;
+        } else {
+            if (maxAllowedDownloads == -1) maxAllowedDownloads = maxParallelDownloads;
+        }
+
 
         resumeSupported = DescriptorUtils.getAttribute("resumeSupported", true, descriptor);
     }
 
+    public boolean isLibraryPlugin() {
+        return libraryPlugin;
+    }
 
     /**
      * Overuje, zda je dane URL podporovane mezi pluginy
@@ -97,7 +111,7 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
      * @return vraci v pripade, ze nejaky plugin podporuje dane URL, jinak false
      */
     public boolean isSupported(final String url) {
-        return supportedURL.matcher(url).matches();
+        return !isLibraryPlugin() && supportedURL.matcher(url).matches();
     }
 
     public String getId() {

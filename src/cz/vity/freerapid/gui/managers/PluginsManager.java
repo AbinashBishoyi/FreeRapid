@@ -80,7 +80,6 @@ public class PluginsManager {
                 if (pluginManager != null) {
                     try {
                         pluginManager.shutdown();
-                        //TODO neco co smaze soubory z tempu? framework na to sere!, ale evidentne 
                         File shadowFolder = new File(System.getProperty("java.io.tmpdir"), ".jpf-shadow");
                         IoUtil.emptyFolder(shadowFolder);
                     } catch (Exception e) {
@@ -387,7 +386,7 @@ public class PluginsManager {
         final Collection<PluginMetaData> datas = this.supportedPlugins.values();
         List<PluginMetaData> result = new ArrayList<PluginMetaData>(datas.size());
         for (PluginMetaData data : datas) {
-            if (data.getMaxParallelDownloads() >= 1) {
+            if (!data.isLibraryPlugin() && data.getMaxParallelDownloads() >= 1) {
                 result.add(data);
             }
         }
