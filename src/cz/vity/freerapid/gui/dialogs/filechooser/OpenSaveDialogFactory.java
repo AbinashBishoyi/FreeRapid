@@ -14,6 +14,7 @@ import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author Vity
@@ -22,7 +23,6 @@ public class OpenSaveDialogFactory {
     private static OpenSaveDialogFactory instance = null;
 
     private OpenSaveDialogFactory(ApplicationContext context) {
-
     }
 
     public static synchronized OpenSaveDialogFactory getInstance(ApplicationContext context) {
@@ -33,9 +33,9 @@ public class OpenSaveDialogFactory {
 
     public File getSaveResultsDialog() {
         final List<EnhancedFileFilter> filters = new ArrayList<EnhancedFileFilter>(3);
-        filters.add(EnhancedFileFilter.createFilter(new String[]{"txt"}, "filterTxt"));
-        filters.add(EnhancedFileFilter.createFilter(new String[]{"csv"}, "filterCsv"));
-        filters.add(EnhancedFileFilter.createFilter(new String[]{"dxf"}, "filterDxf"));
+        filters.add(new EnhancedFileFilter(new String[]{"txt"}, "filterTxt"));
+        filters.add(new EnhancedFileFilter(new String[]{"csv"}, "filterCsv"));
+        filters.add(new EnhancedFileFilter(new String[]{"dxf"}, "filterDxf"));
         final String path = AppPrefs.getProperty(UserProp.LAST_USED_FOLDER_EXPORT, "export");
 
         final String defaultName = AppPrefs.getProperty(UserProp.LAST_EXPORT_FILENAME, new File(path).getName());
@@ -48,25 +48,25 @@ public class OpenSaveDialogFactory {
 
     public File[] getChooseImageFileDialog() {
         final List<EnhancedFileFilter> filters = new ArrayList<EnhancedFileFilter>(3);
-        filters.add(EnhancedFileFilter.createFilter(new String[]{"tif", "tiff"}, "filterTIF"));
-        return getOpenFileDialog(filters, UserProp.LAST_IMPORT_FILTER, UserProp.IMPORT_LAST_USED_FOLDER);
+        filters.add(new EnhancedFileFilter(new String[]{"tif", "tiff"}, "filterTIF"));
+        return getOpenFileDialog(filters, UserProp.LAST_IMPORT_FILTER, UserProp.IMPORT_LAST_USED_FOLDER, false);
     }
 
-
     @SuppressWarnings({"SuspiciousMethodCalls"})
-    private File[] getOpenFileDialog(final List<EnhancedFileFilter> fileFilters, final String lastUsedFilterKey, final String folderPathKey) {
-
+    private File[] getOpenFileDialog(final List<EnhancedFileFilter> fileFilters, final String lastUsedFilterKey, final String folderPathKey, final boolean multiSelection) {
         final OpenFileChooser fileDialog = new OpenFileChooser(new File(AppPrefs.getProperty(folderPathKey, "")));
         fileDialog.updateFileFilters(fileFilters, lastUsedFilterKey);
         fileDialog.setAcceptAllFileFilterUsed(false);
-        fileDialog.setMultiSelectionEnabled(false);
+        fileDialog.setMultiSelectionEnabled(multiSelection);
         final int result = fileDialog.showOpenDialog(Frame.getFrames()[0]);
-        if (result != JFileChooser.APPROVE_OPTION)
+        if (result != JFileChooser.APPROVE_OPTION) {
             return new File[0];
-        else {
+        } else {
             AppPrefs.storeProperty(lastUsedFilterKey, fileFilters.indexOf(fileDialog.getFileFilter()));
             AppPrefs.storeProperty(folderPathKey, FRDUtils.getAbsRelPath(fileDialog.getSelectedFile()).getPath());
-            return new File[]{fileDialog.getSelectedFile()};
+            return multiSelection
+                    ? fileDialog.getSelectedFiles()
+                    : new File[]{fileDialog.getSelectedFile()};
         }
     }
 
@@ -103,7 +103,48 @@ public class OpenSaveDialogFactory {
 
     public File[] getChooseProxyList() {
         final List<EnhancedFileFilter> filters = new ArrayList<EnhancedFileFilter>(1);
-        filters.add(EnhancedFileFilter.createFilter(new String[]{"txt", "list"}, "filterTxt"));
-        return getOpenFileDialog(filters, UserProp.LAST_IMPORT_FILTER, UserProp.IMPORT_LAST_USED_FOLDER);
+        filters.add(new EnhancedFileFilter(new String[]{"txt", "list"}, "filterTxt"));
+        return getOpenFileDialog(filters, UserProp.LAST_IMPORT_FILTER, UserProp.IMPORT_LAST_USED_FOLDER, false);
     }
+
+    public File[] getImportLinks(final List<String[]> supportedTypes) {
+        return getOpenFileDialog(getFilters(supportedTypes, false), UserProp.LAST_IMPORT_FILTER, UserProp.IMPORT_LAST_USED_FOLDER, true);
+    }
+
+    public File getExportLinks(final List<String[]> supportedTypes) {
+        return getSaveFileDialog(getFilters(supportedTypes, true), UserProp.LAST_EXPORT_FILTER, UserProp.LAST_USED_FOLDER_EXPORT, "");
+    }
+
+    private static List<EnhancedFileFilter> getFilters(final List<String[]> supportedTypes, final boolean export) {
+        final String[] allSupported = getAllSupported(supportedTypes);
+        final List<EnhancedFileFilter> filters = new ArrayList<EnhancedFileFilter>(allSupported.length + 1);
+        if (!export) {
+            filters.add(new EnhancedFileFilter(allSupported, "allSupportedFiles"));
+        }
+        for (final String[] strings : supportedTypes) {
+            if (strings[0].equals("txt")) {
+                filters.add(new EnhancedFileFilter(strings, "filterTxt"));
+            } else if (strings[0].equals("csv")) {
+                filters.add(new EnhancedFileFilter(strings, "filterCsv"));
+            } else {
+                filters.add(new EnhancedFileFilter(strings, "filterContainer", strings[0].toUpperCase(Locale.ENGLISH)));
+            }
+        }
+        return filters;
+    }
+
+    private static String[] getAllSupported(final List<String[]> supportedTypes) {
+        int len = 0;
+        for (final String[] strings : supportedTypes) {
+            len += strings.length;
+        }
+        final String[] allSupported = new String[len];
+        len = 0;
+        for (final String[] strings : supportedTypes) {
+            System.arraycopy(strings, 0, allSupported, len, strings.length);
+            len += strings.length;
+        }
+        return allSupported;
+    }
+
 }

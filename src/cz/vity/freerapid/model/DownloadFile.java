@@ -4,6 +4,7 @@ import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.FileTypeIconProvider;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.DownloadTask;
+import cz.vity.freerapid.plugins.container.FileInfo;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.plugins.webclient.FileState;
@@ -88,6 +89,24 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
         this.saveToDirectory = saveToDirectory;
         this.description = description;
         setNewURL(fileUrl);
+    }
+
+    public DownloadFile(final FileInfo info, final File saveToDirectory) {
+        setNewURL(info.getFileUrl());
+        if (info.getFileName() != null) {
+            this.fileName = info.getFileName();
+        }
+        this.fileSize = info.getFileSize();
+        this.description = info.getDescription();
+        this.saveToDirectory = saveToDirectory;
+    }
+
+    public FileInfo toFileInfo() {
+        final FileInfo info = new FileInfo(fileUrl);
+        info.setFileName(fileName);
+        info.setFileSize(fileSize);
+        info.setDescription(description);
+        return info;
     }
 
     /**

@@ -12,29 +12,31 @@ Changed - indicates a change in using/behavior FreeRapid Downloader
 Fixed - indicates a bug fix
 
 FreeRapid Downloader 0.85 Alpha 4
-  Added : Support for direct downloads (you have to enable this feature in User settings dialog)
+  Added : Support for direct downloads (enable this feature in Preferences)
+  Added : Support for container files (DLC, CCF, RSDF, etc...)
   Added : A few new user options:
             - Start downloads from decrypters and folders automatically
             - Bring application to the top when clipboard monitoring detects links
+  Added : Plugin API
+           - Base URL is automatically parsed from fileURL during init
+           - Support for unlimited cryptography
   Added : New LookAndFeel skins - Substance Office Black 2007 and Substance Mariner
   Added : Downgrade of plugin is made automatically if necessary
   Added : New internal property removeNotSupportedPlugins to remove not supported plugins automatically (default value is false)
-  Added : Plugin API
-           - Hash class with functions to calculate hashes
-           - Base URL is automatically parsed from fileURL during init
-           - Support for unlimited cryptography
-  Added : new internal property tableColumnsResize - behavior of resizing table columns, can be set in startup.properties file
+  Added : New internal property tableColumnsResize - behavior of resizing table columns, can be set in startup.properties file
   Changed : Upgraded Substance L&F to version 6.1 Final
   Changed : Upgraded Quaqua L&F to version 7.2.1
   Changed : Upgraded SwingX library to version 1.6.2
   Changed : Speed limiter settings pane split in two to make clear a difference between global and file-specific settings
   Changed : Updated commons-codec library to v1.4
+            - Static methods in Base64 and Hex classes now take Strings as arguments too
+            - DigestUtils class for easier handling of MessageDigest
   Changed : RTMP plugin - major update
-            - Upgraded to MINA library v2 final
-            - Support for SOCKS proxies
+            - Upgraded MINA library to v2
+            - Support for proxies (SOCKS)
   Changed : Options for plugin update methods were shuffled around a bit to make them more logical
   Changed : New icon for global speed limit
-  Changed : priority meaning - higher number = higher priority since this version
+  Changed : Plugin priority changed around: higher number = higher priority
   Fixed : Exception when starting an RTMP download with file pre-allocation enabled
   Fixed : Problems with links containing '#' character
 

@@ -73,6 +73,7 @@ public final class Utils {
     /*
      * Get the extension of a file.
      */
+
     public static String getExtension(final File f) {
         String ext = null;
         final String s = f.getName();
@@ -328,11 +329,13 @@ public final class Utils {
 
 
     /* remove leading whitespace */
+
     public static String ltrim(String source) {
         return source.replaceAll("^\\s+", "");
     }
 
     /* remove trailing whitespace */
+
     public static String rtrim(String source) {
         return source.replaceAll("\\s+$", "");
     }
@@ -368,6 +371,16 @@ public final class Utils {
         return new StringBuilder(string).reverse().toString();
     }
 
+    public static String getThrowableDescription(final Throwable t) {
+        final String s = t.getClass().getSimpleName();
+        final String l = t.getLocalizedMessage();
+        if (l == null) {
+            return s;
+        } else {
+            return s + ": " + l;
+        }
+    }
+
     public static String dumpStackTraces() {
         final Map<Thread, StackTraceElement[]> map = Thread.getAllStackTraces();
         final Throwable throwable = new Throwable() {
@@ -388,4 +401,5 @@ public final class Utils {
         }
         return writer.toString();
     }
+
 }

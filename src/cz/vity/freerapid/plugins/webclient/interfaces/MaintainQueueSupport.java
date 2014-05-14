@@ -1,11 +1,14 @@
 package cz.vity.freerapid.plugins.webclient.interfaces;
 
+import cz.vity.freerapid.plugins.container.FileInfo;
+
 import java.net.URI;
 import java.net.URL;
 import java.util.List;
 
 /**
  * @author Vity
+ * @author ntoskrnl
  */
 public interface MaintainQueueSupport {
 
@@ -29,6 +32,16 @@ public interface MaintainQueueSupport {
     public boolean addLinksToQueue(HttpFile parentFile, String data);
 
     /**
+     * Adds links to the queue.
+     *
+     * @param parentFile parent file where description is copied from
+     * @param infoList   list of links which should be added to the queue
+     * @return true on success, false otherwise
+     * @since 0.85
+     */
+    public boolean addLinksToQueueFromContainer(HttpFile parentFile, List<FileInfo> infoList);
+
+    /**
      * Adds one of the links to the queue (depending on user settings of plugin priorities).
      *
      * @param parentFile parent file where description is copied from
@@ -50,4 +63,16 @@ public interface MaintainQueueSupport {
      * @since 0.85
      */
     public boolean addLinkToQueueUsingPriority(HttpFile parentFile, String data) throws Exception;
+
+    /**
+     * Adds one of the links to the queue (depending on user settings of plugin priorities).
+     *
+     * @param parentFile parent file where description is copied from
+     * @param infoList   list of links of which one is chosen to be added to the queue
+     * @return true on success, false otherwise
+     * @throws Exception if something goes wrong
+     * @since 0.85
+     */
+    public boolean addLinkToQueueFromContainerUsingPriority(HttpFile parentFile, List<FileInfo> infoList) throws Exception;
+
 }

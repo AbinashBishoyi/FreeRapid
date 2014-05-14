@@ -1,7 +1,12 @@
 Version 0.83->0.85
+NEW FILES:
+ExportLinksTask.properties
+ImportLinksTask.properties
+
+
 UpdateDialog.properties
 ============================
-new:
+New:
 stateOldPlugin=NOT SUPPORTED
 
 
@@ -72,6 +77,16 @@ refreshProxyList.Action.accelerator=
 andOtherFiles=...and %d other files
 andOtherURLs=...and %d other URLs
 
+importLinksAction.Action.text=&Import links from file...
+importLinksAction.Action.accelerator=shortcut I
+importLinksAction.Action.shortDescription=Import links from container file
+exportSelectedLinksAction.Action.text=&Export selected links to file...
+exportSelectedLinksAction.Action.accelerator=shortcut E
+exportSelectedLinksAction.Action.shortDescription=Export selected links to container file
+exportAllLinksAction.Action.text=Ex&port all links to file...
+#exportAllAction.Action.accelerator=shortcut E
+exportAllLinksAction.Action.shortDescription=Export all links to container file
+
 
 UserPreferencesDialog.properties
 ====================================
@@ -133,6 +148,13 @@ New:
 pluginsDirectoryIsNotWriteable=Target plugins directory is not writable. You cannot download plugins.\nIf FreeRapid's directory is placed in 'Program files' directory then run FRD as an administrator or place FreeRapid into another directory.
 installedSuccessFully=New plugins were installed successfuly and they are ready to use.
 DownloadNewPluginsTask.reloadingPlugins=Reloading plugins, please wait...
+
+
+JAppFileChooser.properties
+====================================
+New:
+allSupportedFiles=All supported files (%s)
+filterContainer=%2$s containers (%1$s)
 
 
 Version 0.82->0.83

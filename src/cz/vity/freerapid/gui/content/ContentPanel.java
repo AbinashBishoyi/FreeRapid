@@ -163,7 +163,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         }
     }
 
-    private int[] getSelectedRows() {
+    public int[] getSelectedRows() {
         return Swinger.getSelectedRows(table);
     }
 

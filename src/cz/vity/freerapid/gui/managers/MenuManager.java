@@ -66,6 +66,10 @@ public class MenuManager {
         final Object[] fileMenuActionNames = {
                 "addNewLinksAction",
                 MENU_SEPARATOR,
+                "importLinksAction",
+                "exportSelectedLinksAction",
+                "exportAllLinksAction",
+                MENU_SEPARATOR,
                 "quit"
         };
 
@@ -231,7 +235,6 @@ public class MenuManager {
     private void selectAutoShutDownMenu(ApplicationActionMap map) {
         final String action = getSelectedShutDownAction();
         map.get(action).putValue(Action.SELECTED_KEY, Boolean.TRUE);
-
     }
 
     public String getSelectedShutDownAction() {
