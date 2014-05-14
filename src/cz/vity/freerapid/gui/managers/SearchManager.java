@@ -127,7 +127,7 @@ public class SearchManager {
 //                    builder.append(entry.getValue());
 //                else
                 if (entry.getValue().contains("{searchTerms}")) {
-                    builder.append(encode(replaceSearchedText(searchText, enc, entry.getValue()), enc));
+                    builder.append(replaceSearchedText(searchText, enc, entry.getValue()));
                 } else
                     builder.append(entry.getValue());
             }
@@ -152,14 +152,13 @@ public class SearchManager {
             logger.severe("Error generating URL:" + uri + " " + e.getMessage());
         } catch (URISyntaxException e) {
             logger.severe("Error generating URL:" + uri + " " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            logger.severe("Error generating URL:" + uri + " " + e.getMessage());
         }
     }
 
     private String replaceSearchedText(String searchText, String enc, String value) {
-
-        value = value.replace("{searchTerms}", searchText);
-
-        return value;
+        return value.replace("{searchTerms}", encode(searchText, enc));
     }
 
 
