@@ -104,20 +104,27 @@ final public class HttpUtils {
      * Replace invalid characters for file name on current file system with given one. <br/>
      * Usual use: <br >
      * <code>replaceInvalidCharsForFileSystem("diskFileName:", "_")</code> returns <code>diskFileName_</code> on Windows file system <br />
-     * For more information about illegal characters on file systems see: <a href="http://www.xvsxp.com/files/forbidden.php">Forbidden Characters in Filenames</a>
      *
      * @param fileName      given file name
      * @param replaceString usually a character that should be used for invalid characters
      * @return string with replaced invalid characters
      */
     public static String replaceInvalidCharsForFileSystem(final String fileName, final String replaceString) {
+        String result;
         if (Utils.isWindows()) {
-            String result = fileName.replaceAll("(\\\\|\\||:|\\*|\\?|<|>|\\uFFFD|/|\")", replaceString);
-            if (result.startsWith("."))
-                result = result.substring(1);
-            return result;
+            // http://msdn.microsoft.com/en-us/library/aa365247(VS.85)
+            result = fileName.replaceAll("[<>:\"/\\\\\\|\\?\\*\\uFFFD[\\u0000-\\u001F]]", replaceString);
+            result = result.replaceAll("\\.+$", "");
+            result = result.replaceFirst("(?i)^(CON|PRN|AUX|NUL|COM\\d|LPT\\d)(\\..*)?$", "$1" + replaceString + "$2");
         } else {
-            return fileName.replaceAll("/|\\uFFFD", replaceString);
+            result = fileName.replaceAll("[/\\uFFFD]", replaceString);
+            if (result.matches("\\.+")) {
+                result = "";
+            }
         }
+        if (result.isEmpty()) {
+            return replaceString;
+        }
+        return result;
     }
 }
