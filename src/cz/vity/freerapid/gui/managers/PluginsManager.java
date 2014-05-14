@@ -436,7 +436,6 @@ public class PluginsManager {
             Arrays.sort(pluginMetaDatas, new PriorityComparator());
             for (PluginMetaData plugin : pluginMetaDatas) {
                 if (plugin.isSupported(s)) {
-                    addToCache(plugin);
                     if (!plugin.isEnabled()) {
                         disabledPlugin = plugin;
                     } else
