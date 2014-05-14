@@ -105,7 +105,13 @@ public class ManagerDirector {
 
 
         this.rootContainer = new JPanel();
-        this.rootContainer.setName("JPanel1");
+
+        //if we don't name it , sometimes it generates this:
+        //mainTable/JViewport0/contentScrollPane/contentPanel/JPanel1/null.layeredPane/JXRootPane0/mainFrame
+        // and sometimes this
+        //mainTable/JViewport0/contentScrollPane/contentPanel/JPanel2/null.layeredPane/JXRootPane0/mainFrame
+
+        this.rootContainer.setName("JPanel2");
         this.rootContainer.setPreferredSize(new Dimension(700, 550));
 
         taskServiceManager = new TaskServiceManager(context);
