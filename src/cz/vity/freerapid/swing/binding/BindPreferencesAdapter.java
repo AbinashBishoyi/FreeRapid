@@ -1,5 +1,6 @@
 package cz.vity.freerapid.swing.binding;
 
+import javax.swing.*;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
@@ -12,7 +13,11 @@ final class BindPreferencesAdapter extends MyPreferencesAdapter {
         this.prefs.addPreferenceChangeListener(new PreferenceChangeListener() {
             public void preferenceChange(PreferenceChangeEvent evt) {
                 if (getKey().equals(evt.getKey()))
-                    fireValueChange(null, getValue(), false);
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            fireValueChange(null, getValue(), false);
+                        }
+                    });
             }
         });
     }
