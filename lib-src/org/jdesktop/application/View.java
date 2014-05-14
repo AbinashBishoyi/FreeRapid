@@ -10,7 +10,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
 
 
 /**
@@ -51,7 +50,7 @@ import java.util.logging.Logger;
  * @see Application#hide(View)
  */
 public class View extends AbstractBean {
-    private static final Logger logger = Logger.getLogger(View.class.getName());
+    //   private static final Logger logger = Logger.getLogger(View.class.getName());
     private final Application application;
     private ResourceMap resourceMap = null;
     private JRootPane rootPane = null;
@@ -199,7 +198,7 @@ public class View extends AbstractBean {
             throw new IllegalArgumentException("null toolbars");
         }
         List<JToolBar> oldValue = getToolBars();
-        this.toolBars = Collections.unmodifiableList(new ArrayList(toolBars));
+        this.toolBars = Collections.unmodifiableList(new ArrayList<JToolBar>(toolBars));
         JComponent oldToolBarsPanel = this.toolBarsPanel;
         JComponent newToolBarsPanel = null;
         if (this.toolBars.size() == 1) {

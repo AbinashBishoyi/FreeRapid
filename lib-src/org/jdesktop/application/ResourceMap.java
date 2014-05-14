@@ -68,7 +68,7 @@ import java.util.regex.Pattern;
  */
 public class ResourceMap {
     private static Logger logger = Logger.getLogger(ResourceMap.class.getName());
-    private final static Object nullResource = new String("null resource");
+    private final static Object nullResource = "null resource";
     private final ClassLoader classLoader;
     private final ResourceMap parent;
     private final List<String> bundleNames;
@@ -286,7 +286,7 @@ public class ResourceMap {
             return true;
         } else {
             ResourceMap parent = getParent();
-            return (parent != null) ? parent.containsKey(key) : false;
+            return (parent != null) && parent.containsKey(key);
         }
     }
 
@@ -591,7 +591,7 @@ public class ResourceMap {
             return null;
         }
         StringBuffer value = new StringBuffer();
-        int i0 = 0, i1 = 0;
+        int i0 = 0, i1;
         while ((i1 = expr.indexOf("${", i0)) != -1) {
             if ((i1 == 0) || ((i1 > 0) && (expr.charAt(i1 - 1) != '\\'))) {
                 int i2 = expr.indexOf("}", i1);
@@ -884,7 +884,7 @@ public class ResourceMap {
      */
     public Integer getKeyCode(String key) {
         KeyStroke ks = getKeyStroke(key);
-        return (ks != null) ? new Integer(ks.getKeyCode()) : null;
+        return (ks != null) ? ks.getKeyCode() : null;
     }
 
     /**
@@ -996,7 +996,7 @@ public class ResourceMap {
             if (!matchingResourceFound) {
                 return;
             }
-            BeanInfo beanInfo = null;
+            BeanInfo beanInfo;
             try {
                 beanInfo = Introspector.getBeanInfo(component.getClass());
             }
@@ -1183,7 +1183,6 @@ public class ResourceMap {
         if (type.isArray()) {
             type = type.getComponentType();
             Pattern p = Pattern.compile(key + "\\[([\\d]+)\\]");  // matches key[12]
-            List<String> arrayKeys = new ArrayList<String>();
             for (String arrayElementKey : keySet()) {
                 Matcher m = p.matcher(arrayElementKey);
                 if (m.matches()) {
@@ -1315,7 +1314,7 @@ public class ResourceMap {
      * is prepended, otherwise the leading "/" is removed. 
      */
     private static String resourcePath(String path, ResourceMap resourceMap) {
-        String rPath = path;
+        String rPath;
         if (path == null) {
             rPath = null;
         } else if (path.startsWith("/")) {
@@ -1361,13 +1360,13 @@ public class ResourceMap {
             super(Color.class);
         }
 
-        private void error(String msg, String s, Exception e) throws ResourceConverterException {
-            throw new ResourceConverterException(msg, s, e);
-        }
+//        private void error(String msg, String s, Exception e) throws ResourceConverterException {
+//            throw new ResourceConverterException(msg, s, e);
+//        }
 
-        private void error(String msg, String s) throws ResourceConverterException {
-            error(msg, s, null);
-        }
+//        private void error(String msg, String s) throws ResourceConverterException {
+//            error(msg, s, null);
+//        }
 
         /* An improved version of Color.decode() that supports colors
        * with an alpha channel and comma separated RGB[A] values.
@@ -1375,9 +1374,10 @@ public class ResourceMap {
        * "#RRGGBB",  "#AARRGGBB", "R, G, B", "R, G, B, A"
        * Thanks to Romain Guy for the code.
        */
+
         @Override
         public Object parseString(String s, ResourceMap ignore) throws ResourceConverterException {
-            Color color = null;
+            Color color;
             if (s.startsWith("#")) {
                 switch (s.length()) {
                     // RGB/hex color
@@ -1449,15 +1449,20 @@ public class ResourceMap {
     }
 
     private static class KeyStrokeStringConverter extends ResourceConverter {
-        KeyStrokeStringConverter() {
+        private final String replace;
+        private Pattern pattern;
+
+        public KeyStrokeStringConverter() {
             super(KeyStroke.class);
+            replace = (Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() == Event.META_MASK) ? "meta" : "control";
+            pattern = Pattern.compile("shortcut");
         }
 
         @Override
         public Object parseString(String s, ResourceMap ignore) {
             if (s.contains("shortcut")) {
-                int k = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-                s = s.replaceAll("shortcut", (k == Event.META_MASK) ? "meta" : "control");
+                s = pattern.matcher(s).replaceFirst(replace);
+//            System.out.println("i was here");
             }
             return KeyStroke.getKeyStroke(s);
         }

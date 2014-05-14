@@ -124,11 +124,15 @@ class TextActions extends AbstractBean {
         Caret caret = text.getCaret();
         boolean selection = (caret.getDot() != caret.getMark());
         boolean editable = text.isEditable();
-        boolean data = getClipboard().isDataFlavorAvailable(DataFlavor.stringFlavor);
-        setCopyEnabled(selection);
-        setCutEnabled(editable && selection);
-        setDeleteEnabled(editable && selection);
-        setPasteEnabled(editable && data);
+        try {
+            boolean data = getClipboard().isDataFlavorAvailable(DataFlavor.stringFlavor);
+            setCopyEnabled(selection);
+            setCutEnabled(editable && selection);
+            setDeleteEnabled(editable && selection);
+            setPasteEnabled(editable && data);
+        } catch (IllegalStateException e) {
+            //ignore
+        }
     }
 
     // TBD: what if text.getActionMap is null, or if it's parent isn't the UI-installed actionMap

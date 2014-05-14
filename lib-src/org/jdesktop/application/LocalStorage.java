@@ -120,7 +120,7 @@ public class LocalStorage extends AbstractBean {
     }
 
     public Object load(String fileName) throws IOException {
-        InputStream ist = null;
+        InputStream ist;
         try {
             ist = openInputFile(fileName);
         }
@@ -145,16 +145,16 @@ public class LocalStorage extends AbstractBean {
         }
     }
 
-    private void closeStream(Closeable st, String fileName) throws IOException {
-        if (st != null) {
-            try {
-                st.close();
-            }
-            catch (java.io.IOException e) {
-                throw new LSException("close failed \"" + fileName + "\"", e);
-            }
-        }
-    }
+//    private void closeStream(Closeable st, String fileName) throws IOException {
+//        if (st != null) {
+//            try {
+//                st.close();
+//            }
+//            catch (java.io.IOException e) {
+//                throw new LSException("close failed \"" + fileName + "\"", e);
+//            }
+//        }
+//    }
 
     public long getStorageLimit() {
         return storageLimit;

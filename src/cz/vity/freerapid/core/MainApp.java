@@ -94,6 +94,7 @@ public class MainApp extends SingleXFrameApplication {
         super.initialize(args);
 
         ResourceConverter.register(new ListItemsConvertor());
+        this.getContext().getResourceMap();
         this.getContext().getTaskMonitor().setAutoUpdateForegroundTask(false);
     }
 

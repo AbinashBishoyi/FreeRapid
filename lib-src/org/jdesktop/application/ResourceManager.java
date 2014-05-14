@@ -345,7 +345,7 @@ public class ResourceManager extends AbstractBean {
         }
         Object oldValue = applicationBundleNames;
         if (bundleNames != null) {
-            applicationBundleNames = Collections.unmodifiableList(new ArrayList(bundleNames));
+            applicationBundleNames = Collections.unmodifiableList(new ArrayList<String>(bundleNames));
         } else {
             applicationBundleNames = null;
         }

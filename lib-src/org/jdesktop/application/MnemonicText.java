@@ -74,7 +74,7 @@ class MnemonicText {
                 char c2 = sci.next();
                 boolean isQuote = (c1 == '\'') && (c2 == '\'');
                 boolean isSpace = Character.isWhitespace(c2);
-                if (!isQuote && !isSpace && (c2 != sci.DONE)) {
+                if (!isQuote && !isSpace && (c2 != CharacterIterator.DONE)) {
                     return i;
                 }
             }

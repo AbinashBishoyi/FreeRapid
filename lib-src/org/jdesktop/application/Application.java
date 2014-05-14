@@ -384,6 +384,7 @@ public abstract class Application extends AbstractBean {
                         e.wait();
                     }
                     catch (InterruptedException ie) {
+                        //ignore
                     }
                 }
                 qEmpty = e.isEventQEmpty();

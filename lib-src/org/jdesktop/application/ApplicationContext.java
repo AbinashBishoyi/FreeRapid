@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Logger;
 
 /**
  * A singleton that manages shared objects, like actions, resources, and tasks,
@@ -30,7 +29,7 @@ import java.util.logging.Logger;
  * @see Application
  */
 public class ApplicationContext extends AbstractBean {
-    private static final Logger logger = Logger.getLogger(ApplicationContext.class.getName());
+    //private static final Logger logger = Logger.getLogger(ApplicationContext.class.getName());
     private final List<TaskService> taskServices;
     private final List<TaskService> taskServicesReadOnly;
     private ResourceManager resourceManager;
@@ -41,7 +40,7 @@ public class ApplicationContext extends AbstractBean {
     private Class applicationClass = null;
     private JComponent focusOwner = null;
     private Clipboard clipboard = null;
-    private Throwable uncaughtException = null;
+    // private Throwable uncaughtException = null;
     private TaskMonitor taskMonitor = null;
 
 

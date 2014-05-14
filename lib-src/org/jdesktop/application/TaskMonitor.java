@@ -60,7 +60,6 @@ import java.util.*;
  */
 
 public class TaskMonitor extends AbstractBean {
-    private final PropertyChangeListener applicationPCL;
     private final PropertyChangeListener taskServicePCL;
     private final PropertyChangeListener taskPCL;
     private final LinkedList<Task> taskQueue;
@@ -71,7 +70,7 @@ public class TaskMonitor extends AbstractBean {
      * Construct a TaskMonitor.
      */
     public TaskMonitor(ApplicationContext context) {
-        applicationPCL = new ApplicationPCL();
+        PropertyChangeListener applicationPCL = new ApplicationPCL();
         taskServicePCL = new TaskServicePCL();
         taskPCL = new TaskPCL();
         taskQueue = new LinkedList<Task>();
@@ -267,7 +266,7 @@ public class TaskMonitor extends AbstractBean {
         public void propertyChange(PropertyChangeEvent e) {
             String propertyName = e.getPropertyName();
             Task task = (Task) (e.getSource());
-            Object newValue = e.getNewValue();
+            //Object newValue = e.getNewValue();
             if ((task != null) && (task == getForegroundTask())) {
                 firePropertyChange(e);
                 if ("state".equals(propertyName)) {

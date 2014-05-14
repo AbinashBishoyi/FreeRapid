@@ -129,7 +129,6 @@ public abstract class Task<T, V> extends SwingWorker<T, V> {
     private ResourceMap resourceMap;
     private List<TaskListener<T, V>> taskListeners;
     private InputBlocker inputBlocker;
-    private String name = null;
     private String title = null;
     private String description = null;
     private long messageTime = -1L;
@@ -175,7 +174,6 @@ public abstract class Task<T, V> extends SwingWorker<T, V> {
         APPLICATION
     }
 
-    ;
 
     private void initTask(ResourceMap resourceMap, String prefix) {
         this.resourceMap = resourceMap;
@@ -869,7 +867,7 @@ public abstract class Task<T, V> extends SwingWorker<T, V> {
      * from SwingWorker.process().
      */
     private void fireProcessListeners(List<V> values) {
-        TaskEvent<List<V>> event = new TaskEvent(this, values);
+        TaskEvent<List<V>> event = new TaskEvent<List<V>>(this, values);
         for (TaskListener<T, V> listener : taskListeners) {
             listener.process(event);
         }
@@ -879,7 +877,7 @@ public abstract class Task<T, V> extends SwingWorker<T, V> {
      * StatePCL (see below).
      */
     private void fireDoInBackgroundListeners() {
-        TaskEvent<Void> event = new TaskEvent(this, null);
+        TaskEvent<Void> event = new TaskEvent<Void>(this, null);
         for (TaskListener<T, V> listener : taskListeners) {
             listener.doInBackground(event);
         }
@@ -889,7 +887,7 @@ public abstract class Task<T, V> extends SwingWorker<T, V> {
      * StatePCL (see below).
      */
     private void fireSucceededListeners(T result) {
-        TaskEvent<T> event = new TaskEvent(this, result);
+        TaskEvent<T> event = new TaskEvent<T>(this, result);
         for (TaskListener<T, V> listener : taskListeners) {
             listener.succeeded(event);
         }
@@ -899,7 +897,7 @@ public abstract class Task<T, V> extends SwingWorker<T, V> {
      * StatePCL (see below).
      */
     private void fireCancelledListeners() {
-        TaskEvent<Void> event = new TaskEvent(this, null);
+        TaskEvent<Void> event = new TaskEvent<Void>(this, null);
         for (TaskListener<T, V> listener : taskListeners) {
             listener.cancelled(event);
         }
@@ -909,7 +907,7 @@ public abstract class Task<T, V> extends SwingWorker<T, V> {
      * StatePCL (see below).
      */
     private void fireInterruptedListeners(InterruptedException e) {
-        TaskEvent<InterruptedException> event = new TaskEvent(this, e);
+        TaskEvent<InterruptedException> event = new TaskEvent<InterruptedException>(this, e);
         for (TaskListener<T, V> listener : taskListeners) {
             listener.interrupted(event);
         }
@@ -919,7 +917,7 @@ public abstract class Task<T, V> extends SwingWorker<T, V> {
      * StatePCL (see below).
      */
     private void fireFailedListeners(Throwable e) {
-        TaskEvent<Throwable> event = new TaskEvent(this, e);
+        TaskEvent<Throwable> event = new TaskEvent<Throwable>(this, e);
         for (TaskListener<T, V> listener : taskListeners) {
             listener.failed(event);
         }
@@ -929,7 +927,7 @@ public abstract class Task<T, V> extends SwingWorker<T, V> {
      * StatePCL (see below).
      */
     private void fireFinishedListeners() {
-        TaskEvent<Void> event = new TaskEvent(this, null);
+        TaskEvent<Void> event = new TaskEvent<Void>(this, null);
         for (TaskListener<T, V> listener : taskListeners) {
             listener.finished(event);
         }

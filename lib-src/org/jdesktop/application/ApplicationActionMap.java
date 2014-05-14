@@ -51,7 +51,6 @@ import java.util.List;
 
 public class ApplicationActionMap extends ActionMap {
     private final ApplicationContext context;
-    private final ResourceMap resourceMap;
     private final Class actionsClass;
     private final Object actionsObject;
     private final List<ApplicationAction> proxyActions;
@@ -72,7 +71,7 @@ public class ApplicationActionMap extends ActionMap {
         this.context = context;
         this.actionsClass = actionsClass;
         this.actionsObject = actionsObject;
-        this.resourceMap = resourceMap;
+        //  ResourceMap resourceMap1 = resourceMap;
         this.proxyActions = new ArrayList<ApplicationAction>();
         addAnnotationActions(resourceMap);
         maybeAddActionsPCL();

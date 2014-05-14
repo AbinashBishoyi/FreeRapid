@@ -8,7 +8,7 @@ import org.jdesktop.application.ResourceMap;
  *
  * @author Vity
  */
-public class ListItemsConvertor extends ResourceConverter {
+public final class ListItemsConvertor extends ResourceConverter {
     public ListItemsConvertor() {
         super(String[].class);
     }
