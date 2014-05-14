@@ -138,14 +138,16 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
             speedLimitPanel.setSize(45, 15);
             speedLimitPanel.setBorder(null);
             final JCheckBox speedLimiterEnabled = new JCheckBox();
+            speedLimiterEnabled.setBorder(null);
             speedLimiterEnabled.setText("");
             final ValueModel valueModel = bind(speedLimiterEnabled, UserProp.SPEED_LIMIT_ENABLED, UserProp.SPEED_LIMIT_ENABLED_DEFAULT);
             speedLimitPanel.add(speedLimiterEnabled);
-            final JSpinner globalSpeed = new JSpinner();
-            speedLimitPanel.add(globalSpeed);
+            final JSpinner globalSpeedSpinner = new JSpinner();
+            globalSpeedSpinner.setBorder(null);
+            speedLimitPanel.add(globalSpeedSpinner);
             speedLimitPanel.add(new JLabel(" kB"));
-            bind(globalSpeed, UserProp.SPEED_LIMIT, UserProp.SPEED_LIMIT_DEFAULT, 1, 99999, 10);
-            PropertyConnector.connectAndUpdate(valueModel, globalSpeed, "enabled");
+            bind(globalSpeedSpinner, UserProp.SPEED_LIMIT, UserProp.SPEED_LIMIT_DEFAULT, 1, 99999, 10);
+            PropertyConnector.connectAndUpdate(valueModel, globalSpeedSpinner, "enabled");
 
             statusbar.add(speedLimitPanel, JXStatusBar.Constraint.ResizeBehavior.FIXED);
             statusbar.add(progress, JXStatusBar.Constraint.ResizeBehavior.FIXED);
@@ -158,9 +160,11 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
 
             dataManager.getProcessManager().addPropertyChangeListener("downloading", this);
 
-            dataManager.addPropertyChangeListener("speed", this);
+            //new DelayedReadValueModel(new PropertyAdapter<DataManager>(dataManager, "speed"), 100, true).addPropertyChangeListener(this);
+            //dataManager.addPropertyChangeListener("speed", this);
             dataManager.addPropertyChangeListener("completed", this);
             dataManager.addPropertyChangeListener("state", this);
+            dataManager.addPropertyChangeListener("speed", this);
 
             AppPrefs.getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
                 public void preferenceChange(PreferenceChangeEvent evt) {
@@ -212,7 +216,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
         if ("speed".equals(propertyName) || "completed".equals(propertyName)) {
             updateInfoStatus();
         } else if ("started".equals(propertyName) || "done".equals(propertyName) || "message".equals(propertyName)) {
-            final Task task = (Task) evt.getSource();
+            //final Task task = (Task) evt.getSource();
             if (!(evt.getSource() instanceof DownloadTask))
                 updateProgress(evt);
         } else if ("selectedText".equals(propertyName)) {

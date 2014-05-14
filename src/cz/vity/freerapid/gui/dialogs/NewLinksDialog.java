@@ -32,6 +32,8 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 import java.util.List;
@@ -282,11 +284,18 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
         final File directory = getDirectory();
         final Collection<URL> urlList = urlsArea.getURLs();
         urlList.removeAll(removeList);
-        final LinkedHashSet<URL> urlLinkedHashSet = new LinkedHashSet<URL>(urlList);
+        final Map<URI, URL> links = new LinkedHashMap<URI, URL>();
+        for (URL url : urlList) {
+            try {
+                links.put(url.toURI(), url);
+            } catch (URISyntaxException e) {
+                //ignore
+            }
+        }
         List<DownloadFile> result = new ArrayList<DownloadFile>();
         final String description = this.descriptionArea.getText();
         final File saveToDirectory = FRDUtils.getAbsRelPath(directory);
-        for (URL url : urlLinkedHashSet) {
+        for (URL url : links.values()) {
             result.add(new DownloadFile(url, saveToDirectory, description));
         }
         return result;

@@ -686,4 +686,9 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
             }
         }
     }
+
+    public int getSpeed() {
+        return speed;
+    }
+
 }

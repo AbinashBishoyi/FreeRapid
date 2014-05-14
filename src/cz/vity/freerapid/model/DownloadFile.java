@@ -51,7 +51,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
     private volatile FileState fileState = FileState.NOT_CHECKED;
     private volatile Map<String, Object> properties = new Hashtable<String, Object>();
     private int speedLimit = -1;
-    private int tokens;
+    private volatile int tokens;
     private int takenTokens;
 
     static {
@@ -567,7 +567,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
     public void setShortTimeAvgSpeed(final float shortTimeAvgSpeed) {
         float oldValue = this.shortTimeAvgSpeed;
         this.shortTimeAvgSpeed = shortTimeAvgSpeed;
-        firePropertyChange("allTimeAverageSpeed", oldValue, shortTimeAvgSpeed);
+        firePropertyChange("shortTimeAvgSpeed", oldValue, shortTimeAvgSpeed);
     }
 
     public int getSpeedLimit() {

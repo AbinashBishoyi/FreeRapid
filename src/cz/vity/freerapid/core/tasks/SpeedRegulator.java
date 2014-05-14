@@ -4,10 +4,8 @@ import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.model.DownloadFile;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
+import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
@@ -15,14 +13,14 @@ import java.util.prefs.PreferenceChangeListener;
  * @author Vity
  */
 class SpeedRegulator {
+    private final static Logger logger = Logger.getLogger(SpeedRegulator.class.getName());
 
-    private Set<DownloadFile> downloading = new HashSet<DownloadFile>(5);
+    private Map<DownloadFile, DownloadFileInfo> downloading = new Hashtable<DownloadFile, DownloadFileInfo>(10);
     private final float SPEED_BACKUP = 1.3F;
     private int globalSpeed;
     private final Object lock = new Object();
     private Timer timer;
     private static final int SPEED_MINIMUM_HOLDED = 10;
-
 
     public SpeedRegulator() {
         timer = null;
@@ -50,18 +48,20 @@ class SpeedRegulator {
     //metoda volana kazdou sekundu
     private void assignTokensToFiles() {
         final int downloadingCount = downloading.size();//pocet souboru, ktere provadi stahovani
-        if (downloadingCount > 0 && globalSpeed > 0) {
+        final Set<DownloadFile> files = downloading.keySet();
+        if (globalSpeed > 0 && downloadingCount > 0) {
             //first iteration
             long available = globalSpeed;
-            Set<DownloadFile> notSatisfied = new HashSet<DownloadFile>(downloading); //neuspokojeni
-            for (DownloadFile file : downloading) {
-                file.setTokensLimit(0); //reset limitu na token, nutne
-            }
-            while (available > 0 && notSatisfied.size() > 0) { //je co a komu docpavat
+            Set<DownloadFile> notSatisfied = new HashSet<DownloadFile>(files); //neuspokojeni
+
+            do { //je co a komu docpavat
                 int speedPerFile = Math.max((int) (available / (float) notSatisfied.size()), 1);
-                for (DownloadFile file : downloading) {
+                for (DownloadFile file : files) {
                     if (!notSatisfied.contains(file)) //pokud neni v neuspojenych, jdeme na dalsiho
                         continue;
+                    if (available == globalSpeed) {
+                        file.setTokensLimit(0); //reset limitu na token - prvni iterace (jeste jsme nic nerozdali), nutne
+                    }
                     int set;
                     final int lastTaken = file.getTakenTokens();
                     if (file.hasSpeedLimit()) { //pokud ma svuj lokalni limit
@@ -79,7 +79,7 @@ class SpeedRegulator {
                     } else {
                         if (lastTaken < 0 || downloadingCount == 1) { //pokud se jeste nezaclo stahovat nebo pokud stahuje pouze 1 soubor
                             set = speedPerFile;
-                        } else if (lastTaken > 0) {
+                        } else if (lastTaken > 0) {//pokud se minule neco stahlo
                             if (file.getTokensLimit() <= 0) //pokud je to prvni iterace while cyklu
                                 set = Math.min(speedPerFile, (int) (lastTaken * SPEED_BACKUP));
                             else { //pokud je to druha a dalsi iterace pridelovani v cyklu
@@ -95,27 +95,32 @@ class SpeedRegulator {
                     }
                     available -= set;
                     file.setTokensLimit(file.getTokensLimit() + set);
-                    System.out.println("available = " + available);
-                    System.out.println("notSatisfied.size() = " + notSatisfied.size());
                 }
-            }
+            } while (available > 0 && notSatisfied.size() > 0);
             //docpu zbytky - do uspokojeni a dokud je co davat
+            for (DownloadFile file : files) {
+                file.setTakenTokens(0);
+            }
         } else {
             //zadne globalni omezeni neni, jen jejich lokalni
-            for (DownloadFile file : downloading) {
+            for (DownloadFile file : files) {
                 file.setTokensLimit(file.hasSpeedLimit() ? file.getSpeedLimit() : Integer.MAX_VALUE);
+                file.setTakenTokens(0);
             }
         }
-        for (DownloadFile file : downloading) {
-            final int tokensLimit = file.getTokensLimit();
-            System.out.println("tokensLimit = " + tokensLimit);
-            final int tokens = file.getTakenTokens();
-            System.out.println("taken tokens = " + tokens);
+    }
+
+    private void tick() {
+        synchronized (lock) {
+            assignTokensToFiles();
         }
-        for (DownloadFile file : downloading) {
-            file.setTakenTokens(0);
+        for (DownloadFileInfo info : downloading.values()) {
+            synchronized (info) {
+                info.tick();
+            }
         }
     }
+
 
     /**
      * Vraci true, pokud ma dotycny soubor dostatek tokenu (muze stahovat)
@@ -124,28 +129,30 @@ class SpeedRegulator {
      * @param o    kolik token soubor pri stahovani zada
      * @return true ma dostatek tokenu, jinak false
      */
-    public boolean takeTokens(DownloadFile file, int kilobytes) {
-        synchronized (lock) {
-            final int limit = file.getTokensLimit();
-            file.setTokensLimit(limit - kilobytes);
-            final int taken = file.getTakenTokens();
-            file.setTakenTokens((taken == -1) ? kilobytes : taken + kilobytes);
-            return limit > kilobytes;
+    public boolean takeTokens(DownloadFile file, final int bytes) {
+        int kilobytes = (int) Math.round(bytes / 1024.0);
+        final DownloadFileInfo info = downloading.get(file);
+        synchronized (info) {
+            info.counter += bytes;
+            synchronized (lock) {
+                final int taken = file.getTakenTokens();
+                file.setTakenTokens((taken == -1) ? kilobytes : taken + kilobytes);
+                return file.getTokensLimit() > file.getTakenTokens();
+            }
         }
     }
 
 
-    public void addDownloading(DownloadFile file) {
+    public void addDownloading(final DownloadFile file, final DownloadTask task) {
         synchronized (lock) {
             file.setTakenTokens(-1);
-            downloading.add(file);
+            file.setTokensLimit(Integer.MAX_VALUE);
+            downloading.put(file, new DownloadFileInfo(task));
             if (timer == null) {
-                timer = new Timer();
+                timer = new Timer("SpeedRegulatorTimer");
                 timer.schedule(new TimerTask() {
                     public void run() {
-                        synchronized (lock) {
-                            assignTokensToFiles();
-                        }
+                        tick();
                     }
                 }, 0, 1000);
             }
@@ -163,5 +170,111 @@ class SpeedRegulator {
         }
     }
 
+    private static class DownloadFileInfo {
+        private volatile long counter = 0;
+        private long lastSize = 0;
+        private int noDataTimeOut = 0; //XXX seconds to timeout
+        private short indexer = 0;
+        private long[] avgSpeedArray;
+        private final DownloadTask task;
+        private final long startTime;
+        private int avgSpeedMeasuredSeconds;
+        private static final int NO_DATA_TIMEOUT_LIMIT = 100;
+        private float avgSpeed;
+        private final static int[] bufferSizes = {1024, 2 * 1024, 5 * 1024, 10 * 1024, 25 * 1024, 50 * 1024};
+        private byte buffers[][] = new byte[bufferSizes.length][];
+        private DownloadFile file;
+
+        DownloadFileInfo(DownloadTask task) {
+            this.task = task;
+            this.file = task.getDownloadFile();
+            avgSpeedMeasuredSeconds = AppPrefs.getProperty(UserProp.AVG_SPEED_MEASURED_SECONDS, UserProp.AVG_SPEED_MEASURED_SECONDS_DEFAULT);
+            avgSpeedArray = new long[avgSpeedMeasuredSeconds];
+            Arrays.fill(avgSpeedArray, -1);
+            startTime = System.currentTimeMillis();
+            avgSpeed = 0;
+        }
+
+        private void updateShortAvgSpeed() {
+            int i = 0;
+            long sum = 0;
+            for (long l : avgSpeedArray) {
+                if (l != -1) {
+                    sum += l;
+                    ++i;
+                }
+            }
+            avgSpeed = (i == 0) ? 0 : (float) sum / (float) i;
+            file.setShortTimeAvgSpeed(avgSpeed);
+        }
+
+        void tick() {
+            final long localCounter = counter;
+            final long speed = localCounter - lastSize;
+
+            task.setSpeed(speed);
+
+            if (speed == 0) {
+                if (++noDataTimeOut >= NO_DATA_TIMEOUT_LIMIT) { //X seconds with no data
+                    logger.info("Cancelling download - no downloaded data during " + NO_DATA_TIMEOUT_LIMIT + " seconds");
+                    task.setConnectionTimeOut(true);
+                    task.cancel(true);
+                    return;
+                }
+            } else {
+                noDataTimeOut = 0;
+                lastSize = localCounter;
+                task.setDownloaded(localCounter);
+            }
+
+            final long time = System.currentTimeMillis() - startTime;
+            System.out.println("time = " + time);
+            final float l = time / 1000.0F;
+
+            if (Float.compare(l, 0) == 0) {
+                task.setAverageSpeed(0.0F);
+            } else
+                task.setAverageSpeed((float) localCounter / l);
+            if (indexer == avgSpeedMeasuredSeconds)
+                indexer = 0;
+            avgSpeedArray[indexer++] = speed;
+            updateShortAvgSpeed();
+            updateBufferSize(speed);
+        }
+
+        private void updateBufferSize(long speed) {
+            int real = Math.min((int) (speed / 1024.0F), file.getTokensLimit() - Math.max(file.getTakenTokens(), 0));
+            if (real < 0)
+                real = 10;
+            if (file.hasSpeedLimit())
+                real /= 2;
+            final int result;
+            if (real > 50) {
+                if (real >= 300) {
+                    result = 5;
+                } else result = 4;
+            } else {
+                if (real > 15) {
+                    if (real >= 31)
+                        result = 3;
+                    else
+                        result = 2;
+                } else {
+                    if (real >= 6)
+                        result = 1;
+                    else
+                        result = 0;
+                }
+            }
+            byte[] buffer = buffers[result];
+            if (buffer != null) {
+                task.setBuffer(buffer);
+            } else {
+                buffer = new byte[bufferSizes[result]];
+                task.setBuffer(buffer);
+                buffers[result] = buffer;
+            }
+        }
+    }
 
 }

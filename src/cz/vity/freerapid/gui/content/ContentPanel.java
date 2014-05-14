@@ -1027,7 +1027,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             return number.format((float) bytes / (float) (1024 * 1024 * 1024)) + " GB";
         } else if (bytes > (1024 * 1024)) {
             return number.format((float) bytes / (float) (1024 * 1024)) + " MB";
-        } else if (bytes > 1024) {
+        } else if (bytes >= 1024) {
             return number.format((float) bytes / (float) (1024)) + " kB";
         } else {
             return String.format("%s B", NumberFormat.getIntegerInstance().format(bytes));

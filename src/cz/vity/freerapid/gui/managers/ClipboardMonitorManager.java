@@ -200,6 +200,8 @@ public class ClipboardMonitorManager extends Thread implements ClipboardOwner {
                     //ignore
                 } catch (IOException e) {
                     //ignore
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    LogUtils.processException(logger, e);
                 }
             }
         } catch (IllegalStateException e) {

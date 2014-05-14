@@ -9,7 +9,6 @@ import cz.vity.freerapid.plugins.exceptions.*;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.plugins.webclient.FileState;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
-import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpFileDownloadTask;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 import cz.vity.freerapid.swing.Swinger;
@@ -28,8 +27,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.ConnectException;
 import java.net.NoRouteToHostException;
 import java.net.UnknownHostException;
-import java.util.Arrays;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,7 +41,6 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     protected ShareDownloadService service;
     private long speedInBytes;
     private float averageSpeed;
-    private volatile long counter;
     private Integer sleep = 0;
     protected File outputFile;
     protected File storeFile;
@@ -52,12 +48,12 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     private DownloadTaskError serviceError;
 
     private int youHaveToSleepSecondsTime = 0;
-    private static final int NO_DATA_TIMEOUT_LIMIT = 100;
-    private static final int INPUT_BUFFER_SIZE = 24000;
+    private static final int INPUT_BUFFER_SIZE = 1024;
     private static final int OUTPUT_FILE_BUFFER_SIZE = 600000;
     private volatile boolean connectionTimeOut;
     private int fileAlreadyExists;
     private final static SpeedRegulator speedRegulator = new SpeedRegulator();
+    private volatile byte[] buffer;
 
     public DownloadTask(Application application) {
         super(application);
@@ -108,7 +104,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     }
 
     protected OutputStream getFileOutputStream(final File f, final long fileSize) throws NotEnoughSpaceException, IOException {
-        if (f.getParentFile().getFreeSpace() < fileSize + 10 * 1024 * 1024) { //+ 10MB
+        if (f.getParentFile().getFreeSpace() < fileSize + 30 * 1024 * 1024) { //+ 10MB
             throw new NotEnoughSpaceException();
         }
         final OutputStream fos;
@@ -143,9 +139,8 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         downloadFile.setFileState(FileState.CHECKED_AND_EXISTING);
         final boolean temporary = useTemporaryFiles();
 
-        //final byte[] buffer = new byte[AppPrefs.getProperty(UserProp.INPUT_BUFFER_SIZE, INPUT_BUFFER_SIZE)];
-        final byte[] buffer = new byte[1024];
-        final OutputStream[] fileOutputStream = new OutputStream[]{null};
+        setBuffer(new byte[AppPrefs.getProperty(UserProp.INPUT_BUFFER_SIZE, INPUT_BUFFER_SIZE)]);
+        OutputStream fileOutputStream = null;
         final String fileName = downloadFile.getFileName();
         outputFile = downloadFile.getOutputFile();
         //outputFile = new File("d:/vystup.pdf");
@@ -168,84 +163,33 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                 storeFile.deleteOnExit();
 
             try {
-                fileOutputStream[0] = getFileOutputStream(storeFile, fileSize);
+                fileOutputStream = getFileOutputStream(storeFile, fileSize);
                 if (isTerminated()) {
-                    closeFileStream(fileOutputStream[0]);
+                    closeFileStream(fileOutputStream);
                     checkDeleteTempFile();
                     return;
                 }
                 int len;
-                counter = 0;
+                long counter = 0;
                 downloadFile.setState(DownloadState.DOWNLOADING);
                 setSpeed(0);
-                final long time = System.currentTimeMillis();
 
-                final int avgSpeedMeasuredSeconds = AppPrefs.getProperty(UserProp.AVG_SPEED_MEASURED_SECONDS, UserProp.AVG_SPEED_MEASURED_SECONDS_DEFAULT);
-                final long[] avgSpeedArray = new long[avgSpeedMeasuredSeconds];
-                Arrays.fill(avgSpeedArray, -1);
-
-                timer.schedule(new TimerTask() {
-                    private long lastSize = 0;
-                    private int noDataTimeOut = 0; //10 seconds to timeout
-                    private short indexer = 0;
-
-                    public void run() {
-
-                        if (isTerminated() || downloadFile.getState() != DownloadState.DOWNLOADING) {
-                            this.cancel();
-                            return;
-                        }
-
-                        final long localCounter = counter;
-                        final long speed = localCounter - lastSize;
-
-                        setSpeed(speed);
-
-                        if (speed == 0) {
-                            if (++noDataTimeOut >= NO_DATA_TIMEOUT_LIMIT) { //X seconds with no data
-                                logger.info("Cancelling download - no downloaded data during " + NO_DATA_TIMEOUT_LIMIT + " seconds");
-                                connectionTimeOut = true;
-//                                closeFileStream(fileOutputStream[0]);
-//                                fileOutputStream[0] = null;
-
-                                this.cancel();//radsi driv
-                                DownloadTask.this.cancel(true);
-                                return;
-                            }
-                        } else {
-                            noDataTimeOut = 0;
-                            lastSize = localCounter;
-                            setDownloaded(localCounter);
-                        }
-
-                        final long current = System.currentTimeMillis();
-                        final float l = (current - time) / (float) 1000.0;
-
-                        if (Float.compare(l, 0) == 0) {
-                            setAverageSpeed(0.0F);
-                        } else
-                            setAverageSpeed((float) localCounter / l);
-                        if (indexer == avgSpeedMeasuredSeconds)
-                            indexer = 0;
-                        avgSpeedArray[indexer++] = speed;
-                        updateShortAvgSpeed(avgSpeedArray);
-                    }
-                }, 0, 1000);
-
-                speedRegulator.addDownloading(downloadFile);
+                speedRegulator.addDownloading(downloadFile, this);
                 //data downloading-------------------------------
-                while ((len = inputStream.read(buffer)) != -1) {
-                    fileOutputStream[0].write(buffer, 0, len);
+                byte[] buf = getBuffer();
+                while ((len = inputStream.read(buf)) != -1) {
+                    fileOutputStream.write(buf, 0, len);
                     counter += len;
                     if (isTerminated()) {
-                        fileOutputStream[0].flush();
+                        fileOutputStream.flush();
                         break;
                     }
-                    final boolean ok = speedRegulator.takeTokens(downloadFile, (int) Math.round(len / 1024.0));
+                    final boolean ok = speedRegulator.takeTokens(downloadFile, len);
                     if (!ok) {
-                        System.out.println("Going to sleep to slow down speed");
+                        //System.out.println("Going to sleep to slow down speed");
                         Thread.sleep(1000);
                     }
+                    // buf = getBuffer();
                 }
                 //-----------------------------------------------
 
@@ -257,14 +201,15 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                     logger.info("File downloading was terminated");
                 }
             }
-            catch (Exception e) {
+            catch (Throwable e) {
                 if (storeFile != null && storeFile.exists()) {
-                    closeFileStream(fileOutputStream[0]);
-                    fileOutputStream[0] = null;
+                    closeFileStream(fileOutputStream);
+                    fileOutputStream = null;
 
-                    storeFile.delete();
+                    if (!storeFile.delete())
+                        logger.info("Failed to delete file during exception");
                 }
-                throw e;
+                throw new Exception(e);
             }
             finally {
 //                if (timer != null)
@@ -276,8 +221,8 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 //                    LogUtils.processException(logger, e);
 //                }
                 speedRegulator.removeDownloading(downloadFile);
-                closeFileStream(fileOutputStream[0]);
-                fileOutputStream[0] = null;
+                closeFileStream(fileOutputStream);
+                //fileOutputStream = null;
                 checkDeleteTempFile();
             }
         }
@@ -286,18 +231,6 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
             checkDeleteTempFile();
         }
 
-    }
-
-    private void updateShortAvgSpeed(long[] avgSpeedArray) {
-        int i = 0;
-        long sum = 0;
-        for (long l : avgSpeedArray) {
-            if (l != -1) {
-                sum += l;
-                ++i;
-            }
-        }
-        downloadFile.setShortTimeAvgSpeed((i == 0) ? 0 : (float) sum / (float) i);
     }
 
     protected boolean useTemporaryFiles() {
@@ -345,6 +278,11 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
             newValue = this.speedInBytes;
         }
         firePropertyChange("speed", oldValue, newValue);
+    }
+
+
+    public void setConnectionTimeOut(boolean connectionTimeOut) {
+        this.connectionTimeOut = connectionTimeOut;
     }
 
     protected void setSleep(final int sleep) {
@@ -607,7 +545,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     }
 
     @Override
-    public HttpFile getDownloadFile() {
+    public DownloadFile getDownloadFile() {
         return downloadFile;
     }
 
@@ -633,4 +571,12 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     }
 
 
+    public void setBuffer(byte[] buffer) {
+        assert buffer.length != 0;
+        this.buffer = buffer;
+    }
+
+    public byte[] getBuffer() {
+        return buffer;
+    }
 }
