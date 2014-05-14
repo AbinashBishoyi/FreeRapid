@@ -265,6 +265,7 @@ public class ProcessManager extends Thread {
         synchronized (downloadingLock) {
             client = clientManager.popWorkingClient();
             setDownloading(downloading + 1);
+            client.setConnectionTimeOut(AppPrefs.getProperty(UserProp.CONNECTION_TIMEOUT, UserProp.CONNECTION_TIMEOUT_DEFAULT));
             client.initClient(settings);
         }
         if (runCheck) {

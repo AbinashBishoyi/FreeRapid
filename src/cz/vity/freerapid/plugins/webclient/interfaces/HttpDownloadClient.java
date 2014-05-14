@@ -113,4 +113,6 @@ public interface HttpDownloadClient {
      */
     String getContentAsString();
 
+    //TODO javadoc since 0.849
+    void setConnectionTimeOut(int timeout);
 }

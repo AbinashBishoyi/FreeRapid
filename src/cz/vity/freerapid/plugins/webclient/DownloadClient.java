@@ -1,7 +1,5 @@
 package cz.vity.freerapid.plugins.webclient;
 
-import cz.vity.freerapid.core.AppPrefs;
-import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
 import cz.vity.freerapid.plugins.webclient.utils.HttpUtils;
@@ -71,6 +69,8 @@ public class DownloadClient implements HttpDownloadClient {
     public static final String START_POSITION = "startPosition";
     public static final String SUPPOSE_TO_DOWNLOAD = "supposeToDownload";
 
+    private int timeout = 120 * 1000;
+
 
     /**
      * Constructor - creates a new DownloadClient instance.
@@ -87,7 +87,6 @@ public class DownloadClient implements HttpDownloadClient {
         final HttpClientParams clientParams = client.getParams();
         clientParams.setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
         clientParams.setParameter(HttpMethodParams.SINGLE_COOKIE_HEADER, true);
-        final int timeout = AppPrefs.getProperty(UserProp.CONNECTION_TIMEOUT, UserProp.CONNECTION_TIMEOUT_DEFAULT);
         clientParams.setSoTimeout(timeout);
         clientParams.setConnectionManagerTimeout(timeout);
         clientParams.setHttpElementCharset("UTF-8");
@@ -635,5 +634,10 @@ public class DownloadClient implements HttpDownloadClient {
     @Override
     public String getContentAsString() {
         return asString;
+    }
+
+    //TODO javadoc since 0.849
+    public void setConnectionTimeOut(int timeout) {
+        this.timeout = timeout;
     }
 }

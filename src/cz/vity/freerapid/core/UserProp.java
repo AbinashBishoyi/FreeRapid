@@ -282,7 +282,7 @@ final public class UserProp {
     public static final boolean CANCEL_ON_ESCAPE_DEFAULT = true;
 
     public static final String TABLE_SORTABLE = "tableSortable";
-    public static final boolean TABLE_SORTABLE_DEFAULT = false;
+    public static final boolean TABLE_SORTABLE_DEFAULT = true;
 
 
     public static final String IGNORE_BLIND_MODE = "ignoreBlindMode";
