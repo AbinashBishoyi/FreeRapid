@@ -1,9 +1,13 @@
 package cz.vity.freerapid.plugins.webclient;
 
 import cz.vity.freerapid.plugins.exceptions.BuildMethodException;
+import cz.vity.freerapid.plugins.exceptions.PluginImplementationException;
 import cz.vity.freerapid.plugins.webclient.hoster.CaptchaSupport;
 import cz.vity.freerapid.plugins.webclient.interfaces.*;
+import cz.vity.freerapid.plugins.webclient.rtmp.RtmpClient;
+import cz.vity.freerapid.plugins.webclient.rtmp.RtmpSession;
 import cz.vity.freerapid.plugins.webclient.utils.PlugUtils;
+import cz.vity.freerapid.utilities.LogUtils;
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
@@ -136,7 +140,7 @@ public abstract class AbstractRunner implements PluginRunner {
      * Method updates download state of HttpFile automatically - sets <code>DownloadState.GETTING</code> and then <code>DownloadState.DOWNLOADING</code>
      *
      * @param method HttpMethod - its URL should be a link to the file
-     * @return true if file was sucessfuly downloaded, false otherwise - file was not found, only string content is available
+     * @return true if file was successfully downloaded, false otherwise - file was not found, only string content is available
      * @throws Exception when connection/writing to file failed
      */
     protected boolean tryDownloadAndSaveFile(HttpMethod method) throws Exception {
@@ -156,6 +160,53 @@ public abstract class AbstractRunner implements PluginRunner {
         } finally {
             method.abort();
             method.releaseConnection();
+        }
+    }
+
+    /**
+     * Method uses given RtmpSession parameter to connect to the server and tries to download.<br />
+     * Download state of HttpFile is updated automatically - sets <code>DownloadState.GETTING</code> and then <code>DownloadState.DOWNLOADING</code>.
+     * The HttpClient parameter <code>noContentLengthAvailable</code> is also set.
+     *
+     * @param rtmpSession RtmpSession to use for downloading
+     * @return true if file was successfully downloaded, false otherwise
+     * @throws Exception if something goes horribly wrong
+     * @see RtmpSession
+     */
+    private boolean tryDownloadAndSaveFile(final RtmpSession rtmpSession) throws Exception {
+        httpFile.setState(DownloadState.GETTING);
+        logger.info("Starting RTMP download");
+
+        httpFile.getProperties().remove(DownloadClient.START_POSITION);
+        httpFile.getProperties().remove(DownloadClient.SUPPOSE_TO_DOWNLOAD);
+        client.getHTTPClient().getParams().getBooleanParameter("noContentLengthAvailable", true);
+
+        RtmpClient rtmpClient = null;
+        try {
+            rtmpClient = new RtmpClient(rtmpSession);
+            rtmpClient.connect();
+
+            InputStream in = rtmpClient.getStream();
+
+            if (in != null) {
+                logger.info("Saving to file");
+                downloadTask.saveToFile(in);
+                return true;
+            } else {
+                logger.info("Saving file failed");
+                return false;
+            }
+        } catch (Throwable e) {
+            throw new PluginImplementationException("RTMP error (" + e.toString() + ")", e);
+        } finally {
+            if (rtmpClient != null) {
+                try {
+                    //no need to specifically close any streams, this method handles that too
+                    rtmpClient.disconnect();
+                } catch (Exception e) {
+                    LogUtils.processException(logger, e);
+                }
+            }
         }
     }
 

@@ -1184,7 +1184,10 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         final long fileSize = downloadFile.getFileSize();
         if (downloaded <= 0 || fileSize <= 0)
             return 0;
-        return (int) (((downloaded / (float) fileSize) * 100));
+        int i = (int) (((downloaded / (float) fileSize) * 100));
+        if (i < 0) i = 0;
+        if (i > 100) i = 100;
+        return i;
     }
 
 //    private static class IDCellRenderer extends DefaultTableCellRenderer {

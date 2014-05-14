@@ -19,6 +19,9 @@ Fixed - indicates a bug fix
   Added : New setting for handling plugin updates: "Update and restart automatically if no downloads in progress"
   Added : Improved smart clipboard monitoring detection for URLs like
             http://web.com/vb/redirector.php?url=http%3A%2F%2Frapidshare.com%2Ffiles%2F142676%2la.rar&a45456=asdsd
+  Added : Experimental support for downloading basic RTMP streams.
+            This was made possible by Flazr v0.6, which we took and modified slightly to fit our needs.
+            Big thanks to the developers of Flazr! Home page: http://www.flazr.com/
   Changed : Faster matching of URLs against plugins
   Changed : Less required restarts after plugin updates
   Fixed : Problem with downloading txt files + using description, see http://wordrider.net/forum/read.php?7,4681,4696
