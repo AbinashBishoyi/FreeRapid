@@ -3,6 +3,7 @@ package cz.vity.freerapid.gui.actions;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
 import cz.vity.freerapid.gui.managers.PluginsManager;
 import cz.vity.freerapid.utilities.LogUtils;
+import cz.vity.freerapid.utilities.Utils;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.util.URIUtil;
 
@@ -11,8 +12,10 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -23,7 +26,7 @@ import java.util.regex.Pattern;
  */
 public abstract class URLTransferHandler extends TransferHandler {
 
-    private final static Pattern REGEXP_URL = Pattern.compile("((http|https)://)?([a-zA-Z0-9\\.\\-]+(:[a-zA-Z0-9\\.:&%\\$\\-]+)*@)?((25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])|([a-zA-Z0-9\\-]+\\.)*[a-zA-Z0-9\\-]+\\.[a-zA-Z]{2,4})(:[0-9]+)?(/[^/][\\p{Lu}\\p{Ll}0-9\\[\\]\\.:,\\?'\\\\/\\+&%\\$#=~_\\-@]*)*", Pattern.MULTILINE);
+    private final static Pattern REGEXP_URL = Pattern.compile("((http|https)(%3A%2F%2F|://))?([a-zA-Z0-9\\.\\-]+(:[a-zA-Z0-9\\.:&%\\$\\-]+)*@)?((25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])|([a-zA-Z0-9\\-]+\\.)*[a-zA-Z0-9\\-]+\\.[a-zA-Z]{2,4})(:[0-9]+)?(/[^/][\\p{Lu}\\p{Ll}0-9\\[\\]\\.:,\\?'\\\\/\\+&%\\$#=~_\\-@]*)*", Pattern.MULTILINE);
 
     //private final static String URI_LIST_MIME_TYPE = "text/uri-list;class=java.lang.String";
     private final static String URL_LIST_MIME_TYPE = "application/x-java-url; class=java.net.URL";
@@ -68,13 +71,22 @@ public abstract class URLTransferHandler extends TransferHandler {
         while (match.find(start)) {
             try {
                 String spec = match.group();
+                System.out.println("spec = " + spec);
                 if (!spec.startsWith(http))
                     spec = http + spec;
-                if (spec.endsWith("'") && spec.length() > 2) {
-                    spec = spec.substring(0, spec.length() - 1);
+                //support for links like http://egydental.com/vb/redirector.php?url=http%3A%2F%2Frapidshare.com%2Ffiles%2F142677856%2FImplant_volum_1.rar
+
+                URL url = new URL(updateApostrophs(spec));
+                boolean supported = pluginsManager.isSupported(url, clipboardMonitoring);
+                if (!supported) {
+                    int index = spec.indexOf("=http%3A%2F%2F");
+                    if (index >= 0) {
+                        spec = Utils.urlDecode(spec.substring(index + 1));
+                        url = new URL(updateApostrophs(spec));
+                        supported = pluginsManager.isSupported(url, clipboardMonitoring);
+                    }
                 }
-                final URL url = new URL(spec);
-                if (pluginsManager.isSupported(url, clipboardMonitoring)) {
+                if (supported) {
                     final String urlS = url.toExternalForm();
                     final int i = urlS.indexOf("...");
                     Pattern patternMatcher = null;
@@ -126,6 +138,13 @@ public abstract class URLTransferHandler extends TransferHandler {
 //        }
 
         return result;
+    }
+
+    private static String updateApostrophs(String spec) {
+        if (spec.endsWith("'") && spec.length() > 2) {
+            spec = spec.substring(0, spec.length() - 1);
+        }
+        return spec;
     }
 
     @Override
@@ -190,10 +209,8 @@ public abstract class URLTransferHandler extends TransferHandler {
                             urls.add(url);
                         else { //search for our URLs as text
                             try {
-                                final String s = URLDecoder.decode(url.toExternalForm(), "UTF-8");
+                                final String s = Utils.urlDecode(url.toExternalForm());
                                 urls.addAll(textURIListToFileList(s, pluginsManager, true));
-                            } catch (UnsupportedEncodingException e) {
-                                //ignore
                             } catch (IllegalArgumentException e) {
                                 LogUtils.processException(logger, e);
                             }

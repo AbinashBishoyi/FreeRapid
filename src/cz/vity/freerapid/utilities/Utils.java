@@ -3,6 +3,7 @@ package cz.vity.freerapid.utilities;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -332,4 +333,19 @@ public final class Utils {
         return source.replaceAll("\\s+$", "");
     }
 
+    public static String urlDecode(String s) {
+        try {
+            String decoded = URLDecoder.decode(s, "UTF-8");
+            if (decoded.contains("\uFFFD")) {
+                decoded = URLDecoder.decode(s, "Windows-1250");
+            }
+            if (decoded.contains("\uFFFD")) {
+                return s;
+            }
+            return decoded;
+        } catch (UnsupportedEncodingException e) {
+            //ignore
+        }
+        return s;
+    }
 }

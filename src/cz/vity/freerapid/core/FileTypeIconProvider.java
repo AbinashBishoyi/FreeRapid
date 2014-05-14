@@ -1,5 +1,6 @@
 package cz.vity.freerapid.core;
 
+import cz.vity.freerapid.utilities.Utils;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.ResourceMap;
 
@@ -8,9 +9,7 @@ import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
-import java.net.URLDecoder;
 import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Map;
@@ -198,23 +197,12 @@ public class FileTypeIconProvider {
 
     private static String checkEncodedFileName(String name) {
         if (encoded.matcher(name).find()) {
-            try {
-                String decoded = URLDecoder.decode(name, "UTF-8");
-                if (decoded.contains("\uFFFD")) {
-                    decoded = URLDecoder.decode(name, "Windows-1250");
-                }
-                if (decoded.contains("\uFFFD")) {
-                    return name;
-                }
-                return decoded;
-            } catch (UnsupportedEncodingException e) {
-                //ignore
-            }
+            return Utils.urlDecode(name);
         }
         return name;
     }
 
-//    public static void main(String[] args) {
+    //    public static void main(String[] args) {
 //        assert identifyFileName("http://netload.in/dateiMTc4MzUxMT/heroes.311.hdtv-lol.avi.htm").equals("heroes.311.hdtv-lol.avi");
 //    }
 
