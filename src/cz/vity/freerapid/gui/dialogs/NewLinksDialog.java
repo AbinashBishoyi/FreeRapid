@@ -272,7 +272,7 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
                 alreadyOnList.add(file.getFileUrl());
             }
         }
-        final List<URL> removeList = getCommonElements(urlList, alreadyOnList);
+        final List<URL> removeList = getCommonElements(alreadyOnList, urlList);
         if (!removeList.isEmpty()) {
             final int result = Swinger.getChoiceYesNoCancel(getResourceMap().getString("alreadyContainsMessage", urlListToString(removeList)));
             switch (result) {
@@ -323,7 +323,7 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
      * Workaround for performance issue concerning {@link URL#equals(Object) URL.equals()}.
      * Also removes duplicates.
      *
-     * @param target This is where the items will be removed from.
+     * @param target   This is where the items will be removed from.
      * @param toRemove Items to remove.
      * @return List containing the elements which exist in {@code target} but not in {@code toRemove}.
      */
