@@ -22,4 +22,11 @@ public class PluginImplementationException extends NotRecoverableDownloadExcepti
         super(message);
     }
 
+    public PluginImplementationException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public PluginImplementationException(Throwable cause) {
+        super(cause);
+    }
 }

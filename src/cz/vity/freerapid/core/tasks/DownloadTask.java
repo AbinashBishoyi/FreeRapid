@@ -341,7 +341,9 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 
     @Override
     protected void failed(Throwable cause) {
-        if (!(cause instanceof ErrorDuringDownloadingException)) {
+        if (cause instanceof IllegalArgumentException) {
+            cause = new PluginImplementationException(service.getName() + " " + downloadFile.getFileUrl().toExternalForm(), cause);
+        } else if (!(cause instanceof ErrorDuringDownloadingException)) {
             super.failed(cause);
             LogUtils.processException(logger, cause);
         }
