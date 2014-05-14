@@ -17,10 +17,11 @@ FreeRapid Downloader 0.86
   Added : If the same file is downloaded from multiple sources, duplicates are automatically skipped
   Added : Support for preventing standby while downloading
   Added : Support for using system recycle bin for deleting files
-  Changed : Speed up startup time by loading plugins and downloads after creating GUI
+  Changed : Speed up startup time 
   Changed : Internal - NirCmd is not used anymore for native Windows actions
   Changed : Internal - Updated BetterSwingApplicationFramework to v1.9.3 snapshot
   Changed : Internal - Updated jna, mina, and commons-codec libraries to their latest versions
+  Changed : Internal - Updated look and feel libraries
   Fixed : Java 7 compatibility issues
 
 1st January 2011 - FreeRapid Downloader 0.85 Update 1

@@ -100,12 +100,14 @@ public class MainApp extends SingleXFrameApplication {
             return;
         }
 
+        Lng.loadLangProperties();
+
         this.getContext().getResourceMap();
         ResourceConverter.register(new ListItemsConvertor());
 
         this.getContext().getTaskMonitor().setAutoUpdateForegroundTask(false);
 
-        Lng.loadLangProperties();
+
 
         LookAndFeels.getInstance().loadLookAndFeelSettings();//inicializace LaFu, musi to byt pred vznikem hlavniho panelu
 

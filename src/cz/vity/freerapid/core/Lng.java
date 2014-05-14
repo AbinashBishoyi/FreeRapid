@@ -76,7 +76,7 @@ public final class Lng {
         selCountryCode = result.getCountry();
 
         final Locale selLocale = new Locale(selLanguageCode.toLowerCase(Locale.ENGLISH), ("".equals(selCountryCode) ? LOCALE_COUNTRY_CODE : selCountryCode).toUpperCase(Locale.ENGLISH));
-        logger.config("Setting locale " + selLocale);
+        logger.info("Setting locale " + selLocale);
         Locale.setDefault(selLocale);
     }
 
