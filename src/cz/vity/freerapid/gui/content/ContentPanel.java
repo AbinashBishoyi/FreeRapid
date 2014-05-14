@@ -5,6 +5,7 @@ import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.gui.actions.DownloadsActions;
 import cz.vity.freerapid.gui.actions.URLTransferHandler;
+import cz.vity.freerapid.gui.content.comparators.*;
 import cz.vity.freerapid.gui.dialogs.InformationDialog;
 import cz.vity.freerapid.gui.dialogs.MultipleSettingsDialog;
 import cz.vity.freerapid.gui.managers.DataManager;
@@ -38,7 +39,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
@@ -105,6 +105,9 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     private static String[] states;
     private static final NumberFormat integerInstance = NumberFormat.getIntegerInstance();
     private static final NumberFormat numberFormatInstance = NumberFormat.getInstance();
+
+    private static final String MOVEENABLED_ACTION_ENABLED_PROPERTY = "moveEnabled";
+    private boolean moveEnabled = false;
 
     static {
         numberFormatInstance.setMaximumFractionDigits(2);
@@ -440,7 +443,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         }
     }
 
-    @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
+    @org.jdesktop.application.Action(enabledProperty = MOVEENABLED_ACTION_ENABLED_PROPERTY)
     public void topAction() {
         final ListSelectionModel selectionModel = table.getSelectionModel();
         selectionModel.setValueIsAdjusting(true);
@@ -451,7 +454,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         scrollToVisible(true);
     }
 
-    @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
+    @org.jdesktop.application.Action(enabledProperty = MOVEENABLED_ACTION_ENABLED_PROPERTY)
     public void upAction() {
         final ListSelectionModel selectionModel = table.getSelectionModel();
         selectionModel.setValueIsAdjusting(true);
@@ -474,7 +477,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             table.scrollRowToVisible((up) ? rows[0] : rows[length - 1]);
     }
 
-    @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
+    @org.jdesktop.application.Action(enabledProperty = MOVEENABLED_ACTION_ENABLED_PROPERTY)
     public void downAction() {
         final ListSelectionModel selectionModel = table.getSelectionModel();
         selectionModel.setValueIsAdjusting(true);
@@ -490,7 +493,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         scrollToVisible(false);
     }
 
-    @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
+    @org.jdesktop.application.Action(enabledProperty = MOVEENABLED_ACTION_ENABLED_PROPERTY)
     public void bottomAction() {
         final ListSelectionModel selectionModel = table.getSelectionModel();
         selectionModel.setValueIsAdjusting(true);
@@ -654,6 +657,16 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         firePropertyChange(SELECTED_ACTION_ENABLED_PROPERTY, oldValue, selectedEnabled);
     }
 
+    public boolean isMoveEnabled() {
+        return moveEnabled;
+    }
+
+    public void setMoveEnabled(boolean moveEnabled) {
+        boolean oldValue = this.moveEnabled;
+        this.moveEnabled = moveEnabled;
+        firePropertyChange(MOVEENABLED_ACTION_ENABLED_PROPERTY, oldValue, moveEnabled);
+    }
+
     public boolean isNonEmptyEnabled() {
         return nonEmptyEnabled;
     }
@@ -664,12 +677,26 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         firePropertyChange(NONEMPTY_ACTION_ENABLED_PROPERTY, oldValue, nonEmptyEnabled);
     }
 
+    private boolean isSorted() {
+        if (table.isSortable()) {
+            final List<? extends RowSorter.SortKey> keys = table.getRowSorter().getSortKeys();
+            if (!keys.isEmpty()) {
+                for (RowSorter.SortKey key : keys) {
+                    if (key.getSortOrder() != SortOrder.UNSORTED)
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private void updateActions() {
         final int[] indexes = getSelectedRows();
         final boolean enabledCancel = this.manager.hasDownloadFilesStates(indexes, DownloadsActions.cancelEnabledStates);
         setCancelActionEnabled(enabledCancel);
 
         setSelectedEnabled(indexes.length > 0);
+        setMoveEnabled(isSelectedEnabled() && !isSorted());
 
         final boolean allCompleted = this.manager.hasDownloadFilesStates(indexes, DownloadsActions.completedStates);
 
@@ -703,7 +730,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         setNonEmptyEnabled(table.getModel().getRowCount() > 0);
     }
 
-
+    @SuppressWarnings({"unchecked"})
     private void initTable() {
         table.setName("mainTable");
         final String[] columns = (String[]) context.getResourceMap().getObject("mainTableColumns", String[].class);
@@ -712,16 +739,13 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         table.setEditable(false);
         table.setColumnControlVisible(true);
         table.setColumnSelectionAllowed(false);
-        table.setSortable(AppPrefs.getProperty(UserProp.TABLE_SORTABLE, UserProp.TABLE_SORTABLE_DEFAULT));
+        final DefaultRowSorter sorter = (DefaultRowSorter) table.getRowSorter();
+
         //table.setColumnMargin(10);
         final WinampMoveStyle w = new WinampMoveStyle();
         table.addMouseListener(w);
         table.addMouseMotionListener(w);
-        table.setUpdateSelectionOnSort(false);
         table.setSortsOnUpdates(true);
-
-//        table.getRowSorter().
-
 
         table.setTransferHandler(new URLTransferHandler(director) {
             @Override
@@ -769,12 +793,6 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         tableColumnModel.getColumn(COLUMN_PROXY).setCellRenderer(new ConnectionCellRenderer(context));
 
 
-        final SortController rowSorter = (SortController) table.getRowSorter();
-
-        rowSorter.setSortOrderCycle(SortOrder.ASCENDING, SortOrder.DESCENDING, SortOrder.UNSORTED);
-        ((TableRowSorter) table.getRowSorter()).setMaxSortKeys(1);
-
-
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -785,6 +803,26 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                 }
             }
         });
+
+        final boolean b = AppPrefs.getProperty(UserProp.TABLE_SORTABLE, UserProp.TABLE_SORTABLE_DEFAULT);
+        table.setSortable(b);
+        if (b) {
+            final SortController rowSorter = (SortController) table.getRowSorter();
+            rowSorter.setSortOrderCycle(SortOrder.ASCENDING, SortOrder.DESCENDING, SortOrder.UNSORTED);
+            ((DefaultRowSorter) rowSorter).setMaxSortKeys(1);
+            sorter.setComparator(COLUMN_NAME, new NameColumnComparator());
+            sorter.setComparator(COLUMN_AVERAGE_SPEED, new AvgSpeedColumnComparator());
+            sorter.setComparator(COLUMN_CHECKED, new CheckedColumnComparator());
+            sorter.setComparator(COLUMN_PROGRESS, new ProgressColumnComparator());
+            sorter.setComparator(COLUMN_PROXY, new ConnectionColumnComparator());
+            sorter.setComparator(COLUMN_SERVICE, new ServiceColumnComparator());
+            sorter.setComparator(COLUMN_SIZE, new SizeColumnComparator());
+            sorter.setComparator(COLUMN_SPEED, new SpeedColumnComparator());
+            sorter.setComparator(COLUMN_STATE, new EstTimeColumnComparator());
+            sorter.setComparator(COLUMN_PROGRESSBAR, new ProgressBarColumnComparator());
+        }
+        table.setUpdateSelectionOnSort(b);
+
 
         table.packAll();
 
@@ -1139,7 +1177,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         }
     }
 
-    static String stateToString(DownloadState state) {
+    public static String stateToString(DownloadState state) {
         return states[state.ordinal()];
     }
 
@@ -1187,6 +1225,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         @Override
         public void mousePressed(MouseEvent e) {
             if (SwingUtilities.isRightMouseButton(e)) {
+                if (!table.getRowSorter().getSortKeys().isEmpty())
+                    return;
                 if (AppPrefs.getProperty(UserProp.DRAG_ON_RIGHT_MOUSE, UserProp.DRAG_ON_RIGHT_MOUSE_DEFAULT)) {
                     rowPosition = table.rowAtPoint(e.getPoint());
                     if (rowPosition != -1 && isSelectedRow(rowPosition)) {

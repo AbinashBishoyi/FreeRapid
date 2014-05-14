@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 /**
  * @author Ladislav Vitasek
  */
-class NameURLCellRenderer extends DefaultTableCellRenderer {
+final class NameURLCellRenderer extends DefaultTableCellRenderer {
 
     private final FileTypeIconProvider iconProvider;
     private final static Logger logger = Logger.getLogger(NameURLCellRenderer.class.getName());
@@ -22,7 +22,7 @@ class NameURLCellRenderer extends DefaultTableCellRenderer {
     }
 
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    public final Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         if (value == null) {
             value = table.getValueAt(row, column);
         }

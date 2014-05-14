@@ -10,10 +10,10 @@ import java.awt.*;
 /**
  * @author Ladislav Vitasek
  */
-class SpeedCellRenderer extends DefaultTableCellRenderer {
+final class SpeedCellRenderer extends DefaultTableCellRenderer {
 
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    public final Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         if (value == null) {
             value = table.getValueAt(row, column);
         }

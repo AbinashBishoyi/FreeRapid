@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 /**
  * @author Ladislav Vitasek
  */
-class ConnectionCellRenderer extends DefaultTableCellRenderer {
+final class ConnectionCellRenderer extends DefaultTableCellRenderer {
     private final String defaultConnection;
 
     private final static Logger logger = Logger.getLogger(ConnectionCellRenderer.class.getName());
@@ -27,7 +27,7 @@ class ConnectionCellRenderer extends DefaultTableCellRenderer {
     }
 
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    public final Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         if (value == null) {
             value = table.getValueAt(row, column);
         }

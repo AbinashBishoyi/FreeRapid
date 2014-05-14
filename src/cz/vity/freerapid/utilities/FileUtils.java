@@ -214,6 +214,14 @@ public class FileUtils {
         }
     }
 
+    public static File getAbsolutFile(File file) {
+        try {
+            return file.getCanonicalFile();
+        } catch (IOException e) {
+            return file.getAbsoluteFile();
+        }
+    }
+
     public static File getFileDrive(File file) {
         //File.listRoots()
         final FileSystemView fsView = FileSystemView.getFileSystemView();

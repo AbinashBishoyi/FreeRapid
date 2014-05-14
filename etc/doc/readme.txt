@@ -112,14 +112,14 @@ III.   How to run FreeRapid Downloader
 Installation
 ------------
 Unzip files to any of your directory, but beware special characters (like '+' or '!') on the path.
-If you make an upgrade to higher version, you can delete previous folder. All user
-settings are preserved. All user settings are saved in home directories:
+If you make an upgrade to higher version, you can delete previous installation folder. All user
+settings are preserved, but it's recommended to backup them.
+All user settings are saved in home directories:
 MS Windows: c:\Documents and Settings\YOUR_USER_NAME\application data\VitySoft\FRD
             
 Linux: ~/.FRD
 
-DO NOT copy new version over older one.
-
+DO NOT copy new FRD version over older one.
 
 How to get the latest Sun Java on Linux (Ubuntu)?
 
@@ -132,7 +132,7 @@ Run these commands:
 Launching
 -----------
 Windows
- Simply launch frd.exe or double click on frd.jar
+ Simply launch frd.exe
 
 
 Linux

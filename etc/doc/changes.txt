@@ -11,13 +11,16 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
-  - FreeRapid Downloader 0.83 Update 1
+ 29th October 2009 - FreeRapid Downloader 0.83 Update 1
   Added : Romanian language [thanks to de-a dura lex]
-  Changed : file links.txt in the configuration folder adds description to every link
+  Added : Experimental: new -DtableSortable boolean internal property to enable sorting in the main table
+          (default value is false, only for testers, see documentation how to use internal properties) 
+  Changed : file links.txt in the configuration folder adds a description to every link
   Fixed : invalid label in menu for russian and hungarian language
   Fixed : visible status of toolbar and statusbar is not saved
   Fixed : removed blinking of splash screen on WindowsXP
-  Fixed : regression: enabled option hide downloaded files don't hide the most recently download file [thanks to Mauser]
+  Fixed : Rapidshare.com FileInputStream is empty (problem when connection was interrupted)
+  Fixed : regression: enabled option hide downloaded files don't hide the most recently download file [reported by Mauser]
 
 18th October 2009 - FreeRapid Downloader 0.83
   Changed : updated chinese translation

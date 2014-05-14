@@ -14,7 +14,7 @@ import java.awt.*;
 /**
  * @author Ladislav Vitasek
  */
-class ProgressBarCellRenderer extends JProgressBar implements TableCellRenderer {
+final class ProgressBarCellRenderer extends JProgressBar implements TableCellRenderer {
     private static final Color BG_RED = new Color(0xFFD0D0);
     private static final Color BG_ORANGE = new Color(0xFFEDD0);
     private static final Color BG_GREEN = new Color(0xD0FFE9);
@@ -32,7 +32,7 @@ class ProgressBarCellRenderer extends JProgressBar implements TableCellRenderer 
     }
 
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    public final Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         if (value == null) {
             value = table.getValueAt(row, column);
         }

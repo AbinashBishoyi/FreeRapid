@@ -9,7 +9,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -319,36 +318,11 @@ public abstract class SingleFrameApplication extends Application {
      * Java versions.
      */
     private List<Window> getVisibleSecondaryWindows() {
-        List<Window> rv = new ArrayList<Window>();
-        Method getWindowsM = null;
-        try {
-            getWindowsM = Window.class.getMethod("getWindows");
-        }
-        catch (Exception ignore) {
-        }
-        if (getWindowsM != null) {
-            Window[] windows;
-            try {
-                windows = (Window[]) getWindowsM.invoke(null);
-            }
-            catch (Exception e) {
-                throw new Error("HCTB - can't get top level windows list", e);
-            }
-            if (windows != null) {
-                for (Window window : windows) {
-                    if (isVisibleWindow(window)) {
-                        rv.add(window);
-                    }
-                }
-            }
-        } else {
-            Frame[] frames = Frame.getFrames();
-            if (frames != null) {
-                for (Frame frame : frames) {
-                    if (isVisibleWindow(frame)) {
-                        rv.add(frame);
-                    }
-                }
+        final Window[] windows = Window.getWindows();
+        List<Window> rv = new ArrayList<Window>(windows.length);
+        for (Window window : windows) {
+            if (isVisibleWindow(window)) {
+                rv.add(window);
             }
         }
         return rv;

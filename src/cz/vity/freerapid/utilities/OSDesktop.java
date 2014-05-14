@@ -24,7 +24,7 @@ public class OSDesktop {
             return;
         if (Desktop.isDesktopSupported()) {
             try {
-                Desktop.getDesktop().open(file);
+                Desktop.getDesktop().open(FileUtils.getAbsolutFile(file));
             } catch (IOException e) {
                 LogUtils.processException(logger, e);
             } catch (RuntimeException e) {

@@ -10,7 +10,7 @@ import javax.swing.table.AbstractTableModel;
 /**
  * @author Ladislav Vitasek
  */
-class CustomTableModel extends AbstractTableModel implements ListDataListener {
+final class CustomTableModel extends AbstractTableModel implements ListDataListener {
     private final ArrayListModel<DownloadFile> model;
     private final String[] columns;
 

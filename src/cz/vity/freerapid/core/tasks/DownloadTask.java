@@ -89,7 +89,11 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         if (seconds > 0)
             sleep(seconds);
         downloadFile.setState(DownloadState.GETTING);
-        service.run(this);//run plugin
+        try {
+            service.run(this);//run plugin
+        } catch (IllegalStateException e) {//fatal exceptions with connection
+            throw new Exception(e);
+        }
         service = null;
         return null;
     }
@@ -171,7 +175,12 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
             File storeFile = downloadFile.getStoreFile();
             if (downloadFile.getStoreFile() == null || !downloadFile.getStoreFile().exists()) {
                 storeFile = (temporary) ? File.createTempFile(fileName + ".", ".part", saveToDirectory) : outputFile;
-                downloadFile.setStoreFile(useRelativeStoreFileIfPossible ? FRDUtils.getAbsRelPath(storeFile) : storeFile);
+                //workaround http://wordrider.net/forum/read.php?7,2732
+                if (!System.getProperties().containsKey("exePath")) {
+                    downloadFile.setStoreFile(useRelativeStoreFileIfPossible ? FRDUtils.getAbsRelPath(storeFile) : storeFile);
+                } else {
+                    downloadFile.setStoreFile(storeFile);
+                }
                 downloadFile.setDownloaded(0);
             }
             final long fileSize = downloadFile.getFileSize();
@@ -598,7 +607,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     }
 
 
-    protected void setUseRelativeStoreFileIfPossible(boolean useRelativeStoreFileIfPossible) {
-        this.useRelativeStoreFileIfPossible = useRelativeStoreFileIfPossible;
+    protected void setUseRelativeStoreFileIfPossible(boolean useRelative) {
+        this.useRelativeStoreFileIfPossible = useRelative;
     }
 }

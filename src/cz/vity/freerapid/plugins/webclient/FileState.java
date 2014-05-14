@@ -6,18 +6,20 @@ package cz.vity.freerapid.plugins.webclient;
  * @author Ladislav Vitasek
  */
 public enum FileState {
-    /**
-     * file was not checked on the server yet
-     */
-    NOT_CHECKED,
+    //important note, order of these values is used in the table to sort column by priority
     /**
      * file was succesfuly checked on the server and is available for download
      */
     CHECKED_AND_EXISTING,
+
     /**
      * file is not avaiable on the server anymore
      */
     FILE_NOT_FOUND,
+    /**
+     * file was not checked on the server yet
+     */
+    NOT_CHECKED,
     /**
      * error during checking of file
      */

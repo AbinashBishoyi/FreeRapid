@@ -11,7 +11,7 @@ import java.awt.*;
 /**
  * @author Ladislav Vitasek
  */
-class CheckedCellRenderer extends DefaultTableCellRenderer {
+final class CheckedCellRenderer extends DefaultTableCellRenderer {
     private final Icon notFound;
     private final Icon checked;
     private final Icon unknown;
@@ -26,7 +26,7 @@ class CheckedCellRenderer extends DefaultTableCellRenderer {
         this.unknown = map.getIcon("unknownIcon");
     }
 
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    public final Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         if (value == null) {
             value = table.getValueAt(row, column);
         }

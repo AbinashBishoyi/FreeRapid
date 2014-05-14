@@ -133,7 +133,7 @@ public class PluginsManager {
             pluginManager.publishPlugins(loc);
 
             final Set<PluginMetaData> datas = pluginMetaDataManager.getItems();
-            final HashMap<String, PluginMetaData> datasId = new HashMap<String, PluginMetaData>(datas.size());
+            final Map<String, PluginMetaData> datasId = new HashMap<String, PluginMetaData>(datas.size());
             for (PluginMetaData data : datas) {
                 datasId.put(data.getId(), data);
             }

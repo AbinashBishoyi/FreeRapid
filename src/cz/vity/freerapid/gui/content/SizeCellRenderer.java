@@ -12,7 +12,7 @@ import java.text.NumberFormat;
 /**
  * @author Ladislav Vitasek
  */
-class SizeCellRenderer extends DefaultTableCellRenderer {
+final class SizeCellRenderer extends DefaultTableCellRenderer {
     private final String sizeRendererProgress;
     private final String sizeRendererUnknown;
     private final String sizeRendererInBytes;
@@ -27,7 +27,7 @@ class SizeCellRenderer extends DefaultTableCellRenderer {
     }
 
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    public final Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         if (value == null) {
             value = table.getValueAt(row, column);
         }

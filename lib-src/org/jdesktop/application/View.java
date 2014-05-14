@@ -50,7 +50,7 @@ import java.util.List;
  * @see Application#hide(View)
  */
 public class View extends AbstractBean {
-    //   private static final Logger logger = Logger.getLogger(View.class.getName());
+ //   private static final Logger logger = Logger.getLogger(View.class.getName());
     private final Application application;
     private ResourceMap resourceMap = null;
     private JRootPane rootPane = null;

@@ -71,7 +71,7 @@ public class ApplicationActionMap extends ActionMap {
         this.context = context;
         this.actionsClass = actionsClass;
         this.actionsObject = actionsObject;
-        //  ResourceMap resourceMap1 = resourceMap;
+      //  ResourceMap resourceMap1 = resourceMap;
         this.proxyActions = new ArrayList<ApplicationAction>();
         addAnnotationActions(resourceMap);
         maybeAddActionsPCL();

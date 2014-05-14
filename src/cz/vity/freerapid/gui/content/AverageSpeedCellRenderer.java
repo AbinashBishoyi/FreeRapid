@@ -10,8 +10,8 @@ import java.awt.*;
 /**
  * @author Ladislav Vitasek
  */
-class AverageSpeedCellRenderer extends DefaultTableCellRenderer {
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+final class AverageSpeedCellRenderer extends DefaultTableCellRenderer {
+    public final Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         if (value == null) {
             value = table.getValueAt(row, column);
         }

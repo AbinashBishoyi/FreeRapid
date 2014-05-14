@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  * @author Ladislav Vitasek
  */
-class ServiceCellRenderer extends DefaultTableCellRenderer {
+final class ServiceCellRenderer extends DefaultTableCellRenderer {
     private final PluginsManager manager;
     private final Map<String, Icon> iconCache = new HashMap<String, Icon>();
 
@@ -27,7 +27,7 @@ class ServiceCellRenderer extends DefaultTableCellRenderer {
         iconCache.put("default", icon);
     }
 
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    public final Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         if (value == null) {
             value = table.getValueAt(row, column);
         }

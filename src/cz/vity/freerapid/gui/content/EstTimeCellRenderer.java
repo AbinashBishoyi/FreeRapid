@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author Ladislav Vitasek
  */
-class EstTimeCellRenderer extends DefaultTableCellRenderer {
+final class EstTimeCellRenderer extends DefaultTableCellRenderer {
     private final String tooltip;
     private final String elapsedTime;
 
@@ -26,7 +26,7 @@ class EstTimeCellRenderer extends DefaultTableCellRenderer {
     }
 
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    public final Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         if (value == null) {
             value = table.getValueAt(row, column);
         }

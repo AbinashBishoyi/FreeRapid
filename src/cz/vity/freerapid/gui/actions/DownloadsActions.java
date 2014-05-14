@@ -10,6 +10,23 @@ import java.util.EnumSet;
  */
 final public class DownloadsActions {
 
+    private final static int priorities[] = new int[DownloadState.values().length];
+
+    static {
+        priorities[DownloadState.DOWNLOADING.ordinal()] = 0;
+        priorities[DownloadState.GETTING.ordinal()] = 10;
+        priorities[DownloadState.TESTING.ordinal()] = 20;
+        priorities[DownloadState.WAITING.ordinal()] = 30;
+        priorities[DownloadState.QUEUED.ordinal()] = 40;
+        priorities[DownloadState.SLEEPING.ordinal()] = 50;
+        priorities[DownloadState.ERROR.ordinal()] = 60;
+        priorities[DownloadState.PAUSED.ordinal()] = 70;
+        priorities[DownloadState.DISABLED.ordinal()] = 80;
+        priorities[DownloadState.CANCELLED.ordinal()] = 90;
+        priorities[DownloadState.COMPLETED.ordinal()] = 100;
+        priorities[DownloadState.DELETED.ordinal()] = 1000;
+    }
+
     /**
      * Private constructor
      */
@@ -50,5 +67,9 @@ final public class DownloadsActions {
      */
     public static boolean isProcessState(DownloadState s) {
         return s == WAITING || s == DOWNLOADING || s == GETTING || s == TESTING;
+    }
+
+    public static int getPriorityForState(DownloadState s) {
+        return priorities[s.ordinal()];
     }
 }

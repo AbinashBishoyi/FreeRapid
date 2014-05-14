@@ -11,8 +11,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import static java.util.Locale.ENGLISH;
 import java.util.logging.Logger;
+import static java.util.Locale.ENGLISH;
 
 /**
  * The {@link javax.swing.Action} class used to implement the

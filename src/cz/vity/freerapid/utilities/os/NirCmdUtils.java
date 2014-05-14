@@ -36,9 +36,14 @@ final class NirCmdUtils implements SystemCommander {
     }
 
     private boolean startNewApplicationInstance() {
-        final String appPath = Utils.getAppPath();
-        final String appSep = Utils.addFileSeparator(appPath);
-        final String exe = appSep + Consts.WINDOWS_EXE_NAME;
+        final String exe;
+        if (!System.getProperties().containsKey("exePath")) {
+            final String appPath = Utils.getAppPath();
+            final String appSep = Utils.addFileSeparator(appPath);
+            exe = appSep + Consts.WINDOWS_EXE_NAME;
+        } else {
+            exe = System.getProperty("exePath");
+        }
         return run(exe + " " + Utils.getApplicationArguments(), false);
     }
 

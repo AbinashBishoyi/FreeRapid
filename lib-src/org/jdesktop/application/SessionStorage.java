@@ -609,11 +609,16 @@ public class SessionStorage {
                     getLocalGraphicsEnvironment();
             GraphicsDevice[] gs =
                     ge.getScreenDevices();
-            for (GraphicsDevice gd : gs) {
-                GraphicsConfiguration[] gc =
-                        gd.getConfigurations();
-                for (GraphicsConfiguration aGc : gc) {
-                    virtualBounds = virtualBounds.union(aGc.getBounds());
+            //JDK splash screen blinks bug workaround
+            if (gs.length == 1) {
+                virtualBounds = virtualBounds.union(gs[0].getDefaultConfiguration().getBounds());
+            } else {
+                for (GraphicsDevice gd : gs) {
+                    GraphicsConfiguration[] gc =
+                            gd.getConfigurations();
+                    for (GraphicsConfiguration aGc : gc) {
+                        virtualBounds = virtualBounds.union(aGc.getBounds());
+                    }
                 }
             }
             return virtualBounds;

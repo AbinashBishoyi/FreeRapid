@@ -9,13 +9,13 @@ import java.awt.*;
 /**
  * @author Ladislav Vitasek
  */
-class ProgressCellRenderer extends DefaultTableCellRenderer {
+final class ProgressCellRenderer extends DefaultTableCellRenderer {
 
     ProgressCellRenderer() {
     }
 
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    public final Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         if (value == null) {
             value = table.getValueAt(row, column);
         }

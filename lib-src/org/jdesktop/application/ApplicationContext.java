@@ -40,7 +40,7 @@ public class ApplicationContext extends AbstractBean {
     private Class applicationClass = null;
     private JComponent focusOwner = null;
     private Clipboard clipboard = null;
-    // private Throwable uncaughtException = null;
+   // private Throwable uncaughtException = null;
     private TaskMonitor taskMonitor = null;
 
 
