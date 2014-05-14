@@ -1,0 +1,2771 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="1.6.0_20" class="java.beans.XMLDecoder">
+    <object class="java.util.HashSet">
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>sdilej.to</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>edisk.cz</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>load.to</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="id">
+                    <string>depositfiles.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>enterupload.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>leteckaposta.cz</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>savefile.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>cramit.in</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>stream.cz</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>hellshare.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>RapidShare.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>data.hu</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>file2box.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>file-rack.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>sharebee.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>shareplace.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>ifolder.ru</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>dataport.cz</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>o2musicstream.cz</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>ulozisko.sk</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>shareator.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>tinyurl.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>movielibrary.cz</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="id">
+                    <string>czshare.com_profi</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="id">
+                    <string>ifile.it_login</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>filestore.to</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>netgull.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>serienjunkies.org</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>share-rapid</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>czshare.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>movies.apple.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>imageshack.us</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>duckload.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>2shared.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>badongo.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="id">
+                    <string>multishare.cz_premium</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>usershare.net</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>webshots.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>uloz.to</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>gametrailers.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>easyshare_ws</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>zippyshare.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>netload.in</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>filebase.to</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>missupload.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>rghost.net</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>FreakShare</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>hellspy.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>rapidlibrary.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>filer.net</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>protected.socadvnet.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>uloz.cz</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>speedyshare.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>youtube.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>imagevenue.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>flickr.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>microsoft.com/downloads</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>imzupload.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>4us.to</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>saveqube.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>fdnlinks.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>ziddu.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>xun6.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>servup.co.il</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>fileshost.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>protectlinks.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>fileserve.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>extabit.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>addat.hu</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>dataup.de</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>flyshare.cz</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>uploading.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>novaup.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>secured.in</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>turbobit.net</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>x7.to</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>linksave.in</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>usercash.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>co.cc</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>megavideo.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>megashares.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>sendspace.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>bigandfree.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>cobrashare.sk</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>hyperfileshare.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>uploadjockey.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>hotfile.com_premium</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>u.115.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>getthebit.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>uploadjocketredirect.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>filestube.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>bebasupload.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>yourfilehost.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>remixshare.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>multishare.cz</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>disperseit.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>bagruj.cz</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>filebox.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>fileflyer.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>relink.us</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>up-file.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>hulkshare.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>hamstershare.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>share-links.biz</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>imagehaven.net</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>nahraj.cz</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>filesavr.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>recaptcha.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="id">
+                    <string>megaupload.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>linkbucks.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>plunder.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="id">
+                    <string>RapidShare.com_premium</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>metacafe.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>divshare.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>sendspacepl.pl</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>upload-il.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>gigaup.fr</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>file-bit.net</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>paid4share.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>superfastfile.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>files.fm</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>jandown.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>kitaupload.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>rsmonkey.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>tunescoop.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>subory.sk</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>protect-my-links.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>sharingmatrix.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>createfile.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>narod.ru</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>fileupload.eu</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>ugotfile.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>flickrcollections.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>storeplace.org</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>picasa.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>oron.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>megaupload.com_premium</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>iskladka.cz</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>yourfiles.biz</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>indowebster.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>uploaded.to</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>webshare.net</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>egoshare.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="id">
+                    <string>hotfile.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>wiiupload.net</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>4upload.ru</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>kewlshare.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>bitroad.net</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>sharebomb.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>multiload.cz</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="id">
+                    <string>bigandfree.com_premium</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="id">
+                    <string>quickshare.cz_premium</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="id">
+                    <string>direct http</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>videoweed.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>upnito.sk</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>letitbit.net</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>cryptit.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>lix.in</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>myurl.in</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>wikiupload.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>hotfilefolder</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>uploadspace.eu</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>photobucket.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>filefactory.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>megashare.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="id">
+                    <string>data_premium.hu</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>miroriii.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>rapidshareuser</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>shareflare.net</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>dailymotion.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>przeklej.pl</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>filesend.net</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>storage.to</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>uploadbox.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>vimeo.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>multiupload.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>biggerupload.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>depositfiles.com_premium</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>metadivx.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>vip-file.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>gigasize.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>anonym.to</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>shareonline.biz</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>upload.com.ua</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>quickshare.cz</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>xtraupload.de</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>rapidshare.de</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>videolectures.net</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>filedropper.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>ultrashare.net</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>filebeam.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="id">
+                    <string>megavideo.com_premium</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>zshare.net</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>uppit.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>slingfile.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>mega.1280.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>extrashare.us</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>mediafire.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>linkblur.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>4shared.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>easyshare.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>ilix.in</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>gigapeta.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>teradepot.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>uploadline.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="id">
+                    <string>filefactory.com_premium</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>gotupload.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>radikal.ru</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>filesmonster.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>ifile.it</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>dl.free.fr</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>megashare.vn</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>imagebam.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>linkbee.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="id">
+                    <string>hellshare.com_full</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+        <void method="add">
+            <object class="cz.vity.freerapid.model.PluginMetaData">
+                <void property="enabled">
+                    <boolean>true</boolean>
+                </void>
+                <void property="id">
+                    <string>qshare.com</string>
+                </void>
+                <void property="updatesEnabled">
+                    <boolean>true</boolean>
+                </void>
+            </object>
+        </void>
+    </object>
+</java> 

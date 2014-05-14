@@ -6,13 +6,14 @@ import cz.vity.freerapid.utilities.Utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Logger;
 
 /**
  * @author Ladislav Vitasek
  */
-class LinuxCmdUtils implements SystemCommander {
+class LinuxCmdUtils extends AbstractSystemCommander {
     private static final String SYSTEM_COMMAND_PROPERTIES_FILE = "syscmd.properties";
     private final static Logger logger = Logger.getLogger(LinuxCmdUtils.class.getName());
 
@@ -125,5 +126,15 @@ class LinuxCmdUtils implements SystemCommander {
 
     private static String getKey(OSCommand command) {
         return command.toString().toLowerCase();
+    }
+
+    public boolean findTopLevelWindow(String stringToFind, boolean caseSensitive) throws IOException {
+        final String command = getCommand(OSCommand.LIST_TOP_WINDOWS);
+        return super.findTopLevelWndow(stringToFind, caseSensitive, command);
+    }
+
+    public List<String> getTopLevelWindowsList() throws IOException {
+        final String command = getCommand(OSCommand.LIST_TOP_WINDOWS);
+        return super.getTopLevelWindowsList(command);
     }
 }

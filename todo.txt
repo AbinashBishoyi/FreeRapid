@@ -1,0 +1,8 @@
+quiet mode -
+ - captcha
+ - s
+ 
+ 
+ kdyz bude dochazet misto, tak ukazat warning v popupu
+ 
+ nekam si pripisu na TODO podporu pro vicenasobne nalezeni stringbetween

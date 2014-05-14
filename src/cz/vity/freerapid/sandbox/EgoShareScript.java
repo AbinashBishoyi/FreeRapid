@@ -1,7 +1,9 @@
 package cz.vity.freerapid.sandbox;
 
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -64,6 +66,16 @@ final class EgoShareScript {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        try {
+            final Process process = Runtime.getRuntime().exec("c:\\develope\\freerapid\\etc\\tools\\find\\find.exe freerapid");
+            final Scanner scanner = new Scanner(process.getInputStream());
+            while (scanner.hasNextLine()) {
+                System.out.println(scanner.nextLine());
+            }
+            scanner.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         //loadfilelink.decode("aHR0cDovL2VnbzgtMS5lZ29zaGFyZS5jb20vZ2V0ZmlsZS5waHA/aWQ9OTc5NDkmYWNjZXNzX2tleT02MTQwN2Q4MDA5YjM1MDk1NzM1MGVjOTQ5ZGFiOTc5NyZ0PTQ4ZTY4ZGM2Jm89MEVBQUI2NjI3NzZGQjY1QzVFNzZDQkMzOUQ1OEIzNzgzNkQwNUQ3MzI0RDgxNDQ3MkE5NzlDQ0RDM0QxOUE1MEJBMTBCN0IyMEUzRDIyRjU1QzNBMDlENkRFODI1OEFBJm5hbWU9aGlvLXNuLjQwMy5kb3QucGFydDEucmFy");
         //System.out.println(EgoShareScript.decode("aHR0cDovL2VnbzUtMS5lZ29zaGFyZS5jb20vZ2V0ZmlsZS5waHA/aWQ9OTY2MTcmYWNjZXNzX2tleT1iM2JjMjBiNzQ2YTVhNjI4OTk4NjBlYTBkNTdhNzNkMSZ0PTQ4ZTY4ZjMwJm89QkI4NEIwMkY3QTREQTEzRkZDQUQ0QTBFNTU0RERENDdCRTkwQjcyQTcyNERCQzIzRTFCODQyNkUzNjNFREUzNUJFOTFBRTQ5MTE0REExM0ZGRkFEJm5hbWU9aGlvLWtyLjEwMi5sb2wucGFydDMucmFy"));
 

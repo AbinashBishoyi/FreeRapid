@@ -6,14 +6,16 @@ import cz.vity.freerapid.utilities.Utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
  * @author Ladislav Vitasek
  */
-final class NirCmdUtils implements SystemCommander {
+final class NirCmdUtils extends AbstractSystemCommander {
     private final static Logger logger = Logger.getLogger(NirCmdUtils.class.getName());
     private final static String PATH = "tools/nircmd/nircmd.exe";
+    private final static String FIND_COMMAND = "tools/find/find.exe";
 
     NirCmdUtils() {
     }
@@ -132,5 +134,15 @@ final class NirCmdUtils implements SystemCommander {
             LogUtils.processException(logger, e);
             return false;
         }
+    }
+
+    public boolean findTopLevelWindow(String stringToFind, boolean caseSensitive) throws IOException {
+        final String command = Utils.addFileSeparator(Utils.getAppPath()) + FIND_COMMAND;
+        return findTopLevelWndow(stringToFind, caseSensitive, command);
+    }
+
+    public List<String> getTopLevelWindowsList() throws IOException {
+        final String command = Utils.addFileSeparator(Utils.getAppPath()) + FIND_COMMAND;
+        return getTopLevelWindowsList(command);
     }
 }
