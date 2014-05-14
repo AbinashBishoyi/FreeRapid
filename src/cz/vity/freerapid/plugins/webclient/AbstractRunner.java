@@ -13,6 +13,7 @@ import org.apache.commons.httpclient.params.HttpClientParams;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
@@ -367,9 +368,15 @@ public abstract class AbstractRunner implements PluginRunner {
      * @throws Exception when connection/writing to file failed
      */
     protected boolean tryDownloadAndSaveFile(HttpMethod method) throws Exception {
-        logger.info("Download link URI: " + method.getURI().toString());
-        httpFile.setState(DownloadState.GETTING);
-        logger.info("Making final request for file");
+        if(httpFile.getState() == DownloadState.PAUSED || httpFile.getState() == DownloadState.CANCELLED)
+            return false;
+        else
+            httpFile.setState(DownloadState.GETTING);
+        if (logger.isLoggable(Level.INFO)) {
+            logger.info("Download link URI: " + method.getURI().toString());
+            logger.info("Making final request for file");
+        } 
+
         try {
             final InputStream inputStream = client.makeFinalRequestForFile(method, httpFile, true);
             if (inputStream != null) {
