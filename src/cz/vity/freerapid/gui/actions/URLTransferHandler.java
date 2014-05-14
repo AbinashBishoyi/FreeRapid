@@ -89,6 +89,40 @@ public abstract class URLTransferHandler extends TransferHandler {
                         supported = pluginsManager.isSupported(url, clipboardMonitoring);
                     }
                 }
+                if (!supported) {
+                    //support for links like
+                    //  http://www.agaleradodownload.com/download/d/?0PPJOQ2X=d?/moc.daolpuagem.www//:ptth
+                    //  http://www.zunay.com/d/?KKLZZ2OL=d?/moc.daolpuagem.www
+                    int index = spec.toLowerCase(Locale.ENGLISH).indexOf("//:ptth");
+                    if (index >= 0) {
+                        int startIndex = spec.indexOf("url=", 0);
+                        if (startIndex != -1) {
+                            if (startIndex < index) {
+                                spec = Utils.reverseString(spec.substring(startIndex + 4, index));
+                            } else startIndex = -1;
+                        } else {
+                            //? has to be prioritized to =
+                            startIndex = spec.indexOf('?', 0);
+                            if (startIndex != -1) {
+                                if (startIndex < index) {
+                                    spec = Utils.reverseString(spec.substring(startIndex + 1, index));
+                                } else startIndex = -1;
+                            } else {
+                                startIndex = spec.indexOf('=', 0);
+                                if (startIndex != -1) {
+                                    if (startIndex < index) {
+                                        spec = Utils.reverseString(spec.substring(startIndex + 1, index));
+                                    } else startIndex = -1;
+                                }
+                            }
+                        }
+                        if (startIndex != -1) {
+                            spec = Utils.urlDecode("http://" + spec);
+                            url = new URL(updateApostrophs(spec));
+                            supported = pluginsManager.isSupported(url, clipboardMonitoring);
+                        }
+                    }
+                }
                 if (supported) {
                     final String urlS = url.toExternalForm();
                     final int i = urlS.indexOf("...");

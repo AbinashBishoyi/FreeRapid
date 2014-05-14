@@ -63,6 +63,11 @@ public class OptionsActions extends AbstractBean {
     }
 
     @Action
+    public void globalSpeedLimitAction() {
+        AppPrefs.negateProperty(UserProp.SPEED_LIMIT_ENABLED, UserProp.SPEED_LIMIT_ENABLED_DEFAULT);
+    }
+
+    @Action
     public void shutdownDisabledAction() {
         setShutdownProperty(UserProp.AUTOSHUTDOWN_DISABLED);
     }

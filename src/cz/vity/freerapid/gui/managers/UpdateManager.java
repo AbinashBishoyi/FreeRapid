@@ -145,7 +145,7 @@ public class UpdateManager {
                 break;
             case UserProp.PLUGIN_UPDATE_METHOD_AUTO:
             case UserProp.PLUGIN_UPDATE_METHOD_AUTO_RESTART:
-                downloadUpdate(datas, quiet);
+                downloadUpdate(datas, quiet, method);
                 break;
             default:
                 break;
@@ -159,7 +159,7 @@ public class UpdateManager {
         app.prepareDialog(dialog, true);
     }
 
-    public void downloadUpdate(List<WrappedPluginData> pluginList, boolean quiet) {
+    private void downloadUpdate(List<WrappedPluginData> pluginList, boolean quiet, int method) {
         final Task task = getDownloadPluginsTask(pluginList, quiet);
         if (task != null)
             executeUpdateTask(task);

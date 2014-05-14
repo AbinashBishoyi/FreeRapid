@@ -11,6 +11,11 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
+
+  Added : Enhanced clipboard monitoring support for URLs defined in reverse order eg.:
+           http://www.agaleradodownload.com/download/d/?0PPJOQ2X=d?/moc.daolpuagem.www//:ptth
+           http://www.zunay.com/d/?KKLZZ2OL=d?/moc.daolpuagem.www
+  Added : new items in menu Options/Global speed limit, Help/Check for plugin statuses
   Added : plugin API
             - DownloadClientConsts class with constants for DownloadClient parameters
   Added :  New theme for JTattoo LookAndFeel - "Graphite"             

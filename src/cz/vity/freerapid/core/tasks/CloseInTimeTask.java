@@ -37,7 +37,7 @@ final public class CloseInTimeTask extends CoreTask<Void, Void> {
                 break;
             message((i > 1) ? "closeAppMessageN" : "closeAppMessage1", i);
             Thread.sleep(1000);
-            if (!dataManager.checkComplete()) {
+            if (!dataManager.checkAllComplete()) {
                 //   cancel(true);
                 throw new InterruptedException();
             }

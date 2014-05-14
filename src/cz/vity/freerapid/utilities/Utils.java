@@ -361,4 +361,9 @@ public final class Utils {
         }
         return uri;
     }
+
+
+    public static String reverseString(String string) {
+        return new StringBuilder(string).reverse().toString();
+    }
 }

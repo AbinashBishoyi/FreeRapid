@@ -4,9 +4,10 @@ package cz.vity.freerapid.core;
  * @author Vity
  */
 final public class UserProp {
-
     private UserProp() {
     }
+
+    public static final String PLUGINSSTATUS_URL = "pluginsStatusUrl";
 
     public static final String LAST_IMPORT_FILTER = "lastUsedImportFilter";
     public static final String IMPORT_LAST_USED_FOLDER = "importLastUsedFolder";

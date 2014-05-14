@@ -565,7 +565,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     }
 
     private boolean isAllComplete(Application app) {
-        return ((MainApp) app).getManagerDirector().getDataManager().checkComplete();
+        return ((MainApp) app).getManagerDirector().getDataManager().checkAllComplete();
     }
 
     private String getNewUniqueFileName(final File to) {

@@ -84,6 +84,7 @@ public class Consts {
      * version of API
      */
     public static final String APIVERSION = "0.849";
+    public static final String PLUGINSSTATUS_URL = "http://wordrider.net/freerapid/plugins.html";
 
     /**
      * Od teto tridy se nebudou delat zadne instance

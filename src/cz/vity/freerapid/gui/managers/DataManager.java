@@ -13,7 +13,9 @@ import cz.vity.freerapid.gui.managers.exceptions.NotSupportedDownloadServiceExce
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
+import static cz.vity.freerapid.plugins.webclient.DownloadState.*;
 import cz.vity.freerapid.plugins.webclient.FileState;
+import static cz.vity.freerapid.plugins.webclient.FileState.NOT_CHECKED;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
 import cz.vity.freerapid.plugins.webclient.interfaces.MaintainQueueSupport;
 import cz.vity.freerapid.swing.Swinger;
@@ -38,9 +40,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 import java.util.logging.Logger;
-
-import static cz.vity.freerapid.plugins.webclient.DownloadState.*;
-import static cz.vity.freerapid.plugins.webclient.FileState.NOT_CHECKED;
 
 /**
  * @author Vity
@@ -518,7 +517,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         return lock;
     }
 
-    public boolean checkComplete() {
+    public boolean checkAllComplete() {
         synchronized (lock) {
             final boolean nonFatalErrorIsOK = AppPrefs.getProperty(UserProp.AUTOSHUTDOWN_WITH_ERRORS, UserProp.AUTOSHUTDOWN_WITH_ERRORS_DEFAULT);
             for (DownloadFile file : downloadFiles) {

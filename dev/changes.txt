@@ -28,6 +28,13 @@ sortbyServerAction.Action.smallIcon=${iconsPath}sort_small.gif
 
 
 New:
+checkPluginStatuses.Action.text=Check &plugins statuses
+checkPluginStatuses.Action.shortDescription=Check &plugins statuses in web browser
+
+globalSpeedLimitAction.Action.text=&Global speed limit
+globalSpeedLimitAction.Action.shortDescription=${labelSpeedBtn.toolTipText}
+globalSpeedLimitAction.Action.smallIcon=${labelSpeedBtn.icon}
+
 removeCompletedAndDeletedAction.Action.text=Remove Completed Links and De&leted Files
 removeCompletedAndDeletedAction.Action.accelerator =shortcut L
 removeCompletedAndDeletedAction.Action.shortDescription = Remove all completed downloads whose files do not exist
@@ -95,8 +102,8 @@ comboHowToUpdate_list=Ask what to do|Show update dialog first|Update automatical
 DownloadNewPluginsTask.properties
 ====================================
 New:
-pluginsDirectoryIsNotWriteable=Target plugins directory is not writable.You cannot download plugins.\nIf FreeRapid's directory is placed in 'Program files' directory then run FRD as an administrator or place FreeRapid into another directory.
-
+pluginsDirectoryIsNotWriteable=Target plugins directory is not writable. You cannot download plugins.\nIf FreeRapid's directory is placed in 'Program files' directory then run FRD as an administrator or place FreeRapid into another directory.
+installedSuccessFully=New plugins were installed successfuly and they are ready to use.
 
 
 Version 0.82->0.83

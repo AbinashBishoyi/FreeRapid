@@ -49,6 +49,11 @@ public class HelpActions {
     }
 
     @Action
+    public void checkPluginStatuses() {
+        Browser.openBrowser(AppPrefs.getProperty(UserProp.PLUGINSSTATUS_URL, Consts.PLUGINSSTATUS_URL));
+    }
+
+    @Action
     public void showDemo() {
         Browser.openBrowser(AppPrefs.getProperty(UserProp.DEMO_URL, Consts.DEMO_WEBURL));
     }

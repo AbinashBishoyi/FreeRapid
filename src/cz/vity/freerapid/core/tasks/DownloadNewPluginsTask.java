@@ -37,17 +37,17 @@ public class DownloadNewPluginsTask extends DownloadTask {
 
     private final ManagerDirector director;
     private final List<WrappedPluginData> fileList;
-    private final boolean allowAutomaticRestart;
+    private final boolean beQuiet;
     private final ScreenInputBlocker blocker;
     private static boolean restartIsRequiredToUpdateSomePlugins = false;
     private List<File> newPluginsFiles = new ArrayList<File>();
     private Collection<WrappedPluginData> updatedPlugins = new LinkedList<WrappedPluginData>();
 
-    public DownloadNewPluginsTask(ManagerDirector director, ApplicationContext context, List<WrappedPluginData> fileList, boolean allowAutomaticRestart) {
+    public DownloadNewPluginsTask(ManagerDirector director, ApplicationContext context, List<WrappedPluginData> fileList, boolean beQuiet) {
         super(context.getApplication());
         this.director = director;
         this.fileList = fileList;
-        this.allowAutomaticRestart = allowAutomaticRestart;
+        this.beQuiet = beQuiet;
         blocker = new ScreenInputBlocker(this, BlockingScope.APPLICATION, Swinger.getActiveFrame(), null);
         this.setInputBlocker(blocker);
         setUseRelativeStoreFileIfPossible(false);
@@ -175,19 +175,30 @@ public class DownloadNewPluginsTask extends DownloadTask {
 
     @Override
     protected void succeeded(Void result) {
+        Exception ex = null;
         try {
             updatePlugins();
         } catch (JpfException e) {
             LogUtils.processException(logger, e);
+            ex = e;
         }
         blocker.unblock();
+        final int updateMethod = AppPrefs.getProperty(UserProp.PLUGIN_UPDATE_METHOD, UserProp.PLUGIN_UPDATE_METHOD_DEFAULT);
         if (restartIsRequiredToUpdateSomePlugins) {
-            boolean restart = allowAutomaticRestart && AppPrefs.getProperty(UserProp.PLUGIN_UPDATE_METHOD, UserProp.PLUGIN_UPDATE_METHOD_DEFAULT) == UserProp.PLUGIN_UPDATE_METHOD_AUTO_RESTART && director.getDataManager().checkComplete();
+            boolean restart = beQuiet && updateMethod == UserProp.PLUGIN_UPDATE_METHOD_AUTO_RESTART && director.getDataManager().checkAllComplete();
             if (!restart) {
                 restart = Swinger.getChoiceYesNo(getResourceMap().getString("installed")) == Swinger.RESULT_YES;
             }
             if (restart) {
                 director.getMenuManager().getFileActions().restartApplication();
+            }
+        } else {
+            if (!updatedPlugins.isEmpty() || !newPluginsFiles.isEmpty()) {
+                if (ex == null) {
+                    Swinger.showInformationDialog(getResourceMap().getString("installedSuccessFully"));
+                } else {
+                    Swinger.showInformationDialog(Swinger.getMessageFromException(getResourceMap(), ex));
+                }
             }
         }
     }
