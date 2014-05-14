@@ -212,7 +212,7 @@ public class DownloadClient implements HttpDownloadClient {
             }
         }
         final String fileName = HttpUtils.getFileName(method);
-        if (fileName != null) {
+        if (fileName != null && !fileName.isEmpty()) {
             if (!client.getParams().isParameterTrue("dontUseHeaderFilename"))
                 file.setFileName(fileName);
             if (client.getParams().isParameterTrue("noContentTypeInHeader"))
