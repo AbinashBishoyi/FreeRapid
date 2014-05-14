@@ -5,6 +5,7 @@ import com.jgoodies.binding.value.ValueModel;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
+import cz.vity.freerapid.gui.managers.search.SearchItem;
 import cz.vity.freerapid.swing.SwingUtils;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.swing.ToolbarSeparator;
@@ -16,6 +17,8 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.prefs.PreferenceChangeEvent;
@@ -51,12 +54,15 @@ public class ToolbarManager implements PropertyChangeListener {
     //private JXBusyLabel labelWorkingProgress;
 
     private float fontSize;
+    private JTextField searchField;
+    private final ManagerDirector directorManager;
 
     /**
      * Konstruktor - naplni toolbar buttony
      */
 
     public ToolbarManager(ManagerDirector directorManager, ApplicationContext context) {
+        this.directorManager = directorManager;
         toolbarPanel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
         final Action action = context.getActionMap().get("showToolbar");
 
@@ -99,6 +105,26 @@ public class ToolbarManager implements PropertyChangeListener {
         toolbar.add(getButton(Swinger.getAction("upAction")));
         toolbar.add(getButton(Swinger.getAction("downAction")));
         toolbar.add(getButton(Swinger.getAction("bottomAction")));
+        toolbar.add(new ToolbarSeparator());
+        searchField = new JTextField();
+        final Dimension preferredSize = new Dimension(85, 25);
+        searchField.setPreferredSize(preferredSize);
+        searchField.setSize(preferredSize);
+        searchField.setMaximumSize(preferredSize);
+        searchField.setMinimumSize(preferredSize);
+        searchField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER && !searchField.getText().isEmpty()) {
+                    final java.util.List<SearchItem> searchItems = directorManager.getSearchManager().getSearchItems();
+                    if (!searchItems.isEmpty()) {
+                        directorManager.getSearchManager().openBrowser(searchItems.get(0), searchField.getText());
+                    }
+                }
+            }
+        });
+        toolbar.add(searchField);
+
 //        toolbar.add(new ToolbarSeparator());
 //        toolbar.add(getButton(Swinger.getAction("quit")));
         toolbar.add(Box.createGlue());

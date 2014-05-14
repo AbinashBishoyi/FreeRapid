@@ -68,6 +68,8 @@ public class ManagerDirector {
     private SpeedRegulator speedRegulator;
     private LinkStoreManager linkStoreManager;
 
+    private SearchManager searchManager;
+
 
     /**
      * Konstruktor
@@ -95,6 +97,8 @@ public class ManagerDirector {
 
         this.pluginsManager = new PluginsManager(context, this);
 
+        this.searchManager = new SearchManager(context, this);
+
         this.updateManager = new UpdateManager(this, context);
 
         this.fileTypeIconProvider = new FileTypeIconProvider(context);
@@ -114,6 +118,8 @@ public class ManagerDirector {
         this.inputDataManager.initProcessManager();
 
         linkStoreManager = new LinkStoreManager(this, context);
+
+        this.searchManager.loadSearchData();
 
         rootContainer.add(getToolbarManager().getComponent(), BorderLayout.NORTH);
         rootContainer.add(getContentManager().getComponent(), BorderLayout.CENTER);
@@ -200,5 +206,9 @@ public class ManagerDirector {
             speedRegulator = new SpeedRegulator();
         }
         return speedRegulator;
+    }
+
+    public SearchManager getSearchManager() {
+        return searchManager;
     }
 }

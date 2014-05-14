@@ -8,7 +8,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 import java.security.Security;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.TreeSet;
 import java.util.zip.CRC32;
 
 /**
@@ -80,6 +82,14 @@ public final class Hash {
             return this.algorithm.equalsIgnoreCase(that.algorithm) && Arrays.equals(this.bytes, that.bytes);
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        result = algorithm.hashCode();
+        result = 31 * result + Arrays.hashCode(bytes);
+        return result;
     }
 
     ////////////////////////////

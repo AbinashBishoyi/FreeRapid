@@ -29,7 +29,7 @@ FreeRapid Downloader 0.85 Alpha 4
   Changed : Speed limiter settings pane split in two to make clear a difference between global and file-specific settings
   Changed : Updated commons-codec library to v1.4
   Changed : RTMP plugin - major update
-            - Upgraded to MINA v2 final
+            - Upgraded to MINA library v2 final
             - Support for SOCKS proxies
   Changed : Options for plugin update methods were shuffled around a bit to make them more logical
   Changed : New icon for global speed limit

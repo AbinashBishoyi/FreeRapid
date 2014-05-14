@@ -1,0 +1,15 @@
+<OpenSearchDescription>
+    <ShortName>Rapidshare FileFinder</ShortName>
+    <Description>Rapidshare FileFinder</Description>
+    <InputEncoding>UTF-8</InputEncoding>
+    <Image width="16" height="16">
+        data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAA8klEQVQ4jaXSvy9DURQA4LdbJAZGk5jE5H/wV1i6muzSCBVSEYmUTfyIwWSwUelcEovEYGFAIiT6pHht9TM8EmnaV31OcpK7nO+ec88N/DOCn0MUsVEi2yHz54T1BCB8ZSxLkJRL7N10AaZO27d6UmYgx2CBhygFAGtHcSeH9ymB7WIM7N+mAGpVJtcJFihXEoDxrTZbKDK6HN+eKVFvJgCdNjBcYPOS6Fdx1xHeq8wcECwyf8ZHS/Hf3qBGZifuYvaCz54BvDwxkY8/UukxBQDHZfrmGNklbKQANJj+HmXlimbPAJ7vGMrRv8r1WwuQNr4AYe2dNq06ZesAAAAASUVORK5CYII=
+    </Image>
+    <SearchForm>http://www.google.com/coop/cse?cx=000126013176747996749:jnslcnykxks</SearchForm>
+    <Url type="text/html" method="GET" template="http://www.google.com/cse">
+        <Param name="cx" value="000126013176747996749%3Ajnslcnykxks"/>
+        <Param name="ie" value="UTF-8"/>
+        <Param name="q" value="{searchTerms}"/>
+        <Param name="sa" value="Search"/>
+    </Url>
+</OpenSearchDescription>
