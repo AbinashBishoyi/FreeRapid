@@ -84,7 +84,7 @@ public abstract class URLTransferHandler extends TransferHandler {
                         }
                     }
                     if (!containable) {
-                        final String s1 = URIUtil.encodePath(url.toExternalForm());
+                        final String s1 = URIUtil.encodePathQuery(url.toExternalForm());
                         final URI uri = new URI(s1);
                         if (!list.contains(uri)) {
                             list.add(uri);
