@@ -74,18 +74,23 @@ public abstract class URLTransferHandler extends TransferHandler {
                 }
                 final URL url = new URL(spec);
                 if (pluginsManager.isSupported(url)) {
-                    final String s = url.toExternalForm();
+                    final String urlS = url.toExternalForm();
                     boolean containable = false;
                     for (URI u : list) {
                         final String previouslyAdded = u.toURL().toExternalForm();
-                        if (previouslyAdded.length() > s.length() && previouslyAdded.startsWith(s)) {
+                        if (previouslyAdded.length() > urlS.length() && previouslyAdded.startsWith(urlS)) {
                             containable = true;
                             break;
                         }
                     }
                     if (!containable) {
-                        final String s1 = URIUtil.encodePathQuery(url.toExternalForm());
-                        final URI uri = new URI(s1);
+                        URI uri;
+                        try {
+                            uri = new URI(urlS);
+                        } catch (URISyntaxException e) {
+                            uri = new URI(URIUtil.encodePathQuery(urlS));
+                        }
+
                         if (!list.contains(uri)) {
                             list.add(uri);
                             result.add(uri.toURL());
