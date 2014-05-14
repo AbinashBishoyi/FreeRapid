@@ -144,7 +144,7 @@ public class FileTypeIconProvider {
             return icon;
         } catch (IOException e) {
             return map.getImageIcon("iconFileTypeSmall_UNKNOWN");
-        } catch (NullPointerException e) {
+        } catch (NullPointerException e) {//JDK BUG
             return map.getImageIcon("iconFileTypeSmall_UNKNOWN");
         } catch (ClassFormatError e) {
             return map.getImageIcon("iconFileTypeSmall_UNKNOWN");

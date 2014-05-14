@@ -10,6 +10,7 @@ import cz.vity.freerapid.utilities.FileUtils;
 import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.application.*;
 
+import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import java.beans.PropertyChangeEvent;
@@ -180,9 +181,16 @@ public class FileHistoryManager extends AbstractBean implements Application.Exit
 
     }
 
-    public synchronized void addHistoryItem(DownloadFile file, File savedAs) {
-        if (AppPrefs.getProperty(UserProp.USE_HISTORY, UserProp.USE_HISTORY_DEFAULT))
-            getItems().add(new FileHistoryItem(file, savedAs));
+    public synchronized void addHistoryItem(final DownloadFile file, final File savedAs) {
+        if (AppPrefs.getProperty(UserProp.USE_HISTORY, UserProp.USE_HISTORY_DEFAULT)) {
+            final ArrayListModel<FileHistoryItem> historyItems = getItems();
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    historyItems.add(new FileHistoryItem(file, savedAs));
+                }
+            });
+        }
+
     }
 
     public synchronized void clearHistory() {

@@ -11,6 +11,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.commons.httpclient.util.URIUtil;
 
 import java.io.*;
 import java.util.Locale;
@@ -114,7 +115,17 @@ public class DownloadClient implements HttpDownloadClient {
 
     @Override
     public PostMethod getPostMethod(final String uri) {
-        final PostMethod m = new PostMethod(uri);
+        PostMethod m;
+        try {
+            m = new PostMethod(uri);
+        } catch (IllegalArgumentException e) {
+            logger.warning("Invalid URI detected for PostMethod: " + uri + " Trying to reencode ");
+            try {
+                m = new PostMethod(URIUtil.encodePathQuery(uri));
+            } catch (URIException e1) {
+                throw e;
+            }
+        }
         setDefaultsForMethod(m);
         m.setDoAuthentication(hasAuthentification());
         return m;
@@ -399,7 +410,17 @@ public class DownloadClient implements HttpDownloadClient {
 
     @Override
     public GetMethod getGetMethod(final String uri) {
-        final GetMethod m = new GetMethod(uri);
+        GetMethod m;
+        try {
+            m = new GetMethod(uri);
+        } catch (IllegalArgumentException e) {
+            logger.warning("Invalid URI detected for GetMethod: " + uri + " Trying to reencode ");
+            try {
+                m = new GetMethod(URIUtil.encodePathQuery(uri));
+            } catch (URIException e1) {
+                throw e;
+            }
+        }
         setDefaultsForMethod(m);
         m.setDoAuthentication(hasAuthentification());
         return m;

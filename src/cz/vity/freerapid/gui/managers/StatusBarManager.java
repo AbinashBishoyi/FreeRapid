@@ -2,7 +2,9 @@ package cz.vity.freerapid.gui.managers;
 
 import com.jgoodies.binding.adapter.Bindings;
 import com.jgoodies.binding.adapter.SpinnerAdapterFactory;
+import com.jgoodies.binding.beans.PropertyAdapter;
 import com.jgoodies.binding.beans.PropertyConnector;
+import com.jgoodies.binding.value.DelayedReadValueModel;
 import com.jgoodies.binding.value.ValueModel;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.MainApp;
@@ -160,11 +162,25 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
 
             dataManager.getProcessManager().addPropertyChangeListener("downloading", this);
 
-            //new DelayedReadValueModel(new PropertyAdapter<DataManager>(dataManager, "speed"), 100, true).addPropertyChangeListener(this);
+            final DelayedReadValueModel delayedReadValueModel = new DelayedReadValueModel(new PropertyAdapter<DataManager>(dataManager, "speed"), 50, true);
+            delayedReadValueModel.addPropertyChangeListener(new PropertyChangeListener() {
+                public void propertyChange(PropertyChangeEvent evt) {
+                    final String s = evt.getPropertyName();
+                    System.out.println("s2 = " + s);
+                }
+            });
+            delayedReadValueModel.addValueChangeListener(new PropertyChangeListener() {
+
+                public void propertyChange(PropertyChangeEvent evt) {
+                    final String s = evt.getPropertyName();
+                    System.out.println("s = " + s);
+                }
+            });
+
+            //dataManager.addPropertyChangeListener("speed", this);
             //dataManager.addPropertyChangeListener("speed", this);
             dataManager.addPropertyChangeListener("completed", this);
             dataManager.addPropertyChangeListener("state", this);
-            dataManager.addPropertyChangeListener("speed", this);
 
             AppPrefs.getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
                 public void preferenceChange(PreferenceChangeEvent evt) {
@@ -213,7 +229,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
 
     public void propertyChange(PropertyChangeEvent evt) {
         final String propertyName = evt.getPropertyName();
-        if ("speed".equals(propertyName) || "completed".equals(propertyName)) {
+        if ("value".equals(propertyName) || "completed".equals(propertyName)) {
             updateInfoStatus();
         } else if ("started".equals(propertyName) || "done".equals(propertyName) || "message".equals(propertyName)) {
             //final Task task = (Task) evt.getSource();

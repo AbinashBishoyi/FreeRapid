@@ -6,6 +6,7 @@ import cz.vity.freerapid.model.DownloadFile;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
+import java.util.logging.Logger;
 
 /**
  * @author Ladislav Vitasek
@@ -13,6 +14,8 @@ import java.awt.*;
 class NameURLCellRenderer extends DefaultTableCellRenderer {
 
     private final FileTypeIconProvider iconProvider;
+    private final static Logger logger = Logger.getLogger(NameURLCellRenderer.class.getName());
+
 
     NameURLCellRenderer(FileTypeIconProvider iconProvider) {
         this.iconProvider = iconProvider;
@@ -21,6 +24,10 @@ class NameURLCellRenderer extends DefaultTableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         final DownloadFile downloadFile = (DownloadFile) value;
+        if (downloadFile == null) {
+            logger.warning("Download File is null");
+            return this;
+        }
         final String fn = downloadFile.getFileName();
         final String url = downloadFile.getFileUrl().toString();
         if (fn != null && !fn.isEmpty()) {

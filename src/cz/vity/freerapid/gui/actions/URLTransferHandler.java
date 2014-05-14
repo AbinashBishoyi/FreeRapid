@@ -172,8 +172,8 @@ public abstract class URLTransferHandler extends TransferHandler {
             LogUtils.processException(logger, e);
         }
 
+        urls = new LinkedList<URL>();
         try {
-            urls = new LinkedList<URL>();
 //            final DataFlavor[] flavors = transferable.getTransferDataFlavors();
 //            for (DataFlavor flavor : flavors) {
 //                System.out.println("flavor = " + flavor);
@@ -204,7 +204,10 @@ public abstract class URLTransferHandler extends TransferHandler {
                     //ignore
                 } catch (IOException e) {
                     //ignore
+                } catch (NullPointerException e) { //JDK bug http://bugtracker.wordrider.net/task/953
+                    LogUtils.processException(logger, e);
                 }
+
             } else {
                 DataFlavor xhtmlFavor = null;
                 try {

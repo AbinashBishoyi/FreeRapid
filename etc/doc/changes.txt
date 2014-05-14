@@ -12,6 +12,8 @@ Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
   Changed : upgraded JTattoo library
+  Changed : fatal exceptions are shown only once for reporting
+  Fixed : ClassCast exception in directory chooser 
   Fixed : handling invalid response header from server with empty file name
   Fixed : main window couldn't be activated at some random special cases
   Fixed : NullPointerException when server didn't respond anything at some random special cases
