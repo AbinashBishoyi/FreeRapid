@@ -7,12 +7,8 @@ import cz.vity.freerapid.core.tasks.SpeedRegulator;
 import cz.vity.freerapid.swing.TextComponentContextMenuListener;
 import org.jdesktop.application.ApplicationContext;
 
-import javax.imageio.ImageIO;
-import javax.imageio.spi.ServiceRegistry;
 import javax.swing.*;
 import java.awt.*;
-import java.lang.reflect.Field;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -77,26 +73,13 @@ public class ManagerDirector {
 
     static {
         // Fix for JDK 6 bug ICO vs WBMP
+        // http://bugs.sun.com/view_bug.do?bug_id=5101862
+        final javax.imageio.spi.IIORegistry registry = javax.imageio.spi.IIORegistry.getDefaultInstance();
         try {
-            final Field theRegistry = ImageIO.class.getDeclaredField("theRegistry");
-            theRegistry.setAccessible(true);
-            final Field categoryMap = ServiceRegistry.class.getDeclaredField("categoryMap");
-            categoryMap.setAccessible(true);
-            final Map categoryMapObj = (Map) categoryMap.get(theRegistry.get(null));
-            for (final Object value : categoryMapObj.values()) {
-                final Field map = value.getClass().getDeclaredField("map");
-                map.setAccessible(true);
-                final Map mapObj = (Map) map.get(value);
-                for (final Object key : mapObj.keySet()) {
-                    if (((Class) key).getName().startsWith("com.sun.imageio.plugins.wbmp.")) {
-                        mapObj.remove(key);
-                        logger.info("Successfully removed " + key);
-                        break;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "Failed to remove WBMP SPI, problems may occur when reading ICO files", e);
+            final Object spi = registry.getServiceProviderByClass(com.sun.imageio.plugins.wbmp.WBMPImageReaderSpi.class);
+            registry.deregisterServiceProvider(spi);
+        } catch (Throwable e) {
+            logger.log(Level.WARNING, "Failed to remove WBMP SPI, problems may occur when reading ICO files", e);
         }
     }
 
