@@ -13,6 +13,7 @@ Fixed - indicates a bug fix
 
 
 9th August 2009 - FreeRapid Downloader 0.83 beta 2 released
+  Changed : updated PT_BR translation thanks to Tiago 
   Changed : support for speed limit from menu (additional support will come back with 0.84) 
   Changed : upgraded GOCR to version 0.48
   Changed : internal - upgraded SwingX components to version 1.0
