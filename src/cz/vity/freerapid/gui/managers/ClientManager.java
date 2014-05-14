@@ -90,6 +90,8 @@ public class ClientManager {
             defaultConnectionSettings.setEnabled(isEnabled);
             availableConnections.add(defaultConnectionSettings);
         }
+
+        setAuthenticator();
     }
 
     private boolean useDefaultConnection() {
@@ -124,7 +126,9 @@ public class ClientManager {
         } else {
             logger.info("Setting proxy configuration OFF for default connection");
         }
+    }
 
+    private void setAuthenticator() {
         Authenticator.setDefault(new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
