@@ -27,7 +27,7 @@ public final class RecentsFilesComboModel extends DefaultComboBoxModel {
         this.keyProperties = keyProperties;
         this.autosave = autosave;
         final String[] avalues = AppPrefs.getProperty(keyProperties, "").split("\\|");
-        final List<String> values = Arrays.asList(Arrays.copyOf(avalues, maxRecentPhrasesCount));
+        final List<String> values = Arrays.asList(Arrays.copyOf(avalues, avalues.length <= maxRecentPhrasesCount ? avalues.length : maxRecentPhrasesCount));
         Collections.reverse(values);
         int counter = 0;
         for (String value : values) {
