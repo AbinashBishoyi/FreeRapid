@@ -16,6 +16,7 @@ September 2012 - FreeRapid Downloader 0.9
   Added : After in-depth consideration, all non-updated translations were enabled, bringing the total number of
           supported languages to 31. Missing strings will appear in English. Updates to translations are warmly welcome,
           as usual.
+  Added : Search engine support for IMDb.com
   Added : new action in menu Help -> Browse config folder
   Changes, which regular users don't see:
   Changed : Internal - the file list (include file history list) is stored in the database
