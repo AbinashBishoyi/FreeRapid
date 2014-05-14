@@ -128,7 +128,11 @@ public class FileTypeIconProvider {
             }
         }
         if (icon == null) {
-            icon = resourceMap.getImageIcon("iconFileTypeSmall_UNKNOWN");
+            if (bigImage) {
+                icon = resourceMap.getImageIcon("iconFileTypeBig_UNKNOWN");
+            } else {
+                icon = resourceMap.getImageIcon("iconFileTypeSmall_UNKNOWN");
+            }
         }
         systemIcons.put(extension + bigImage, icon);
         return icon;
