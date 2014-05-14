@@ -52,6 +52,9 @@ public class DownloadNewPluginsTask extends DownloadTask {
         initDownloadThread();
 
         final File dir = director.getPluginsManager().getPluginsDir();
+        if (!dir.canWrite()) {
+            throw new IOException(getResourceMap().getString("pluginsDirectoryIsNotWriteable"));
+        }
         boolean success = false;
         for (DownloadFile file : fileList) {
             if (isCancelled())
