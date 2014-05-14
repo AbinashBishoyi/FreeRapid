@@ -109,7 +109,30 @@ public class PluginsManager {
 
         synchronized (lock) {
             final ObjectFactory objectFactory = ObjectFactory.newInstance();
-            final ShadingPathResolver resolver = new ShadingPathResolver();
+            final ShadingPathResolver resolver = new ShadingPathResolver() {
+                @Override
+                protected URL maybeJarUrl(URL url) throws MalformedURLException {
+                    /*
+                     * This method is overridden to add support for .frp plugins.
+                     * Also, the original method uses toLowerCase(Locale.getDefault()).
+                     * All classes with these issues: StandardPathResolver, ShadingPathResolver, StandardPluginLocation
+                     */
+                    if ("jar".equalsIgnoreCase(url.getProtocol())) {
+                        return url;
+                    }
+                    File file = IoUtil.url2file(url);
+                    if ((file == null) || !file.isFile()) {
+                        return url;
+                    }
+                    String fileName = file.getName().toLowerCase(Locale.ROOT);
+                    if (fileName.endsWith(".jar")
+                            || fileName.endsWith(".zip")
+                            || fileName.endsWith(".frp")) {
+                        return new URL("jar:" + IoUtil.file2url(file).toExternalForm() + "!/");
+                    }
+                    return url;
+                }
+            };
             try {
                 resolver.configure(new ExtendedProperties());
             } catch (Exception e) {
