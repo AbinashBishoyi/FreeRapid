@@ -17,6 +17,7 @@ import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.FileUtils;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Sound;
+import cz.vity.freerapid.utilities.Utils;
 import org.apache.commons.httpclient.SimpleHttpConnectionManager;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.TaskEvent;
@@ -137,10 +138,6 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         return new CountingOutputStream(fos);
     }
 
-    protected void initBackground() {
-        //client.initClient();
-    }
-
     @Override
     public boolean isTerminated() {
         return this.isCancelled() || Thread.currentThread().isInterrupted();
@@ -155,18 +152,18 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 
         setBuffer(new byte[AppPrefs.getProperty(UserProp.INPUT_BUFFER_SIZE, INPUT_BUFFER_SIZE)]);
 
+        fileAlreadyExists = checkExists();
+        if (fileAlreadyExists == UserProp.SKIP) {
+            skipped = true;
+            downloadFile.setErrorMessage(getResourceMap().getString("fileAlreadyExistsTooltip"));
+            this.cancel(true);
+            return;
+        } else if (fileAlreadyExists == UserProp.RENAME) {
+            downloadFile.setFileName(getNewUniqueFileName(downloadFile.getOutputFile()));
+        }
+
         final String fileName = downloadFile.getFileName();
         File outputFile = downloadFile.getOutputFile();
-
-        if (temporary) {
-            this.fileAlreadyExists = checkExists();
-            if (this.fileAlreadyExists == UserProp.SKIP) {
-                skipped = true;
-                downloadFile.setErrorMessage(getResourceMap().getString("fileAlreadyExistsTooltip"));
-                this.cancel(true);
-                return;
-            }
-        }
 
         final SpeedRegulator speedRegulator = ((MainApp) this.getApplication()).getManagerDirector().getSpeedRegulator();
         final File saveToDirectory = downloadFile.getSaveToDirectory();
@@ -481,6 +478,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
             synchronized (DownloadTask.class) {
                 if (!EventQueue.isDispatchThread()) {
                     SwingUtilities.invokeAndWait(new Runnable() {
+                        @Override
                         public void run() {
                             property[0] = showFileAlreadyExistsDialog();
                         }
@@ -569,6 +567,20 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         return ((MainApp) app).getManagerDirector().getDataManager().checkComplete();
     }
 
+    private String getNewUniqueFileName(final File to) {
+        final File dir = to.getParentFile();
+        final String pureFileName = Utils.getPureFilenameWithDots(to);
+        String ext = Utils.getExtension(to);
+        ext = (ext != null) ? ("." + ext) : "";
+        File newFile;
+        int counter = 2;
+        while ((newFile = new File(dir, pureFileName + "-" + String.valueOf(counter) + ext)).exists()) {
+            ++counter;
+        }
+        return newFile.getName();
+    }
+
+    @Override
     public void sleep(int seconds) throws InterruptedException {
         setSleep(0);
         downloadFile.setState(DownloadState.WAITING);

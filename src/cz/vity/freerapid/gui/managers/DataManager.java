@@ -13,9 +13,7 @@ import cz.vity.freerapid.gui.managers.exceptions.NotSupportedDownloadServiceExce
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
-import static cz.vity.freerapid.plugins.webclient.DownloadState.*;
 import cz.vity.freerapid.plugins.webclient.FileState;
-import static cz.vity.freerapid.plugins.webclient.FileState.NOT_CHECKED;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
 import cz.vity.freerapid.plugins.webclient.interfaces.MaintainQueueSupport;
 import cz.vity.freerapid.swing.Swinger;
@@ -40,6 +38,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 import java.util.logging.Logger;
+
+import static cz.vity.freerapid.plugins.webclient.DownloadState.*;
+import static cz.vity.freerapid.plugins.webclient.FileState.NOT_CHECKED;
 
 /**
  * @author Vity
@@ -336,20 +337,16 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                         //file.setState(DownloadState.CANCELLED);
                     }
                     file.setState(CANCELLED);
-                    if (delete && file.getDownloaded() >= 0) {
+                    if (delete && file.getDownloaded() > 0) {
                         File outputFile = file.getStoreFile();
                         if (outputFile != null && outputFile.exists()) {
                             if (!outputFile.delete())
-                                logger.info("Deleting store file " + outputFile + " failed");
+                                logger.warning("Deleting store file " + outputFile + " failed");
                         }
-                        if (file.getDownloaded() > 0) {
-                            outputFile = file.getOutputFile();
-                            //bugfix, workaround, not sure if it works properly at all situations
-                            if (outputFile != null && outputFile.exists() && outputFile.length() == file.getDownloaded()) {
-                                if (!outputFile.delete()) {
-                                    logger.info("Deleting output file " + outputFile + " failed");
-                                }
-                            }
+                        outputFile = file.getOutputFile();
+                        if (outputFile != null && outputFile.exists()) {
+                            if (!outputFile.delete())
+                                logger.warning("Deleting output file " + outputFile + " failed");
                         }
                     }
                     file.setDownloaded(0);

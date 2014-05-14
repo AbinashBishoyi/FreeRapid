@@ -11,6 +11,9 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
+  Fixed : Wrong file is deleted when cancelling a download in some cases,
+            see http://bugtracker.wordrider.net/task/1325 and http://wordrider.net/forum/read.php?7,4340
+
 11th July 2010 - FreeRapid Downloader 0.85 Alfa 1
   Added : New action in Remove menu: "Remove Completed Links and Deleted Files"
   Added : New user option: "Slim lines in History dialog"

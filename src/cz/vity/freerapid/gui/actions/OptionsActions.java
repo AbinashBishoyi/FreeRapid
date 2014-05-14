@@ -106,7 +106,12 @@ public class OptionsActions extends AbstractBean {
         }
     }
 
-    @org.jdesktop.application.Action(enabledProperty = REFRESH_PROXY_LIST_ACTION_ENABLED_PROPERTY)
+    @Action
+    public void globalLimitSpeedAction() {
+        AppPrefs.negateProperty(UserProp.SPEED_LIMIT_ENABLED, UserProp.SPEED_LIMIT_ENABLED_DEFAULT);
+    }
+
+    @Action(enabledProperty = REFRESH_PROXY_LIST_ACTION_ENABLED_PROPERTY)
     public void refreshProxyList() {
         app.getManagerDirector().getClientManager().updateConnectionSettings();
     }
