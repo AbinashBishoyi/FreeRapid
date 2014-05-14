@@ -54,6 +54,15 @@ public class PluginMetaDataManager {
     private Collection<PluginMetaData> loadData() {
         Set<PluginMetaData> result = null;
         final File srcFile = new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML);
+        if (!srcFile.exists()) { //extract from old file, we ignore existence of backup file in case the main file does not exist
+            final File backupFile = FileUtils.getBackupFile(srcFile);
+            if (backupFile.exists()) {
+                //noinspection ResultOfMethodCallIgnored
+                backupFile.renameTo(srcFile);
+            }
+        }
+
+
         if (srcFile.exists()) { //extract from old file
             try {
                 result = loadList(srcFile);

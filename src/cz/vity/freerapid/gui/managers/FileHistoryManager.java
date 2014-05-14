@@ -46,6 +46,15 @@ public class FileHistoryManager extends AbstractBean {
     private List<FileHistoryItem> loadList(final File srcFile) throws IOException {
         final List<FileHistoryItem> list = new LinkedList<FileHistoryItem>();
         final LocalStorage localStorage = context.getLocalStorage();
+        if (!srcFile.exists()) { //extract from old file, we ignore existence of backup file in case the main file does not exist
+            final File backupFile = FileUtils.getBackupFile(srcFile);
+            if (backupFile.exists()) {
+                //noinspection ResultOfMethodCallIgnored
+                backupFile.renameTo(srcFile);
+            }
+        }
+
+
         if (!srcFile.exists()) {
             return list;
         }
