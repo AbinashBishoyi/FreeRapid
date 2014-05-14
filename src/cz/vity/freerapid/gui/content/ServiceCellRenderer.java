@@ -28,6 +28,9 @@ class ServiceCellRenderer extends DefaultTableCellRenderer {
     }
 
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        if (value == null) {
+            value = table.getValueAt(row, column);
+        }
         final DownloadFile downloadFile = (DownloadFile) value;
         final String shareDownloadServiceID = downloadFile.getPluginID();
         assert shareDownloadServiceID != null;
@@ -63,7 +66,7 @@ class ServiceCellRenderer extends DefaultTableCellRenderer {
             this.setText(null);
             this.setHorizontalAlignment(CENTER);
         }
-
+        getAccessibleContext().setAccessibleName(table.getColumnName(column) + " " + serviceName);
         return this;
     }
 }

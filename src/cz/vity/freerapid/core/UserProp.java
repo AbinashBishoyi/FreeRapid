@@ -268,4 +268,13 @@ final public class UserProp {
 
     public static final String MIN_DISK_SPACE = "minDiskSpaceMB";
     public static final int MIN_DISK_SPACE_DEFAULT = 30;
+
+    public static final String AUTODETECT_SOCKSPROXY = "autodetectSOCKSProxy";
+    public static final boolean AUTODETECT_SOCKSPROXY_DEFAULT = true;
+
+    public static final String BLIND_MODE = "blindMode";
+    public static final boolean BLIND_MODE_DEFAULT = false;
+
+    public static final String DEFAULT_CONNECTION_SOCKS = "defaultConnectionSocks";
+    public static final boolean DEFAULT_CONNECTION_SOCKS_DEFAULT = false;
 }

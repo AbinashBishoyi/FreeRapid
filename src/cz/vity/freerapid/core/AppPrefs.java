@@ -8,6 +8,8 @@ import org.jdesktop.application.ResourceMap;
 
 import java.io.*;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
@@ -33,7 +35,13 @@ public final class AppPrefs {
     private String userNode;
     private static final String CONFIG_DIR = "config";
 
-    private long lastSaved;
+    private boolean pendingChanges;
+
+    private final static Timer syncTimer = new Timer("AppPrefsSyncTimer", true); // Daemon Thread
+
+    private final static int SYNC_INTERVAL = 30;
+
+    private final Object syncLock = new Object();
 
     AppPrefs(final ApplicationContext context, final Map<String, String> properties, final boolean resetOptions) {
         this.context = context;
@@ -43,23 +51,38 @@ public final class AppPrefs {
         this.propertiesFileName = id.toLowerCase() + ".xml";
         AppPrefs.properties = loadProperties();
 
-        lastSaved = System.currentTimeMillis();
         if (Utils.isWindows()) {
             getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
                 public void preferenceChange(PreferenceChangeEvent evt) {
-                    final long time = System.currentTimeMillis();
-                    if (time - lastSaved > 1000 * 30) {
-                        store();
+                    logger.info("Property changed: " + evt.getKey());
+                    synchronized (syncLock) {
+                        if (!FWProp.PROXY_PASSWORD.equals(evt.getKey()))
+                            pendingChanges = true;
                     }
                 }
             });
+            syncTimer.schedule(new TimerTask() {
+                public void run() {
+                    synchronized (syncLock) {
+                        if (pendingChanges) {
+                            sync();
+                        }
+                    }
+                }
+            }, SYNC_INTERVAL * 1000, SYNC_INTERVAL * 1000);
         }
+
         if (resetOptions) {
             try {
                 AppPrefs.properties.clear();
             } catch (BackingStoreException e) {
                 LogUtils.processException(logger, e);
             }
+        }
+        final String blindMode = System.getProperty("javax.accessibility.assistive_technologies", null);
+        if (blindMode != null) {
+            storeProperty(UserProp.BLIND_MODE, true);
+            storeProperty(UserProp.PLUGIN_UPDATE_METHOD, UserProp.PLUGIN_UPDATE_METHOD_AUTO);
         }
         if (!properties.isEmpty()) {
             for (Map.Entry<String, String> entry : properties.entrySet()) {
@@ -181,6 +204,12 @@ public final class AppPrefs {
      * Provede ulozeni properties do souboru definovaneho systemem. Uklada se do XML.
      */
     public void store() {
+        synchronized (syncLock) {
+            sync();
+        }
+    }
+
+    private void sync() {
         OutputStream outputStream = null;
         try {
             if (!getProperty(FWProp.PROXY_SAVEPASSWORD, false))
@@ -193,6 +222,7 @@ public final class AppPrefs {
             getPreferences().exportNode(outputStream);
             outputStream.close();
             logger.config("Preferences were saved successfuly");
+            pendingChanges = false;
         } catch (IOException e) {
             try {
                 if (outputStream != null)
@@ -204,7 +234,6 @@ public final class AppPrefs {
         } catch (Exception e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
         }
-        lastSaved = System.currentTimeMillis();
     }
 
     private String getUserNode() {

@@ -33,7 +33,11 @@ class ProgressBarCellRenderer extends JProgressBar implements TableCellRenderer 
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        if (value == null) {
+            value = table.getValueAt(row, column);
+        }
         final DownloadFile downloadFile = (DownloadFile) value;
+
         final DownloadState state = downloadFile.getState();
         if (state == DownloadState.DOWNLOADING || state == DownloadState.GETTING || state == DownloadState.WAITING) {
             this.setBackground(BG_GREEN);
@@ -79,6 +83,7 @@ class ProgressBarCellRenderer extends JProgressBar implements TableCellRenderer 
                 this.setValue(progress);
             }
         }
+        getAccessibleContext().setAccessibleName(this.getString());
         return this;
     }
 

@@ -27,7 +27,11 @@ class EstTimeCellRenderer extends DefaultTableCellRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        if (value == null) {
+            value = table.getValueAt(row, column);
+        }
         final DownloadFile downloadFile = (DownloadFile) value;
+
         final DownloadState state = downloadFile.getState();
         value = ContentPanel.stateToString(state);
         this.setHorizontalAlignment(CENTER);
@@ -57,7 +61,8 @@ class EstTimeCellRenderer extends DefaultTableCellRenderer {
             if (task != null)
                 this.setToolTipText(String.format(elapsedTime, ContentPanel.secondsToHMin(task.getExecutionDuration(TimeUnit.SECONDS))));
         }
-
-        return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        final Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        getAccessibleContext().setAccessibleName(table.getColumnName(column) + " " + value);
+        return comp;
     }
 }

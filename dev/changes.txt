@@ -14,6 +14,17 @@ ErrorDialog.properties
 Added:
 errorMessageMacOSXBug=Call to Steve Jobs... MacOSX bug :-(....
 
+NewLinksDialog.properties
+===============================
+Added:
+btnSelectPathAction.description=Open directory chooser
+
+
+ConnectDialog.properties
+===============================
+Added:
+checkSocksProxy.text=SOC&KS
+
 
 Version 0.8->
 

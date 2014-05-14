@@ -188,6 +188,9 @@ public class ConnectionSettings {
         return true;
     }
 
+    public void setProxyType(Proxy.Type proxyType) {
+        this.proxyType = proxyType;
+    }
 
     @Override
     public int hashCode() {
@@ -196,6 +199,7 @@ public class ConnectionSettings {
         result = 31 * result + (proxyURL != null ? proxyURL.toLowerCase().hashCode() : 0);
         result = 31 * result + proxyPort;
         result = 31 * result + (proxySet ? 1 : 0);
+        result = 31 * result + (proxyType != null ? proxyType.hashCode() : 0);
         return result;
     }
 

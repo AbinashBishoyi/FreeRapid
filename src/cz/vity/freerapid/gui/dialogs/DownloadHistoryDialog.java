@@ -873,6 +873,8 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         }
 
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            if (value == null)
+                value = table.getValueAt(row, column);
             value = millisToString((Long) value);
             this.setHorizontalAlignment(CENTER);
             return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
@@ -945,6 +947,8 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         }
 
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            if (value == null)
+                value = table.getValueAt(row, column);
             if (value != null) {
                 if (!((String) value).isEmpty()) {
                     this.setToolTipText(String.format(tooltip, value));

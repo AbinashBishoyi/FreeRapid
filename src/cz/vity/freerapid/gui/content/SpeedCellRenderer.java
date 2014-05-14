@@ -14,6 +14,9 @@ class SpeedCellRenderer extends DefaultTableCellRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        if (value == null) {
+            value = table.getValueAt(row, column);
+        }
         final DownloadFile downloadFile = (DownloadFile) value;
         if (downloadFile.getState() == DownloadState.DOWNLOADING) {
             if (downloadFile.getSpeed() >= 0) {
@@ -21,6 +24,7 @@ class SpeedCellRenderer extends DefaultTableCellRenderer {
             } else value = "0 B/s";
             //this.setToolTipText("Average speed " + bytesToAnother((long) downloadFile.getAverageSpeed()) + "/s");
         } else value = "";
+        getAccessibleContext().setAccessibleName(table.getColumnName(column) + " " + value.toString());
         return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
     }
 }

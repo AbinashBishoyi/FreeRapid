@@ -21,6 +21,8 @@ public class HeaderIconRenderer extends DefaultTableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         // Inherit the colors and font from the header component
         if (table != null) {
+            if (value == null)
+                value = table.getValueAt(row, column);
             JTableHeader header = table.getTableHeader();
             if (header != null) {
                 setForeground(header.getForeground());

@@ -8,6 +8,7 @@ import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.FWProp;
+import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.swing.ComponentFactory;
 import cz.vity.freerapid.swing.LimitedPlainDocument;
 import cz.vity.freerapid.swing.Swinger;
@@ -97,6 +98,7 @@ public class ConnectDialog extends AppDialog {
         bind(checkStorePassword, FWProp.PROXY_SAVEPASSWORD, false);
         bind(checkAuthentification, FWProp.PROXY_LOGIN, false);
         bind(checkUseProxy, FWProp.PROXY_USE, false);
+        bind(checkSocksProxy, UserProp.DEFAULT_CONNECTION_SOCKS, UserProp.DEFAULT_CONNECTION_SOCKS_DEFAULT);
         fieldPassword.setText(Utils.generateXorString(AppPrefs.getProperty(FWProp.PROXY_PASSWORD, "")));
     }
 
@@ -126,6 +128,7 @@ public class ConnectDialog extends AppDialog {
             if (!comp.equals(checkUseProxy))
                 comp.setEnabled(enabled);
         }
+        checkSocksProxy.setEnabled(enabled);
         if (checkAuthentification.isSelected() && enabled)
             updateEnabledUseLogin(true);
         else
@@ -154,11 +157,21 @@ public class ConnectDialog extends AppDialog {
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
+
+
         JPanel dialogPane = new JPanel();
         checkUseProxy = new JCheckBox();
+        checkSocksProxy = new JCheckBox();
         checkUseProxy.setName("checkUseHttpProxy");
+        checkSocksProxy.setName("checkSocksProxy");
 
-        CompTitledPane panelProxyPane = new CompTitledPane(checkUseProxy);
+        final JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.LINE_AXIS));
+        topPanel.add(checkUseProxy);
+        topPanel.add(Box.createHorizontalGlue());
+        topPanel.add(checkSocksProxy);
+
+        CompTitledPane panelProxyPane = new CompTitledPane(topPanel);
         contentPanel = panelProxyPane.getContentPane();
         contentPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         JLabel labelHostName = new JLabel();
@@ -321,4 +334,5 @@ public class ConnectDialog extends AppDialog {
     private JLabel labelPassword;
     private JLabel labelWarning;
     private JCheckBox checkUseProxy;
+    private JCheckBox checkSocksProxy;
 }

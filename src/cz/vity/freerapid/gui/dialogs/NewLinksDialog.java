@@ -30,6 +30,8 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -89,6 +91,11 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
         setAction(btnPasteFromClipboard, "btnPasteFromClipboardAction");
         setAction(btnSelectPath, "btnSelectPathAction");
         setAction(btnStartPaused, "btnStartPausedAction");
+
+        final String desc = getResourceMap().getString("btnSelectPathAction.description");
+        btnSelectPath.getAccessibleContext().setAccessibleName(desc);
+        btnSelectPath.getAccessibleContext().setAccessibleDescription(desc);
+        btnSelectPath.setToolTipText(desc);
 
         pack();
         locateOnOpticalScreenCenter(this);
@@ -159,6 +166,21 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
 
         descriptionArea.setFont(descriptionArea.getFont().deriveFont(11.0F));
         descriptionArea.setComponentOrientation(ComponentOrientation.getOrientation(Locale.getDefault()));
+
+        final KeyAdapter adapter = new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_TAB) {
+                    if (!e.isShiftDown())
+                        KeyboardFocusManager.getCurrentKeyboardFocusManager().focusNextComponent();
+                    else
+                        KeyboardFocusManager.getCurrentKeyboardFocusManager().focusPreviousComponent();
+                    e.consume();
+                }
+            }
+        };
+        urlsArea.addKeyListener(adapter);
+        descriptionArea.addKeyListener(adapter);
 
         this.setTransferHandler(new URLTransferHandler(director) {
             protected void doDropAction(List<URL> files) {

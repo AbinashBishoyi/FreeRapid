@@ -23,11 +23,11 @@ class NameURLCellRenderer extends DefaultTableCellRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        final DownloadFile downloadFile = (DownloadFile) value;
-        if (downloadFile == null) {
-            logger.warning("Download File is null");
-            return this;
+        if (value == null) {
+            value = table.getValueAt(row, column);
         }
+        final DownloadFile downloadFile = (DownloadFile) value;
+
         final String fn = downloadFile.getFileName();
         final String url = downloadFile.getFileUrl().toString();
         if (fn != null && !fn.isEmpty()) {
@@ -35,13 +35,16 @@ class NameURLCellRenderer extends DefaultTableCellRenderer {
         } else {
             value = url;
         }
-
         super.getTableCellRendererComponent(table, " " + value, isSelected, hasFocus, row, column);
+        getAccessibleContext().setAccessibleName(table.getColumnName(column) + "   " + value);
+//        getAccessibleContext().setAccessibleDescription((String) value);
+
         //this.setForeground(Color.BLUE);
         if (value != null) {
             this.setToolTipText(url);
             this.setIcon(iconProvider.getIconImageByFileType(downloadFile.getFileType(), false));
         }
+
         return this;
     }
 

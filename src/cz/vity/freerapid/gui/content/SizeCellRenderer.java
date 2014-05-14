@@ -28,7 +28,11 @@ class SizeCellRenderer extends DefaultTableCellRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        if (value == null) {
+            value = table.getValueAt(row, column);
+        }
         final DownloadFile downloadFile = (DownloadFile) value;
+
         final long fs = downloadFile.getFileSize();
         if (fs >= 0) {
             if (downloadFile.getDownloaded() != fs)
@@ -41,6 +45,7 @@ class SizeCellRenderer extends DefaultTableCellRenderer {
             value = sizeRendererUnknown;
             this.setToolTipText(null);
         }
+        getAccessibleContext().setAccessibleName(table.getColumnName(column) + " " + value);
         return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
     }
 }

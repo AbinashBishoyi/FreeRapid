@@ -27,7 +27,11 @@ class CheckedCellRenderer extends DefaultTableCellRenderer {
     }
 
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        if (value == null) {
+            value = table.getValueAt(row, column);
+        }
         final DownloadFile downloadFile = (DownloadFile) value;
+
         assert downloadFile != null;
         this.setIconTextGap(2);
         this.setHorizontalAlignment(CENTER);
@@ -46,6 +50,7 @@ class CheckedCellRenderer extends DefaultTableCellRenderer {
                 this.setIcon(unknown);
                 break;
         }
+        this.getAccessibleContext().setAccessibleName(table.getColumnName(column) + "   " + this.getToolTipText());
         return rendererComponent;
     }
 }

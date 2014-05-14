@@ -20,6 +20,8 @@ public class ComboBoxRenderer extends JLabel implements ListCellRenderer {
 
     public Component getListCellRendererComponent(JList list,
                                                   Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        if (value == null)
+            value = list.getModel().getElementAt(index);
         if (SEPARATOR.equals(value)) {
             return separator;
         }

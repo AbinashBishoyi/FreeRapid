@@ -13,6 +13,8 @@ import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
 
 import java.io.File;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.ProxySelector;
 import java.util.*;
@@ -112,12 +114,42 @@ public class ClientManager {
                 final String password = Utils.generateXorString(AppPrefs.getProperty(FWProp.PROXY_PASSWORD, ""));
                 connectionSettings.setProxy(url, port, Proxy.Type.HTTP, userName, password);
             } else
-                connectionSettings.setProxy(url, port, Proxy.Type.HTTP); // TODO: add option for SOCKS in UI
+                connectionSettings.setProxy(url, port, Proxy.Type.HTTP);
+
+            final boolean socks = AppPrefs.getProperty(UserProp.DEFAULT_CONNECTION_SOCKS, UserProp.DEFAULT_CONNECTION_SOCKS_DEFAULT);
+            if (socks)
+                connectionSettings.setProxyType(Proxy.Type.SOCKS);
+
             logger.info("Setting proxy configuration ON with configuration: " + connectionSettings.toString());
         } else {
             logger.info("Setting proxy configuration OFF for default connection");
         }
 
+        Authenticator.setDefault(new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                //called from SocksSocketImpl
+                if ("SOCKS5".equals(this.getRequestingProtocol())) {
+                    final ConnectionSettings conn = findConnectionByParameters(this.getRequestingHost(), this.getRequestingPort(), Proxy.Type.SOCKS);
+                    if (conn != null) {
+                        final String pass = conn.getPassword();
+                        final char[] password = (pass == null) ? null : pass.toCharArray();
+                        return new PasswordAuthentication(conn.getUserName(), password);
+                    }
+                }
+                return null;
+            }
+        });
+    }
+
+
+    private ConnectionSettings findConnectionByParameters(String proxyURL, int proxyPort, Proxy.Type proxyType) {
+        final List<ConnectionSettings> conns = getAvailableConnections();
+        for (ConnectionSettings conn : conns) {
+            if (conn.getProxyPort() == proxyPort && conn.getProxyType() == proxyType && conn.getProxyURL().equalsIgnoreCase(proxyURL))
+                return conn;
+        }
+        return null;
     }
 
     private void readProxyList(File f) {
@@ -126,6 +158,7 @@ public class ClientManager {
         final Pattern patternWhole = Pattern.compile("((\\w*)(:(.*?))?@)?(.*?):(\\d{2,5})");
         final Pattern socksPattern = Pattern.compile(SOCKS_PREFIX_REGEXP, Pattern.CASE_INSENSITIVE);
         final String[] strings = Utils.loadFile(f).split("(\\s)");
+        final boolean autodetectSOCKS = AppPrefs.getProperty(UserProp.AUTODETECT_SOCKSPROXY, UserProp.AUTODETECT_SOCKSPROXY_DEFAULT);
         for (String s : strings) {
             if (s.isEmpty())
                 continue;
@@ -149,6 +182,8 @@ public class ClientManager {
                     final Integer port = Integer.valueOf(hostPort[1]);
                     if (port > 65535)
                         continue;
+                    if (autodetectSOCKS && port >= 1080 && port <= 1090)
+                        proxyType = Proxy.Type.SOCKS;
                     if (i > 0)
                         settings.setProxy(hostPort[0], port, proxyType, s1.substring(0, i), s1.substring(i + 1));
                     else
@@ -159,6 +194,8 @@ public class ClientManager {
                     final Integer port = Integer.valueOf(hostPort[1]);
                     if (port > 65535)
                         continue;
+                    if (autodetectSOCKS && port >= 1080 && port <= 1090)
+                        proxyType = Proxy.Type.SOCKS;
                     settings.setProxy(hostPort[0], port, proxyType);
                 }
                 availableConnections.add(settings);

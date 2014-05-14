@@ -1012,9 +1012,10 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         JLabel labelLanguage = new JLabel();
 
         labelLanguage.setName("language");
-        labelLanguage.setLabelFor(comboLng);
+
         comboLng = new JComboBox();
 
+        labelLanguage.setLabelFor(comboLng);
         comboRemoveCompleted = new JComboBox();
         comboRemoveCompleted.setName("comboRemoveCompleted");
         comboLng.setName("comboLng");
@@ -1070,6 +1071,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         spinnerUpdateHour = new JSpinner();
         JLabel labelHours = new JLabel();
         JLabel labelUpdateFromServer = new JLabel();
+
         JLabel labelAfterDetectUpdate = new JLabel();
 
         JPanel panelPlugins = new JPanel();
@@ -1094,6 +1096,9 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
         checkPrepareFile.setName("checkPrepareFile");
         JLabel labelManualCheck = new JLabel();
+
+        labelUpdateFromServer.setLabelFor(this.comboPluginServers);
+        labelAfterDetectUpdate.setLabelFor(this.comboHowToUpdate);
 
         //======== this ========
         Container contentPane = getContentPane();
@@ -1917,6 +1922,8 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
         @Override
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            if (value == null)
+                value = list.getModel().getElementAt(index);
             final SupportedLanguage lng = (SupportedLanguage) value;
 
             assert lng != null;
@@ -1929,6 +1936,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
             if (resource != null) {
                 this.setIcon(new ImageIcon(resource));
             }
+            this.getAccessibleContext().setAccessibleDescription(lng.getName());
             return component;
         }
     }

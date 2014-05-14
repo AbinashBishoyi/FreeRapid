@@ -8,6 +8,7 @@ import cz.vity.freerapid.plugins.webclient.hoster.PremiumAccount;
 import cz.vity.freerapid.plugins.webclient.interfaces.DialogSupport;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.LogUtils;
+import cz.vity.freerapid.utilities.Sound;
 import org.jdesktop.appframework.swingx.SingleXFrameApplication;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.SingleFrameApplication;
@@ -97,6 +98,9 @@ public class StandardDialogSupportImpl implements DialogSupport {
     private void askCaptcha(Icon image) {
         if (AppPrefs.getProperty(UserProp.ACTIVATE_WHEN_CAPTCHA, UserProp.ACTIVATE_WHEN_CAPTCHA_DEFAULT))
             Swinger.bringToFront(((SingleFrameApplication) context.getApplication()).getMainFrame(), true);
+        if (AppPrefs.getProperty(UserProp.BLIND_MODE, UserProp.BLIND_MODE_DEFAULT)) {
+            Sound.playSound(context.getResourceMap().getString("captchaWav"));
+        }
         captchaResult = (String) JOptionPane.showInputDialog(null, context.getResourceMap(DownloadTask.class).getString("InsertWhatYouSee"), context.getResourceMap(DownloadTask.class).getString("InsertCaptcha"), JOptionPane.PLAIN_MESSAGE, image, null, null);
     }
 

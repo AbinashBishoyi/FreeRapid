@@ -28,11 +28,11 @@ class ConnectionCellRenderer extends DefaultTableCellRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        final DownloadFile downloadFile = (DownloadFile) value;
         if (value == null) {
-            logger.warning("DownloadFile is null");
-            return new JLabel();
+            value = table.getValueAt(row, column);
         }
+        final DownloadFile downloadFile = (DownloadFile) value;
+
         final DownloadTask task = downloadFile.getTask();
 
         ConnectionSettings con = null;
@@ -54,7 +54,7 @@ class ConnectionCellRenderer extends DefaultTableCellRenderer {
                 }
             } else value = defaultConnection;
         } else value = "";
-
+        getAccessibleContext().setAccessibleDescription(table.getColumnName(column) + " " + value.toString());
         return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
     }
 }

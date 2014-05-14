@@ -11,9 +11,14 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
-XXth September 2009 - FreeRapid Downloader 0.83 beta 4
+5th September 2009 - FreeRapid Downloader 0.83 beta 4
+  Added : improvements and fixes to enable FRD using blind people - it's now compatible to Java Accessibility Bridge
+         See http://java.sun.com/javase/technologies/accessibility/accessbridge/ for more details
+         or here: http://a11y.netbeans.org/a11yDevGuide.html
   Added : SOCKS proxy support [thanks to Benjamin!!] - all urls in proxy list file has to be prefixed with $SOCKS$ or SOCKS:
-  Added : added shell script in tools/socks to help with automatic creating list of SOCKS proxies for FRD [thanks to Benjamin!!]
+          SOCKS5 authentication is experimental
+  Added : added shell script setupproxy.sh in tools/socks to help with automatic creating list of SOCKS proxies for FRD
+        [thanks to Benjamin!!]
   Added : added backup links.txt file (located in configuration folder), which stores all links you ever added into FreeRapid
   Fixed: problems with backup files
 
