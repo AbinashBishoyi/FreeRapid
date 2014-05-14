@@ -152,9 +152,13 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     }
 
 
-    @org.jdesktop.application.Action(enabledProperty = COMPLETED_OK_ACTION_ENABLED_PROPERTY)
+    @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
     public void openFileAction() {
-        openFilesInSystem(false);
+        if (AppPrefs.getProperty(UserProp.OPEN_INCOMPLETE_FILES, UserProp.OPEN_INCOMPLETE_FILES_DEFAULT) && isSelectedEnabled()) {
+            openFilesInSystem(true);
+        } else {
+            openFilesInSystem(false);
+        }
     }
 
     private void openFilesInSystem(final boolean storeFile) {

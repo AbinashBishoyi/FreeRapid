@@ -19,8 +19,10 @@ final class ProgressBarCellRenderer extends JProgressBar implements TableCellRen
     private static final Color BG_ORANGE = new Color(0xFFEDD0);
     private static final Color BG_GREEN = new Color(0xD0FFE9);
     private static final Color BG_BLUE = new Color(0xB6E9FF);
-    private static final Color BG_BLACK = new Color(0x000000);
+    private static final Color BG_BLACK = new Color(0xFFCE9B);
+    private static final Color BG_PINK = Color.PINK;
     private static final Color BG_GREY = new Color(0xAAAAAA);
+    private final Color defaultColor;
 
     private String autoReconnectIn;
     private String attemptForDownloading;
@@ -32,6 +34,7 @@ final class ProgressBarCellRenderer extends JProgressBar implements TableCellRen
         attemptForDownloading = map.getString("attemptForDownloading");
         final int h = this.getPreferredSize().height;
         this.setPreferredSize(new Dimension(70, h));
+        defaultColor = this.getBackground();
     }
 
     @Override
@@ -55,7 +58,7 @@ final class ProgressBarCellRenderer extends JProgressBar implements TableCellRen
                 break;
             case PAUSED:
             case DISABLED:
-                this.setBackground(BG_BLACK);
+                this.setBackground(BG_PINK);
                 break;
             case QUEUED:
                 this.setBackground(BG_ORANGE);
@@ -68,10 +71,11 @@ final class ProgressBarCellRenderer extends JProgressBar implements TableCellRen
                 this.setBackground(BG_GREY);
                 break;
             case COMPLETED:
-                this.setBackground(null);
+                this.setBackground(defaultColor);
                 break;
             default:
-                this.setBackground(BG_BLACK);
+                assert false;
+                //this.setBackground(BG_BLACK);
                 break;
         }
 

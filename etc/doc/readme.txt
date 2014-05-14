@@ -179,6 +179,11 @@ IV.    Known bugs and Limitations
 =======================================
 Always close FRD properly otherwise you can loose your file list (eg. Windows shutdown with force option...)
 
+
+- MacOS: Cannot run on MacOS. FreeRapid distribution is damaged.
+  - Solution - You need to change the security and privacy permission to any developer.
+  - See this tutorial: https://kb.wisc.edu/helpdesk/page.php?id=25443
+
 - Application will not start if it's placed on the path with special characters like '+' or '%'
   - X please move application to another location without such characters
 

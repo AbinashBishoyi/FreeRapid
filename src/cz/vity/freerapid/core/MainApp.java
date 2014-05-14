@@ -35,8 +35,8 @@ import java.util.logging.Logger;
  */
 public class MainApp extends SingleXFrameApplication {
 
-    public static final int BUILD_REQUEST = 10;
-    public static final int PLUGINS_VERSION = 9;
+    public static final int BUILD_REQUEST = 11;
+    public static final int PLUGINS_VERSION = 10;
     static boolean debug = false;
     private ManagerDirector director;
     private TrayIconSupport trayIconSupport = null;

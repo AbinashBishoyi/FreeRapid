@@ -181,6 +181,10 @@ Více informací:
 
 IV.    Známé problémy a omezení
 =======================================
+- MacOS: Nelze spustit aplikaci na MacOS. Dostavám hlášku o tom, že FreeRapid je poškozený.
+  - X - Je třeba povolit instalaci aplikací třetích stran.
+  - Návod s obrázky: https://kb.wisc.edu/helpdesk/page.php?id=25443
+
 - Aplikace se nespustí, jestliže cesta k ní obsahuje speciální znaky typu '+', '%'
   - X změňte prosím umístění aplikace tak, aby cesta k ní neobsahovala speciální znaky
 - ESET "Smart" Antivirus na operačním systému Windows blokuje spuštění FRD
