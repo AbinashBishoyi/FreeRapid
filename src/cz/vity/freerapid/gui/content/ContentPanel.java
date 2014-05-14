@@ -561,7 +561,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     public void openInBrowser() {
         final java.util.List<DownloadFile> files = manager.getSelectionToList(getSelectedRows());
         for (HttpFile file : files) {
-            Browser.openBrowser(file.getFileUrl().toExternalForm());
+            Browser.openBrowser(file.getFileUrl().toExternalForm().replaceAll("%23", "#"));
         }
     }
 
@@ -1007,7 +1007,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         final java.util.List<DownloadFile> files = manager.getSelectionToList(getSelectedRows());
         StringBuilder builder = new StringBuilder();
         for (DownloadFile file : files) {
-            builder.append(file.toString()).append('\n');
+            builder.append(file.toString().replaceAll("%23", "#")).append('\n');
         }
         SwingUtils.copyToClipboard(builder.toString().trim(), this);
     }

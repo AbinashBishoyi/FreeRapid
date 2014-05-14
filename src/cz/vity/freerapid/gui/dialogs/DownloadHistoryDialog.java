@@ -210,7 +210,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
             } else {
                 value = tableModel.getValueAt(row, selCol).toString();
             }
-            builder.append(value).append('\n');
+            builder.append(value.replaceAll("%23", "#")).append('\n');
         }
         SwingUtils.copyToClipboard(builder.toString().trim(), this);
     }
@@ -239,7 +239,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
     public void openInBrowser() {
         final java.util.List<FileHistoryItem> files = manager.getSelectionToList(getSelectedRows());
         for (FileHistoryItem file : files) {
-            Browser.openBrowser(file.getUrl().toExternalForm());
+            Browser.openBrowser(file.getUrl().toExternalForm().replaceAll("%23", "#"));
         }
     }
 
