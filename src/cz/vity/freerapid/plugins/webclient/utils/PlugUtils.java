@@ -41,7 +41,7 @@ public final class PlugUtils {
      * Function is not case sensitive. Spaces among numbers are not important (they are removed).<br />
      * All ',' are converted to '.'<br />
      * Since version 0.83 there is additional replacement for characters in Russian alphabet (azbuka).<br />
-     *
+     * All <code>&nbsp;</code> are replaced to be a pure <code>' '</code>
      * @param value input string parsed from page
      * @return filesize in bytes
      */
@@ -54,7 +54,7 @@ public final class PlugUtils {
         value = value.replace('\u041A', 'K');
         value = value.replace('\u0433', 'G');
         value = value.replace('\u0413', 'G');
-        value = value.toUpperCase();
+        value = value.toUpperCase().replaceAll("&nbsp;", " ");
         int constant = 1;
         int index = value.lastIndexOf("KB");
         if (index >= 0) {
