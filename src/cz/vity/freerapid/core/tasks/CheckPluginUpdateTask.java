@@ -87,7 +87,7 @@ public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
             throw new InterruptedException();
         final String line = client.getContentAsString();
 
-        if ((line != null)) {
+        if ((line != null && line.contains("thisisanupdate"))) {
             //   return CONNECT_SAME_VERSION;
             final String lineL = line.toLowerCase();
             if (lineL.contains("required")) {
