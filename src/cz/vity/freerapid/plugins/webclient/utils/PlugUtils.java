@@ -327,8 +327,8 @@ public final class PlugUtils {
      * Returns time value in seconds between 2 other strings.
      *
      * @param content      searched content
-     * @param stringBefore string before searched string
-     * @param stringAfter  string after searched string
+     * @param stringBefore string before searched string - without white space characters on the RIGHT side
+     * @param stringAfter  string after searched string - without white space characters on the LEFT side
      * @param srcTimeUnit  source time unit - usually <code>TimeUnit.SECONDS</code> or <code>TimeUnit.MILLISECONDS</code>
      * @return time value in seconds
      * @throws PluginImplementationException No wait time value between stringBefore and stringAfter
@@ -336,7 +336,7 @@ public final class PlugUtils {
     public static int getWaitTimeBetween(String content, String stringBefore, String stringAfter, TimeUnit srcTimeUnit) throws PluginImplementationException {
         final String before = Pattern.quote(stringBefore);
         final String after = Pattern.quote(stringAfter);
-        final Matcher matcher = matcher(before + "([0-9]+?)" + after, content);
+        final Matcher matcher = matcher(before + "\\s*([0-9]+?)\\s*" + after, content);
         if (matcher.find()) {
             final long i = Long.parseLong(matcher.group(1));
             return new Long(srcTimeUnit.toSeconds(i)).intValue();

@@ -121,6 +121,7 @@ public class PlugUtilsTest {
     @Test
     public void testGetWaitTimeBetween() throws PluginImplementationException {
         assertEquals(PlugUtils.getWaitTimeBetween("waitTime = 2;", "waitTime = ", ";", TimeUnit.MINUTES), 120);
+        assertEquals(PlugUtils.getWaitTimeBetween("waitTime = 2000\n\n;", "waitTime =", ";", TimeUnit.MILLISECONDS), 2);
     }
 
     @Test
