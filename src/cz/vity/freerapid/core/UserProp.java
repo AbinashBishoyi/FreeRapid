@@ -386,6 +386,9 @@ final public class UserProp {
     public static final String SKIP_DUPLICATE_FILES = "skipDuplicateFiles";
     public static final boolean SKIP_DUPLICATE_FILES_DEFAULT = false;
 
+    public static final String PLUGIN_WITH_PRIORITY_PRECEDENCE = "pluginWithPriorityPrecedence";
+    public static final boolean PLUGIN_WITH_PRIORITY_PRECEDENCE_DEFAULT = false;
+
 }
 
 

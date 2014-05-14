@@ -10,6 +10,7 @@ import cz.vity.freerapid.core.Consts;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
 import cz.vity.freerapid.gui.managers.MenuManager;
+import cz.vity.freerapid.gui.managers.PluginsManager;
 import cz.vity.freerapid.model.PluginMetaData;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 import cz.vity.freerapid.swing.ComponentFactory;
@@ -47,7 +48,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -370,7 +370,7 @@ public class PluginsTab extends UserPreferencesTab implements ClipboardOwner {
 
     private List<PluginMetaData> getSortedPriorityPluginList() {
         List<PluginMetaData> datas = getSupportedPlugins();
-        Collections.sort(datas, new PriorityComparator());
+        Collections.sort(datas, new PluginsManager.PriorityComparator());
         return datas;
     }
 
@@ -684,13 +684,6 @@ public class PluginsTab extends UserPreferencesTab implements ClipboardOwner {
 
     @Override
     public void lostOwnership(Clipboard clipboard, Transferable contents) {
-    }
-
-    private static class PriorityComparator implements Comparator<PluginMetaData> {
-        @Override
-        public int compare(PluginMetaData o1, PluginMetaData o2) {
-            return new Integer(o1.getPluginPriority()).compareTo(o2.getPluginPriority());
-        }
     }
 
     private static class SpinnerEditor extends AbstractCellEditor implements TableCellEditor {

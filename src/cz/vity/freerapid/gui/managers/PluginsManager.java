@@ -243,7 +243,7 @@ public class PluginsManager {
 
         } catch (Exception e) {
             LogUtils.processException(logger, e);
-            if (this.supportedPlugins == null || supportedPlugins.isEmpty())
+            if (supportedPlugins.isEmpty())
                 context.getApplication().exit();
         }
     }
@@ -427,27 +427,48 @@ public class PluginsManager {
     public String getServiceIDForURL(URL url) throws NotSupportedDownloadServiceException {
         final String s = url.toExternalForm();
         PluginMetaData disabledPlugin = null;
-        final PluginMetaData[] plugins = getCachedPlugins();
 
-        //iterate through last used
-        for (int i = plugins.length - 1; i >= 0; i--) {
-            PluginMetaData plugin = plugins[i];
-            if (plugin.isSupported(s)) {
-                addToCache(plugin);
-                logger.info("Cache hit");
-                if (plugin.isEnabled()) {
-                    return plugin.getId();
+        final boolean priorityFirst = AppPrefs.getProperty(UserProp.PLUGIN_WITH_PRIORITY_PRECEDENCE, UserProp.PLUGIN_WITH_PRIORITY_PRECEDENCE_DEFAULT);
+        if (priorityFirst) {
+            //iterate through all plugins
+            final Collection<PluginMetaData> values = this.supportedPlugins.values();
+            final PluginMetaData[] pluginMetaDatas = values.toArray(new PluginMetaData[values.size()]);
+            Arrays.sort(pluginMetaDatas, new PriorityComparator());
+            for (PluginMetaData plugin : pluginMetaDatas) {
+                if (plugin.isSupported(s)) {
+                    addToCache(plugin);
+                    if (!plugin.isEnabled()) {
+                        disabledPlugin = plugin;
+                    } else
+                        return plugin.getId();
                 }
             }
-        }
-        //iterate through all plugins
-        for (PluginMetaData plugin : this.supportedPlugins.values()) {
-            if (plugin.isSupported(s)) {
-                addToCache(plugin);
-                if (!plugin.isEnabled()) {
-                    disabledPlugin = plugin;
-                } else
-                    return plugin.getId();
+        } else {
+
+            final PluginMetaData[] plugins = getCachedPlugins();
+
+            //iterate through last used
+            for (int i = plugins.length - 1; i >= 0; i--) {
+                PluginMetaData plugin = plugins[i];
+                if (plugin.isSupported(s)) {
+                    addToCache(plugin);
+                    logger.info("Cache hit");
+                    if (plugin.isEnabled()) {
+                        return plugin.getId();
+                    }
+                }
+            }
+
+            //iterate through all plugins
+            final Collection<PluginMetaData> values = this.supportedPlugins.values();
+            for (PluginMetaData plugin : values) {
+                if (plugin.isSupported(s)) {
+                    addToCache(plugin);
+                    if (!plugin.isEnabled()) {
+                        disabledPlugin = plugin;
+                    } else
+                        return plugin.getId();
+                }
             }
         }
         if (disabledPlugin != null)
@@ -584,4 +605,10 @@ public class PluginsManager {
                 && !isPluginDisabled(ID_DIRECT);
     }
 
+    public static class PriorityComparator implements Comparator<PluginMetaData> {
+        @Override
+        public int compare(PluginMetaData o1, PluginMetaData o2) {
+            return new Integer(o1.getPluginPriority()).compareTo(o2.getPluginPriority());
+        }
+    }
 }
