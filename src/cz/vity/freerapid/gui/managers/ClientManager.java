@@ -34,7 +34,7 @@ public class ClientManager {
     private final List<ConnectionSettings> availableConnections = new ArrayList<ConnectionSettings>(2);
     private Stack<HttpDownloadClient> workingClientsPool = new Stack<HttpDownloadClient>();
     private static final String PROXY_LIST_DEFAULT_PATH = new File(Utils.getAppPath(), "proxy.list").getAbsolutePath();
-    public static final int MAX_DOWNLOADING = 9;
+    public static final int MAX_DOWNLOADING = 10;
 
     private ConnectionSettings defaultConnectionSettings = new ConnectionSettings();
 

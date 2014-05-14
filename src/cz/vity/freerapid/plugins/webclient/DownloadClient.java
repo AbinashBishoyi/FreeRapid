@@ -1,5 +1,6 @@
 package cz.vity.freerapid.plugins.webclient;
 
+import cz.vity.freerapid.plugins.webclient.interfaces.FileStreamRecognizer;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
 import cz.vity.freerapid.plugins.webclient.utils.HttpUtils;
@@ -17,7 +18,6 @@ import org.apache.commons.httpclient.util.URIUtil;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -70,6 +70,7 @@ public class DownloadClient implements HttpDownloadClient {
     public static final String SUPPOSE_TO_DOWNLOAD = "supposeToDownload";
 
     private int timeout = 120 * 1000;
+    private DefaultFileStreamRecognizer streamRecognizer;
 
 
     /**
@@ -129,7 +130,10 @@ public class DownloadClient implements HttpDownloadClient {
      * @param method
      */
     protected void setDefaultsForMethod(HttpMethod method) {
-        method.setRequestHeader("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.14) Gecko/2009082707 Firefox/3.0.14");
+        if (client.getParams().isParameterTrue(DownloadClientConsts.USER_AGENT)) {
+            method.setRequestHeader("User-Agent", client.getParams().getParameter(DownloadClientConsts.USER_AGENT).toString());
+        } else
+            method.setRequestHeader("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.2.3) Gecko/20100401 Firefox/3.6.3");
         method.setRequestHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         method.setRequestHeader("Accept-Language", "cs,en-us;q=0.7,en;q=0.3");
         method.setRequestHeader("Accept-Charset", "windows-1250,utf-8;q=0.7,*;q=0.7");
@@ -330,23 +334,14 @@ public class DownloadClient implements HttpDownloadClient {
     }
 
     private boolean checkContentTypeStream(HttpMethod method, boolean showWarnings) {
-        boolean stream = true;
-        final Header contentType = getContentType(method);
-        if (contentType == null) {
-            stream = false;
-            if (showWarnings)
-                logger.warning("No Content-Type!");
-        } else {
-            final String value = contentType.getValue().toLowerCase(Locale.ENGLISH);
-            final boolean isImage = value.startsWith("image/");
-            final boolean isAudioVideo = value.startsWith("audio/") || value.startsWith("video/");
-            if (!value.startsWith("application/") && !isImage && !isAudioVideo) {
-                stream = false;
-                if (showWarnings)
-                    logger.warning("Suspicious Content-Type: " + contentType.getValue());
+        FileStreamRecognizer recognizer = (FileStreamRecognizer) client.getParams().getParameter(DownloadClientConsts.FILE_STREAM_RECOGNIZER);
+        if (recognizer == null) {
+            if (streamRecognizer == null) {
+                streamRecognizer = new DefaultFileStreamRecognizer();
             }
+            recognizer = streamRecognizer;
         }
-        return stream;
+        return recognizer.isStream(method, showWarnings);
     }
 
 

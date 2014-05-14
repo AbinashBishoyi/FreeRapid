@@ -9,11 +9,13 @@ package cz.vity.freerapid.plugins.webclient;
  * @see AbstractRunner#setClientParameter(String, boolean)
  * @since 0.85
  */
-public class DownloadClientConsts {
+public final class DownloadClientConsts {
 
     /**
      * Value is a Content-Type considered as stream
+     *
      */
+    @Deprecated
     public final static String CONSIDER_AS_STREAM = "considerAsStream";
     /**
      * If <code>true</code>, Content-Type header is ignored
@@ -39,6 +41,17 @@ public class DownloadClientConsts {
      * Value is a charset used for page content
      */
     public final static String PAGE_CHARSET = "pageCharset";
+
+    /**
+     * Default value for HTTP user-agent for every HTTP method 
+     */
+    public static final String USER_AGENT = "userAgent";
+
+    /**
+     * Custom file stream recognizer 
+     */
+    public static final String FILE_STREAM_RECOGNIZER = "fileStreamRecognizer";
+
 
     /**
      * Do not instantiate.

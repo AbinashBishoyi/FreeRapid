@@ -1,6 +1,5 @@
 package cz.vity.freerapid.plugins.webclient;
 
-import cz.vity.freerapid.plugins.exceptions.NotSupportedDownloadByServiceException;
 import cz.vity.freerapid.plugins.webclient.hoster.PremiumAccount;
 import cz.vity.freerapid.plugins.webclient.interfaces.*;
 import cz.vity.freerapid.utilities.LogUtils;
@@ -14,7 +13,6 @@ import javax.swing.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 /**
  * Implements ShareDownloadService and adds basic functionality
@@ -27,10 +25,6 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
      */
     private final static Logger logger = Logger.getLogger(AbstractFileShareService.class.getName());
 
-    /**
-     * Field pattern
-     */
-    private Pattern pattern;
     /**
      * Field pluginContext
      */
@@ -50,8 +44,6 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
     @Override
     final protected void doStart() throws Exception {
         final PluginDescriptor desc = this.getDescriptor();
-        final PluginAttribute attribute = desc.getAttribute("urlRegex");
-        pattern = Pattern.compile(attribute.getValue(), Pattern.CASE_INSENSITIVE);
         final PluginAttribute attr = desc.getAttribute("faviconImage");
         if (attr != null) {
             final PluginClassLoader loader = getManager().getPluginClassLoader(desc);
@@ -96,16 +88,6 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
         return this.getDescriptor().getId();
     }
 
-    /**
-     * Method supportURL checks whether active plugin supports given URL
-     *
-     * @param url given URL to test
-     * @return boolean true if plugin supports downloading from this URL
-     */
-    protected boolean supportURL(String url) {
-        return pattern == null || pattern.matcher(url).matches();
-    }
-
     @Override
     public String toString() {
         return getName();
@@ -113,7 +95,7 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
 
     @Override
     public void run(HttpFileDownloadTask downloadTask) throws Exception {
-        checkSupportedURL(downloadTask);
+        //checkSupportedURL(downloadTask);
         final PluginRunner pluginRunner = getPluginRunnerInstance();
         if (pluginRunner != null) {
             pluginRunner.init(this, downloadTask);
@@ -124,7 +106,7 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
 
     @Override
     public void runCheck(HttpFileDownloadTask downloadTask) throws Exception {
-        checkSupportedURL(downloadTask);
+        //checkSupportedURL(downloadTask);
         final PluginRunner pluginRunner = getPluginRunnerInstance();
         if (pluginRunner != null) {
             pluginRunner.init(this, downloadTask);
@@ -145,19 +127,6 @@ public abstract class AbstractFileShareService extends Plugin implements ShareDo
     @Override
     public PluginContext getPluginContext() {
         return pluginContext;
-    }
-
-    /**
-     * Checks if given downloadTask is supported by this plugin.
-     *
-     * @param downloadTask downloadTask
-     * @throws NotSupportedDownloadByServiceException
-     *          if not supported
-     */
-    protected void checkSupportedURL(HttpFileDownloadTask downloadTask) throws NotSupportedDownloadByServiceException {
-        if (!supportURL(downloadTask.getDownloadFile().getFileUrl().toExternalForm())) {
-            throw new NotSupportedDownloadByServiceException();
-        }
     }
 
     @Override
