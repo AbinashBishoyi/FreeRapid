@@ -3,6 +3,8 @@ package cz.vity.freerapid.gui.actions;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
 import cz.vity.freerapid.gui.managers.PluginsManager;
 import cz.vity.freerapid.utilities.LogUtils;
+import org.apache.commons.httpclient.URIException;
+import org.apache.commons.httpclient.util.URIUtil;
 
 import javax.swing.*;
 import java.awt.datatransfer.DataFlavor;
@@ -82,7 +84,8 @@ public abstract class URLTransferHandler extends TransferHandler {
                         }
                     }
                     if (!containable) {
-                        final URI uri = url.toURI();
+                        final String s1 = URIUtil.encodePath(url.toExternalForm());
+                        final URI uri = new URI(s1);
                         if (!list.contains(uri)) {
                             list.add(uri);
                             result.add(uri.toURL());
@@ -93,6 +96,8 @@ public abstract class URLTransferHandler extends TransferHandler {
                 //ignore
             } catch (URISyntaxException e) {
                 //ignore
+            } catch (URIException e) {
+                //ignore                                
             }
             start = match.end();
         }
