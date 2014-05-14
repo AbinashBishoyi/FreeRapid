@@ -11,6 +11,13 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
+XXth September 2009 - FreeRapid Downloader 0.83 Release Candidate
+  Added : startup.properties file in FRD's directory - see comments in this file for more details
+  Changed : minor GUI speed optimizations
+  Changed : updated plugins to their latest versions
+  Fixed : Close To Tray bug  http://bugtracker.wordrider.net/task/1158 [thanks to kiwichick!]
+  Fixed : restore window size to maximized state does not work  
+
 5th September 2009 - FreeRapid Downloader 0.83 beta 4
   Added : improvements and fixes to enable FRD using blind people - it's now compatible to Java Accessibility Bridge
          See http://java.sun.com/javase/technologies/accessibility/accessbridge/ for more details
