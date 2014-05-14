@@ -1,5 +1,8 @@
 package cz.vity.freerapid.utilities;
 
+import org.apache.commons.httpclient.URIException;
+import org.apache.commons.httpclient.util.URIUtil;
+
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -347,5 +350,15 @@ public final class Utils {
             //ignore
         }
         return s;
+    }
+
+    public static URI convertToURI(String url) throws URISyntaxException, URIException {
+        URI uri;
+        try {
+            uri = new URI(url);
+        } catch (URISyntaxException e) {
+            uri = new URI(URIUtil.encodePathQuery(url));
+        }
+        return uri;
     }
 }

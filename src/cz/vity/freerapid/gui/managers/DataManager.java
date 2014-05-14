@@ -8,14 +8,18 @@ import cz.vity.freerapid.core.FWProp;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.DownloadTask;
 import cz.vity.freerapid.gui.actions.DownloadsActions;
+import cz.vity.freerapid.gui.actions.URLTransferHandler;
 import cz.vity.freerapid.gui.managers.exceptions.NotSupportedDownloadServiceException;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
+import static cz.vity.freerapid.plugins.webclient.DownloadState.*;
 import cz.vity.freerapid.plugins.webclient.FileState;
+import static cz.vity.freerapid.plugins.webclient.FileState.NOT_CHECKED;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
 import cz.vity.freerapid.plugins.webclient.interfaces.MaintainQueueSupport;
 import cz.vity.freerapid.swing.Swinger;
+import cz.vity.freerapid.utilities.Utils;
 import org.jdesktop.application.AbstractBean;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.ApplicationContext;
@@ -28,14 +32,12 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.*;
 import java.util.logging.Logger;
-
-import static cz.vity.freerapid.plugins.webclient.DownloadState.*;
-import static cz.vity.freerapid.plugins.webclient.FileState.NOT_CHECKED;
 
 /**
  * @author Vity
@@ -757,7 +759,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
 
     @Override
     public boolean addLinksToQueue(HttpFile parentFile, List<URI> uriList) {
-        List<DownloadFile> files = new LinkedList<DownloadFile>();
+        final List<DownloadFile> files = new LinkedList<DownloadFile>();
         final boolean dontAddNotSupported = AppPrefs.getProperty(UserProp.DONT_ADD_NOTSUPPORTED_FROMCRYPTER, UserProp.DONT_ADD_NOTSUPPORTED_FROMCRYPTER_DEFAULT);
         for (URI uri : uriList) {
             try {
@@ -772,12 +774,54 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                 logger.warning("File with URI " + uri.toString() + " cannot be added to queue");
             }
         }
-        try {
-            addToList(files);
-            return true;
-        } catch (Exception e) {
+        final boolean[] result = new boolean[1];
+        final Runnable runnable = new Runnable() {
+            public void run() {
+                try {
+                    addToList(files);
+                    result[0] = true;
+                } catch (Exception e) {
+                    result[0] = false;
+                }
+            }
+        };
+        if (!SwingUtilities.isEventDispatchThread()) {
+            try {
+                SwingUtilities.invokeAndWait(runnable);
+            } catch (InterruptedException e) {
+                return false;
+            } catch (InvocationTargetException e) {
+                return false;
+            }
+        } else {
+            runnable.run();
+        }
+        return result[0];
+    }
+
+    @Override
+    public boolean addLinkToQueueUsingPriority(HttpFile parentFile, String data) throws Exception {
+        final List<URL> urlList = URLTransferHandler.textURIListToFileList(data, pluginsManager, false);
+        return !urlList.isEmpty() && addLinkToQueueUsingPriority(parentFile, urlList);
+    }
+
+    @Override
+    public boolean addLinkToQueueUsingPriority(HttpFile parentFile, List<URL> urlList) throws Exception {
+        List<URLByPriority> list = new ArrayList<URLByPriority>(urlList.size());
+        for (URL url : urlList) {
+            final String id;
+            try {
+                id = pluginsManager.getServiceIDForURL(url);
+            } catch (NotSupportedDownloadServiceException e) {
+                continue;
+            }
+            list.add(new URLByPriority(url, pluginsManager.getPluginMetadata(id).getPriority()));
+        }
+        if (list.isEmpty()) {
             return false;
         }
+        Collections.sort(list);
+        return addLinksToQueue(parentFile, Arrays.asList(Utils.convertToURI(list.get(0).getUrl().toExternalForm())));
     }
 
     public void setSpeedLimit(int[] indexes, int speed) {
@@ -808,4 +852,23 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         }
 
     }
+
+    private final class URLByPriority implements Comparable<URLByPriority> {
+        private int priority;
+        private URL url;
+
+        private URLByPriority(URL url, int priority) {
+            this.url = url;
+            this.priority = priority;
+        }
+
+        public int compareTo(URLByPriority o) {
+            return new Integer(this.priority).compareTo(o.priority);
+        }
+
+        public URL getUrl() {
+            return url;
+        }
+    }
+
 }

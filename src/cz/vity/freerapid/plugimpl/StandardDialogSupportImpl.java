@@ -71,14 +71,15 @@ public class StandardDialogSupportImpl implements DialogSupport {
     @Override
     public boolean showOKCancelDialog(final Component container, final String title) throws Exception {
         final boolean[] dialogResult = new boolean[]{false};
+        final Runnable runable = new Runnable() {
+            @Override
+            public void run() {
+                dialogResult[0] = Swinger.showInputDialog(title, container, true) == Swinger.RESULT_OK;
+            }
+        };
         if (!EventQueue.isDispatchThread()) {
-            SwingUtilities.invokeAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    dialogResult[0] = Swinger.showInputDialog(title, container, true) == Swinger.RESULT_OK;
-                }
-            });
-        } else dialogResult[0] = Swinger.showInputDialog(title, container, true) == Swinger.RESULT_OK;
+            SwingUtilities.invokeAndWait(runable);
+        } else runable.run();
         return dialogResult[0];
     }
 

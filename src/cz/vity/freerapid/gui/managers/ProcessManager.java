@@ -223,7 +223,7 @@ public class ProcessManager extends Thread {
             services.put(idServices, downloadService);
         } else {
             //pro pripad, ze se nezmenili services pluginu, ale metadata ano - napr. max. pocet stahovanych
-//            downloadService.setPluginMet
+            downloadService.setPluginMetaData(metaData);
         }
 
         logger.info("Getting plugin: " + metaData.toString());

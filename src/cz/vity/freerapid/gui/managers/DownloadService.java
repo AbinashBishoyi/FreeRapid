@@ -19,11 +19,12 @@ class DownloadService {
     private Collection<ConnectionSettings> problems = new Vector<ConnectionSettings>();
 
     private String serviceName;
-    private final ShareDownloadService service;
+    //private final ShareDownloadService service;
+    private int maxDownloads;
 
     public DownloadService(PluginMetaData fileService, ShareDownloadService service) {
-        this.service = service;
-        this.serviceName = fileService.getServices();
+        //  this.service = service;
+        setPluginMetaData(fileService);
     }
 
 
@@ -36,8 +37,8 @@ class DownloadService {
         for (ConnectionSettings settings : downloading) {
             if (settings.equals(connectionSettings)) {
                 ++foundCount;
-                //TODO Vity na pocet pluginu
-                if (foundCount >= service.getMaxDownloadsFromOneIP()) {
+                //depends on user settings
+                if (foundCount >= this.maxDownloads) {
                     return false;
                 }
             }
@@ -120,4 +121,8 @@ class DownloadService {
         return serviceName;
     }
 
+    public void setPluginMetaData(PluginMetaData metaData) {
+        this.serviceName = metaData.getServices();
+        this.maxDownloads = metaData.getMaxAllowedDownloads();
+    }
 }

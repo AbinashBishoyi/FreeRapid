@@ -5,7 +5,6 @@ import cz.vity.freerapid.gui.managers.PluginsManager;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
 import org.apache.commons.httpclient.URIException;
-import org.apache.commons.httpclient.util.URIUtil;
 
 import javax.swing.*;
 import java.awt.datatransfer.DataFlavor;
@@ -113,12 +112,7 @@ public abstract class URLTransferHandler extends TransferHandler {
                         }
                     }
                     if (!containable) {
-                        URI uri;
-                        try {
-                            uri = new URI(urlS);
-                        } catch (URISyntaxException e) {
-                            uri = new URI(URIUtil.encodePathQuery(urlS));
-                        }
+                        URI uri = Utils.convertToURI(urlS);
 
                         if (!list.contains(uri)) {
                             list.add(uri);
