@@ -344,7 +344,8 @@
             <jarfileset dir="./${build.dir}/lookandfeel"/>
             <javafileset dir="./${build.dir}" includes="*/*.xml"/>
             <javafileset dir="./${build.dir}" includes="*/*.txt"/>
-            <javafileset dir="./${build.dir}" includes="*/*.frp"/>
+            <javafileset dir="./${build.dir}" includes="*.conf"/>
+            <javafileset dir="./${build.dir}" includes="*.dat"/>
             <javafileset dir="./${build.dir}" includes="*.properties"/>
         </jarbundler>
         <mkdir dir="${macos.dmg.temp.dir}"/>
