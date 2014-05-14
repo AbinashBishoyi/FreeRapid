@@ -12,10 +12,10 @@
 *                                                            *
 *                                                            *
 *     FreeRapid Downloader                                   *
-*      - Ladislav Vitasek alias Vity (c) 2008                *
+*      - Ladislav Vitasek alias Vity (c) 2009                *
 *Dom.stránka/Forum/Bugtracker: http://wordrider.net/freerapid*
-*E-Mail: info@wordrider.net - návrhy/                        *
-*Poslední zmìna: 2008-12-25                                  *
+*E-Mail: info@wordrider.net - návrhy                         *
+*Poslední zmìna: 2009-04-14                                  *
 **************************************************************
 
 =======================================

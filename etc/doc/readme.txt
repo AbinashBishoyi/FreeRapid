@@ -3,7 +3,7 @@
 *      by Ladislav Vitasek aka Vity                          *
 *   Website/Forum/Bugtracker: http://wordrider.net/freerapid *
 *   Mail: info@wordrider.net - suggestions                   *
-*   Last change: 20th December 2008                          *
+*   Last change: 14th April 2009                             *
 **************************************************************
 
 =======================================
@@ -33,6 +33,7 @@ Main features:
  - automatic plugins updates
  - simple CAPTCHA recognition
  - auto shutdown
+ - multilanguage enviroment (more than 20 languages supported)
  - many UI settings 
  - works on MS Windows, Linux and MacOS
  - looks amazingly (many color styles)

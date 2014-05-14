@@ -11,6 +11,7 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
+14th April 2009 - FreeRapid Downloader 0.82 released
   Added : internal - plugin API - support for using SSL in plugins 
   Added : French version of readme.txt [thanks to Jean-François]
   Added : Information (fileinfo) dialog - allow to create non existing folder like in NewLinks dialog
