@@ -72,7 +72,7 @@ public class MethodBuilderTest {
         methodBuilder = new MethodBuilder(content, client);
         methodBuilder.setActionFromFormWhereTagContains("Zaregistruj se", true);
         s = methodBuilder.setBaseURL("http://testbase.com/").toGetMethod().getURI().toString();
-        Assert.assertEquals("Parsing Form tag", "http://testbase.com/login/?prihlasit=P%C5%99ihl%C3%A1sit&pamatovat=1", s);
+        Assert.assertEquals("Parsing Form tag", "http://testbase.com/login/?login=&pass=&pamatovat=1&prihlasit=P%C5%99ihl%C3%A1sit", s);
 
 
     }

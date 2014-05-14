@@ -37,24 +37,25 @@ import java.util.regex.Pattern;
  * @since 0.82
  */
 public final class MethodBuilder {
-    private final Map<String, String> parameters = new HashMap<String, String>(4);
+    private final Map<String, String> parameters = new LinkedHashMap<String, String>(4);
     private final String content;
     private HttpDownloadClient client;
     private String referer;
     private static Pattern formPattern;
     private String action;
     private static Pattern parameterPatterns;
-    private static Pattern parameterPattern1;
+    private static Pattern parameterInputPattern;
     private HttpMethodEnum postMethod = HttpMethodEnum.POST;
     private static final int FORM_MATCHER_TITLE_GROUP = 1;
     private String baseURL;
     private static Pattern aHrefPattern;
     private static final int FORM_MATCHER_FORM_CONTENT = 2;
-    private static Pattern parameterPattern2;
+    private static Pattern parameterNamePattern;
     private boolean encodeParameters = true;
     private String encoding = "UTF-8";
     private boolean autoReplaceEntities = true;
     private static Pattern imgPattern;
+    private static Pattern parameterValuePattern;
 
     /**
      * Returns actual set POST or GET method extracted from result. <br /> Its value is used in <code>toMethod()</code> method.<br/>
@@ -570,20 +571,25 @@ public final class MethodBuilder {
     }
 
     private void populateParameters(final String content) {
-        if (parameterPattern1 == null)
-            parameterPattern1 = Pattern.compile("name=(?:\"|')?(.*?)(?:\"|'|\\s).*?value=(?:\"|')?(.*?)(?:\"|'|\\s*>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
-        if (parameterPattern2 == null)
-            parameterPattern2 = Pattern.compile("value=(?:\"|')?(.*?)(?:\"|'|\\s).*?name=(?:\"|')?(.*?)(?:\"|'|\\s*>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
-        Matcher matcher = parameterPattern1.matcher(content);
+        if (parameterInputPattern == null)
+            parameterInputPattern = Pattern.compile("<input (.+?)>", Pattern.DOTALL | Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+        if (parameterNamePattern == null)
+            parameterNamePattern = Pattern.compile("name=(?:\"|')?(.*?)(?:\"|'|\\s)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+        if (parameterValuePattern == null)
+            parameterValuePattern = Pattern.compile("value=(?:\"|')?(.*?)(?:\"|'|\\s)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         int start = 0;
+        Matcher matcher = parameterInputPattern.matcher(content);
         while (matcher.find(start)) {
-            parameters.put(matcher.group(1), matcher.group(2));
-            start = matcher.end();
-        }
-        matcher = parameterPattern2.matcher(content);
-        start = 0;
-        while (matcher.find(start)) {
-            parameters.put(matcher.group(2), matcher.group(1));
+            final String input = matcher.group(1);
+            final Matcher matchName = parameterNamePattern.matcher(input);
+            if (matchName.find()) {
+                String paramName = matchName.group(1);
+                final Matcher matchValue = parameterValuePattern.matcher(input);
+                if (matchValue.find()) {
+                    parameters.put(paramName, matchValue.group(1));
+                } else
+                    parameters.put(paramName, "");
+            }
             start = matcher.end();
         }
     }
