@@ -713,7 +713,7 @@ public final class MethodBuilder {
         s = checkURI(s);
         final PostMethod postMethod = client.getPostMethod(s);
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
-            postMethod.addParameter(entry.getKey(), entry.getValue());
+            postMethod.addParameter(entry.getKey(), (encodeParameters) ? encode(entry.getValue()) : entry.getValue());
         }
         return postMethod;
     }

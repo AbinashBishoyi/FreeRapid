@@ -30,8 +30,9 @@ public final class PlugUtils {
     /**
      * regexp pattern for form parameter matching - cached because of speed optimization
      */
-    private static Pattern parameterPattern1;
-    private static Pattern parameterPattern2;
+    private static Pattern parameterInputPattern;
+    private static Pattern parameterNamePattern;
+    private static Pattern parameterValuePattern;
 
     /**
      * Parses input string and converts it into bytes.<br />
@@ -147,9 +148,7 @@ public final class PlugUtils {
 
     public static String getParameter(String name, String content) throws PluginImplementationException {
         //(?: means no capturing group
-        Pattern parameterInputPattern = Pattern.compile("<input (.+?)>", Pattern.DOTALL | Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
-        Pattern parameterNamePattern = Pattern.compile("name=(?:\"|')?(.*?)(?:\"|'|\\s|$)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
-        Pattern parameterValuePattern = Pattern.compile("value=(?:\"|')?(.*?)(?:\"|'|\\s|$)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+        initParameterPatterns();
         int start = 0;
         Matcher matcher = parameterInputPattern.matcher(content);
         while (matcher.find(start)) {
@@ -190,9 +189,7 @@ public final class PlugUtils {
             throw new IllegalArgumentException("You have to provide some parameter names");
         final Set<String> set = new HashSet<String>(parameters.length);
         set.addAll(Arrays.asList(parameters));
-        Pattern parameterInputPattern = Pattern.compile("<input (.+?)>", Pattern.DOTALL | Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
-        Pattern parameterNamePattern = Pattern.compile("name=(?:\"|')?(.*?)(?:\"|'|\\s|$)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
-        Pattern parameterValuePattern = Pattern.compile("value=(?:\"|')?(.*?)(?:\"|'|\\s|$)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+        initParameterPatterns();
         int start = 0;
         Matcher matcher = parameterInputPattern.matcher(content);
         while (matcher.find(start)) {
@@ -217,6 +214,15 @@ public final class PlugUtils {
         if (!set.isEmpty()) {
             throw new PluginImplementationException("Following parameters: " + Arrays.toString(set.toArray()) + " were not found");
         }
+    }
+
+    private static void initParameterPatterns() {
+        if (parameterInputPattern == null)
+            parameterInputPattern = Pattern.compile("<input (.+?)>", Pattern.DOTALL | Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+        if (parameterNamePattern == null)
+            parameterNamePattern = Pattern.compile("name=(?:\"|')?(.*?)(?:\"|'|\\s|$)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+        if (parameterValuePattern == null)
+            parameterValuePattern = Pattern.compile("value=(?:\"|')?(.*?)(?:\"|'|\\s|$)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
     }
 
     /**
@@ -257,14 +263,14 @@ public final class PlugUtils {
      *
      * @param file           file to apply found file name
      * @param content        content to search
-     * @param fileNameBefore string before file name
-     * @param fileNameAfter  string after file name
+     * @param fileNameBefore string before file name, character '\n' is replaced as \\s*
+     * @param fileNameAfter  string after file name, character '\n' is replaced as \\s*
      * @throws PluginImplementationException file name was not found
      * @since 0.82
      */
     public static void checkName(HttpFile file, String content, String fileNameBefore, String fileNameAfter) throws PluginImplementationException {
-        final String before = Pattern.quote(Utils.rtrim(fileNameBefore));
-        final String after = Pattern.quote(Utils.ltrim(fileNameAfter));
+        final String before = Pattern.quote(Utils.rtrim(fileNameBefore)).replaceAll("\n", "\\\\E\\\\s*\\\\Q");
+        final String after = Pattern.quote(Utils.ltrim(fileNameAfter)).replaceAll("\n", "\\\\E\\\\s*\\\\Q");
         final Matcher matcher = matcher(before + "\\s*(.+?)\\s*" + after, content);
         if (matcher.find()) {
             String fileName = matcher.group(1).trim();
@@ -285,14 +291,14 @@ public final class PlugUtils {
      *
      * @param file           file to apply found file name
      * @param content        content to search
-     * @param fileSizeBefore string before file name  - without white space characters on the RIGHT side
-     * @param fileSizeAfter  string after file name  - without white space characters on the LEFT side
+     * @param fileSizeBefore string before file name  - without white space characters on the RIGHT side, character '\n' is replaced as \\s*
+     * @param fileSizeAfter  string after file name  - without white space characters on the LEFT side, character '\n' is replaced as \\s*
      * @throws PluginImplementationException file size string was not found
      * @since 0.82
      */
     public static void checkFileSize(HttpFile file, String content, String fileSizeBefore, String fileSizeAfter) throws PluginImplementationException {
-        final String before = Pattern.quote(Utils.rtrim(fileSizeBefore));
-        final String after = Pattern.quote(Utils.ltrim(fileSizeAfter));
+        final String before = Pattern.quote(Utils.rtrim(fileSizeBefore)).replaceAll("\n", "\\\\E\\\\s*\\\\Q");
+        final String after = Pattern.quote(Utils.ltrim(fileSizeAfter)).replaceAll("\n", "\\\\E\\\\s*\\\\Q");
         final Matcher matcher = matcher(before + "\\s*(.+?)\\s*" + after, content);
         if (matcher.find()) {
             final String fileSize = matcher.group(1);

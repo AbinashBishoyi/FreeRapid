@@ -2,7 +2,9 @@ package cz.vity.freerapid.plugins.webclient.utils;
 
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.exceptions.PluginImplementationException;
+import cz.vity.freerapid.plugins.webclient.MethodBuilderTest;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
+import cz.vity.freerapid.utilities.Utils;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
@@ -10,8 +12,11 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -20,9 +25,12 @@ import java.util.concurrent.TimeUnit;
  * @author Ladislav Vitasek
  */
 public class PlugUtilsTest {
+    private String content;
+
     @Before
-    public void setUp() {
-        // Add your code here
+    public void before() throws URISyntaxException {
+        final URI uri = MethodBuilderTest.class.getResource("resources/MethodBuilderTest.html").toURI();
+        content = Utils.loadFile(new File(uri));
     }
 
     @After
@@ -159,5 +167,8 @@ public class PlugUtilsTest {
         final HttpFile httpFile = new DownloadFile();
         PlugUtils.checkFileSize(httpFile, content, "strong>File size:", "<");
         assertEquals(httpFile.getFileSize(), 5900 * 1024);
+
+        PlugUtils.checkFileSize(httpFile, this.content, "File size:</b></td>\n<td align=left>", "</td>");
+        assertEquals(httpFile.getFileSize(), 18 * 1024 * 1024);
     }
 }
