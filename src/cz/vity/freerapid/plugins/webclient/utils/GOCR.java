@@ -69,10 +69,14 @@ class GOCR {
             processOut.flush();
             processOut.close();
             scanner = new Scanner(process.getInputStream());
+            StringBuilder builder = new StringBuilder();
             final String s;
-            if (scanner.hasNext()) {
-                s = scanner.next();
-            } else throw new IllegalStateException("No output");
+            while (scanner.hasNext()) {
+                builder.append(scanner.next());
+            }
+            s = builder.toString();
+            if (s == null || s.isEmpty())
+                throw new IllegalStateException("No output");
             process.waitFor();
             if (process.exitValue() != 0)
                 throw new IOException("Process exited abnormally");
