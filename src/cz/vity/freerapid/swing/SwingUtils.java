@@ -1,5 +1,7 @@
 package cz.vity.freerapid.swing;
 
+import cz.vity.freerapid.utilities.LogUtils;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -8,6 +10,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.logging.Logger;
 
 /**
  * Utility pro Swing
@@ -15,14 +18,20 @@ import java.awt.event.MouseEvent;
  * @author Vity
  */
 final public class SwingUtils {
+    private final static Logger logger = Logger.getLogger(SwingUtils.class.getName());
+
     private SwingUtils() {
 
     }
 
     public static void copyToClipboard(String text, ClipboardOwner owner) {
         final StringSelection stringSelection = new StringSelection(text);
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clipboard.setContents(stringSelection, owner);
+        try {
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            clipboard.setContents(stringSelection, owner);
+        } catch (Exception e) {
+            LogUtils.processException(logger, e);
+        }
     }
 
     public static void showPopMenu(JPopupMenu popupMenu, MouseEvent e, Component source, Component destination) {
