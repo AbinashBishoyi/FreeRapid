@@ -169,6 +169,24 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     }
 
     @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
+    public void sortbyNameAction() {
+        final ListSelectionModel selectionModel = table.getSelectionModel();
+        selectionModel.setValueIsAdjusting(true);
+        int[] indexes = getSelectedRows();
+        if (indexes.length == 1) {
+            table.selectAll();
+            indexes = getSelectedRows();
+        }
+        final int resultIndex = manager.sortByName(indexes);
+        selectionModel.setValueIsAdjusting(false);
+        if (resultIndex != -1) {
+            int index = Swinger.convertRowIndexToView(table, resultIndex);
+            selectionModel.setSelectionInterval(index, index + indexes.length - 1);
+            scrollToVisible(true);
+        }
+    }
+
+    @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
     public void deleteFileAction() {
 //        if (!isCompleteWithFilesEnabled())
 //            return;

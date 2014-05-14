@@ -39,6 +39,7 @@ FreeRapid Downloader 0.85 Alpha 4
   Changed : Options for plugin update methods were shuffled around a bit to make them more logical
   Changed : New icon for global speed limit
   Changed : Plugin priority changed around: higher number = higher priority
+  Changed : "Sort by Name" action is back
   Fixed : Exception when starting an RTMP download with file pre-allocation enabled
   Fixed : Problems with links containing '#' character
 

@@ -143,7 +143,7 @@ public class ToolbarManager implements PropertyChangeListener {
         });
 
         toolbar.add(searchField);
-
+        toolbar.add(Box.createHorizontalStrut(3));
 //        toolbar.add(new ToolbarSeparator());
 //        toolbar.add(getButton(Swinger.getAction("quit")));
         //    toolbar.add(Box.createGlue());

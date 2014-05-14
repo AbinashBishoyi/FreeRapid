@@ -14,7 +14,9 @@ import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.container.FileInfo;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
+import static cz.vity.freerapid.plugins.webclient.DownloadState.*;
 import cz.vity.freerapid.plugins.webclient.FileState;
+import static cz.vity.freerapid.plugins.webclient.FileState.NOT_CHECKED;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
 import cz.vity.freerapid.plugins.webclient.interfaces.MaintainQueueSupport;
 import cz.vity.freerapid.swing.Swinger;
@@ -39,9 +41,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 import java.util.logging.Logger;
-
-import static cz.vity.freerapid.plugins.webclient.DownloadState.*;
-import static cz.vity.freerapid.plugins.webclient.FileState.NOT_CHECKED;
 
 /**
  * @author Vity
@@ -852,6 +851,49 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
             return false;
         }
 
+    }
+
+    /**
+     * Bere v uvahu i radky vybrane na preskacku.
+     *
+     * @param indexes list of indexes
+     * @return Vraci -1 pokud nedoslo ke zmene.
+     */
+    public int sortByName(int[] indexes) {
+        synchronized (lock) {
+            if (indexes.length == 1)
+                return -1;
+            final List<DownloadFile> files = selectionToList(indexes);
+            //        final DownloadFile[] beforeSorting = files.toArray(new DownloadFile[files.size()]);
+            final DownloadFile[] sorted = files.toArray(new DownloadFile[files.size()]);
+            Arrays.sort(sorted, new Comparator<DownloadFile>() {
+                public int compare(DownloadFile o1, DownloadFile o2) {
+                    return o1.getFileName().compareToIgnoreCase(o2.getFileName());
+                }
+            });
+//            boolean sameIndexes = true;
+//            for (int i = 0; i < sorted.length; i++) {
+//                if (getIndex(sorted[i]) != getIndex(beforeSorting[i])) {
+//                    sameIndexes = false;
+//                    break;
+//                }
+//            }
+//
+//            if (sameIndexes) {
+//                return -1;
+//            }
+
+            if (indexes.length > 1)
+                Arrays.sort(indexes);
+            //final int placeIndex = getIndex(sorted[0]);
+            final int placeIndex = indexes[0];
+            final int length = indexes.length;
+            for (int i = length - 1; i >= 0; --i) {
+                downloadFiles.remove(indexes[i]);
+            }
+            downloadFiles.addAll(placeIndex, Arrays.asList(sorted));
+            return placeIndex;
+        }
     }
 
     private final class URLByPriority implements Comparable<URLByPriority> {

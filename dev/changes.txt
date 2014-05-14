@@ -31,10 +31,6 @@ fileAlreadyExistsTooltip=File already exists on the disk
 MainApp.properties
 ====================================
 Removed:
-sortbyNameAction.Action.text=Sort by &Name
-sortbyNameAction.Action.shortDescription=Sort selected downloads by file name
-sortbyNameAction.Action.accelerator=shortcut S
-sortbyNameAction.Action.smallIcon=${iconsPath}sort_small.gif
 sortbyServerAction.Action.text=Sort by &Server
 sortbyServerAction.Action.shortDescription=Sort selected downloads by server name
 sortbyServerAction.Action.accelerator=
@@ -42,6 +38,9 @@ sortbyServerAction.Action.smallIcon=${iconsPath}sort_small.gif
 
 
 New:
+#do not translate, just place it there:
+searchDefaultIcon=${iconsPath}search.png
+
 manageSearchEngines.Action.text=&Manage search engines...
 manageSearchEngines.Action.shortDescription=Open search engine selection page in web browser
 howToManageSearchEngines=To add a new search engine, browse this site and make your choice.\nRight-click the download link and choose "Save linked content as" (or something similar),\nand save the file into the "search" folder inside FRD's root folder.

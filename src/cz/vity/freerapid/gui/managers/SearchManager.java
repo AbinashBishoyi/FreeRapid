@@ -22,17 +22,16 @@ import java.util.logging.Logger;
  * @author Vity
  */
 public class SearchManager {
-    private final ApplicationContext context;
-    private final ManagerDirector managerDirector;
     private final static String SEARCH_DIR = "search";
     private final static Logger logger = Logger.getLogger(SearchManager.class.getName());
     private List<SearchItem> searchItems;
     private int filesCount = -1;
     private long lastModified = -1;
 
+    @SuppressWarnings({"UnusedDeclaration"})
     public SearchManager(ApplicationContext context, ManagerDirector managerDirector) {
-        this.context = context;
-        this.managerDirector = managerDirector;
+//        ApplicationContext context1 = context;
+//        ManagerDirector managerDirector1 = managerDirector;
     }
 
     public void loadSearchData() {
