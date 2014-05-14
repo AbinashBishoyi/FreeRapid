@@ -75,13 +75,21 @@ public abstract class URLTransferHandler extends TransferHandler {
                 final URL url = new URL(spec);
                 if (pluginsManager.isSupported(url)) {
                     final String urlS = url.toExternalForm();
+                    final int i = urlS.indexOf("...");
+                    Pattern patternMatcher = null;
+                    if (i > 0) {
+                        String pattern = Pattern.quote(urlS.substring(0, i)) + ".+" + Pattern.quote(urlS.substring(i + 4));
+                        patternMatcher = Pattern.compile(pattern);
+                    }
+
                     boolean containable = false;
                     for (URI u : list) {
                         final String previouslyAdded = u.toURL().toExternalForm();
-                        if (previouslyAdded.length() > urlS.length() && previouslyAdded.startsWith(urlS)) {
-                            containable = true;
-                            break;
-                        }
+                        if (previouslyAdded.length() > urlS.length())
+                            if (previouslyAdded.startsWith(urlS) || (patternMatcher != null && patternMatcher.matcher(previouslyAdded).matches())) {
+                                containable = true;
+                                break;
+                            }
                     }
                     if (!containable) {
                         URI uri;
