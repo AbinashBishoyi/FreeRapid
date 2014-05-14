@@ -1,9 +1,10 @@
-package cz.vity.freerapid.utilities;
+package cz.vity.freerapid.utilities.os;
 
 import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
 import com.sun.jna.WString;
 import cz.vity.freerapid.core.Consts;
+import cz.vity.freerapid.utilities.Utils;
 
 import java.util.logging.Logger;
 

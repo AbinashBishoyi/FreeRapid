@@ -5,7 +5,6 @@ import com.sun.jna.platform.win32.*;
 import cz.vity.freerapid.core.Consts;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
-import net.jimmc.jshortcut.JShellLink;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -56,7 +55,7 @@ final class WindowsCommander extends AbstractSystemCommander {
         final String exe = appPath + Consts.WINDOWS_EXE_NAME;
         final String icon = appPath + Consts.WINDOWS_ICON_NAME;
         try {
-            final JShellLink link = new JShellLink();
+            final net.jimmc.jshortcut.JShellLink link = new net.jimmc.jshortcut.JShellLink();
             link.setPath(exe);
             link.setWorkingDirectory(appPath);
             link.setIconLocation(icon);

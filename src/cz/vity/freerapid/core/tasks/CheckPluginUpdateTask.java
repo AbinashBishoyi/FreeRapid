@@ -63,7 +63,7 @@ public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
 
     protected List<Plugin> doInBackground() throws Exception {
         final List<Plugin> newPlugins = new ArrayList<Plugin>();
-        if (failed > 6)
+        if (quietMode && failed > 6)
             return newPlugins;
         AppPrefs.storeProperty(UserProp.PLUGIN_LAST_UPDATE_TIMESTAMP_CHECK, System.currentTimeMillis());
         message("updatesPluginCheck");
@@ -131,8 +131,8 @@ public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
 //        if (handleRuntimeException(cause))
 //            return;
 
-        ++failed;
         if (quietMode) {
+            ++failed;
             AppPrefs.storeProperty(UserProp.PLUGIN_LAST_UPDATE_TIMESTAMP_CHECK, -1);
             return;
         }
@@ -141,7 +141,6 @@ public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
         } else {
             Swinger.showErrorMessage(getResourceMap(), "errormessage_submit_failed", cause.getMessage());
         }
-
     }
 
     @Override
