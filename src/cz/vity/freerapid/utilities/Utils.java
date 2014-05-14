@@ -330,4 +330,16 @@ public final class Utils {
     public static boolean isJVMVersion(String requiredVersion) {
         return System.getProperty("java.version").equals(requiredVersion);
     }
+
+
+    /* remove leading whitespace */
+    public static String ltrim(String source) {
+        return source.replaceAll("^\\s+", "");
+    }
+
+    /* remove trailing whitespace */
+    public static String rtrim(String source) {
+        return source.replaceAll("\\s+$", "");
+    }
+
 }

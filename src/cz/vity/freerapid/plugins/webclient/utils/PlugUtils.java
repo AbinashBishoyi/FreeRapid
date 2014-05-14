@@ -2,6 +2,7 @@ package cz.vity.freerapid.plugins.webclient.utils;
 
 import cz.vity.freerapid.plugins.exceptions.PluginImplementationException;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
+import cz.vity.freerapid.utilities.Utils;
 import org.apache.commons.httpclient.methods.PostMethod;
 
 import java.awt.image.BufferedImage;
@@ -334,8 +335,8 @@ public final class PlugUtils {
      * @throws PluginImplementationException No wait time value between stringBefore and stringAfter
      */
     public static int getWaitTimeBetween(String content, String stringBefore, String stringAfter, TimeUnit srcTimeUnit) throws PluginImplementationException {
-        final String before = Pattern.quote(stringBefore);
-        final String after = Pattern.quote(stringAfter);
+        final String before = Pattern.quote(Utils.rtrim(stringBefore));
+        final String after = Pattern.quote(Utils.ltrim(stringAfter));
         final Matcher matcher = matcher(before + "\\s*([0-9]+?)\\s*" + after, content);
         if (matcher.find()) {
             final long i = Long.parseLong(matcher.group(1));
