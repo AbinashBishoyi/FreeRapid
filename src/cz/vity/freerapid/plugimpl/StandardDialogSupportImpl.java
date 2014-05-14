@@ -91,25 +91,13 @@ public class StandardDialogSupportImpl implements DialogSupport {
 
     @Override
     public String askForCaptcha(final BufferedImage image) throws Exception {
-        synchronized (captchaLock) {
-            captchaResult = "";
-            if (!EventQueue.isDispatchThread()) {
-                SwingUtilities.invokeAndWait(new Runnable() {
-                    @Override
-                    public void run() {
-                        askCaptcha(image);
-                    }
-                });
-            } else askCaptcha(image);
-            image.flush();
-            return captchaResult;
-        }
+        return askForCaptcha(new ImageIcon(image));
     }
 
-    private void askCaptcha(BufferedImage image) {
+    private void askCaptcha(Icon image) {
         if (AppPrefs.getProperty(UserProp.ACTIVATE_WHEN_CAPTCHA, UserProp.ACTIVATE_WHEN_CAPTCHA_DEFAULT))
             Swinger.bringToFront(((SingleFrameApplication) context.getApplication()).getMainFrame(), true);
-        captchaResult = (String) JOptionPane.showInputDialog(null, context.getResourceMap(DownloadTask.class).getString("InsertWhatYouSee"), context.getResourceMap(DownloadTask.class).getString("InsertCaptcha"), JOptionPane.PLAIN_MESSAGE, new ImageIcon(image), null, null);
+        captchaResult = (String) JOptionPane.showInputDialog(null, context.getResourceMap(DownloadTask.class).getString("InsertWhatYouSee"), context.getResourceMap(DownloadTask.class).getString("InsertCaptcha"), JOptionPane.PLAIN_MESSAGE, image, null, null);
     }
 
 
@@ -122,5 +110,25 @@ public class StandardDialogSupportImpl implements DialogSupport {
             LogUtils.processException(logger, e);
         }
         result[0] = dialog.getAccount();
+    }
+
+
+    public String askForCaptcha(final Icon image) throws Exception {
+        synchronized (captchaLock) {
+            captchaResult = "";
+            if (!EventQueue.isDispatchThread()) {
+                SwingUtilities.invokeAndWait(new Runnable() {
+                    @Override
+                    public void run() {
+                        askCaptcha(image);
+                    }
+                });
+            } else askCaptcha(image);
+            if (image instanceof ImageIcon) {
+                ImageIcon icon = (ImageIcon) image;
+                icon.getImage().flush();
+            }
+            return captchaResult;
+        }
     }
 }

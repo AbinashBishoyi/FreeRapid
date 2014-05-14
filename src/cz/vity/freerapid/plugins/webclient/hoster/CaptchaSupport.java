@@ -3,10 +3,11 @@ package cz.vity.freerapid.plugins.webclient.hoster;
 import cz.vity.freerapid.plugins.exceptions.FailedToLoadCaptchaPictureException;
 import cz.vity.freerapid.plugins.webclient.interfaces.DialogSupport;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
-import org.apache.commons.httpclient.methods.GetMethod;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -60,7 +61,45 @@ public class CaptchaSupport {
      */
     public String getCaptcha(final String url) throws FailedToLoadCaptchaPictureException {
         try {
-            return dialogSupport.askForCaptcha(getCaptchaImage(url));
+            return dialogSupport.askForCaptcha(getImageIcon(url));
+        } catch (FailedToLoadCaptchaPictureException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new FailedToLoadCaptchaPictureException(e);
+        }
+    }
+
+    private Icon getImageIcon(final String url) throws FailedToLoadCaptchaPictureException {
+        try {
+            InputStream inputStream = null;
+
+            ByteArrayOutputStream out = null;
+            try {
+                inputStream = loadStream(url);
+                if (inputStream == null)
+                    throw new NullPointerException("InputStreamForCaptchaIsNull");
+                final byte buf[] = new byte[1024 * 4];
+                out = new ByteArrayOutputStream();
+                int len;
+                while ((len = inputStream.read(buf)) != -1) {
+                    out.write(buf, 0, len);
+                }
+                return new ImageIcon(out.toByteArray());
+            }
+            finally {
+                if (inputStream != null)
+                    try {
+                        inputStream.close();
+                    } catch (IOException e) {
+                        //ignore
+                    }
+                if (out != null)
+                    try {
+                        out.close();
+                    } catch (IOException e) {
+                        //ignore
+                    }
+            }
         } catch (FailedToLoadCaptchaPictureException e) {
             throw e;
         } catch (Exception e) {
@@ -77,18 +116,21 @@ public class CaptchaSupport {
      *          if http operation failed to load remote image
      */
     public BufferedImage getCaptchaImage(final String url) throws FailedToLoadCaptchaPictureException {
-        final GetMethod getMethod = client.getGetMethod(url);
         try {
-            InputStream stream = client.makeRequestForFile(getMethod);
-            if (stream == null)
-                throw new FailedToLoadCaptchaPictureException();
-            return loadCaptcha(stream);
+            return loadCaptcha(loadStream(url));
         } catch (FailedToLoadCaptchaPictureException e) {
             throw e;
         } catch (Exception e) {
             throw new FailedToLoadCaptchaPictureException(e);
         }
 
+    }
+
+    private InputStream loadStream(String url) throws IOException, FailedToLoadCaptchaPictureException {
+        InputStream stream = client.makeRequestForFile(client.getGetMethod(url));
+        if (stream == null)
+            throw new FailedToLoadCaptchaPictureException();
+        return stream;
     }
 
     /**

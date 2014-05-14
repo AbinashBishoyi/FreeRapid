@@ -649,6 +649,11 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                 minValue,   // minValue
                 maxValue, // maxValue
                 step)); // step
+        final JComponent editor = spinner.getEditor();
+        if (editor instanceof JFormattedTextField) {
+            final JFormattedTextField field = (JFormattedTextField) editor;
+            field.setFocusLostBehavior(JFormattedTextField.COMMIT);
+        }
     }
 
     private ValueModel bind(final JCheckBox checkBox, final String key, final Object defaultValue) {

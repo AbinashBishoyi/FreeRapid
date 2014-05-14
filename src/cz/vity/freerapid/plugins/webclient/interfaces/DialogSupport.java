@@ -2,6 +2,7 @@ package cz.vity.freerapid.plugins.webclient.interfaces;
 
 import cz.vity.freerapid.plugins.webclient.hoster.PremiumAccount;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -49,4 +50,14 @@ public interface DialogSupport {
      * @throws Exception if something went wrong or thread was interrupted
      */
     public String askForCaptcha(final BufferedImage image) throws Exception;
+
+    /**
+     * Shows default simple input dialog for getting input from user.
+     *
+     * @param image CAPTCHA image to show user
+     * @return returns string given from user - returns null if user cancelled dialog; method can return empty string
+     * @throws Exception if something went wrong or thread was interrupted
+     */
+    public String askForCaptcha(final Icon image) throws Exception;
+
 }
