@@ -10,7 +10,15 @@ removeCompletedAndDeletedAction.Action.smallIcon=${iconsPath}clean.png
 UserPreferencesDialog.properties
 ====================================
 New:
-checkSlimLinesInHistory.text=Show slim lines in History dialog
+panelSpeedLimiter.border=Speed limiter
+labelSpeedSliderMinValue.text=Global speed limiter minimum value
+labelSpeedSliderMaxValue.text=maximum value
+labelSpeedSliderStep.text=step
+labelSpeedSliderKbps.text=kB/s
+labelFileSpeedLimiterValues.text=Values for file speed limiter
+fieldFileSpeedLimiterValues.toolTipText=Separate values with commas. Two commas indicate a menu separator. 0 means unlimited.
+
+checkSlimLinesInHistory.text=Slim lines in History dialog
 
 priorityUpAction.Action.text=
 priorityUpAction.Action.shortDescription=Set higher plugin priority

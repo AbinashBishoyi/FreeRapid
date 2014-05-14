@@ -12,7 +12,8 @@ Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
   Added : New action in Remove menu: "Remove Completed Links and Deleted Files"
-  Added : New user option: "Show slim lines in History dialog"
+  Added : New user option: "Slim lines in History dialog"
+  Added : New user options for speed limiter
   Fixed : Problem with downloading txt files + using description, see http://wordrider.net/forum/read.php?7,4681,4696
 
  29th October 2009 - FreeRapid Downloader 0.83 Update 1

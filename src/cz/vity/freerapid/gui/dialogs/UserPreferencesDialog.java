@@ -632,6 +632,45 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         bind(spinnerErrorAttemptsCount, UserProp.ERROR_ATTEMPTS_COUNT, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT, -1, 999, 1);
         bind(spinnerAutoReconnectTime, UserProp.AUTO_RECONNECT_TIME, UserProp.AUTO_RECONNECT_TIME_DEFAULT, 1, 10000, 10);
 
+        bind(spinnerGlobalSpeedSliderMin, UserProp.GLOBAL_SPEED_SLIDER_MIN, UserProp.GLOBAL_SPEED_SLIDER_MIN_DEFAULT, 1, Integer.MAX_VALUE, 5);
+        bind(spinnerGlobalSpeedSliderMax, UserProp.GLOBAL_SPEED_SLIDER_MAX, UserProp.GLOBAL_SPEED_SLIDER_MAX_DEFAULT, 1, Integer.MAX_VALUE, 5);
+        bind(spinnerGlobalSpeedSliderStep, UserProp.GLOBAL_SPEED_SLIDER_STEP, UserProp.GLOBAL_SPEED_SLIDER_STEP_DEFAULT, 1, 1000, 1);
+
+        spinnerGlobalSpeedSliderMin.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                if ((Integer) spinnerGlobalSpeedSliderMin.getValue() > (Integer) spinnerGlobalSpeedSliderMax.getValue()) {
+                    spinnerGlobalSpeedSliderMax.setValue(spinnerGlobalSpeedSliderMin.getValue());
+                }
+            }
+        });
+        spinnerGlobalSpeedSliderMax.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                if ((Integer) spinnerGlobalSpeedSliderMin.getValue() > (Integer) spinnerGlobalSpeedSliderMax.getValue()) {
+                    spinnerGlobalSpeedSliderMin.setValue(spinnerGlobalSpeedSliderMax.getValue());
+                }
+            }
+        });
+
+        fieldFileSpeedLimiterValues.setText(AppPrefs.getProperty(UserProp.SPEED_LIMIT_SPEEDS, UserProp.SPEED_LIMIT_SPEEDS_DEFAULT));
+        fieldFileSpeedLimiterValues.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                changedUpdate(e);
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                changedUpdate(e);
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                model.setBuffering(true);
+            }
+        });
+
         bind(spinnerUpdateHour, UserProp.PLUGIN_UPDATE_CHECK_INTERVAL, UserProp.PLUGIN_UPDATE_CHECK_INTERVAL_DEFAULT, 1, 1000, 1);
 
         bind(checkProcessFromTop, UserProp.START_FROM_TOP, UserProp.START_FROM_TOP_DEFAULT);
@@ -828,6 +867,8 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
         AppPrefs.storeProperty(UserProp.PLUGIN_CHECK_URL_SELECTED, comboPluginServers.getSelectedItem().toString());
 
+        AppPrefs.storeProperty(UserProp.SPEED_LIMIT_SPEEDS, fieldFileSpeedLimiterValues.getText());
+
         trigger.triggerCommit();
 
         String property = fieldProxyListPath.getText();
@@ -842,7 +883,6 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         final SupportedLanguage lng = Lng.getSelectedLanguage();
         if (!lng.equals(comboLng.getSelectedItem())) {
             updateLng();
-
         }
 
         ((SimplePreferencesComboModel) comboPluginServers.getModel()).store();
@@ -1170,6 +1210,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         checkDecoratedFrames = new JCheckBox();
         checkShowIconInSystemTray = new JCheckBox();
         checkHideWhenMinimized = new JCheckBox();
+
         JPanel panelConnectionSettings = new JPanel();
         JPanel panelConnections1 = new JPanel();
         JLabel labelMaxConcurrentDownloads = new JLabel();
@@ -1186,7 +1227,19 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         JLabel labelAutoReconnectTime = new JLabel();
         spinnerAutoReconnectTime = new JSpinner();
         JLabel labelSeconds = new JLabel();
+        JPanel panelSpeedLimiter = new JPanel();
+        spinnerGlobalSpeedSliderMin = new JSpinner();
+        spinnerGlobalSpeedSliderMax = new JSpinner();
+        spinnerGlobalSpeedSliderStep = new JSpinner();
+        JLabel labelSpeedSliderMinValue = new JLabel();
+        JLabel labelSpeedSliderMaxValue = new JLabel();
+        JLabel labelSpeedSliderStep = new JLabel();
+        JLabel labelSpeedSliderKbps1 = new JLabel();
+        JLabel labelSpeedSliderKbps2 = new JLabel();
+        fieldFileSpeedLimiterValues = new JTextField();
+        JLabel labelFileSpeedLimiterValues = new JLabel();
         JLabel labelRequiresRestart = new JLabel();
+
         toolbar = new EnhancedToolbar();
         CellConstraints cc = new CellConstraints();
         checkAnimateIcon = new JCheckBox();
@@ -1918,6 +1971,59 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                             panelErrorHandlingBuilder.add(labelSeconds, cc.xy(7, 3));
                         }
 
+                        //======== panelSpeedLimiter ========
+                        {
+                            panelSpeedLimiter.setBorder(new TitledBorder(null, bundle.getString("panelSpeedLimiter.border"), TitledBorder.LEADING, TitledBorder.TOP));
+
+                            labelSpeedSliderMinValue.setName("labelSpeedSliderMinValue");
+                            labelSpeedSliderMaxValue.setName("labelSpeedSliderMaxValue");
+                            labelSpeedSliderStep.setName("labelSpeedSliderStep");
+
+                            spinnerGlobalSpeedSliderMin.setModel(new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 5));
+                            spinnerGlobalSpeedSliderMax.setModel(new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 5));
+                            spinnerGlobalSpeedSliderStep.setModel(new SpinnerNumberModel(0, 0, 1000, 1));
+
+                            labelSpeedSliderKbps1.setName("labelSpeedSliderKbps");
+                            labelSpeedSliderKbps2.setName("labelSpeedSliderKbps");
+
+                            labelFileSpeedLimiterValues.setName("labelFileSpeedLimiterValues");
+                            fieldFileSpeedLimiterValues.setName("fieldFileSpeedLimiterValues");
+
+                            PanelBuilder panelSpeedLimiterBuilder = new PanelBuilder(new FormLayout(
+                                    new ColumnSpec[]{
+                                            new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(0), FormSpec.NO_GROW),
+                                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                            new ColumnSpec(ColumnSpec.RIGHT, Sizes.DEFAULT, ColumnSpec.NO_GROW),
+                                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                            new ColumnSpec(Sizes.dluX(40)),
+                                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                            FormFactory.DEFAULT_COLSPEC,
+                                            new ColumnSpec(Sizes.dluX(40)),
+                                            new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
+                                    },
+                                    new RowSpec[]{
+                                            FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.LINE_GAP_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.LINE_GAP_ROWSPEC,
+                                            FormFactory.DEFAULT_ROWSPEC,
+                                            FormFactory.LINE_GAP_ROWSPEC,
+                                            FormFactory.NARROW_LINE_GAP_ROWSPEC
+                                    }), panelSpeedLimiter);
+
+                            panelSpeedLimiterBuilder.add(labelSpeedSliderMinValue, cc.xy(3, 1));
+                            panelSpeedLimiterBuilder.add(spinnerGlobalSpeedSliderMin, cc.xy(5, 1));
+                            panelSpeedLimiterBuilder.add(labelSpeedSliderKbps1, cc.xy(7, 1));
+                            panelSpeedLimiterBuilder.add(labelSpeedSliderMaxValue, cc.xy(3, 3));
+                            panelSpeedLimiterBuilder.add(spinnerGlobalSpeedSliderMax, cc.xy(5, 3));
+                            panelSpeedLimiterBuilder.add(labelSpeedSliderKbps2, cc.xy(7, 3));
+                            panelSpeedLimiterBuilder.add(labelSpeedSliderStep, cc.xy(3, 5));
+                            panelSpeedLimiterBuilder.add(spinnerGlobalSpeedSliderStep, cc.xy(5, 5));
+
+                            panelSpeedLimiterBuilder.add(labelFileSpeedLimiterValues, cc.xy(9, 1));
+                            panelSpeedLimiterBuilder.add(fieldFileSpeedLimiterValues, cc.xy(9, 3));
+                        }
+
                         //---- labelRequiresRestart ----
                         labelRequiresRestart.setName("labelRequiresRestart");
 
@@ -1930,13 +2036,16 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                                         FormFactory.LINE_GAP_ROWSPEC,
                                         FormFactory.DEFAULT_ROWSPEC,
                                         FormFactory.LINE_GAP_ROWSPEC,
+                                        FormFactory.DEFAULT_ROWSPEC,
+                                        FormFactory.LINE_GAP_ROWSPEC,
                                         FormFactory.DEFAULT_ROWSPEC
                                 }), panelConnectionSettings);
 
                         panelConnectionSettingsBuilder.add(panelConnections1, cc.xy(1, 1));
                         panelConnectionSettingsBuilder.add(panelProxySettings, cc.xy(1, 3));
                         panelConnectionSettingsBuilder.add(panelErrorHandling, cc.xy(1, 5));
-                        panelConnectionSettingsBuilder.add(labelRequiresRestart, cc.xy(1, 7));
+                        panelConnectionSettingsBuilder.add(panelSpeedLimiter, cc.xy(1, 7));
+                        panelConnectionSettingsBuilder.add(labelRequiresRestart, cc.xy(1, 9));
                     }
                     labelRequiresRestart.setVisible(false);
                     panelCard.add(panelConnectionSettings, "CARD2");
@@ -2009,6 +2118,11 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
     private JSpinner spinnerErrorAttemptsCount;
     private JSpinner spinnerAutoReconnectTime;
     private JButtonBar toolbar;
+
+    private JSpinner spinnerGlobalSpeedSliderMin;
+    private JSpinner spinnerGlobalSpeedSliderMax;
+    private JSpinner spinnerGlobalSpeedSliderStep;
+    private JTextField fieldFileSpeedLimiterValues;
 
     private JButton btnApplyLookAndFeel;
 
