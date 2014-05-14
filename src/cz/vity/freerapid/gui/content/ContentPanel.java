@@ -48,10 +48,8 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.net.URL;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Locale;
 import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
@@ -252,7 +250,18 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     public void searchSubtitlesAction() {
         final int[] indexes = getSelectedRows();
         final java.util.List<DownloadFile> files = manager.getSelectionToList(indexes);
-        final String subLanguage = AppPrefs.getProperty(UserProp.SEARCH_SUBTITLES_LANGUAGE, Locale.getDefault().getISO3Language());
+        String subLanguage = AppPrefs.getProperty(UserProp.SEARCH_SUBTITLES_LANGUAGE, Locale.getDefault().getISO3Language());
+        //http://en.wikipedia.org/wiki/List_of_ISO_639-2_codes
+        //duplicate code problem
+        Map<String, String> remapLang = new HashMap<String, String>();
+        remapLang.put("ces", "cze");
+        remapLang.put("fra", "fre");
+        remapLang.put("nld", "dut");
+        remapLang.put("fas", "per");
+        remapLang.put("slk", "slo");
+        if (remapLang.containsKey(subLanguage)) {
+            subLanguage = remapLang.get(subLanguage);
+        }
         final String weblanguage = Locale.getDefault().getLanguage();
         for (DownloadFile file : files) {
             final long fs = file.getFileSize();
