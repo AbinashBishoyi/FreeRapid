@@ -36,7 +36,6 @@ public class UpdateManager {
 
     private final ManagerDirector director;
     private final ApplicationContext context;
-    //   private Set<String> updatedPluginsCode = new HashSet<String>();
 
     private Timer timer;
 
@@ -117,12 +116,8 @@ public class UpdateManager {
 
     private void updateDetected(List<Plugin> availablePlugins, boolean quiet) {
         int method = AppPrefs.getProperty(UserProp.PLUGIN_UPDATE_METHOD, UserProp.PLUGIN_UPDATE_METHOD_DEFAULT);
-        if (method == UserProp.PLUGIN_UPDATE_METHOD_AUTO_RESTART) {//redundant option now that restarts are not required anymore
-            AppPrefs.storeProperty(UserProp.PLUGIN_UPDATE_METHOD, UserProp.PLUGIN_UPDATE_METHOD_AUTO);
-            method = UserProp.PLUGIN_UPDATE_METHOD_AUTO;
-        }
         final List<WrappedPluginData> datas;
-        if (method == UserProp.PLUGIN_UPDATE_METHOD_AUTO)
+        if (method == UserProp.PLUGIN_UPDATE_METHOD_AUTO || method == UserProp.PLUGIN_UPDATE_METHOD_QUIET)
             datas = generateUpdateData(availablePlugins, false);
         else
             datas = generateUpdateData(availablePlugins, true);
@@ -143,9 +138,12 @@ public class UpdateManager {
         }
         switch (method) {
             case UserProp.PLUGIN_UPDATE_METHOD_DIALOG:
-                showUpdateDialog(datas);
+                showUpdateDialog(datas, false);
                 break;
             case UserProp.PLUGIN_UPDATE_METHOD_AUTO:
+                showUpdateDialog(datas, true);
+                break;
+            case UserProp.PLUGIN_UPDATE_METHOD_QUIET:
                 downloadUpdate(datas, quiet);
                 break;
             default:
@@ -153,8 +151,8 @@ public class UpdateManager {
         }
     }
 
-    private void showUpdateDialog(List<WrappedPluginData> result) {
-        final UpdateDialog dialog = new UpdateDialog(this.director.getMainFrame(), this.director);
+    private void showUpdateDialog(List<WrappedPluginData> result, boolean startAutomatically) {
+        final UpdateDialog dialog = new UpdateDialog(this.director.getMainFrame(), this.director, startAutomatically);
         dialog.initData(result);
         final MainApp app = (MainApp) context.getApplication();
         app.prepareDialog(dialog, true);
@@ -179,7 +177,7 @@ public class UpdateManager {
     public Task getDownloadPluginsTask(final List<WrappedPluginData> wrappedList, boolean quiet) {
         final List<WrappedPluginData> fileList = new LinkedList<WrappedPluginData>();
         for (WrappedPluginData data : wrappedList) {
-            if (data.isSelected() /*&& !updatedPluginsCode.contains(getUniqueId(data.getID(), data.getVersion()))*/) {
+            if (data.isSelected()) {
                 final DownloadFile httpFile = data.getHttpFile();
                 if (httpFile.getState() != DownloadState.COMPLETED)
                     fileList.add(data);
@@ -202,8 +200,6 @@ public class UpdateManager {
         for (Plugin plugin : list) {
             final String id = plugin.getId();
             supportedPluginsIdByServer.add(id);
-//            if (updatedPluginsCode.contains(getUniqueId(id, plugin.getVersion())))
-//                continue;
             final Version newVersion = Version.parse(plugin.getVersion());
             plugin.setVersion(newVersion.toString());
 

@@ -51,25 +51,23 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
     private static final int COLUMN_AUTHOR = 4;
     private static final int COLUMN_PROGRESS = 5;
     private static final int COLUMN_STATUS = 6;
+
     private ArrayListModel<WrappedPluginData> listModel = new ArrayListModel<WrappedPluginData>();
 
-
-    public UpdateDialog(Frame owner, ManagerDirector managerDirector) throws HeadlessException {
+    public UpdateDialog(Frame owner, ManagerDirector managerDirector, boolean startAutomatically) throws HeadlessException {
         super(owner, true);
         this.managerDirector = managerDirector;
-
-
         this.setName("UpdateDialog");
-
         try {
             initComponents();
             build();
+            if (startAutomatically) {
+                okBtnAction();
+            }
         } catch (Exception e) {
             LogUtils.processException(logger, e);
             doClose();
         }
-
-
     }
 
     @Override
@@ -86,8 +84,6 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
     private void build() {
         inject();
         buildGUI();
-
-        //final ActionMap actionMap = getActionMap();
         setAction(btnOK, "okBtnAction");
         setAction(btnCancel, "btnCancelAction");
     }
@@ -105,7 +101,7 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
     }
 
 
-    @org.jdesktop.application.Action
+    @Action
     public void btnCancelAction() {
         doClose();
     }
@@ -123,11 +119,11 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
         Swinger.inputFocus(table);
     }
 
-
+    @Override
     public void propertyChange(final PropertyChangeEvent evt) {
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
-                // logger.info("Firing contents changed");
                 final DownloadFile downloadFile = (DownloadFile) evt.getSource();
                 listModel.fireContentsChanged(getIndex(downloadFile));
             }
@@ -174,8 +170,6 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
             public void mouseClicked(MouseEvent e) {
                 if (!table.hasFocus())
                     Swinger.inputFocus(table);
-//                if (SwingUtilities.isRightMouseButton(e))
-//                    showPopMenu(e);
             }
         });
 
@@ -205,7 +199,6 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
         }
     }
 
-
     @Override
     public void doClose() {
         super.doClose();
@@ -217,7 +210,6 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
             data.getHttpFile().removePropertyChangeListener(this);
         }
     }
-
 
     @SuppressWarnings({"deprecation"})
     private void initComponents() {
@@ -328,9 +320,9 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 
     private class CustomTableModel extends AbstractTableModel implements ListDataListener {
+
         private final ArrayListModel<WrappedPluginData> model;
         private final String[] columns;
-
 
         public CustomTableModel(ArrayListModel<WrappedPluginData> model, String[] columns) {
             super();
@@ -339,7 +331,7 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
             model.addListDataListener(this);
         }
 
-
+        @Override
         public int getRowCount() {
             return model.getSize();
         }
@@ -364,16 +356,17 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
             }
         }
 
-
         @Override
         public String getColumnName(int column) {
             return this.columns[column];
         }
 
+        @Override
         public int getColumnCount() {
             return this.columns.length;
         }
 
+        @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
             final WrappedPluginData item = model.get(rowIndex);
             switch (columnIndex) {
@@ -417,27 +410,25 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
             return null;
         }
 
+        @Override
         public void intervalAdded(ListDataEvent e) {
             fireTableRowsInserted(e.getIndex0(), e.getIndex1());
         }
 
+        @Override
         public void intervalRemoved(ListDataEvent e) {
             fireTableRowsDeleted(e.getIndex0(), e.getIndex1());
         }
 
+        @Override
         public void contentsChanged(ListDataEvent e) {
             fireTableRowsUpdated(e.getIndex0(), e.getIndex1());
         }
-
 
     }
 
 
     private static class ProgressBarCellRenderer extends JProgressBar implements TableCellRenderer {
-//        private static final Color BG_RED = new Color(0xFFD0D0);
-//        private static final Color BG_ORANGE = new Color(0xFFEDD0);
-//        private static final Color BG_GREEN = new Color(0xD0FFE9);
-//        private static final Color BG_BLUE = new Color(0xb6e9ff);
 
         public ProgressBarCellRenderer() {
             super(0, 100);
@@ -448,8 +439,6 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             final DownloadFile downloadFile = (DownloadFile) value;
-//            final DownloadState state = downloadFile.getState();
-
             this.setToolTipText(null);
             final int progress = ContentPanel.getProgress(downloadFile);
             this.setStringPainted(true);

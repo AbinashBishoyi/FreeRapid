@@ -24,16 +24,13 @@ import java.util.regex.Pattern;
  * @author Vity
  */
 public abstract class URLTransferHandler extends TransferHandler {
+    private final static Logger logger = Logger.getLogger(URLTransferHandler.class.getName());
 
     private final static Pattern REGEXP_URL = Pattern.compile("((http|https)://)?([a-zA-Z0-9\\.\\-]+(:[a-zA-Z0-9\\.:&%\\$\\-]+)*@)?((25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])|([a-zA-Z0-9\\-]+\\.)*[a-zA-Z0-9\\-]+\\.[a-zA-Z]{2,4})(:[0-9]+)?(/[^/][\\p{Lu}\\p{Ll}0-9\\[\\]\\.:,\\?'\\\\/\\+&%\\$#=~_\\-@]*)*", Pattern.MULTILINE);
-
-    //private final static String URI_LIST_MIME_TYPE = "text/uri-list;class=java.lang.String";
     private final static String URL_LIST_MIME_TYPE = "application/x-java-url; class=java.net.URL";
-    private final static Logger logger = Logger.getLogger(URLTransferHandler.class.getName());
 
     private List<URL> urls;
     private PluginsManager pluginsManager;
-
 
     protected abstract void doDropAction(List<URL> urlList);
 
@@ -44,24 +41,6 @@ public abstract class URLTransferHandler extends TransferHandler {
     public static List<URL> textURIListToFileList(String data, final PluginsManager pluginsManager, boolean clipboardMonitoring) {
         final Set<URI> list = new HashSet<URI>();
         final LinkedList<URL> result = new LinkedList<URL>();
-//        final String[] strings = data.split("\\p{Space}");
-//        logger.info("Dragged string data " + data);
-//        for (String s : strings) {
-//            s = s.trim();
-//            if (!s.isEmpty() && !s.startsWith("#")) {
-//                logger.info("Testing for url " + s);
-//                try {
-//                    list.add(new URI(s).toURL());
-//                } catch (URISyntaxException e) {
-//                    logger.warning("Invalid URI " + e.getMessage());
-//                } catch (IllegalArgumentException e) {
-//                    logger.warning("Invalid argument " + e.getMessage());
-//                } catch (MalformedURLException e) {
-//                    logger.warning("Invalid argument " + e.getMessage());
-//                }
-//            }
-//
-//        }
         data = data.replaceAll("(\\p{Punct}|[\\t\\n\\x0B\\f\\r])http(s)?(?!%3A%2F%2F)", "  http$2");//2 spaces
         final Matcher match = REGEXP_URL.matcher(data);
         int start = 0;
@@ -164,11 +143,6 @@ public abstract class URLTransferHandler extends TransferHandler {
             start = match.end();
         }
 
-//        for (StringTokenizer st = new StringTokenizer(data, "\r\n"); st.hasMoreTokens();) {
-//            String s = st.nextToken().trim();
-//            // the line is a comment (as per the RFC 2483)
-//        }
-
         return result;
     }
 
@@ -197,17 +171,13 @@ public abstract class URLTransferHandler extends TransferHandler {
         }
         for (DataFlavor flavor : support.getDataFlavors()) {
             if (flavor.isFlavorTextType()) {
-                //logger.info("canImport: JavaFileList FLAVOR: " + flavor);
                 return true;
             }
-            //System.out.println("flavor.getMimeType() = " + flavor.getMimeType());
             if (flavor.isMimeTypeEqual(URL_LIST_MIME_TYPE)) {
-                //logger.info("canImport: URI_LIST_MIME_TYPE FLAVOR: " + flavor);
                 return true;
             }
 
         }
-        //logger.info("canImport: Rejected Flavors: " + Arrays.toString(dataFlavors));
         return false;
     }
 
@@ -225,13 +195,6 @@ public abstract class URLTransferHandler extends TransferHandler {
 
         urls = new LinkedList<URL>();
         try {
-//            final DataFlavor[] flavors = transferable.getTransferDataFlavors();
-//            for (DataFlavor flavor : flavors) {
-//                System.out.println("flavor = " + flavor);
-//                if (flavor.equals(urlFlavor)) {
-//                    System.out.println("rovnaji se");
-//                }
-//            }
             if (urlFlavor != null && transferable.isDataFlavorSupported(urlFlavor)) {
                 try {
                     final Object transferData = transferable.getTransferData(urlFlavor);
@@ -305,11 +268,8 @@ public abstract class URLTransferHandler extends TransferHandler {
         return false;
     }
 
-    //    @Override
-//    public boolean importData(JComponent comp, Transferable transferable) {
-//    }
-
     public List<URL> getUrls() {
         return urls;
     }
+
 }

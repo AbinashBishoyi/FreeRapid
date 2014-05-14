@@ -13,9 +13,7 @@ import cz.vity.freerapid.gui.managers.exceptions.NotSupportedDownloadServiceExce
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
-import static cz.vity.freerapid.plugins.webclient.DownloadState.*;
 import cz.vity.freerapid.plugins.webclient.FileState;
-import static cz.vity.freerapid.plugins.webclient.FileState.NOT_CHECKED;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
 import cz.vity.freerapid.plugins.webclient.interfaces.MaintainQueueSupport;
 import cz.vity.freerapid.swing.Swinger;
@@ -40,6 +38,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 import java.util.logging.Logger;
+
+import static cz.vity.freerapid.plugins.webclient.DownloadState.*;
+import static cz.vity.freerapid.plugins.webclient.FileState.NOT_CHECKED;
 
 /**
  * @author Vity
@@ -690,6 +691,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
     public boolean addLinksToQueue(HttpFile parentFile, List<URI> uriList) {
         final List<DownloadFile> files = new LinkedList<DownloadFile>();
         final boolean dontAddNotSupported = AppPrefs.getProperty(UserProp.DONT_ADD_NOTSUPPORTED_FROMCRYPTER, UserProp.DONT_ADD_NOTSUPPORTED_FROMCRYPTER_DEFAULT);
+        final boolean startDownload = AppPrefs.getProperty(UserProp.AUTO_START_DOWNLOADS_FROM_DECRYPTER, UserProp.AUTO_START_DOWNLOADS_FROM_DECRYPTER_DEFAULT);
         for (URI uri : uriList) {
             try {
                 final URL url = uri.toURL();
@@ -697,7 +699,11 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                     continue;
                 final DownloadFile downloadFile = new DownloadFile(url, parentFile.getSaveToDirectory(), parentFile.getDescription());
                 downloadFile.setPluginID("");
-                downloadFile.setState(QUEUED);
+                if (startDownload) {
+                    downloadFile.setState(QUEUED);
+                } else {
+                    downloadFile.setState(PAUSED);
+                }
                 files.add(downloadFile);
             } catch (MalformedURLException e) {
                 logger.warning("File with URI " + uri.toString() + " cannot be added to queue");

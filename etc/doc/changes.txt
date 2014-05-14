@@ -1,6 +1,6 @@
 **************************************************************
 *   History of changes for FreeRapid Downloader              *
-*   Website: http://wordrider.net/freerapid                  *
+*   Website: http://wordrider.net/freerapid/                 *
 *   Issue tracker: http://bugtracker.wordrider.net/          *
 *   Email: info@wordrider.net (issue tracker is preferred)   *
 **************************************************************
@@ -19,16 +19,18 @@ FreeRapid Downloader 0.85 Alpha 4
            - Hash class with functions to calculate hashes
            - Base URL is automatically parsed from fileURL during init
            - Support for unlimited cryptography
+  Added : A few new user options
   Changed : Upgraded Substance L&F to version 6.1 Final
   Changed : Upgraded Quaqua L&F to version 7.2.1
   Changed : Upgraded SwingX library to version 1.6.2
-  Changed : Removed redundant setting for automatic restart after plugin updates
   Changed : Speed limiter settings pane split in two to make clear a difference between global and file-specific settings
   Changed : Updated commons-codec library to v1.4
   Changed : RTMP plugin - major update
             - Upgraded to MINA v2 final
             - Support for SOCKS proxies
+  Changed : Options for plugin update methods were shuffled around a bit to make them more logical
   Fixed : Exception when starting an RTMP download with file pre-allocation enabled
+  Fixed : Problems with links containing '#' character
 
 8th August 2010 - FreeRapid Downloader 0.85 Alpha 3
   Added : Plugin API

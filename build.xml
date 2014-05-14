@@ -146,6 +146,7 @@
             <fileset dir="${classes.dir}" includes="**/**/EDTPropertyChangeSupport**"/>
             <fileset dir="${classes.dir}" includes="**/**/Utils**"/>
             <fileset dir="${classes.dir}" includes="**/**/LogUtils**"/>
+            <fileset dir="${classes.dir}" includes="**/**/crypto/**"/>
         </jar>
 
         <zip file="${dist.dir}/plugin-api-src.zip" compress="true">
@@ -153,6 +154,7 @@
             <fileset dir="${src.dir}" includes="**/**/EDTPropertyChangeSupport**"/>
             <fileset dir="${src.dir}" includes="**/**/Utils**"/>
             <fileset dir="${src.dir}" includes="**/**/LogUtils**"/>
+            <fileset dir="${src.dir}" includes="**/**/crypto/**"/>
         </zip>
 
     </target>

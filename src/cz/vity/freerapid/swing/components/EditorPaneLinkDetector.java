@@ -333,11 +333,11 @@ public class EditorPaneLinkDetector extends JEditorPane {
     private String checkURI(String url) throws URIException {
         final String defaultProtocolCharset = org.apache.commons.httpclient.URI.getDefaultProtocolCharset();
         try {
-            return new org.apache.commons.httpclient.URI(url, true, defaultProtocolCharset).toString();
+            return new org.apache.commons.httpclient.URI(url, true, defaultProtocolCharset).getEscapedURIReference();
         } catch (URIException e) {
             logger.warning(String.format("Invalid URL - '%s' does not match URI specification", url));
             try {
-                return new org.apache.commons.httpclient.URI(URIUtil.encodePathQuery(url), true, defaultProtocolCharset).toString();
+                return new org.apache.commons.httpclient.URI(URIUtil.encodePathQuery(url), true, defaultProtocolCharset).getEscapedURIReference();
             } catch (URIException e1) {
                 throw e;
             }

@@ -150,9 +150,6 @@ public class Cipher {
     // The transformation
     private String transformation;
 
-    // The exemption mechanism that needs to be enforced
-    private ExemptionMechanism exmech;
-
     // Flag which indicates whether or not this cipher has been initialized
     private boolean initialized = false;
 
@@ -883,7 +880,7 @@ public class Cipher {
      */
     public final ExemptionMechanism getExemptionMechanism() {
         chooseFirstProvider();
-        return exmech;
+        return null;
     }
 
     //

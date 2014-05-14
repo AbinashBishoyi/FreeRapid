@@ -13,6 +13,7 @@ import cz.vity.freerapid.gui.actions.DownloadsActions;
 import cz.vity.freerapid.gui.content.ContentPanel;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
 import cz.vity.freerapid.model.DownloadFile;
+import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.swing.ComponentFactory;
 import cz.vity.freerapid.swing.Swinger;
@@ -44,12 +45,10 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
     private final DownloadFile file;
     private PresentationModel<DownloadFile> model;
 
-
     public InformationDialog(Frame owner, ManagerDirector director, DownloadFile file) throws Exception {
         super(owner);
         this.director = director;
         this.file = file;
-
         this.setName("InformationDialog");
         try {
             initComponents();
@@ -59,7 +58,6 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
             doClose();
             throw e;
         }
-
     }
 
 
@@ -81,18 +79,13 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
         doClose();
     }
 
-
     private void build() {
         inject();
         buildGUI();
         buildModels();
-
-        //final ActionMap actionMap = getActionMap();
         setAction(okButton, "okBtnAction");
         setAction(cancelButton, "cancelBtnAction");
-
         setAction(btnSelectPath, "btnSelectPathAction");
-
         updateInit();
     }
 
@@ -107,7 +100,6 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
         new CompoundUndoManager(descriptionArea);
 
         comboPath.setModel(new RecentsFilesComboModel(UserProp.LAST_USED_SAVED_PATH, true));
-        //AutoCompleteDecorator.decorate(comboPath);
 
         final File absolutFile = FileUtils.getAbsolutFile(file.getSaveToDirectory());
         comboPath.setSelectedItem(absolutFile.toString());
@@ -125,6 +117,8 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
         fieldFrom.setEditable(false);
 
         descriptionArea.setFont(descriptionArea.getFont().deriveFont(11.0F));
+
+        connectionField.setEditable(false);
     }
 
     @org.jdesktop.application.Action
@@ -184,7 +178,6 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
         return true;
     }
 
-
     @org.jdesktop.application.Action
     public void btnSelectPathAction() {
         final JDirectoryChooser directoryChooser = new JDirectoryChooser(comboPath.getEditor().getItem().toString());
@@ -193,7 +186,6 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
             Swinger.inputFocus(comboPath);
         }
     }
-
 
     @SuppressWarnings({"deprecation"})
     private void initComponents() {
@@ -221,6 +213,9 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
         currentSpeedLabel = new JLabel();
         JLabel labelAverageSpeed = new JLabel();
         avgSpeedLabel = new JLabel();
+        JPanel connectionPanel = new JPanel();
+        JLabel connectionLabel = new JLabel();
+        connectionField = new JTextField();
         JXButtonPanel buttonBar = new JXButtonPanel();
         okButton = new JButton();
         cancelButton = new JButton();
@@ -323,6 +318,26 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
                 //---- labelAverageSpeed ----
                 labelAverageSpeed.setName("labelAverageSpeed");
 
+                //======== connectionPanel ========
+                {
+
+                    //---- connectionToLabel ----
+                    connectionLabel.setName("connectionLabel");
+                    saveToLabel.setLabelFor(connectionField);
+
+                    PanelBuilder connectionPanelBuilder = new PanelBuilder(new FormLayout(
+                            new ColumnSpec[]{
+                                    FormFactory.DEFAULT_COLSPEC,
+                                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                    new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
+                            },
+                            RowSpec.decodeSpecs("default")),
+                            connectionPanel);
+
+                     connectionPanelBuilder.add(connectionLabel, cc.xy(1, 1));
+                     connectionPanelBuilder.add(connectionField, cc.xy(3, 1));
+                }
+
                 //---- avgSpeedLabel ----
                 avgSpeedLabel.setName("avgSpeedLabel");
                 avgSpeedLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
@@ -356,6 +371,8 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
                                 FormFactory.LINE_GAP_ROWSPEC,
                                 FormFactory.DEFAULT_ROWSPEC,
                                 FormFactory.LINE_GAP_ROWSPEC,
+                                FormFactory.DEFAULT_ROWSPEC,
+                                FormFactory.LINE_GAP_ROWSPEC,
                                 FormFactory.DEFAULT_ROWSPEC
                         }), contentPanel);
 
@@ -377,6 +394,7 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
                 contentPanelBuilder.add(currentSpeedLabel, cc.xywh(3, 17, 3, 1));
                 contentPanelBuilder.add(labelAverageSpeed, cc.xy(7, 17));
                 contentPanelBuilder.add(avgSpeedLabel, cc.xy(9, 17));
+                contentPanelBuilder.add(connectionPanel, cc.xywh(1, 19, 9, 1));
             }
             dialogPane.add(contentPanel, BorderLayout.CENTER);
 
@@ -409,7 +427,6 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
         contentPane.add(dialogPane, BorderLayout.CENTER);
     }
 
-
     private void updateInit() {
         updateFrom();
         updateSize();
@@ -424,6 +441,7 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
         updateEstimateTime();
         updateDownloaded();
         updateEnabled();
+        updateConnection();
     }
 
     private void updateEnabled() {
@@ -434,7 +452,6 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
         okAction.setEnabled(enabled);
         selectAction.setEnabled(enabled);
         descriptionArea.setEditable(enabled);
-//        descriptionArea.setEnabled(enabled);
         comboPath.setEditable(enabled);
         comboPath.setEnabled(enabled);
     }
@@ -539,6 +556,11 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
         fieldFrom.setText(file.getFileUrl().toExternalForm());
     }
 
+    private void updateConnection() {
+        final ConnectionSettings cs = file.getConnectionSettings();
+        connectionField.setText(cs == null ? "" : cs.toString());
+    }
+
     private JLabel iconLabel;
     private JLabel pathLabel;
     private JTextField fieldFrom;
@@ -553,23 +575,28 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
     private JButton okButton;
     private JButton cancelButton;
     private JLabel estTimeLabel;
+    private JTextField connectionField;
 
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if ("speed".equals(evt.getPropertyName())) {
+        final String propName = evt.getPropertyName();
+        if ("speed".equals(propName)) {
             updateSpeeds();
-        } else if ("averageSpeed".equals(evt.getPropertyName())) {
+        } else if ("averageSpeed".equals(propName)) {
             updateSpeeds();
-        } else if ("state".equals(evt.getPropertyName())) {
+        } else if ("state".equals(propName)) {
             updateState();
-        } else if ("fileName".equals(evt.getPropertyName())) {
+        } else if ("fileName".equals(propName)) {
             updateFileName();
-        } else if ("fileSize".equals(evt.getPropertyName())) {
+        } else if ("fileSize".equals(propName)) {
             updateSize();
-        } else if ("sleep".equals(evt.getPropertyName())) {
+        } else if ("sleep".equals(propName)) {
             updateEstimateTime();
             updateDurationTime();
-        } else if ("downloaded".equals(evt.getPropertyName())) {
+        } else if ("downloaded".equals(propName)) {
             updateDownloaded();
+        } else if ("connectionSettings".equals(propName)) {
+            updateConnection();
         }
     }
 

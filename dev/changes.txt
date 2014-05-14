@@ -7,6 +7,9 @@ stateOldPlugin=NOT SUPPORTED
 
 InformationDialog.properties
 ===================================
+New:
+connectionLabel.text=Co&nnection:
+
 Changed:
 was:
 InformationDialog.title=File Information
@@ -72,6 +75,9 @@ fieldFileSpeedLimiterValues.toolTipText=Separate values with commas. Two commas 
 labelFileSpeedLimiterValuesDesc.text=<html><small>Separate values with commas.<br/>Two commas indicate a menu separator. 0 means unlimited.</small></html>
 
 checkSlimLinesInHistory.text=Slim lines in History dialog
+checkBringToFrontWhenPasted.text=Bring application to the top when clipboard monitoring detects links
+
+checkAutoStartDownloadsFromDecrypter.text=Start downloads from decrypters and folders automatically
 
 priorityUpAction.Action.text=
 priorityUpAction.Action.shortDescription=Set higher plugin priority
@@ -89,7 +95,6 @@ labelServices.text=Services:
 labelPriority.text=Priority:
 labelMaxConnections.text=Max downloads:
 
-
 clipboardMonitoringMenu.text=&Clipboard monitoring
 selectAllCMAction.Action.text=&Enable All
 selectAllCMAction.Action.smallIcon=${iconsPath}checks.png
@@ -102,6 +107,11 @@ was:
 pluginTableColumns_list=X|U|Plugin ID|Version|Service|Author|WWW
 new:
 pluginTableColumns_list=X|U|C|Plugin ID|Version|Service|Author|Max Downloads|Priority|WWW
+
+was:
+comboHowToUpdate_list=Ask what to do|Show update dialog first|Update automatically without asking
+new:
+comboHowToUpdate_list=Ask what to do|Show update dialog first|Update automatically and show information dialog|Update completely automatically
 
 
 DownloadNewPluginsTask.properties

@@ -201,7 +201,7 @@ final public class UserProp {
     public static final int PLUGIN_UPDATE_ASK_FOR_METHOD = 0;
     public static final int PLUGIN_UPDATE_METHOD_DIALOG = 1;
     public static final int PLUGIN_UPDATE_METHOD_AUTO = 2;
-    public static final int PLUGIN_UPDATE_METHOD_AUTO_RESTART = 3;//redundant option now that restarts are not required anymore
+    public static final int PLUGIN_UPDATE_METHOD_QUIET = 3;
     public static final int PLUGIN_UPDATE_METHOD_DEFAULT = PLUGIN_UPDATE_ASK_FOR_METHOD;
 
     public static final String RECHECK_FILES_ON_START = "recheckFilesOnStart";
@@ -305,6 +305,8 @@ final public class UserProp {
     public static final String REMOVE_NOT_SUPPORTED_PLUGINS = "removeNotSupportedPlugins";
     public static final boolean REMOVE_NOT_SUPPORTED_PLUGINS_DEFAULT = false;
 
+    public static final String AUTO_START_DOWNLOADS_FROM_DECRYPTER = "autoStartDownloadsFromDecrypter";
+    public static final boolean AUTO_START_DOWNLOADS_FROM_DECRYPTER_DEFAULT = true;
 
 }
 
