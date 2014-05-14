@@ -530,10 +530,16 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     }
 
     private void scrollToVisible(final boolean up) {
-        final int[] rows = table.getSelectedRows();
-        final int length = rows.length;
-        if (length > 0)
-            table.scrollRowToVisible((up) ? rows[0] : rows[length - 1]);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                final int[] rows = table.getSelectedRows();
+                final int length = rows.length;
+                if (length > 0) {
+                    table.scrollRowToVisible((up) ? rows[0] : rows[length - 1]);
+                }
+            }
+        });
     }
 
     @org.jdesktop.application.Action(enabledProperty = MOVEENABLED_ACTION_ENABLED_PROPERTY)
@@ -1052,7 +1058,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                                 renameFile(source, originalOuputFile, backup, selectedRow);
                             }
                         });
-                    }
+                    } else
+                        scrollToVisible(true);
                 }
 
                 @Override
@@ -1092,7 +1099,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             resultDownloadFile.setFileName(backupFileName);
             table.setValueAt(resultDownloadFile, selectedRow, table.convertColumnIndexToView(COLUMN_NAME));
         } else {
-            scrollToVisible(false);
+            scrollToVisible(true);
         }
     }
 
