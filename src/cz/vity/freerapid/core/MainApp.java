@@ -79,7 +79,8 @@ public class MainApp extends SingleXFrameApplication {
 
 
         System.getProperties().put("arguments", args);
-        System.setProperty("apple.laf.useScreenMenuBar", String.valueOf(AppPrefs.getProperty("apple.laf.useScreenMenuBar", true)));
+        if (System.getProperty("mrj.version") != null)
+            System.setProperty("apple.laf.useScreenMenuBar", String.valueOf(AppPrefs.getProperty("apple.laf.useScreenMenuBar", true)));
 
         if (OneInstanceClient.checkInstance(fileList, appPrefs, getContext())) {
             this.exit();
