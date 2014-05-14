@@ -46,6 +46,10 @@ public abstract class AbstractRunner implements PluginRunner {
      */
     protected String fileURL;
     /**
+     * Base URL
+     */
+    private String baseURL;
+    /**
      * support loading CAPTCHA from the web
      */
     private CaptchaSupport captchaSupport;
@@ -56,7 +60,6 @@ public abstract class AbstractRunner implements PluginRunner {
     /**
      * Referer
      */
-
     private String referer;
     /**
      * default encoding for page
@@ -66,18 +69,21 @@ public abstract class AbstractRunner implements PluginRunner {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void init(ShareDownloadService service, HttpFileDownloadTask downloadTask) {
         this.pluginService = service;
         this.downloadTask = downloadTask;
         this.client = downloadTask.getClient();
         this.httpFile = downloadTask.getDownloadFile();
         this.fileURL = httpFile.getFileUrl().toString();
+        this.baseURL = httpFile.getFileUrl().getProtocol() + "://" + httpFile.getFileUrl().getAuthority();
         initialized = true;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public void run() throws Exception {
         if (!initialized)
             throw new IllegalStateException("Cannot run Run method. Runner was not initialized via init method");
@@ -87,6 +93,7 @@ public abstract class AbstractRunner implements PluginRunner {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void runCheck() throws Exception {
         if (!initialized)
             throw new IllegalStateException("Cannot run runCheck method. Runner was not initialized via init method");
@@ -273,10 +280,10 @@ public abstract class AbstractRunner implements PluginRunner {
     /**
      * Returns base url for the site
      *
-     * @return base url - null by default
+     * @return base url - parsed from fileURL during init by default
      */
     protected String getBaseURL() {
-        return null;
+        return baseURL;
     }
 
     /**
@@ -312,8 +319,7 @@ public abstract class AbstractRunner implements PluginRunner {
     }
 
     /**
-     * Returns httpClient parameters
-     *
+     * @return httpClient parameters
      * @since 0.85
      */
     protected HttpClientParams getClientParameters() {

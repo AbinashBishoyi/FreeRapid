@@ -16,6 +16,7 @@ FreeRapid Downloader 0.85 Alpha 4
   Added : New LookAndFeel skins - Substance Office Black 2007 and Substance Mariner
   Added : Plugin API
            - Hash class with functions to calculate hashes
+           - Base URL is automatically parsed from fileURL during init
   Changed : Upgraded Substance L&F to version 6.1 Final
   Changed : Removed redundant setting for automatic restart after plugin updates
   Changed : Speed limiter settings pane split in two to make clear a difference between global and file-specific settings
