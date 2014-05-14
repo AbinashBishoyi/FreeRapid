@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription>
+    <ShortName>Uložto.cz</ShortName>
+    <Description>Uložto.cz web</Description>
+    <Url type="text/html" method="get" template="http://www.uloz.to/browse/?q={searchTerms}"/>
+    <Image width="16" height="16">
+        data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAACCElEQVR4nJVSzUtUURw9v3vv+xieSU1T85jSLCoh20UfVFME9QcELSSIQEjBaBkRVFAELQsMijZB1hSGZForiYhyyIVNKG1qEZON47OZdBhHn+/Nu78WgrTUw1meczgHDg0nUlg1LDcpVq8G0Nx1YQ0Gy02amzcpYVuW60a1mmxoiKrzImbH00e914NRbWFFKmxb+37LpYvewBDyDx4x80RnNzP/7s38vNfDzO+3tw4nUiusfMmNd3T6xel3qRbBUQQgrFQARNWqiNnQOlpc/L+MN/S27eH9mcE3OgiUsC0wcxAAqNfmzURCBwGYAZCUy3GFx0+kZRWeZgAI5Tg6DFkzgKi2QErpMGTmbd1dJ/I/Wu/cBtGum9ft5qYdVy6TlEo6DochiABo3xeGAc2Wm9x57SoZRlPH+ULvs9TZdlJq9tMIR5EgpbgekRAA9FIAItZ6/YH9ZBhTmRcQwmndnT10DMzlDx8BCIBlg2O5SQCsNQASQjoO1+vfb9wCs7StDYcPgmgu+xmACMuzJOWenrsAhGVCM4iCmT+k1L6BlyBaKnqJUyd1ECxOTpqJjeLvSBYAtAZgxuO6HgrTmBsdDUqldXvbljyvksvFj6eFaabHx+ytW9R0/ysAfqEQTx+pjOXM/C/V2BjVFr62n3PPnC729Us7NvW8T8bsoFSuTnyjNb11efTa8A8eLuj3Z9Io+QAAAABJRU5ErkJggg==
+    </Image>
+    <Developer>Vity</Developer>
+    <InputEncoding>UTF-8</InputEncoding>
+</OpenSearchDescription>

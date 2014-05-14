@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription>
+    <ShortName>FreeRapid web</ShortName>
+    <Description>FreeRapid web</Description>
+    <Url type="text/html" method="get"
+         template="http://www.google.com/custom?client=pub-7961300392405080&amp;cof=FORID%3A13%3BAH%3Aleft%3BS%3Ahttp%3A%2F%2Fwordrider.net%2Ffreerapid%2F%3BCX%3AFreeRapid%2520search%3BL%3Ahttp%3A%2F%2Fwordrider.net%2Ffreerapid%2Fimg%2Flogo.jpg%3BLH%3A50%3BLC%3A%230000ff%3BVLC%3A%23663399%3BDIV%3A%23336699%3B&amp;adkw=AELymgVkt3-Lqox4wTjZunaNRGtL-XwxvIoMJGkWxSICix03oVQYrUd5mwovqPcN3vCk00Lp94JjBaATriK6Ez8zd7p3zkN8gSSAaso-TUFnRmu-hPV4m0xpZmuFZu8lv3eepIoT_mEKfIbgM7kGPQ3t6axpxMdilA9A0kHBCwWCxIwNhrKb8BM&amp;channel=7199813087&amp;boostcse=0&amp;q={searchTerms}&amp;btnG=Search&amp;cx=partner-pub-7961300392405080%3Ak79vct-s9mn"/>
+    <Image width="16" height="16">
+        data:image/png;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAQAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAcHNyAT08PGpuZGfIin2B54p8gOSHe3/khHh75IF1eeSBdHjkhHh85YV4fOVlXF66ODg4XAAAAAAAAAAAAAAAAFtSVZSecn//x5em/8iYpv/ElqP/wJOg/7WHlP+ugY7/soeT/7WKl/++kJ7/wZGf/5hue/9WTFCWpqmoA2FgYU18RFP/pV1x/5lVaP+WVGb/lFJl/4pIWv9aPUX/VTtC/3Y9Tf+AR1j/iUxd/5JRZP+iXG//fkRU/2dmZV1MNTuoiTRK/4k3TP+GNkz/gzVK/3srQv9NIy//vsLB/8LGxf9CHyn/ZCM1/3IuQf97MUb/gjRJ/4gzSv9YOkK8UiIw2oUkQf9+JD//fCQ+/3YdOP9LFSb/rK6u////////////sLGx/zwSHv9gFi3/ax82/3MhO/+BJED/UBws5E8UJ+aBHD7/eRs6/3cWNv9LCyD/oaGi//////////////////////+lpqX/OwkZ/2MRK/9sGDT/exs7/00SJuVNESbkfxg7/3oWN/9cEyv/oqKi/////////////////////////////////6ampv9NEyX/bBMw/3gWN/9MESTkTREm5IIYPP9hDCn/QjU6/5uamv+7urr//////////////////////7u6u/+bm5v/Qjk7/1YKJP98Fzr/TBEl5E0SJuSAGTz/chg2/2cUMP9PABf/ZE5U//////////////////////9fUFT/OwAM/1sRKf9qFjL/fRk6/0wSJeRQFynkhCFB/34hPv9/IT//cRIw/3RZYf/+////////////////////bFpg/1kMJP9yHTj/eB88/4MiQP9QFyjkVSAv5YwzTP+FMUj/hTFI/3gjOv92XWT//v///////////////////29eYv9hGy//eSxC/4AwRv+LNEv/ViAv5loxPOGXSV3/kEZZ/5FGWv+FN0z/fGdt//////////////////////92Zmr/ci9B/4dBVP+NRFj/l0hd/1syPd1dR022pWJ2/6Fhdf+iYnX/nVxv/2hSWf+enp7/o6Ch/6Ofof+fnp7/YU9U/5FVZv+bXnD/n2F0/6Ffc/9kUlerbm1tV5dtef/FkaH/uIeV/7eHlv+meIX/kmh1/5Bmc/+OZXL/jmRx/59zgP+yg5D/tISS/8SRoP+RaHT/hIWETQAAAABbVVePqY+X/+DAyv/kxs7/5sbQ/+bG0P/kxc7/48TO/+TEzv/jxc3/4sPM/+PDzP+1maH/T0pLkgAAAAAAAAAAAAAAADo7O1RqZWezi4aI5JGLjuWQiozkkIqM5JCKjOSQiozkkIqM5Y6Ji+d2cXLDOzs8ZQAAAAAAAAAAgAMAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAAwAMAAA==
+    </Image>
+    <Developer>Vity</Developer>
+    <InputEncoding>UTF-8</InputEncoding>
+</OpenSearchDescription>
