@@ -245,7 +245,7 @@
         <mkdir dir="${reports.tests}"/>
         <junit printsummary="yes" haltonfailure="yes">
             <classpath>
-                <path refid="cp"/>
+                <path refid="test-cp"/>
                 <pathelement location="${build.tests}"/>
                 <pathelement location="${classes.dir}"/>
                 <pathelement path="${java.class.path}"/>
