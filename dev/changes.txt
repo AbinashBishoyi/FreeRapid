@@ -1,9 +1,12 @@
 =======================================================================================================================
-                                           Version 0.86u1->0.87
+                                           Version 0.86u1->
 =======================================================================================================================
 MainApp.properties
 ===================================
 Added:
+fileIsBeingAlreadyDownloading=File is already downloading
+DatabaseManager.databaseIsAlreadyUsed=Another instance of FRD is already running. Multiple instances are not supported.
+
 targetFileAlreadyExists=Target file %s already exists.\nDo you want to replace/overwrite it?
 message.button.overwrite=Overwrite
 

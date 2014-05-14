@@ -1,15 +1,12 @@
 package cz.vity.freerapid.gui.managers;
 
-import cz.vity.freerapid.core.application.GlobalEDTExceptionHandler;
+import cz.vity.freerapid.core.tasks.CoreTask;
 import cz.vity.freerapid.gui.managers.interfaces.Identifiable;
+import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.LogUtils;
-import org.jdesktop.application.Task;
 import org.jdesktop.application.TaskService;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
@@ -142,7 +139,8 @@ public class DatabaseManager {
 
     public void runOnTask(final Runnable runnable) {
         final TaskService service = director.getTaskServiceManager().getTaskService(TaskServiceManager.DATABASE_SERVICE);
-        service.execute(new Task(director.getContext().getApplication()) {
+        service.execute(new CoreTask(director.getContext().getApplication()) {
+
             @Override
             protected Object doInBackground() throws Exception {
                 runnable.run();
@@ -152,7 +150,10 @@ public class DatabaseManager {
             @Override
             protected void failed(Throwable cause) {
                 LogUtils.processException(logger, cause);
-                new GlobalEDTExceptionHandler().uncaughtException(Thread.currentThread(), cause);
+                if (cause instanceof PersistenceException && cause
+                        .getMessage().contains("error 141")) {
+                    Swinger.showErrorDialog(director.getContext().getResourceMap(), "DatabaseManager.databaseIsAlreadyUsed", cause);
+                } else super.failed(cause);
             }
         });
     }

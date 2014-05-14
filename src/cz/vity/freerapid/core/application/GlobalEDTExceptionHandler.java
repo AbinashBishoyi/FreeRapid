@@ -2,6 +2,7 @@ package cz.vity.freerapid.core.application;
 
 import cz.vity.freerapid.swing.Swinger;
 
+import javax.persistence.PersistenceException;
 import javax.swing.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -27,6 +28,12 @@ public class GlobalEDTExceptionHandler implements Thread.UncaughtExceptionHandle
 
     public void uncaughtException(final Thread t, final Throwable e) {
         //https://appframework.dev.java.net/issues/show_bug.cgi?id=65
+        if (e instanceof PersistenceException) {
+            if (e.getMessage().contains("error 141")) {
+                logger.severe("Another instance of FRD is already running. Multiple instances are not supported.");
+                return;
+            }
+        }
         if (e instanceof IllegalStateException) { //app framework hack
             if (e.getMessage().contains("cannot open system"))
                 return;

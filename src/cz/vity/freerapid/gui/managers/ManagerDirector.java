@@ -80,7 +80,7 @@ public class ManagerDirector {
         // http://bugs.sun.com/view_bug.do?bug_id=5101862
         try {
             final javax.imageio.spi.IIORegistry registry = javax.imageio.spi.IIORegistry.getDefaultInstance();
-            final Object spi = registry.getServiceProviderByClass(com.sun.imageio.plugins.wbmp.WBMPImageReaderSpi.class);
+            final Object spi = registry.getServiceProviderByClass(Class.forName("com.sun.imageio.plugins.wbmp.WBMPImageReaderSpi"));
             registry.deregisterServiceProvider(spi);
         } catch (final Throwable e) {
             logger.log(Level.WARNING, "Failed to remove WBMP SPI, problems may occur when reading ICO files", e);

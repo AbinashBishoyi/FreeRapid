@@ -160,9 +160,9 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         final List<DownloadFile> files = manager.getSelectionToList(indexes);
         for (DownloadFile file : files) {
             if (storeFile) {
-                if (file.getStoreFile() != null && file.getStoreFile().length() > 0) {
+                if (file.getStoreFile() != null && file.getStoreFile().length() > 0 && FileUtils.getAbsolutFile(file.getStoreFile()).exists()) {
                     OSDesktop.openFile(file.getStoreFile());
-                }
+                } else OSDesktop.openFile(file.getOutputFile());
             } else
                 OSDesktop.openFile(file.getOutputFile());
         }

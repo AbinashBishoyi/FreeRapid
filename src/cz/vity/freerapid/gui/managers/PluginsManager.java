@@ -39,6 +39,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -254,7 +255,8 @@ public class PluginsManager {
         for (int i = 0; i < length; i++) {
             try {
                 final String path = fileToUrl(plugins[i]).toExternalForm();
-                logger.info("Plugins path:" + path);
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Plugins path:" + path);
                 final URL context = new URL("jar:" + path + "!/");
                 final URL manifest = new URL("jar:" + path + "!/plugin.xml");
                 loc[i] = new StandardPluginLocation(context, manifest);
@@ -262,6 +264,7 @@ public class PluginsManager {
                 LogUtils.processException(logger, e);
             }
         }
+        logger.info("Found " + length + " plugins.");
 
         return loc;
     }

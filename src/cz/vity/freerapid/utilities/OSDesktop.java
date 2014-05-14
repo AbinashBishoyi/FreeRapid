@@ -20,6 +20,9 @@ public class OSDesktop {
      * @see Desktop#open(java.io.File)
      */
     public static void openFile(File file) {
+        if (file == null) {
+            return;
+        }
         if (!file.exists())
             return;
         if (Desktop.isDesktopSupported()) {

@@ -203,7 +203,9 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
 
     private void addOnList(List<DownloadFile> files) {
         final boolean startFromTop = AppPrefs.getProperty(UserProp.START_FROM_TOP, UserProp.START_FROM_TOP_DEFAULT);
+        int counter = this.downloadFiles.size();
         for (DownloadFile file : files) {
+            file.setListOrder(counter++); //optimization , we don't need to reOrder and resave the whole list
             try {
                 file.setPluginID(pluginsManager.getServiceIDForURL(file.getFileUrl()));
             } catch (NotSupportedDownloadServiceException e) {
@@ -216,8 +218,9 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
             this.downloadFiles.addAll(files);
         } else {
             this.downloadFiles.addAll(0, files); //reverse collection first?
+            reOrderListProperty();
         }
-        reOrderListProperty();
+
     }
 
 
