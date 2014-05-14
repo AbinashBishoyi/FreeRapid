@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 public abstract class URLTransferHandler extends TransferHandler {
     private final static Logger logger = Logger.getLogger(URLTransferHandler.class.getName());
 
-    private final static Pattern REGEXP_URL = Pattern.compile("((http|https)://)?([a-zA-Z0-9\\.\\-]+(:[a-zA-Z0-9\\.:&%\\$\\-]+)*@)?((25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])|([a-zA-Z0-9\\-]+\\.)*[a-zA-Z0-9\\-]+\\.[a-zA-Z]{2,4})(:[0-9]+)?(/[^/][\\p{Lu}\\p{Ll}0-9\\[\\]\\.:,\\?'\\\\/\\+&%\\$#=~_\\-@]*)*", Pattern.MULTILINE);
+    private final static Pattern REGEXP_URL = Pattern.compile("((http|https)://)?([a-zA-Z0-9\\.\\-]+(:[a-zA-Z0-9\\.:&%\\$\\-]+)*@)?((25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])|([a-zA-Z0-9\\-]+\\.)*[a-zA-Z0-9\\-]+\\.[a-zA-Z]{2,4})(:[0-9]+)?(/[^/][\\p{Lu}\\p{Ll}0-9\\[\\]\\.:,\\?'\\\\/\\+&%\\$#!\\|=~_\\-@]*)*", Pattern.MULTILINE);
     private final static String URL_LIST_MIME_TYPE = "application/x-java-url; class=java.net.URL";
 
     private List<URL> urls;
@@ -49,7 +49,7 @@ public abstract class URLTransferHandler extends TransferHandler {
         while (match.find(start)) {
             try {
                 String spec = match.group();
-                if (!spec.startsWith(http))
+                if (!spec.startsWith(http) && !spec.startsWith("https://"))
                     spec = http + spec;
 
                 URL url = new URL(updateApostrophs(spec));
