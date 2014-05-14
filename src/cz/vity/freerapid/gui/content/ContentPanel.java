@@ -1005,10 +1005,12 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         final NumberFormat number = NumberFormat.getNumberInstance();
         number.setMaximumFractionDigits(2);
         number.setMinimumFractionDigits(1);
-        if (bytes > (1024 * 1024)) {
-            return String.format("%s MB", number.format((float) bytes / (1024 * 1024)));
+        if (bytes > (1024 * 1024 * 1024)) {
+            return number.format((float) bytes / (float) (1024 * 1024 * 1024)) + " GB";
+        } else if (bytes > (1024 * 1024)) {
+            return number.format((float) bytes / (float) (1024 * 1024)) + " MB";
         } else if (bytes > 1024) {
-            return String.format("%s kB", number.format((float) bytes / 1024));
+            return number.format((float) bytes / (float) (1024)) + " kB";
         } else {
             return String.format("%s B", NumberFormat.getIntegerInstance().format(bytes));
         }

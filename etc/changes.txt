@@ -11,6 +11,7 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
+  Changed : support for viewing info about >GB long files 
   Changed : upgraded Substance L&F to version 5.1, upgraded SwingX library to the newest devel version
   Fixed : support for only X bytes long files 
   Fixed : UI - UserPreferences dialog - OK not enabled when changed How to update plugins combobox [reported by Alex]
