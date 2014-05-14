@@ -15,11 +15,13 @@ Internal - indicates an internal change - information for FRD developers - nothi
 
 FreeRapid Downloader 0.85 Update 1
   Added : Support for deleting files to recycle bin - you have to enable it manually in startup.properties file for now
+  Added : Support for grouping FRD application in taskbar for Windows 7
   Added : Plugin API
            - ScriptUtils class for easy JavaScript manipulation
   Changed: Internal - enhanced ESET antivirus detection, which is blocking FRD to start
   Changed: Internal - enhanced detection of not writable plugins directory
   Changed: Internal - list of languages is represented in file languages.xml, languages.properties was removed
+
   Fixed: Internal - plugin API - small problem in MethodBuilder when parsing name attribute
   Fixed: Linux - cannot connect server problem - frd.sh was updated
 

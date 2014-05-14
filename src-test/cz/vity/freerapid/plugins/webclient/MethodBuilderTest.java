@@ -102,6 +102,20 @@ public class MethodBuilderTest {
 
     }
 
+
+    @Test
+    public void addParameters() throws BuildMethodException, URIException {
+        MethodBuilder methodBuilder = getMethodBuilder();
+        methodBuilder.addParameters("button_test_2", "button_test4");
+        Map<String, String> params = methodBuilder.getParameters();
+        Assert.assertEquals("Correct tag parsing with spaces", null, params.get("button"));
+        Assert.assertEquals("Correct tag parsing with spaces", null, params.get("button test 1"));
+        Assert.assertEquals("Correct tag parsing with spaces", "Free_download", params.get("button_test_2"));
+        Assert.assertEquals("Correct tag parsing with spaces", null, params.get("button test '3'"));
+        Assert.assertEquals("Correct tag parsing with spaces", "Free download", params.get("button_test4"));
+        Assert.assertEquals("Correct tag parsing with spaces", null, params.get("button_test5"));
+    }
+
     @Test
     public void testSetActionFromFormByName() throws BuildMethodException, URIException {
         MethodBuilder methodBuilder = getMethodBuilder();
@@ -115,8 +129,10 @@ public class MethodBuilderTest {
         Assert.assertEquals("Correct tag parsing with spaces", null, params.get("button"));
         Assert.assertEquals("Correct tag parsing with spaces", "Free download", params.get("button test 1"));
         Assert.assertEquals("Correct tag parsing with spaces", "Free_download", params.get("button_test_2"));
-        Assert.assertEquals("Correct tag parsing with spaces", "Free_download", params.get("button test '3'"));
-        Assert.assertEquals("Correct tag parsing with spaces", "Free_download", params.get("button_test4"));
+        Assert.assertEquals("Correct tag parsing with spaces", "Free download", params.get("button test '3'"));
+        Assert.assertEquals("Correct tag parsing with spaces", "Free download", params.get("button_test4"));
+        Assert.assertEquals("Correct tag parsing with spaces", "Free", params.get("button_test5"));
+        Assert.assertEquals("Correct tag parsing with spaces", "val", params.get("par"));
 
         methodBuilder = getMethodBuilder();
         action = methodBuilder.setActionFromFormByName("downForm", true).getAction();

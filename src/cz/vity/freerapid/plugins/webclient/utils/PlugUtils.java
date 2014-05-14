@@ -156,18 +156,19 @@ public final class PlugUtils {
     public static String getParameter(String name, String content) throws PluginImplementationException {
         //(?: means no capturing group
         initParameterPatterns();
+
         int start = 0;
         Matcher matcher = parameterInputPattern.matcher(content);
         while (matcher.find(start)) {
             final String input = matcher.group(1);
             final Matcher matchName = parameterNamePattern.matcher(input);
             if (matchName.find()) {
-                String paramName = matchName.group(1);
+                String paramName = getCorrectGroup(matchName);
                 if (name.toLowerCase().equals(paramName.toLowerCase())) {
                     final Matcher matchValue = parameterValuePattern.matcher(input);
 
                     if (matchValue.find()) {
-                        return matchValue.group(1);
+                        return getCorrectGroup(matchValue);
                     } else {
                         return "";
                     }
@@ -191,6 +192,7 @@ public final class PlugUtils {
      * @throws PluginImplementationException any of the parameter were not found in given content
      * @see cz.vity.freerapid.plugins.webclient.utils.PlugUtils#getParameter(String, String)
      */
+    
     public static void addParameters(final PostMethod postMethod, final String content, final String[] parameters) throws PluginImplementationException {
         if (parameters.length == 0)
             throw new IllegalArgumentException("You have to provide some parameter names");
@@ -203,12 +205,12 @@ public final class PlugUtils {
             final String input = matcher.group(1);
             final Matcher matchName = parameterNamePattern.matcher(input);
             if (matchName.find()) {
-                String paramName = matchName.group(1);
+                String paramName = getCorrectGroup(matchName);
                 if (set.contains(paramName)) {
                     final Matcher matchValue = parameterValuePattern.matcher(input);
                     String paramValue = "";
                     if (matchValue.find()) {
-                        paramValue = matchValue.group(1);
+                        paramValue = getCorrectGroup(matchValue);
                     }
                     set.remove(paramName);
                     postMethod.addParameter(paramName, paramValue);
@@ -227,9 +229,20 @@ public final class PlugUtils {
         if (parameterInputPattern == null)
             parameterInputPattern = Pattern.compile("<input (.+?)>", Pattern.DOTALL | Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         if (parameterNamePattern == null)
-            parameterNamePattern = Pattern.compile("name\\s?=\\s?(?:\"|')?(.*?)(?:\"|'|\\s|$)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+            parameterNamePattern = Pattern.compile("(?:name\\s?=\\s?)(?:([\"]([^\"]+)[\">$])|([']([^']+)['>$])|(([^'\">\\s]+)[/\\s>$]?))", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         if (parameterValuePattern == null)
-            parameterValuePattern = Pattern.compile("value\\s?=\\s?(?:\"|')?(.*?)(?:\"|'|\\s|$)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+            parameterValuePattern = Pattern.compile("(?:value\\s?=\\s?)(?:([\"]([^\"]+)[\">$])|([']([^']+)['>$])|(([^'\">\\s]+)[/\\s>$]?))", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+    }
+
+
+     private static String getCorrectGroup(Matcher matcher) {
+        for (int i = matcher.groupCount(); i > 0; i--) {
+            final String group = matcher.group(i);
+            if (group != null) {
+                return group;
+            }
+        }
+        throw new IllegalStateException("Group cannot be empty");
     }
 
     /**

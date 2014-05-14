@@ -40,6 +40,7 @@ import java.util.regex.Pattern;
  * @author Vity
  * @since 0.82
  */
+@SuppressWarnings({"UnusedDeclaration"})
 public final class MethodBuilder {
     private final static Logger logger = Logger.getLogger(MethodBuilder.class.getName());
     private final static Random random = new Random();
@@ -50,7 +51,7 @@ public final class MethodBuilder {
     private final String content;
     private HttpDownloadClient client;
 
-    private final Map<String, String> parameters = new LinkedHashMap<String, String>(4);
+    private Map<String, String> parameters = new LinkedHashMap<String, String>(4);
     private String referer;
     private String action;
     private HttpMethodEnum postMethod = HttpMethodEnum.POST;
@@ -62,7 +63,6 @@ public final class MethodBuilder {
     private boolean addWww = false;
 
     private static Pattern formPattern;
-    private static Pattern parameterPatterns;
     private static Pattern parameterInputPattern;
     private static Pattern parameterTypePattern;
     private static Pattern parameterNamePattern;
@@ -474,25 +474,19 @@ public final class MethodBuilder {
             throw new IllegalArgumentException("You have to provide some parameter names");
         final Set<String> set = new HashSet<String>(parameters.length);
         set.addAll(Arrays.asList(parameters));
-        if (parameterPatterns == null)
-            parameterPatterns = Pattern.compile("name\\s?=\\s?(?:\"|')?(.*?)(?:\"|'|\\s).*?value\\s?=\\s?(?:\"|')?(.*?)(?:\"|'|\\s*>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+        populateParameters(content);
 
-        final Matcher matcher = parameterPatterns.matcher(content);
-        int start = 0;
-        String param;
-        while (matcher.find(start)) {
-            param = matcher.group(1);
-            if (set.contains(param)) {
-                set.remove(param);
-                this.parameters.put(param, matcher.group(2));
-            }
-            if (set.isEmpty())
-                break;
-            start = matcher.end();
+        Map<String, String> p = new LinkedHashMap<String, String>(this.parameters);
+
+        for (String paramName : this.parameters.keySet()) {
+            if (set.contains(paramName)) {
+                set.remove(paramName);
+            } else p.remove(paramName);
         }
         if (!set.isEmpty()) {
             throw new BuildMethodException("The parameters " + Arrays.toString(set.toArray()) + " were not found");
         }
+        this.parameters = p;
         return this;
     }
 
@@ -678,6 +672,16 @@ public final class MethodBuilder {
             populateParameters(content);
     }
 
+    private static String getCorrectGroup(Matcher matcher) {
+        for (int i = matcher.groupCount(); i > 0; i--) {
+            final String group = matcher.group(i);
+            if (group != null) {
+                return group;
+            }
+        }
+        throw new IllegalStateException("Group cannot be empty");
+    }
+
     private void populateParameters(final String content) {
         if (parameterInputPattern == null)
             parameterInputPattern = Pattern.compile("<input (.+?>)", Pattern.DOTALL | Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
@@ -692,15 +696,16 @@ public final class MethodBuilder {
         if (parameterNamePattern == null)
 
             //parameterNamePattern = Pattern.compile("name\\s?=\\s?(?:\"|')?(.*?)(?:\"|'|\\s|>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE); //invalid
-            parameterNamePattern = Pattern.compile("name\\s?=\\s?(?:(?:\")(.*?)(?:\"|>))|(?:(?:')(.*?)(?:'|>))|(?:(.*?)(?:\\s|>))", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+            parameterNamePattern = Pattern.compile("(?:name\\s?=\\s?)(?:([\"]([^\"]+)[\">])|([']([^']+)['>])|(([^'\">\\s]+)[/\\s>]))", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         if (parameterValuePattern == null)
-            parameterValuePattern = Pattern.compile("value\\s?=\\s?(?:\"|')?(.*?)(?:\"|'|\\s|>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+            parameterValuePattern = Pattern.compile("(?:value\\s?=\\s?)(?:([\"]([^\"]+)[\">])|([']([^']+)['>])|(([^'\">\\s]+)[/\\s>]))", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         final Matcher matcher = parameterInputPattern.matcher(content);
         while (matcher.find()) {
             final String input = matcher.group(1);
             final Matcher matchName = parameterNamePattern.matcher(input);
             if (matchName.find()) {
-                final String paramName = matchName.group(1);
+                final String paramName = getCorrectGroup(matchName);
+                //System.out.println("paramName = " + paramName);
                 String paramType = null;
                 final Matcher matchType = parameterTypePattern.matcher(input);
                 if (matchType.find()) {
@@ -712,7 +717,7 @@ public final class MethodBuilder {
                 } else {
                     final Matcher matchValue = parameterValuePattern.matcher(input);
                     if (matchValue.find()) {
-                        parameters.put(paramName, matchValue.group(1));
+                        parameters.put(paramName, getCorrectGroup(matchValue));
                     } else
                         parameters.put(paramName, "");
                 }
