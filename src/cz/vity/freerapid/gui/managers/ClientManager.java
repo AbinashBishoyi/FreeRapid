@@ -18,6 +18,7 @@ import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.ProxySelector;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,7 +39,7 @@ public class ClientManager {
 
     private ConnectionSettings defaultConnectionSettings = new ConnectionSettings();
 
-    private volatile int popCount;
+    private AtomicInteger popCount = new AtomicInteger(0);
     private final Object connectionSettingsLock = new Object();
     private final ManagerDirector managerDirector;
     private int rotate = 0;
@@ -51,7 +52,6 @@ public class ClientManager {
             ProxySelector.setDefault(null);
         //System.setProperty("java.net.useSystemProxies", useSystemProxies);
 
-        popCount = 0;
         initSSL();
         updateConnectionSettings();
     }
@@ -253,8 +253,8 @@ public class ClientManager {
     }
 
     public synchronized HttpDownloadClient popWorkingClient() {
-        if (popCount < MAX_DOWNLOADING) {
-            ++popCount;
+        if (popCount.intValue() < MAX_DOWNLOADING) {
+            popCount.incrementAndGet();
             if (workingClientsPool.isEmpty()) {
                 return new DownloadClient();
             } else return workingClientsPool.pop();
@@ -262,7 +262,7 @@ public class ClientManager {
     }
 
     public synchronized void pushWorkingClient(HttpDownloadClient client) {
-        --popCount;
+        popCount.decrementAndGet();
         workingClientsPool.add(client);
     }
 

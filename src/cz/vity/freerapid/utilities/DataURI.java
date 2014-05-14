@@ -79,9 +79,9 @@ public class DataURI {
             logger.warning("Data URI doesn't contain a comma");
             return null;
         }
-        final Matcher matcher = Pattern.compile("data:([^;,]+?)?(;base64)?(?:;charset=([^;,]+?))?(;base64)?,(.*)", Pattern.MULTILINE | Pattern.DOTALL).matcher(spec);
+        final Matcher matcher = Pattern.compile("data:([^;,]+?)?(;base64)?(?:;charset=([^;,]+?))?(;base64)?,(.*)", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE).matcher(spec);
         if (!matcher.find()) {
-            logger.warning("Invalid data URI");
+            logger.warning("Invalid data URI " + spec);
             return null;
         }
         boolean base64 = false;
@@ -101,15 +101,16 @@ public class DataURI {
         String strData = matcher.group(5);
         if (base64) {
             strData = strData.replaceAll("\\s+", "");
-        }
-        try {
-            strData = URLDecoder.decode(strData, charset);
-        } catch (UnsupportedEncodingException e) {
-            LogUtils.processException(logger, e);
-            return null;
-        } catch (IllegalArgumentException e) {
-            LogUtils.processException(logger, e);
-            return null;
+        } else {
+            try {
+                strData = URLDecoder.decode(strData, charset);
+            } catch (UnsupportedEncodingException e) {
+                LogUtils.processException(logger, e);
+                return null;
+            } catch (IllegalArgumentException e) {
+                LogUtils.processException(logger, e);
+                return null;
+            }
         }
         byte[] bytes;
         try {

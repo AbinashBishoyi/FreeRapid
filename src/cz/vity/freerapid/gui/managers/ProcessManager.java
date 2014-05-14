@@ -12,10 +12,12 @@ import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.model.PluginMetaData;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
+import static cz.vity.freerapid.plugins.webclient.DownloadState.*;
 import cz.vity.freerapid.plugins.webclient.FileState;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 import cz.vity.freerapid.utilities.LogUtils;
+import cz.vity.freerapid.utilities.Utils;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.TaskEvent;
 import org.jdesktop.application.TaskListener;
@@ -28,11 +30,10 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.*;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
-
-import static cz.vity.freerapid.plugins.webclient.DownloadState.*;
 
 /**
  * @author Vity
@@ -53,7 +54,7 @@ public class ProcessManager extends Thread {
     private final Object manipulation = new Object();
     private final java.util.Timer errorTimer = new java.util.Timer();
     private PluginsManager pluginsManager;
-    private volatile int downloading;
+    private AtomicInteger downloading = new AtomicInteger(0);
     private TaskService taskService;
     private ClientManager clientManager;
 
@@ -68,10 +69,6 @@ public class ProcessManager extends Thread {
         taskService = director.getTaskServiceManager().getTaskService(TaskServiceManager.DOWNLOAD_SERVICE);
         clientManager = director.getClientManager();
 
-        synchronized (downloadingLock) {
-            setDownloading(0);
-        }
-
         AppPrefs.getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
             public void preferenceChange(PreferenceChangeEvent evt) {
                 if (UserProp.MAX_DOWNLOADS_AT_A_TIME.equals(evt.getKey()))
@@ -83,6 +80,7 @@ public class ProcessManager extends Thread {
 
     @Override
     public void run() {
+        logger.severe(Utils.dumpStackTraces());
         this.setName("ProcessManagerThread");
         this.setUncaughtExceptionHandler(new GlobalEDTExceptionHandler());
 
@@ -265,7 +263,7 @@ public class ProcessManager extends Thread {
         final HttpDownloadClient client;
         synchronized (downloadingLock) {
             client = clientManager.popWorkingClient();
-            setDownloading(downloading + 1);
+            setDownloading(downloading.intValue(), downloading.incrementAndGet());
             client.setConnectionTimeOut(AppPrefs.getProperty(UserProp.CONNECTION_TIMEOUT, UserProp.CONNECTION_TIMEOUT_DEFAULT));
             client.initClient(settings);
         }
@@ -346,6 +344,7 @@ public class ProcessManager extends Thread {
             try {
                 taskService.execute(task);
             } catch (RejectedExecutionException e) {
+                logger.severe(Utils.dumpStackTraces());
                 logger.severe("downloading = " + downloading);
                 throw e;
             } catch (Exception e) {
@@ -380,7 +379,7 @@ public class ProcessManager extends Thread {
             }
             synchronized (downloadingLock) {
                 clientManager.pushWorkingClient(client);
-                setDownloading(downloading - 1);
+                setDownloading(downloading.intValue(), downloading.decrementAndGet());
             }
 
             if (task != null) {
@@ -523,13 +522,11 @@ public class ProcessManager extends Thread {
     }
 
     public int getDownloading() {
-        return downloading;
+        return downloading.get();
     }
 
-    public void setDownloading(int downloading) {
-        int oldValue = this.downloading;
-        this.downloading = downloading;
-        pcs.firePropertyChange("downloading", oldValue, this.downloading);
+    private void setDownloading(int intOldValue, int downloading) {
+        pcs.firePropertyChange("downloading", intOldValue, downloading);
     }
 
 

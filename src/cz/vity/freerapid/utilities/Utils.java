@@ -7,6 +7,7 @@ import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -365,5 +366,26 @@ public final class Utils {
 
     public static String reverseString(String string) {
         return new StringBuilder(string).reverse().toString();
+    }
+
+    public static String dumpStackTraces() {
+        final Map<Thread, StackTraceElement[]> map = Thread.getAllStackTraces();
+        final Throwable throwable = new Throwable() {
+            @Override
+            public String toString() {
+                return "";
+            }
+        };
+        final StringWriter writer = new StringWriter();
+        final PrintWriter printWriter = new PrintWriter(writer);
+        for (Map.Entry<Thread, StackTraceElement[]> entry : map.entrySet()) {
+            final StackTraceElement[] stackTraceElements = entry.getValue();
+            throwable.setStackTrace(stackTraceElements);
+            final Thread thread = entry.getKey();
+            printWriter.append(String.valueOf(thread)).append(" [").append(String.valueOf(thread.getState())).append(']').append(getSystemLineSeparator());
+            throwable.printStackTrace(printWriter);
+            printWriter.append(getSystemLineSeparator());
+        }
+        return writer.toString();
     }
 }
