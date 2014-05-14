@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="FreeRapid Downloader" default="shrink" basedir=".">
+    <property name="application" value="FreeRapid"/>
+    <property name="version" value="0.83-rc"/>
+    <property name="version.name" value="${application}-${version}"/>
+    <property name="mainclass" value="cz.vity.freerapid.core.MainApp"/>
+    <property name="mainjar.file" value="frd.jar"/>
+
+    <property name="shrinklog" value="${application}_swingx_shrinklog.xml"/>
+
+    <target name="shrink">
+        <taskdef name="yguard" classname="com.yworks.yguard.YGuardTask" classpath="ant-tasks/yguard.jar"/>
+        <yguard>
+            <inoutpair in="swingx.jar" out="swingx-ob.jar"/>
+            <shrink logfile="${shrinklog}">
+                <keep linenumbertable="true" sourcefile="true">
+                    <class classes="private" methods="private" fields="private">
+                        <patternset>
+                            <include name="org.jdesktop.swingx.plaf.*"/>
+                            <include name="org.jdesktop.swingx.painter.*"/>
+                        </patternset>
+                    </class>
+                    <class name="org.jdesktop.swingx.JXTable" classes="private" methods="private" fields="private"/>
+                    <class name="org.jdesktop.swingx.JXList" classes="private" methods="private" fields="private"/>
+                    <class name="org.jdesktop.swingx.table.TableColumnExt" classes="private" methods="private"
+                           fields="private"/>
+                    <class name="org.jdesktop.swingx.JXFrame" classes="private" methods="private" fields="private"/>
+                    <class name="org.jdesktop.swingx.decorator.ColorHighlighter" classes="private" methods="private"
+                           fields="private"/>
+                    <class name="org.jdesktop.swingx.sort.SortController" classes="private" methods="private"
+                           fields="private"/>
+                    <class name="org.jdesktop.swingx.decorator.ComponentAdapter" classes="private" methods="private"
+                           fields="private"/>
+                    <class name="org.jdesktop.swingx.hyperlink.LinkModel" classes="private" methods="private"
+                           fields="private"/>
+                    <class name="org.jdesktop.swingx.hyperlink.LinkModelAction" classes="private" methods="private"
+                           fields="private"/>
+                    <class name="org.jdesktop.swingx.renderer.DefaultTableRenderer" classes="private" methods="private"
+                           fields="private"/>
+                    <class name="org.jdesktop.swingx.renderer.HyperlinkProvider" classes="private" methods="private"
+                           fields="private"/>
+                    <class name="org.jdesktop.swingx.decorator.HighlighterFactory" classes="private" methods="private"
+                           fields="private"/>
+                    <class name="org.jdesktop.swingx.error.ErrorInfo" classes="private" methods="private"
+                           fields="private"/>
+                    <class name="org.jdesktop.swingx.error.ErrorReporter" classes="private" methods="private"
+                           fields="private"/>
+                    <class classes="private" methods="private" fields="private">
+                        <patternset>
+                            <include name="org.jdesktop.swingx.JXStatusBar**"/>
+                        </patternset>
+                    </class>
+                    <class name="org.jdesktop.swingx.JXErrorPane" classes="private" methods="private" fields="private"/>
+                    <class name="org.jdesktop.swingx.JXCollapsiblePane" classes="private" methods="private"
+                           fields="private"/>
+                    <class name="org.jdesktop.swingx.SwingXUtilities" classes="private" methods="private"
+                           fields="private"/>
+                </keep>
+            </shrink>
+        </yguard>
+    </target>
+
+</project>
