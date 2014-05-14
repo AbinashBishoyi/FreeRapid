@@ -518,10 +518,16 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
     public void deleteFileAction() {
         final int[] indexes = getSelectedRows();
         final java.util.List<FileHistoryItem> files = manager.getSelectionToList(indexes);
-        StringBuilder builder = new StringBuilder();
-        for (FileHistoryItem file : files) {
-            if (file.getOutputFile() != null && file.getOutputFile().exists())
+        final StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < files.size(); i++) {
+            final FileHistoryItem file = files.get(i);
+            if (file.getOutputFile() != null && file.getOutputFile().exists()) {
                 builder.append('\n').append(Utils.shortenFileName(file.getOutputFile(), 60));
+            }
+            if (i >= 20) {
+                builder.append('\n').append(getResourceMap().getString("andOtherFiles", files.size() - 20));
+                break;
+            }
         }
         final String s = builder.toString();
         final int result;
