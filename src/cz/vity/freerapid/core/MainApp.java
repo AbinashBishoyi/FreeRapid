@@ -43,6 +43,7 @@ public class MainApp extends SingleXFrameApplication {
 
     @Override
     protected void initialize(String[] args) {
+        if (checkInvalidPath()) return;
 
         final CmdLine line = new CmdLine(this);
         final List<String> fileList = line.processCommandLine(args);
@@ -50,7 +51,7 @@ public class MainApp extends SingleXFrameApplication {
         try {
             LogUtils.initLogging((debug) ? Consts.LOGDEBUG : Consts.LOGDEFAULT);//logovani nejdrive
         } catch (Exception e) {
-            java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainApp.class.getName());
+            java.util.logging.Logger logger = getLogger();
             logger.log(Level.SEVERE, e.getMessage());
         }
 
@@ -59,8 +60,7 @@ public class MainApp extends SingleXFrameApplication {
         final Map<String, String> map = line.getProperties();
         if (Utils.isWindows() && (new java.io.File("C:/Program files/Eset").exists() || new java.io.File("D:/Program files/Eset").exists())) {
             if (!map.containsKey(FWProp.ONEINSTANCE)) {
-                java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainApp.class.getName());
-                logger.info("Detecting ESET - disabling OneInstance functionality");
+                getLogger().info("Detecting ESET - disabling OneInstance functionality");
                 map.put(FWProp.ONEINSTANCE, "false");
             }
         }
@@ -68,8 +68,7 @@ public class MainApp extends SingleXFrameApplication {
         try {
             this.appPrefs = new AppPrefs(this.getContext(), map, line.isResetOptions());
         } catch (IllegalStateException e) {
-            java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainApp.class.getName());
-            logger.log(Level.SEVERE, e.getMessage());
+            getLogger().log(Level.SEVERE, e.getMessage());
             exitWithErrorMessage("Fatal Error - not all required libraries are available.\nYou probably didn't extract the zip file properly.\nYou have to have /lib directory with all libraries in the FreeRapid directory.\nExiting.");
         }
 
@@ -93,7 +92,7 @@ public class MainApp extends SingleXFrameApplication {
         this.getContext().getTaskMonitor().setAutoUpdateForegroundTask(false);
     }
 
-    private void checkBugs() {
+    private boolean checkInvalidPath() {
         final String path = Utils.getAppPath();//Utils pouzivaji AppPrefs i logovani
         int index = path.indexOf('+');
         if (index == -1)
@@ -102,16 +101,27 @@ public class MainApp extends SingleXFrameApplication {
             index = path.indexOf("!\\");
 
         if (index > 0 || path.endsWith("!")) {
-            exitWithErrorMessage("errorInvalidPath", path.substring(0, index + 1));
+            final String msg = String.format("This application cannot be started on the path containing '+' or '!' characters ('%s'...)\nExiting.", path.substring(0, index + 1));
+            JOptionPane.showMessageDialog(null, msg, "Error", JOptionPane.ERROR_MESSAGE);
+            getLogger().severe(msg);
+            System.exit(-1);
+            return true;
         }
+        return false;
+    }
+
+    private java.util.logging.Logger getLogger() {
+        return java.util.logging.Logger.getLogger(MainApp.class.getName());
+    }
+
+    private void checkBugs() {
         if (!Utils.isWindows() && Utils.isJVMVersion("1.6.0_0")) {
             exitWithErrorMessage("errorInvalidJRE");
         }
     }
 
     private void exitWithErrorMessage(final String s, final Object... args) {
-        java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainApp.class.getName());
-        logger.severe(s);
+        getLogger().severe(s);
         Swinger.showErrorMessage(this.getContext().getResourceMap(), s, args);
         System.exit(-1);
     }

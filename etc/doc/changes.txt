@@ -13,7 +13,9 @@ Fixed - indicates a bug fix
 
   Added : internal - plugin API - support for using SSL in plugins 
   Added : French version of readme.txt [thanks to Jean-François]
-  Added : Information (fileinfo) dialog - allow to create non existing folder like in NewLinks dialog  
+  Added : Information (fileinfo) dialog - allow to create non existing folder like in NewLinks dialog
+  Added : czech user guide for Menu-Help (F1)
+  Added : based on locale country flag for english translation
   Changed : support for viewing info about >GB long files 
   Changed : internal - upgraded Substance L&F to version 5.1, upgraded SwingX components to version 0.96  
   Changed : this file and readme.txt files were moved to 'doc' folder

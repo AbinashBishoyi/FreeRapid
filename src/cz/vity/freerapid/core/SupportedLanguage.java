@@ -1,6 +1,9 @@
 package cz.vity.freerapid.core;
 
 import java.text.Collator;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * @author Vity
@@ -11,6 +14,7 @@ public final class SupportedLanguage implements Comparable<SupportedLanguage> {
     private final String icon;
     private final String country;
     private final Integer mnemonic;
+    private final Map<String, String> flags = new HashMap<String, String>(2);
 
     public SupportedLanguage(final String languageCode, final String name, final String icon, final Integer mnemonic, final String country) {
         this.languageCode = languageCode;
@@ -55,6 +59,9 @@ public final class SupportedLanguage implements Comparable<SupportedLanguage> {
     }
 
     public final String getIcon() {
+        final String country = Locale.getDefault().getCountry();
+        if (flags.containsKey(country))
+            return flags.get(country);
         return icon;
     }
 
@@ -69,5 +76,17 @@ public final class SupportedLanguage implements Comparable<SupportedLanguage> {
     @Override
     public String toString() {
         return getLanguageCode();
+    }
+
+    public void setFlags(String flags) {
+        final String[] f = flags.split("\\|");
+        for (String s : f) {
+            if (!s.trim().isEmpty()) {
+                final String[] country = s.split("=");
+                for (int i = 0; i < country.length; i += 2) {
+                    this.flags.put(country[i], country[i + 1]);
+                }
+            }
+        }
     }
 }

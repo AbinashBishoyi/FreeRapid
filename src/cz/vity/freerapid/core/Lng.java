@@ -32,14 +32,16 @@ public final class Lng {
             supportedLanguages = new LinkedList<SupportedLanguage>();
             final Properties languages = Utils.loadProperties(LANG_LIST_FILE, true);
             int counter = -1;
-            final String lngPostfix = "language", lngNamePostfix = ".name", lngMnemonicPostfix = ".mnemonic", lngIconPostfix = ".icon", countryPrefix = ".country";
-            String lngCode, lngItem, country;
+            final String lngPostfix = "language", lngNamePostfix = ".name", lngMnemonicPostfix = ".mnemonic", lngIconPostfix = ".icon", countryPrefix = ".country", flagsPrefix = ".flags";
+            String lngCode, lngItem, country, flags;
             Integer mnemonic;
             SupportedLanguage language;
             while ((lngCode = languages.getProperty(lngItem = (lngPostfix + ++counter))) != null) {
                 mnemonic = (int) languages.getProperty(lngItem + lngMnemonicPostfix, "\0").charAt(0);
                 country = languages.getProperty(lngItem + countryPrefix, "");
+                flags = languages.getProperty(lngItem + flagsPrefix, "");
                 language = new SupportedLanguage(lngCode, languages.getProperty(lngItem + lngNamePostfix, "?"), languages.getProperty(lngItem + lngIconPostfix, LANG_NONAME_ICON), mnemonic, country);
+                language.setFlags(flags);
                 supportedLanguages.add(language);
             }
         }

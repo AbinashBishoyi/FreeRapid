@@ -1,0 +1,1 @@
+Please, see readme.txt in 'doc' folder for your language.

@@ -230,4 +230,5 @@ final public class UserProp {
     public static final String MAX_RECENT_PHRASES_COUNT = "maxRecentPhrasesCount";
     public static final int MAX_RECENT_PHRASES_COUNT_DEFAULT = 6;
 
+    public static final String HELP_URL = "HELP_URL";
 }

@@ -147,6 +147,7 @@ Pøíklad - spuštìní aplikace v ladícím módu:
 
 
 Více informací:
+  - Uživatelská pøíruèka - http://wordrider.net/freerapid/help (lze také vyvolat stiskem klávesy F1 v programu)
   - Neoficiální tutoriál pro uživatele Linuxu - Jak nakonfigurovat FreeRapid Downloader na Linuxu (ve španìlštinì)
     http://manualinux.my-place.us/freerapid.html
 
