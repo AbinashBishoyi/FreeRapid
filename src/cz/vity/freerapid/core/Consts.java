@@ -45,7 +45,7 @@ public class Consts {
 
     public static final String PLUGINS_DIR = "plugins";
 
-    public static final String PLUGINS_DIST_FILE_NAME = "distplugins.dat";
+    public static final String PLUGINS_DIST_FILE_NAME = "instplgs.dat";//prefer 8 long length names
 
     /**
      * cesta k properties fajlu

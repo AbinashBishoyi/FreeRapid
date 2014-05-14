@@ -34,7 +34,7 @@
     <property name="plugins-src.dir" value="plugins-src"/>
 
     <!-- keep in sync with Consts.PLUGINS_DIST_FILE_NAME -->
-    <property name="plugins-dist-file-name" value="distplugins.dat"/>
+    <property name="plugins-dist-file-name" value="instplgs.dat"/>
 
     <property name="resources" value="cz/vity/freerapid/core/resources/"/>
     <property name="splash" value="${resources}icons/splash.jpg"/>
@@ -145,7 +145,8 @@
             <fileset dir="${classes.dir}" includes="**/**/?*.properties"/>
         </jar>
 
-        <zip file="${build.dir}/${plugins-dist-file-name}" level="9" compress="true">
+        <!-- compression is useless, plugins are already compressed, also the main ZIP file -->
+        <zip file="${build.dir}/${plugins-dist-file-name}" level="0" compress="false">
             <fileset dir="${plugins.dir}" includes="**/*"/>
         </zip>
 

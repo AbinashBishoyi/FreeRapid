@@ -15,6 +15,7 @@ import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.plugins.webclient.interfaces.PluginContext;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 import cz.vity.freerapid.swing.Swinger;
+import cz.vity.freerapid.utilities.FileUtils;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
 import org.java.plugin.JpfException;
@@ -30,16 +31,14 @@ import org.java.plugin.util.IoUtil;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.ApplicationContext;
 
-import java.io.*;
+import java.io.File;
+import java.io.FilenameFilter;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 /**
  * @author Vity
@@ -298,47 +297,14 @@ public class PluginsManager {
             }
         }
         // If the plugin directory is empty, extract the dist plugins there.
-        final String[] files = pluginsDir.list();
+        // maybe we should mark a version of FRD of his last installed plugins in plugins dir
+        // eg. using MainApp.BUILD_REQUEST ?
+        final String[] files = pluginsDir.list();//maybe a slow operation??
         if (files != null && files.length == 0) {
-            extractDistPluginsTo(pluginsDir);
+            final File pluginsDistFile = new File(Utils.getAppPath(), Consts.PLUGINS_DIST_FILE_NAME);
+            FileUtils.extractZipFileInto(pluginsDistFile, pluginsDir);
         }
         return pluginsDir;
-    }
-
-    private void extractDistPluginsTo(final File directory) {
-        ZipInputStream zis = null;
-        OutputStream os = null;
-        try {
-            final File pluginsDistFile = new File(Utils.getAppPath(), Consts.PLUGINS_DIST_FILE_NAME);
-            zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(pluginsDistFile)));
-            byte[] buffer = new byte[8192];
-            int len;
-            ZipEntry entry;
-            while ((entry = zis.getNextEntry()) != null) {
-                // Directory structure inside archive isn't preserved, but it's not really needed.
-                if (!entry.isDirectory()) {
-                    final File outputFile = new File(directory, entry.getName());
-                    os = new BufferedOutputStream(new FileOutputStream(outputFile));
-                    while ((len = zis.read(buffer)) != -1) {
-                        os.write(buffer, 0, len);
-                    }
-                    os.close();
-                }
-            }
-        } catch (final Exception e) {
-            logger.log(Level.SEVERE, "Failed to extract dist plugins", e);
-        } finally {
-            if (zis != null) try {
-                zis.close();
-            } catch (final Exception e) {
-                LogUtils.processException(logger, e);
-            }
-            if (os != null) try {
-                os.close();
-            } catch (final Exception e) {
-                LogUtils.processException(logger, e);
-            }
-        }
     }
 
     private void disablePluginsInConflict() {

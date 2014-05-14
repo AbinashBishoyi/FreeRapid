@@ -8,6 +8,8 @@ import javax.swing.filechooser.FileSystemView;
 import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * @author Ladislav Vitasek
@@ -118,6 +120,46 @@ public class FileUtils {
             return file;
         else return new File(relativeFile);
     }
+
+    public static void extractZipFileInto(final File zipFile, final File targetDirectory) {
+        ZipInputStream zis = null;
+        OutputStream os = null;
+        try {
+            zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(zipFile)));
+            final byte[] buffer = new byte[8192];
+            int len;
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                // Directory structure inside archive isn't preserved, but it's not really needed.
+                if (!entry.isDirectory()) {
+                    final File outputFile = new File(targetDirectory, entry.getName());
+                    try {
+                        os = new BufferedOutputStream(new FileOutputStream(outputFile));
+                        while ((len = zis.read(buffer)) != -1) {
+                            os.write(buffer, 0, len);
+                        }
+                    } finally {
+                        if (os != null) {
+                            try {
+                                os.close();
+                            } catch (final Exception e) {
+                                LogUtils.processException(logger, e);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (final Exception e) {
+            logger.log(Level.SEVERE, "Failed to extract dist plugins", e);
+        } finally {
+            if (zis != null) try {
+                zis.close();
+            } catch (final Exception e) {
+                LogUtils.processException(logger, e);
+            }
+        }
+    }
+
 
     private static String getRelativePath(final File base, final File file) throws IOException {
         String basePath;
