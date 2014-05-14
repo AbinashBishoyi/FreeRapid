@@ -38,7 +38,7 @@ public class OpenSearchDescriptionBinding {
 
     @Relation.Finish("SearchForm")
     public static void relateSearchForm(OpenSearchDescription openSearchDescription, String searchForm) {
-        openSearchDescription.setShortName(searchForm);
+        openSearchDescription.setSearchForm(searchForm);
     }
 
     @Relation.Finish("Description")

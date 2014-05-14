@@ -314,6 +314,15 @@ final public class UserProp {
     public static final String TABLE_COLUMNS_RESIZE = "tableColumnsResize";
     public static final int TABLE_COLUMNS_RESIZE_DEFAULT = javax.swing.JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS;
 
+    public static final String SEARCH_FIELD_TEXT = "searchFieldText";
+    public static final String SEARCH_FIELD_SEARCH_ENGINE = "searchFieldSearchEngine";
+    public static final String SEARCH_FIELD_SEARCH_ENGINE_DEFAULT = "google";
+    public static final String SEARCH_FIELD_VISIBLE = "searchFieldVisible";
+    public static final boolean SEARCH_FIELD_VISIBLE_DEFAULT = true;
+    public static final String SEARCH_FIELD_WIDTH = "searchFieldWidth";
+    public static final int SEARCH_FIELD_WIDTH_DEFAULT = 165;
+
+
 }
 
 

@@ -160,7 +160,10 @@ public final class AppPrefs {
      * @param value hodnota uzivatelskeho nastaveni
      */
     public static void storeProperty(final String key, final String value) {
-        getPreferences().put(key, value);
+        if (value == null) {
+            getPreferences().remove(key);
+        } else
+            getPreferences().put(key, value);
     }
 
     /**

@@ -61,4 +61,18 @@ public class SearchItem {
     public OpenSearchDescription getSearchDescription() {
         return searchDescription;
     }
+
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SearchItem that = (SearchItem) o;
+
+        return !(id != null ? !id.equals(that.id) : that.id != null);
+
+    }
+
+    public int hashCode() {
+        return (id != null ? id.hashCode() : 0);
+    }
 }

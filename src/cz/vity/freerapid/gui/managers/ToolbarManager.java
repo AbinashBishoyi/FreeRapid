@@ -1,17 +1,17 @@
 package cz.vity.freerapid.gui.managers;
 
+import com.jgoodies.binding.adapter.Bindings;
 import com.jgoodies.binding.beans.PropertyConnector;
 import com.jgoodies.binding.value.ValueModel;
 import cz.vity.freerapid.core.AppPrefs;
-import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
+import cz.vity.freerapid.gui.SearchField;
 import cz.vity.freerapid.gui.managers.search.SearchItem;
 import cz.vity.freerapid.swing.SwingUtils;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.swing.ToolbarSeparator;
 import cz.vity.freerapid.swing.binding.BindUtils;
 import org.jdesktop.application.ApplicationContext;
-import org.jdesktop.swingx.JXFrame;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -54,7 +54,7 @@ public class ToolbarManager implements PropertyChangeListener {
     //private JXBusyLabel labelWorkingProgress;
 
     private float fontSize;
-    private JTextField searchField;
+    private SearchField searchField;
     private final ManagerDirector directorManager;
 
     /**
@@ -106,24 +106,30 @@ public class ToolbarManager implements PropertyChangeListener {
         toolbar.add(getButton(Swinger.getAction("downAction")));
         toolbar.add(getButton(Swinger.getAction("bottomAction")));
         toolbar.add(new ToolbarSeparator());
-        searchField = new JTextField();
-        final Dimension preferredSize = new Dimension(85, 25);
-        searchField.setPreferredSize(preferredSize);
-        searchField.setSize(preferredSize);
-        searchField.setMaximumSize(preferredSize);
-        searchField.setMinimumSize(preferredSize);
+        searchField = new SearchField();
+        searchField.setSearchItemList(directorManager.getSearchManager().getSearchItems());
         searchField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER && !searchField.getText().isEmpty()) {
-                    final java.util.List<SearchItem> searchItems = directorManager.getSearchManager().getSearchItems();
-                    if (!searchItems.isEmpty()) {
-                        directorManager.getSearchManager().openBrowser(searchItems.get(0), searchField.getText());
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    final SearchItem searchItem = searchField.getSelectedItem();
+                    if (searchItem != null) {
+                        directorManager.getSearchManager().openBrowser(searchItem, searchField.getText());
+                        Swinger.inputFocus(searchField);
                     }
                 }
             }
         });
-        toolbar.add(searchField);
+
+        ValueModel valueModel = BindUtils.getPrefsValueModel(UserProp.SEARCH_FIELD_TEXT, "");
+        Bindings.bind(searchField, valueModel, false);
+        //PropertyConnector.connectAndUpdate(valueModel, searchField, "text");
+
+        valueModel = BindUtils.getPrefsValueModel(UserProp.SEARCH_FIELD_VISIBLE, UserProp.SEARCH_FIELD_VISIBLE_DEFAULT);
+        PropertyConnector.connectAndUpdate(valueModel, searchField, "visible");
+
+        if (!searchField.getSearchItemList().isEmpty())
+            toolbar.add(searchField);
 
 //        toolbar.add(new ToolbarSeparator());
 //        toolbar.add(getButton(Swinger.getAction("quit")));
@@ -253,12 +259,11 @@ public class ToolbarManager implements PropertyChangeListener {
         button.setText(s);
     }
 
-
-    private void setWorkingProgress(final boolean enabled) {
-        final JXFrame jxFrame = (JXFrame) (MainApp.getInstance(MainApp.class).getMainFrame());
-        jxFrame.setWaiting(enabled);
-        //labelWorkingProgress.setBusy(enabled);
-    }
+//    private void setWorkingProgress(final boolean enabled) {
+//        final JXFrame jxFrame = (JXFrame) (MainApp.getInstance(MainApp.class).getMainFrame());
+//        jxFrame.setWaiting(enabled);
+//        //labelWorkingProgress.setBusy(enabled);
+//    }
 
 
 }
