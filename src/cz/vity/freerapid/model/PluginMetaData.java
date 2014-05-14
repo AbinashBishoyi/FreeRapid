@@ -80,8 +80,8 @@ final public class PluginMetaData extends AbstractBean implements Identifiable<L
         www = DescriptorUtils.getAttribute("www", Consts.WEBURL, descriptor);
         premium = DescriptorUtils.getAttribute("premium", false, descriptor);
         favicon = DescriptorUtils.getAttribute("faviconImage", null, descriptor) != null;
-        removeCompleted = DescriptorUtils.getAttribute("removeCompleted", false, descriptor);
-        maxParallelDownloads = DescriptorUtils.getAttribute("maxDownloads", 1, descriptor);
+        setRemoveCompleted(DescriptorUtils.getAttribute("removeCompleted", false, descriptor));
+        setMaxParallelDownloads(DescriptorUtils.getAttribute("maxDownloads", 1, descriptor));
         libraryPlugin = DescriptorUtils.getAttribute("libraryPlugin", false, descriptor) || maxParallelDownloads == 0;
         if (pluginPriority == -1)
             pluginPriority = DescriptorUtils.getAttribute("priority", (premium) ? 1000 : 100, descriptor);
@@ -91,11 +91,10 @@ final public class PluginMetaData extends AbstractBean implements Identifiable<L
             supportedURL = Pattern.compile(DescriptorUtils.getAttribute("urlRegex", "&&&XX&&&", descriptor), Pattern.CASE_INSENSITIVE);
         }
         if (maxAllowedDownloads > 1) {
-            maxAllowedDownloads = Math.min(maxParallelDownloads, maxAllowedDownloads);
+            setMaxAllowedDownloads(Math.min(maxParallelDownloads, maxAllowedDownloads));
         } else {
-            if (maxAllowedDownloads == -1) maxAllowedDownloads = maxParallelDownloads;
+            if (maxAllowedDownloads == -1) setMaxAllowedDownloads(getMaxParallelDownloads());
         }
-
 
         resumeSupported = DescriptorUtils.getAttribute("resumeSupported", true, descriptor);
     }
@@ -114,6 +113,18 @@ final public class PluginMetaData extends AbstractBean implements Identifiable<L
         return !isLibraryPlugin() && supportedURL.matcher(url).matches();
     }
 
+
+    public void setRemoveCompleted(boolean removeCompleted) {
+        this.removeCompleted = removeCompleted;
+    }
+
+    public void setResumeSupported(boolean resumeSupported) {
+        this.resumeSupported = resumeSupported;
+    }
+
+    public void setMaxParallelDownloads(int maxParallelDownloads) {
+        this.maxParallelDownloads = maxParallelDownloads;
+    }
 
     public Long getIdentificator() {
         return dbId;
