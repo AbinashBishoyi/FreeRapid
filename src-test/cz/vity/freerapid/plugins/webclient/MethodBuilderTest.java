@@ -72,7 +72,7 @@ public class MethodBuilderTest {
 
         methodBuilder = getMethodBuilder();
         methodBuilder.setActionFromFormWhereTagContains("Zaregistruj se", true);
-        s = methodBuilder.setBaseURL("http://testbase.com/").toGetMethod().getURI().toString();
+        s = methodBuilder.setBaseURL("http://testbase.com/").setEncodePathAndQuery(true).toGetMethod().getURI().toString();
         Assert.assertEquals("Parsing Form tag", "http://testbase.com/login/?login=&pass=&pamatovat=1&prihlasit=P%C5%99ihl%C3%A1sit", s);
 
 
@@ -143,27 +143,26 @@ public class MethodBuilderTest {
     @Test
     public void testEncodePathAndQuery() throws BuildMethodException, URIException {
         MethodBuilder methodBuilder = getMethodBuilder();
-        HttpMethod httpMethod = methodBuilder.setActionFromFormByName("downForm2", true).encodePathAndQuery().toHttpMethod();
+        HttpMethod httpMethod = methodBuilder.setActionFromFormByName("downForm2", true).setEncodePathAndQuery(true).toHttpMethod();
         String resultLink = "http://www.badongo.com/cfile/%C4%8Cesk%C3%A9%20z%C3%A1zem%C3%AD/";
         Assert.assertEquals("Encoded part of action 1", resultLink, httpMethod.getURI().toString());
 
         methodBuilder = getMethodBuilder();
         methodBuilder.setAction("http://dla.uloz.to/Ps;Hs;fid=1563039;cid=296926994;rid=686135084;up=0;uid=0;uip=85.71.214.165;tm=1238798202;ut=f;aff=uloz.to;He;ch=3a48fe4b04126e5175db9d506ea5531f;cpnb=;cput=;cptm=;Pe/1563039/Lost S05E11_by_insomniac.rar?bD&u=0&c=296926994&De");
-        httpMethod = methodBuilder.encodePathAndQuery().toHttpMethod();
+        httpMethod = methodBuilder.setEncodePathAndQuery(true).toHttpMethod();
 
-        resultLink = "http://dla.uloz.to/Ps;Hs;fid=1563039;cid=296926994;rid=686135084;up=0;uid=0;uip=85.71.214.165;tm=1238798202;ut=f;aff=uloz.to;He;ch=3a48fe4b04126e5175db9d506ea5531f;cpnb=;cput=;cptm=;Pe/1563039/Lost%2520S05E11_by_insomniac.rar?bD&u=0&c=296926994&De";
+        resultLink = "http://dla.uloz.to/Ps;Hs;fid=1563039;cid=296926994;rid=686135084;up=0;uid=0;uip=85.71.214.165;tm=1238798202;ut=f;aff=uloz.to;He;ch=3a48fe4b04126e5175db9d506ea5531f;cpnb=;cput=;cptm=;Pe/1563039/Lost%20S05E11_by_insomniac.rar?bD&u=0&c=296926994&De";
         Assert.assertEquals("Encoded part of action 2", resultLink, httpMethod.getURI().toString());
 
         methodBuilder = getMethodBuilder();
-        httpMethod = methodBuilder.setActionFromFormByName("downForm2", true).encodePathAndQuery().toGetMethod();
-        resultLink = "http://www.badongo.com/cfile/%25C4%258Cesk%25C3%25A9%2520z%25C3%25A1zem%25C3%25AD/";
+        httpMethod = methodBuilder.setActionFromFormByName("downForm2", true).setEncodePathAndQuery(true).toGetMethod();
+        resultLink = "http://www.badongo.com/cfile/%C4%8Cesk%C3%A9%20z%C3%A1zem%C3%AD/";
         Assert.assertEquals("Encoded part of action 3", resultLink, httpMethod.getURI().toString());
 
         methodBuilder = getMethodBuilder();
-        httpMethod = methodBuilder.setAction("http://www.iskladka.cz/download.php?file=1238795053_Èeský+sen.zip").encodePathAndQuery().toGetMethod();
-        resultLink = "http://www.iskladka.cz/download.php?file=1238795053_%25C4%258Cesk%25C3%25BD+sen.zip";
+        httpMethod = methodBuilder.setAction("http://www.iskladka.cz/download.php?file=1238795053_Èeský sen.zip").setParameter("test", "È").setEncodePathAndQuery(true).toGetMethod();
+        resultLink = "http://www.iskladka.cz/download.php?file=1238795053_%C4%8Cesk%C3%BD%20sen.zip&test=%C4%8C";
         Assert.assertEquals("Encoded part of action 3", resultLink, httpMethod.getURI().toString());
-
     }
 
 

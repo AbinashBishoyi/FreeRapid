@@ -67,6 +67,9 @@ final public class HttpUtils {
                         s = URLDecoder.decode(s, "UTF-8");
                     } catch (UnsupportedEncodingException e) {
                         logger.warning("Unsupported encoding");
+                    } catch (IllegalArgumentException e) {
+                        logger.warning("Invalid file name header:" + e.getMessage());
+                        return s;
                     }
                 return s;
             } else {
@@ -85,7 +88,11 @@ final public class HttpUtils {
                             return URLDecoder.decode(s, "UTF-8");
                         } catch (UnsupportedEncodingException e) {
                             logger.warning("Unsupported encoding");
+                        } catch (IllegalArgumentException e) {
+                            logger.warning("Invalid file name header:" + e.getMessage());
+                            return s;
                         }
+
                 } else
                     logger.warning("File name was not found in:" + value);
             }

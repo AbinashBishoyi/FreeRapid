@@ -10,10 +10,7 @@ import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -187,13 +184,13 @@ public class EditorPaneLinkDetector extends JEditorPane {
         return list;
     }
 
-    static class SyntaxDocument extends DefaultStyledDocument {
+    class SyntaxDocument extends DefaultStyledDocument {
         private DefaultStyledDocument doc;
         private Element rootElement;
 
         private MutableAttributeSet normal;
         private MutableAttributeSet keyword;
-        private static final Pattern EMAIL_PATTERN = REGEXP_URL;
+        private final Pattern EMAIL_PATTERN = REGEXP_URL;
         private static final String DELIMITERS = "\n\t";
 
 
@@ -332,37 +329,32 @@ public class EditorPaneLinkDetector extends JEditorPane {
         }
     }
 
-    private static URL getURL(String url) {
+
+    private String checkURI(String url) throws URIException {
+        final String defaultProtocolCharset = org.apache.commons.httpclient.URI.getDefaultProtocolCharset();
         try {
-            return new URI(url).toURL();
-        } catch (MalformedURLException e) {
-            //ignore
-        } catch (URISyntaxException e) {
+            return new org.apache.commons.httpclient.URI(url, true, defaultProtocolCharset).toString();
+        } catch (URIException e) {
+            logger.warning(String.format("Invalid URL - '%s' does not match URI specification", url));
             try {
-                return new URI(encodeLastPartOfURL(url)).toURL();
-            } catch (Exception ex) {
-                //ignore
+                return new org.apache.commons.httpclient.URI(URIUtil.encodePathQuery(url), true, defaultProtocolCharset).toString();
+            } catch (URIException e1) {
+                throw e;
             }
-
-
         }
-        return null;
     }
 
-    private static String encodeLastPartOfURL(String url) throws UnsupportedEncodingException, URIException {
-        if (url == null)
-            throw new IllegalArgumentException("Cannot encode last part. URL is null");
-        return URIUtil.encodePathQuery(url);
-//        final boolean removedSlash = (url.endsWith("/"));
-//        if (removedSlash)
-//            url = url.substring(0, url.length() - 1);
-//        final int index = url.lastIndexOf('/');
-//        if (index > 0) {
-//            final String enc = URLEncoder.encode(url.substring(index + 1), "UTF-8");
-//            url = url.substring(0, index + 1) + enc + ((removedSlash) ? "/" : "");
-//        }
-//        return url;
 
+    private URL getURL(String url) {
+
+        try {
+            return new URL(checkURI(url));
+        } catch (MalformedURLException e) {
+            //ignore
+        } catch (URIException e) {
+            //ignore
+        }
+        return null;
     }
 
 }
