@@ -14,7 +14,7 @@
 *      by Ladislav Vitasek aka Vity                          *
 *   Website/Forum/Bugtracker: http://wordrider.net/freerapid *
 *   Mail: info@wordrider.net - suggestions                   *
-*   Last change: 31th October 2010                           *
+*   Last change: 14th November 2010                          *
 **************************************************************
 
 =======================================
