@@ -12,6 +12,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.util.Hashtable;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -101,7 +102,7 @@ public class FileTypeIconProvider {
         } else {
 
 
-            fileType = fileType.toUpperCase();
+            fileType = fileType.toUpperCase(Locale.ENGLISH);
 
 
             final String base;

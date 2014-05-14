@@ -17,6 +17,7 @@ import org.jdesktop.application.ResourceConverter;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
+import java.net.ProxySelector;
 import java.util.EventObject;
 import java.util.List;
 import java.util.Locale;
@@ -160,6 +161,7 @@ public class MainApp extends SingleXFrameApplication {
     }
 
     private void initMainFrame() {
+        ProxySelector.setDefault(null);
         final JFrame frame = getMainFrame();
         if (AppPrefs.getProperty(FWProp.DECORATED_FRAMES, false)) {
             JFrame.setDefaultLookAndFeelDecorated(true);

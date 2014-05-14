@@ -294,6 +294,7 @@ public abstract class AbstractRunner implements PluginRunner {
      * UTF-8 encoding is set by default
      *
      * @param encoding encoding name - like Windows-1250, ISO-8859-1
+     * @since 0.83
      */
     protected void setPageEncoding(String encoding) {
         this.encoding = encoding;

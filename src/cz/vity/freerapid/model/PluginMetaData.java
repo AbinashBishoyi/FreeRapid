@@ -10,6 +10,7 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.util.Locale;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
@@ -65,7 +66,7 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
         this.descriptor = descriptor;
         supportedURL = Pattern.compile(DescriptorUtils.getAttribute("urlRegex", "XX", descriptor), Pattern.CASE_INSENSITIVE);
         hasOptions = DescriptorUtils.getAttribute("hasOptions", false, descriptor);
-        services = DescriptorUtils.getAttribute("services", getId(), descriptor);
+        services = DescriptorUtils.getAttribute("services", getId(), descriptor).toLowerCase(Locale.ENGLISH);
         www = DescriptorUtils.getAttribute("www", Consts.WEBURL, descriptor);
         premium = DescriptorUtils.getAttribute("premium", false, descriptor);
         favicon = DescriptorUtils.getAttribute("faviconImage", null, descriptor) != null;

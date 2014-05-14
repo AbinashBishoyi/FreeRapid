@@ -11,6 +11,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import static java.util.Locale.ENGLISH;
 import java.util.logging.Logger;
 
 /**
@@ -360,7 +361,7 @@ public class ApplicationAction extends AbstractAction {
     private void maybePutDescriptionValue(String key, javax.swing.Action proxy) {
         Object s = proxy.getValue(key);
         if (s instanceof String) {
-            putValue(key, (String) s);
+            putValue(key, s);
         }
     }
 
@@ -369,7 +370,7 @@ public class ApplicationAction extends AbstractAction {
         if (proxy != null) {
             setEnabled(proxy.isEnabled());
             Object s = proxy.getValue(SELECTED_KEY);
-            setSelected((s instanceof Boolean) && ((Boolean) s).booleanValue());
+            setSelected((s instanceof Boolean) && (Boolean) s);
             maybePutDescriptionValue(javax.swing.Action.SHORT_DESCRIPTION, proxy);
             maybePutDescriptionValue(javax.swing.Action.LONG_DESCRIPTION, proxy);
         }
@@ -406,7 +407,6 @@ public class ApplicationAction extends AbstractAction {
      */
     private void initActionProperties(ResourceMap resourceMap, String baseName) {
         boolean iconOrNameSpecified = false;  // true if Action's icon/name properties set
-        String typedName = null;
 
         // Action.text => Action.NAME,MNEMONIC_KEY,DISPLAYED_MNEMONIC_INDEX_KEY
         String text = resourceMap.getString(baseName + ".Action.text");
@@ -465,7 +465,7 @@ public class ApplicationAction extends AbstractAction {
     }
 
     private String propertyMethodName(String prefix, String propertyName) {
-        return prefix + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
+        return prefix + propertyName.substring(0, 1).toUpperCase(ENGLISH) + propertyName.substring(1);
     }
 
     private Method propertyGetMethod(String propertyName) {
@@ -740,7 +740,7 @@ public class ApplicationAction extends AbstractAction {
     public boolean isSelected() {
         if ((getProxy() != null) || (isSelectedMethod == null)) {
             Object v = getValue(SELECTED_KEY);
-            return (v instanceof Boolean) ? ((Boolean) v).booleanValue() : false;
+            return (v instanceof Boolean) && (Boolean) v;
         } else {
             try {
                 Object b = isSelectedMethod.invoke(appAM.getActionsObject());
@@ -816,7 +816,7 @@ public class ApplicationAction extends AbstractAction {
      */
     void forwardPropertyChangeEvent(PropertyChangeEvent e, String actionPropertyName) {
         if ("selected".equals(actionPropertyName) && (e.getNewValue() instanceof Boolean)) {
-            putValue(SELECTED_KEY, (Boolean) e.getNewValue());
+            putValue(SELECTED_KEY, e.getNewValue());
         }
         firePropertyChange(actionPropertyName, e.getOldValue(), e.getNewValue());
     }
@@ -852,7 +852,7 @@ public class ApplicationAction extends AbstractAction {
         sb.append(getName());
         Object selectedValue = getValue(SELECTED_KEY);
         if (selectedValue instanceof Boolean) {
-            if (((Boolean) selectedValue).booleanValue()) {
+            if ((Boolean) selectedValue) {
                 sb.append("+");
             }
         }

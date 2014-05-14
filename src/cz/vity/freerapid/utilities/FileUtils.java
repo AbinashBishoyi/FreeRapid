@@ -64,7 +64,7 @@ public class FileUtils {
     }
 
     public static void makeBackup(final File srcFile) throws IOException {
-        if (!srcFile.exists())
+        if (!srcFile.exists() || srcFile.length() <= 0)
             return;
         final File backupFile = getBackupFile(srcFile);
 
