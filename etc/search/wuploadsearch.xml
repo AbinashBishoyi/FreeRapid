@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+<ShortName>Wupload Search</ShortName>
+<Description>Search Wupload Search</Description>
+<Tags>schadenfreude</Tags>
+<Image height="16" width="16" type="image/png">data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAaFJREFUOE9j/P//PwNFAGQAJZjh+7nzDN927gLjH6dOEzTs24FDcPW/btxkYPiUX/T/AwM7GH+UUvj/798/nIb8+fSJ4S0zF1z994lT/jN8XbwULgAy5O/jJ3ADQIYhG/jt4CGG91DLQGp/Hz/JwPDz+g0UwZ8bNgGDBBIunyZP+/9z+044/3N3H8IyVp7//759Y2D49/cvwwt+sf8vgSaC8OfqOrCG7zdvMTznEvz/Wkbp/59378AGvg6Lhqt7Z2gOVgeWuOXs8f8CIzsY33H3+v/392+GK1Z2cLF7sQngsLmkpA4Xe5yRjTDgUmXV//XMbGC8RUzy/8X2DjgfJn5z1uz/61jY4eIP5sxDGHBj7dr/fSxscNzPzoHCB8n1s3OiiL2+dAnsejDx9sEDhjJW1v9lrGwouF5U9H8VDw+GeI2AANibcANA/quVkflfxMaGgk8tXvx/e3Mzhvgke3t4zMDjfKafH4rCWb6+4ID7/eMHQ6ehIYrchuJiTAPOr1nzf0VqKhy/e/QIbvijc+cYkOXuHj4MlyOY9gllNIoNAAB/o1fmN1uRTAAAAABJRU5ErkJggg==</Image>
+<Url type="text/html" method="GET" template="http://www.wuploadsearch.com/search.php?q={searchTerms}"/>
+<InputEncoding>UTF-8</InputEncoding>
+</OpenSearchDescription>
