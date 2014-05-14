@@ -83,7 +83,7 @@ public class TrayPopWindowReporter {
             }
         });
 
-        waitTimer = new Timer(2000, listener);
+        waitTimer = new Timer(2500, listener);
         waitTimer.setRepeats(false);
 
         Timeline dispose = new Timeline(window);
