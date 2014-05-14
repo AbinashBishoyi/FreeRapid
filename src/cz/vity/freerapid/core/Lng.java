@@ -14,26 +14,25 @@ import java.util.logging.Logger;
  * @author Vity
  */
 public final class Lng {
-    private final static Logger logger = Logger.getLogger(Lng.class.getName());
+    private static final Logger logger = Logger.getLogger(Lng.class.getName());
+    private static final String LANG_LIST_FILE = "languages.xml";
+    private static final String LOCALE_LANG_CODE = Locale.getDefault().getLanguage();
+    private static final String LOCALE_COUNTRY_CODE = Locale.getDefault().getCountry();
 
     private static List<SupportedLanguage> supportedLanguages = null;
-
-    private static final String LANG_LIST_FILE = "languages.xml";
-    public static final String localeLanguageCode = Locale.getDefault().getLanguage();
     private static String selLanguageCode;
     private static String selCountryCode;
-    private static final String localeCountry = Locale.getDefault().getCountry();
-
 
     private Lng() {
     }
 
-    @SuppressWarnings({"unchecked"})
     public static synchronized List<SupportedLanguage> getSupportedLanguages() {
         if (supportedLanguages == null) {
             final BindingHandler handler = new BindingHandler(LanguageBinding.class);
             try {
-                supportedLanguages = (List<SupportedLanguage>) handler.parse(new InputSource(Utils.class.getClassLoader().getResourceAsStream(LANG_LIST_FILE)));
+                @SuppressWarnings({"unchecked", "UnnecessaryLocalVariable"})
+                List<SupportedLanguage> list = (List<SupportedLanguage>) handler.parse(new InputSource(Utils.class.getClassLoader().getResourceAsStream(LANG_LIST_FILE)));
+                supportedLanguages = list;
             } catch (Exception e) {
                 LogUtils.processException(logger, e);
                 supportedLanguages = Collections.emptyList();
@@ -43,17 +42,9 @@ public final class Lng {
     }
 
     private static SupportedLanguage findSupportedLanguage(SupportedLanguage lang) {
-        if ("".equals(lang.getCountry())) {
-            for (SupportedLanguage supportedLanguage : getSupportedLanguages()) {
-                if (supportedLanguage.getLanguageCode().equalsIgnoreCase(lang.getLanguageCode())) {
-                    return supportedLanguage;
-                }
-            }
-        } else {
-            for (SupportedLanguage supportedLanguage : getSupportedLanguages()) {
-                if (supportedLanguage.equals(lang)) {
-                    return supportedLanguage;
-                }
+        for (SupportedLanguage supportedLanguage : getSupportedLanguages()) {
+            if (supportedLanguage.equals(lang)) {
+                return supportedLanguage;
             }
         }
         return null;
@@ -63,9 +54,9 @@ public final class Lng {
         selLanguageCode = AppPrefs.getProperty(FWProp.SELECTED_LANGUAGE, null);
         SupportedLanguage result;
         if (selLanguageCode == null) {
-            result = findSupportedLanguage(new SupportedLanguage(localeLanguageCode, localeCountry));
+            result = findSupportedLanguage(new SupportedLanguage(LOCALE_LANG_CODE, LOCALE_COUNTRY_CODE));
             if (result == null) {
-                result = findSupportedLanguage(new SupportedLanguage(localeLanguageCode, ""));
+                result = findSupportedLanguage(new SupportedLanguage(LOCALE_LANG_CODE, ""));
                 if (result == null) {
                     result = new SupportedLanguage(FWProp.DEFAULT_LANG_CODE, "");
                 }
@@ -84,9 +75,8 @@ public final class Lng {
         selLanguageCode = result.getLanguageCode();
         selCountryCode = result.getCountry();
 
-        final Locale selLocale = new Locale(selLanguageCode.toLowerCase(Locale.ENGLISH), ("".equals(selCountryCode) ? localeCountry : selCountryCode).toUpperCase(Locale.ENGLISH));
+        final Locale selLocale = new Locale(selLanguageCode.toLowerCase(Locale.ENGLISH), ("".equals(selCountryCode) ? LOCALE_COUNTRY_CODE : selCountryCode).toUpperCase(Locale.ENGLISH));
         logger.config("Setting locale " + selLocale);
-        //logger.config("Taiwan locale " + Locale.TAIWAN);
         Locale.setDefault(selLocale);
     }
 
