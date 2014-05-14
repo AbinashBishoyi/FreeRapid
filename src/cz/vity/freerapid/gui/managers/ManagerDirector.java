@@ -7,6 +7,7 @@ import cz.vity.freerapid.core.tasks.SpeedRegulator;
 import cz.vity.freerapid.swing.TextComponentContextMenuListener;
 import org.jdesktop.application.ApplicationContext;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.util.logging.Logger;
@@ -70,6 +71,10 @@ public class ManagerDirector {
 
     private SearchManager searchManager;
 
+    static {
+        ImageIO.scanForPlugins();
+    }
+
 
     /**
      * Konstruktor
@@ -87,6 +92,7 @@ public class ManagerDirector {
         logger.info("Starting version " + Consts.APPVERSION);
         mainFrame = ((MainApp) context.getApplication()).getMainFrame();
 
+
         this.rootContainer = new JPanel();
         this.rootContainer.setPreferredSize(new Dimension(700, 550));
 
@@ -94,6 +100,7 @@ public class ManagerDirector {
         this.clientManager = new ClientManager(this);
 
         this.fileHistoryManager = new FileHistoryManager(this, context);
+
 
         this.pluginsManager = new PluginsManager(context, this);
 

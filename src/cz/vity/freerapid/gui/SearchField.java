@@ -36,6 +36,7 @@ public class SearchField extends JTextField implements FocusListener, PopupMenuL
         btn.setSize(PREFFERED_HEIGHT - 6, PREFFERED_HEIGHT - 6);
         btn.setMinimumSize(btn.getSize());
         btn.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        btn.setFocusable(false);
         this.add(btn);
 
         btn.setCursor(Cursor.getDefaultCursor());
