@@ -23,7 +23,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
-import java.util.zip.InflaterInputStream;
 
 /**
  * Robot to browse on the web.
@@ -131,19 +130,18 @@ public class DownloadClient implements HttpDownloadClient {
      *
      * @param method method
      */
-    protected void setDefaultsForMethod(HttpMethod method) {
+    protected void setDefaultsForMethod(final HttpMethod method) {
         if (client.getParams().isParameterSet(DownloadClientConsts.USER_AGENT)) {
             method.setRequestHeader("User-Agent", client.getParams().getParameter(DownloadClientConsts.USER_AGENT).toString());
-        } else
-            method.setRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:7.0) Gecko/20100101 Firefox/7.0");
+        } else {
+            method.setRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:17.0) Gecko/20100101 Firefox/17.0");
+        }
         method.setRequestHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-        method.setRequestHeader("Accept-Language", "cs,en-us;q=0.7,en;q=0.3");
-        method.setRequestHeader("Accept-Charset", "windows-1250,utf-8;q=0.7,*;q=0.7");
-        //method.setRequestHeader("Accept-Charset", "utf-8, windows-1250;q=0.7,*;q=0.7");
-        method.setRequestHeader("Accept-Encoding", "gzip,deflate");
-        method.setRequestHeader("Keep-Alive", "30");
-        if (referer != null && referer.length() > 0)
+        method.setRequestHeader("Accept-Language", "en-US,en;q=0.5");
+        method.setRequestHeader("Accept-Encoding", "gzip");
+        if (referer != null && !referer.isEmpty()) {
             method.setRequestHeader("Referer", referer);
+        }
         method.setFollowRedirects(false);
     }
 
@@ -357,9 +355,6 @@ public class DownloadClient implements HttpDownloadClient {
                 if ("gzip".equalsIgnoreCase(hce.getValue())) {
                     logger.info("Found GZIP stream");
                     return new GZIPInputStream(method.getResponseBodyAsStream());
-                } else if ("deflate".equalsIgnoreCase(hce.getValue())) {
-                    logger.info("Found deflate stream");
-                    return new InflaterInputStream(method.getResponseBodyAsStream());
                 } else {
                     logger.warning("Unknown Content-Encoding: " + hce.getValue());
                 }
@@ -447,10 +442,7 @@ public class DownloadClient implements HttpDownloadClient {
         if (null != hce && !hce.getValue().isEmpty()) {
             if ("gzip".equalsIgnoreCase(hce.getValue())) {
                 logger.info("Extracting GZIP");
-                asString = inflate(method.getResponseBodyAsStream(), "gzip");
-            } else if ("deflate".equalsIgnoreCase(hce.getValue())) {
-                logger.info("Extracting deflate");
-                asString = inflate(method.getResponseBodyAsStream(), "deflate");
+                asString = inflate(method.getResponseBodyAsStream());
             } else {
                 logger.warning("Unknown Content-Encoding: " + hce.getValue());
             }
@@ -549,28 +541,18 @@ public class DownloadClient implements HttpDownloadClient {
     }
 
     /**
-     * Converts given GZIP/deflate input stream into string. <br>
+     * Converts given GZIPed input stream into string. <br>
      * UTF-8 encoding is used as default.<br>
      * Shouldn't be called to file input streams.<br>
      *
-     * @param in     input stream which should be converted
-     * @param format format of InputStream to inflate (gzip or deflate)
+     * @param in input stream which should be converted
      * @return input stream as string
      * @throws IOException when there was an error during reading from the stream
      */
-    protected String inflate(InputStream in, String format) throws IOException {
-        if (in == null || format == null)
-            throw new NullPointerException();
+    protected String inflate(InputStream in) throws IOException {
         byte[] buffer = new byte[4000];
         int b;
-        InflaterInputStream gin;
-        if (format.equalsIgnoreCase("gzip")) {
-            gin = new GZIPInputStream(in);
-        } else if (format.equalsIgnoreCase("deflate")) {
-            gin = new InflaterInputStream(in);
-        } else {
-            throw new IllegalArgumentException("Format must be either 'gzip' or 'deflate'");
-        }
+        GZIPInputStream gin = new GZIPInputStream(in);
         StringBuilder builder = new StringBuilder();
         while (true) {
             b = gin.read(buffer);
