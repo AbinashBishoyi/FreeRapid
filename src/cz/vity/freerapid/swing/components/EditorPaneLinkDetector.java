@@ -3,13 +3,18 @@ package cz.vity.freerapid.swing.components;
 import cz.vity.freerapid.swing.SwingUtils;
 import cz.vity.freerapid.utilities.Browser;
 import cz.vity.freerapid.utilities.LogUtils;
+import org.apache.commons.httpclient.URIException;
+import org.apache.commons.httpclient.util.URIUtil;
 
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.UnsupportedEncodingException;
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -344,18 +349,19 @@ public class EditorPaneLinkDetector extends JEditorPane {
         return null;
     }
 
-    private static String encodeLastPartOfURL(String url) throws UnsupportedEncodingException {
+    private static String encodeLastPartOfURL(String url) throws UnsupportedEncodingException, URIException {
         if (url == null)
             throw new IllegalArgumentException("Cannot encode last part. URL is null");
-        final boolean removedSlash = (url.endsWith("/"));
-        if (removedSlash)
-            url = url.substring(0, url.length() - 1);
-        final int index = url.lastIndexOf('/');
-        if (index > 0) {
-            final String enc = URLEncoder.encode(url.substring(index + 1), "UTF-8");
-            url = url.substring(0, index + 1) + enc + ((removedSlash) ? "/" : "");
-        }
-        return url;
+        return URIUtil.encodePathQuery(url);
+//        final boolean removedSlash = (url.endsWith("/"));
+//        if (removedSlash)
+//            url = url.substring(0, url.length() - 1);
+//        final int index = url.lastIndexOf('/');
+//        if (index > 0) {
+//            final String enc = URLEncoder.encode(url.substring(index + 1), "UTF-8");
+//            url = url.substring(0, index + 1) + enc + ((removedSlash) ? "/" : "");
+//        }
+//        return url;
 
     }
 

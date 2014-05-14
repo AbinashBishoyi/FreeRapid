@@ -62,6 +62,7 @@ public final class MethodBuilder {
     private boolean autoReplaceEntities = true;
     private static Pattern imgPattern;
     private static Pattern parameterValuePattern;
+    private boolean encodePathAndQuery;
 
     /**
      * Returns actual set POST or GET method extracted from result. <br /> Its value is used in <code>toMethod()</code> method.<br/>
@@ -500,28 +501,44 @@ public final class MethodBuilder {
         return encoded;
     }
 
+//    /**
+//     * Calls URLEncoder to over the last part of the action or base URL.<br />
+//     * Replaces everything after the last '/' character.
+//     *
+//     * @return builder instance
+//     * @throws BuildMethodException if action or base url is null or no '/' was found.
+//     */
+//    public MethodBuilder encodeLastPartOfAction() throws BuildMethodException {
+//        String url = (action != null) ? action : baseURL;
+//        if (url == null)
+//            throw new BuildMethodException("Cannot encode last part. Action or baseURL is null");
+//        final boolean removedSlash = (url.endsWith("/"));
+//        if (removedSlash)
+//            url = url.substring(0, url.length() - 1);
+//        final int index = url.lastIndexOf('/');
+//        if (index > 0) {
+//            final String enc = encode(url.substring(index + 1));
+//            url = url.substring(0, index + 1) + enc + ((removedSlash) ? "/" : "");
+//            if (action != null) {
+//                action = url;
+//            } else baseURL = url;
+//        } else throw new BuildMethodException("No '/' was found to encode last part of action");
+//        return this;
+//    }
+
     /**
-     * Calls URLEncoder to over the last part of the action or base URL.<br />
-     * Replaces everything after the last '/' character.
+     * Calls URLEncoder to over path and query part of the action or base URL.<br />
+     * <b>Note:</b> This method just sets the flag that the result action in the httpmethod should be encoded.
      *
      * @return builder instance
      * @throws BuildMethodException if action or base url is null or no '/' was found.
      */
-    public MethodBuilder encodeLastPartOfAction() throws BuildMethodException {
+    public MethodBuilder encodePathAndQuery() throws BuildMethodException {
         String url = (action != null) ? action : baseURL;
         if (url == null)
             throw new BuildMethodException("Cannot encode last part. Action or baseURL is null");
-        final boolean removedSlash = (url.endsWith("/"));
-        if (removedSlash)
-            url = url.substring(0, url.length() - 1);
-        final int index = url.lastIndexOf('/');
-        if (index > 0) {
-            final String enc = encode(url.substring(index + 1));
-            url = url.substring(0, index + 1) + enc + ((removedSlash) ? "/" : "");
-            if (action != null) {
-                action = url;
-            } else baseURL = url;
-        } else throw new BuildMethodException("No '/' was found to encode last part of action");
+
+        this.encodePathAndQuery = true;
         return this;
     }
 
@@ -556,7 +573,14 @@ public final class MethodBuilder {
     public HttpMethod toGetMethod() throws BuildMethodException {
         if (referer != null)
             client.setReferer(referer);
-        String uri = checkURI(generateURL());
+        String s = generateURL();
+        try {
+            s = (encodePathAndQuery) ? URIUtil.encodePathQuery(s, encoding) : s;
+        } catch (URIException e) {
+            throw new BuildMethodException("Cannot create URI");
+        }
+
+        String uri = checkURI(s);
         if (!parameters.isEmpty()) {
             final StringBuilder builder = new StringBuilder(uri);
             if (!uri.contains("?"))
@@ -573,7 +597,12 @@ public final class MethodBuilder {
             }
             uri = builder.toString();
         }
-        uri = checkURI(uri);
+        try {
+            s = (encodePathAndQuery) ? URIUtil.encodePathQuery(uri, encoding) : uri;
+        } catch (URIException e) {
+            throw new BuildMethodException("Cannot create URI");
+        }
+        uri = checkURI(s);
         return client.getGetMethod(uri);
     }
 
@@ -628,7 +657,7 @@ public final class MethodBuilder {
             if (action.toLowerCase().startsWith("http")) {
                 return action;
             } else {
-                if (baseURL != null && baseURL.toLowerCase().startsWith("http")) {
+                if (baseURL != null && baseURL.toLowerCase(Locale.ENGLISH).startsWith("http")) {
                     if (action != null) {
                         String ac = action;
                         if (action.startsWith("/"))
@@ -653,7 +682,7 @@ public final class MethodBuilder {
         } catch (URISyntaxException e) {
             logger.warning(String.format("Invalid URL - '%s' does not match URI specification", url));
             try {
-                return new URI(URIUtil.encodePathQuery(url)).toURL().toExternalForm();
+                return new URI(URIUtil.encodePathQuery(url, encoding)).toURL().toExternalForm();
             } catch (URISyntaxException e1) {
                 //ignore
             } catch (URIException e1) {
@@ -701,7 +730,15 @@ public final class MethodBuilder {
     public HttpMethod toPostMethod() throws BuildMethodException {
         if (referer != null)
             client.setReferer(referer);
-        final PostMethod postMethod = client.getPostMethod(generateURL());
+        String s = generateURL();
+        if (encodePathAndQuery)
+            try {
+                s = URIUtil.encodePathQuery(s, encoding);
+            } catch (URIException e) {
+                throw new BuildMethodException("Cannot create URI");
+            }
+        s = checkURI(s);
+        final PostMethod postMethod = client.getPostMethod(s);
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
             postMethod.addParameter(entry.getKey(), entry.getValue());
         }
@@ -808,8 +845,9 @@ public final class MethodBuilder {
      *
      * @param encoding Value to set for property 'encoding'.
      */
-    public void setEncoding(String encoding) {
+    public MethodBuilder setEncoding(String encoding) {
         this.encoding = encoding;
+        return this;
     }
 
     /**

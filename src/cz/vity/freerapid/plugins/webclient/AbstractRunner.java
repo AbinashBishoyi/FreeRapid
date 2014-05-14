@@ -67,6 +67,11 @@ public abstract class AbstractRunner implements PluginRunner {
     private String referer;
 
     /**
+     * default encoding for page
+     */
+    private String encoding = "UTF-8";
+
+    /**
      * Constructs a new AbstractRunner.
      */
     public AbstractRunner() {
@@ -241,7 +246,19 @@ public abstract class AbstractRunner implements PluginRunner {
      * @since 0.82
      */
     protected MethodBuilder getMethodBuilder() throws BuildMethodException {
-        return new MethodBuilder(client).setBaseURL(getBaseURL()).setReferer(referer);
+        return new MethodBuilder(client).setBaseURL(getBaseURL()).setReferer(referer).setEncoding(encoding);
+    }
+
+    /**
+     * Returns new instance of MethodBuilder, which is used to create GET and POST method.<br>
+     * The default content for parsing is taken from the last HTTP response. <br />If you need to use your own content for creating method, make your own instance of MethodBuilder.
+     *
+     * @param content specific content
+     * @return new instance of MethodBuilder
+     * @since 0.82
+     */
+    protected MethodBuilder getMethodBuilder(String content) throws BuildMethodException {
+        return new MethodBuilder(content, client).setBaseURL(getBaseURL()).setReferer(referer);
     }
 
     /**
@@ -279,6 +296,7 @@ public abstract class AbstractRunner implements PluginRunner {
      * @param encoding encoding name - like Windows-1250, ISO-8859-1
      */
     protected void setPageEncoding(String encoding) {
+        this.encoding = encoding;
         setClientParameter("pageCharset", encoding);
         client.getHTTPClient().getParams().setHttpElementCharset(encoding);
     }
