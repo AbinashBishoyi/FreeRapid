@@ -27,9 +27,9 @@ public abstract class CoreTask<T, V> extends Task<T, V> {
         return super.getResourceMap();
     }
 
-    public void postMessage(String s, Object args) {
-        message(s, args);
-    }
+//    public void postMessage(String s, Object args) {
+//        message(s, args);
+//    }
 
     @Override
     protected void failed(Throwable cause) {

@@ -4,13 +4,13 @@ import cz.vity.freerapid.core.application.GlobalEDTExceptionHandler;
 import cz.vity.freerapid.core.application.ListItemsConvertor;
 import cz.vity.freerapid.core.tasks.CheckForNewVersionTask;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
-import cz.vity.freerapid.utilities.os.Win7NativeUtils;
 import cz.vity.freerapid.swing.LookAndFeels;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.swing.TrayIconSupport;
 import cz.vity.freerapid.utilities.Browser;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
+import cz.vity.freerapid.utilities.os.Win7NativeUtils;
 import org.jdesktop.appframework.swingx.SingleXFrameApplication;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.ApplicationContext;
@@ -148,6 +148,12 @@ public class MainApp extends SingleXFrameApplication {
         getLogger().info("You are running FRD with JVM version = " + System.getProperty("java.version") + " - (min 1.6.0_07 is required)");
         if ("1.6.0_0".equals(jvm) || "1.6.0-beta".equals(System.getProperty("java.version"))) {
             exitWithErrorMessage("errorInvalidJRE");
+        }
+        if (!Utils.isWindows() && System.getProperty("javax.net.ssl.trustStore", "").startsWith("/etc/ssl/")) {
+            //https://bugs.launchpad.net/ubuntu/+source/openjdk-6/+bug/224455
+            getLogger().warning("Possible SSL problem with sites like Rapidshare. javax.net.ssl.trustStore points to dir requiring higher access rights. Trying workaround. ");
+            System.setProperty("javax.net.ssl.trustStore", System.getProperty("java.io.tmpdir", " "));
+            
         }
     }
 

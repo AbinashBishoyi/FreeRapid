@@ -5,6 +5,7 @@
 package org.jdesktop.appframework.swingx;
 
 import com.jgoodies.binding.list.ArrayListModel;
+import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.session.PropertySupport;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.table.TableColumnExt;
@@ -16,9 +17,7 @@ import java.awt.*;
 import java.beans.*;
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
 
 /**
@@ -37,26 +36,21 @@ public class XProperties {
      * <pre><code>
      * new XProperties.registerPersistenceDelegates();
      * </code></pre>
+     * @param context
      */
-    public void registerPersistenceDelegates() {
-        XMLEncoder e = new XMLEncoder(System.out);
-        e.setPersistenceDelegate(SortKeyState.class,
-                new DefaultPersistenceDelegate(new String[]{"sortOrder",
-                        "modelIndex"}));
-        e.setPersistenceDelegate(ColumnState.class,
-                new DefaultPersistenceDelegate(
-                        new String[]{"width", "preferredWidth", "modelIndex",
-                                "visible", "viewIndex"}));
-        e.setPersistenceDelegate(XProperties.XTableState.class,
-                new DefaultPersistenceDelegate(new String[]{"columnStates",
-                        "sortKeyState", "horizontalScrollEnabled"}));
-        e.setPersistenceDelegate(ArrayListModel.class, e.getPersistenceDelegate(List.class));
+    public void registerPersistenceDelegates(ApplicationContext context) {
+        final Map<Class<?>,PersistenceDelegate> persistentDelegates = context.getLocalStorage().getPersistentDelegates();
+        persistentDelegates.put(SortKeyState.class, new DefaultPersistenceDelegate(new String[]{"sortOrder", "modelIndex"}));
+        persistentDelegates.put(ColumnState.class, new DefaultPersistenceDelegate(new String[]{"width", "preferredWidth", "modelIndex", "visible", "viewIndex"}));
+        persistentDelegates.put(XProperties.XTableState.class, new DefaultPersistenceDelegate(new String[]{"sortOrder", "modelIndex"}));
+        persistentDelegates.put(XTableState.class, new DefaultPersistenceDelegate(new String[]{"columnStates", "sortKeyState", "horizontalScrollEnabled"}));
+        persistentDelegates.put(ArrayListModel.class, new XMLEncoder(System.out).getPersistenceDelegate(List.class));
 //PersistenceDelegate for URL class ~ This tells XMLEncoder how to deal with these objects
         final PrimitivePersistenceDelegate primitivePersistenceDelegate = new PrimitivePersistenceDelegate();
-        e.setPersistenceDelegate(URL.class, new PrimitivePersistenceDelegate());
-        e.setPersistenceDelegate(File.class, primitivePersistenceDelegate);
-    }
+        persistentDelegates.put(URL.class, new PrimitivePersistenceDelegate());
+        persistentDelegates.put(File.class, primitivePersistenceDelegate);
 
+    }          
 //    static class FilePersistenceDelegate extends PersistenceDelegate {
 //        protected Expression instantiate(Object oldInstance, Encoder out) {
 //            File f = (File) oldInstance;
@@ -66,9 +60,6 @@ public class XProperties {
 
 
     class PrimitivePersistenceDelegate extends PersistenceDelegate {
-//        protected boolean mutatesTo(Object oldInstance, Object newInstance) {
-//            return oldInstance.equals(newInstance);
-//        }
 
         protected Expression instantiate(Object oldInstance, Encoder out) {
             return new Expression(oldInstance, oldInstance.getClass(),

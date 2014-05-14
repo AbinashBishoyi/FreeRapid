@@ -289,9 +289,9 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
 //            statusbar.remove(indicator);
 //    }
 
-    private void setStatusBarVisible(boolean visible) {
-        getStatusBar().setVisible(visible);
-    }
+//    private void setStatusBarVisible(boolean visible) {
+//        getStatusBar().setVisible(visible);
+//    }
 
 
     public void propertyChange(PropertyChangeEvent evt) {

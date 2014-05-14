@@ -4,7 +4,6 @@
 */
 package org.jdesktop.application;
 
-import static org.jdesktop.application.Application.KEY_APPLICATION_VENDOR_ID;
 import org.jdesktop.application.utils.AppHelper;
 import org.jdesktop.application.utils.PlatformType;
 
@@ -17,6 +16,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static org.jdesktop.application.Application.KEY_APPLICATION_VENDOR_ID;
 
 /**
  * Access to per application, per user, local file storage.

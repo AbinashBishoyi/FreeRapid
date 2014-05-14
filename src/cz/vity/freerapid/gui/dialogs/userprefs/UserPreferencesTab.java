@@ -7,7 +7,6 @@ import com.jgoodies.binding.value.ValueHolder;
 import com.jgoodies.binding.value.ValueModel;
 import com.jgoodies.forms.layout.CellConstraints;
 import cz.vity.freerapid.swing.SwingUtils;
-import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.swing.binding.MyPreferencesAdapter;
 import org.jdesktop.application.ResourceMap;
 
@@ -16,7 +15,7 @@ import javax.swing.*;
 /**
  * @author ntoskrnl
  */
-public abstract class UserPreferencesTab extends JPanel {
+abstract class UserPreferencesTab extends JPanel {
 
     protected final UserPreferencesDialog dialog;
     protected final ResourceMap resourceMap;
@@ -25,7 +24,7 @@ public abstract class UserPreferencesTab extends JPanel {
     protected UserPreferencesTab(final UserPreferencesDialog dialog) {
         this.dialog = dialog;
         this.resourceMap = dialog.getResourceMap();
-        this.actionMap = Swinger.getActionMap(this.getClass(), this);
+        this.actionMap = dialog.getApp().getContext().getActionManager().getActionMap(this.getClass(), this, dialog.getResourceMap());
     }
 
     public abstract void build(final CellConstraints cc);

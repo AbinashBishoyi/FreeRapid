@@ -11,7 +11,10 @@ import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import javax.swing.text.JTextComponent;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -185,6 +188,16 @@ public class Swinger {
         }
         final Frame frame = getActiveFrame();
         bringToFront(frame, true);
+        if (inputObject instanceof JComponent) {
+            final Timer timer = new Timer(500, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Swinger.inputFocus((JComponent) inputObject);
+                }
+            });
+            timer.setRepeats(false);
+            timer.start();
+        }
         return JOptionPane.showOptionDialog(frame, inputObject, title, JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, objects, objects[0]);
     }
 

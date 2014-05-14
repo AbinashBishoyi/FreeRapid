@@ -240,8 +240,8 @@ public abstract class SingleXFrameApplication extends SingleFrameApplication {
      */
     protected void injectSessionProperties() {
         SessionStorage storage = getContext().getSessionStorage();
-        storage.registerPropertySupport(JXTable.class, new XTableProperty());
-        new XProperties().registerPersistenceDelegates();
+        storage.putProperty(JXTable.class, new XTableProperty());
+        new XProperties().registerPersistenceDelegates(getContext());
     }
 
 

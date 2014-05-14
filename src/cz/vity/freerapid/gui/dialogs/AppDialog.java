@@ -237,7 +237,7 @@ public abstract class AppDialog extends JDialog {
         return action;
     }
 
-    protected ActionMap getActionMap() {
+    public ActionMap getActionMap() {
         if (this.actionMap == null)
             return actionMap = Swinger.getActionMap(this.getClass(), this);
         else

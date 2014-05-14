@@ -6,7 +6,40 @@ MainApp.properties
 Added:
 fileIsBeingAlreadyDownloading=File is being already downloading.
 
+quietModeAction.Action.text=&Quiet Mode
+quietModeAction.Action.shortDescription=Toggle Quiet Mode
+quietModeAction.Action.accelerator=F8
+quietModeAction.Action.smallIcon=${iconsPath}loudspeaker.png
 
+quietModeActionTray=Quiet Mode
+
+labelQuietMode.icon=${iconsPath}loudspeaker.png
+labelQuietMode.toolTipText=Quiet Mode
+
+
+Changed:
+monitorClipboardAction.Action.accelerator=F7
+
+
+UserPreferencesDialog.properties
+===================================
+Added:
+alertsPanelQM.tab.title=Quiet Mode
+
+panelActivateQM.border=Quiet Mode activation
+radioButtonActivateQMAlways.text=A&lways active when enabled
+radioButtonActivateQMWhenWindowsFound.text=Active when enabled and any of the specified &windows are found
+labelSearchForWindows.text=Search for these window titles:
+btnAddQuietModeDetectionStringAction.Action.text=&Add
+btnRemoveQuietModeDetectionStringAction.Action.text=&Remove
+checkCaseSensitiveSearchQM.text=&Case sensitive search
+panelQMOptions.border=Quiet Mode options
+checkNoSoundsInQM.text=Disable &sounds in quiet mode
+checkNoCaptchaInQM.text=Do not bring captcha &popups to front in quiet mode
+checkNoConfirmDialogsInQM.text=Do not bring confirmation &dialogs to front in quiet mode
+checkPlaySoundForQM.text=&Play sound when user interaction is required
+labelNoteForQM.text=You can enable or disable quiet mode by clicking the icon in the status bar or from the Options menu.
+addNewWindowPopupTitle=Add new window title
 
 =======================================================================================================================
                                            Version 0.85->0.85u1
@@ -17,6 +50,8 @@ UserPreferencesDialog.properties
 Added:
 
 checkUseRecycleBin.text=Use system recycle &bin for deleting files
+
+
 
 MainApp.properties
 ===================================

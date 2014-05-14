@@ -344,7 +344,7 @@ final public class UserProp {
     public static final String QUIET_MODE_ACTIVATION_WHEN_WINDOWS_FOUND = "whenWindowsFound";
     public static final String QUIET_MODE_ACTIVATION_MODE_DEFAULT = QUIET_MODE_ACTIVATION_ALWAYS;
     public static final String QUIET_MODE_ACTIVATION_STRINGS = "quietModeActivationStrings";
-    public static final String QUIET_MODE_ACTIVATION_STRINGS_DEFAULT = "VLC media player|iTunes|Call of Duty";
+    public static final String QUIET_MODE_ACTIVATION_STRINGS_DEFAULT = "VLC media player|iTunes|Call of Duty|- SMPlayer";
     public static final String QUIET_MODE_CASE_SENSITIVE_SEARCH = "quietModeCaseSensitiveSearch";
     public static final boolean QUIET_MODE_CASE_SENSITIVE_SEARCH_DEFAULT = false;
     public static final String QUIET_MODE_NO_SOUNDS = "quietModeNoSounds";

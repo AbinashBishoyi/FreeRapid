@@ -142,7 +142,7 @@ public final class PlugUtils {
 
     /**
      * Method converts a string in this form:<br>
-     * <code>video_title", "\u0025D9\u002583\u0025D8\u0025B4\u0025D9\u002581+\u0025D8\u0025A7\u0025D9\u002584\u0025D8\u0025AD\u0025D9\u002582\u0025D9\u00258A\u0025D9\u002582\u0025D8\u0025A9+32++\u0025D8\u0025A7\u0025D9\u002584\u0025D8\u0025AA\u0025D9\u002588\u0025D8\u0025B6\u0025D9\u00258A\u0025D8\u0025AD</code>
+     * <code>"\u0025D9\u002583\u0025D8\u0025B4\u0025D9\u002581+\u0025D8\u0025A7\u0025D9\u002584\u0025D8\u0025AD\u0025D9\u002582\u0025D9\u00258A\u0025D9\u002582\u0025D8\u0025A9+32++\u0025D8\u0025A7\u0025D9\u002584\u0025D8\u0025AA\u0025D9\u002588\u0025D8\u0025B6\u0025D9\u00258A\u0025D8\u0025AD</code>
      * <br> into <code>Slečna si to opravdu užívá... _))))))))))))))))))</code><br />
      * @param str a string to convert
      * @return decoded string
