@@ -19,6 +19,7 @@ FreeRapid Downloader 0.86
   Changed : Internal - NirCmd is not used anymore for native Windows actions
   Changed : Internal - Updated BetterSwingApplicationFramework to v1.9.3 snapshot
   Changed : Internal - Updated jna, mina, and commons-codec libraries to their latest versions
+  Changed : Internal - speed up startup time
   Fixed : Java 7 compatibility issues
 
 1st January 2011 - FreeRapid Downloader 0.85 Update 1

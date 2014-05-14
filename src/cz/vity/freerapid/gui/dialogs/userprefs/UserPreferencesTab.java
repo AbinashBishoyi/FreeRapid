@@ -15,7 +15,7 @@ import javax.swing.*;
 /**
  * @author ntoskrnl
  */
-abstract class UserPreferencesTab extends JPanel {
+public abstract class UserPreferencesTab extends JPanel {
 
     protected final UserPreferencesDialog dialog;
     protected final ResourceMap resourceMap;
