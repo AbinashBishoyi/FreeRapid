@@ -1,11 +1,13 @@
 package cz.vity.freerapid.core;
 
+import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
+import jlibs.xml.sax.binding.BindingHandler;
+import org.xml.sax.InputSource;
 
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Properties;
 import java.util.logging.Logger;
 
 /**
@@ -16,8 +18,7 @@ public final class Lng {
 
     private static List<SupportedLanguage> supportedLanguages = null;
 
-    private static final String LANG_LIST_FILE = "languages.properties";
-    private static final String LANG_NONAME_ICON = "blank.gif";
+    private static final String LANG_LIST_FILE = "languages.xml";
     public static final String localeLanguageCode = Locale.getDefault().getLanguage();
     private static String selLanguageCode;
     private static String selCountryCode;
@@ -27,22 +28,15 @@ public final class Lng {
     private Lng() {
     }
 
+    @SuppressWarnings({"unchecked"})
     public static synchronized List<SupportedLanguage> getSupportedLanguages() {
         if (supportedLanguages == null) {
-            supportedLanguages = new LinkedList<SupportedLanguage>();
-            final Properties languages = Utils.loadProperties(LANG_LIST_FILE, true);
-            int counter = -1;
-            final String lngPostfix = "language", lngNamePostfix = ".name", lngMnemonicPostfix = ".mnemonic", lngIconPostfix = ".icon", countryPrefix = ".country", flagsPrefix = ".flags";
-            String lngCode, lngItem, country, flags;
-            Integer mnemonic;
-            SupportedLanguage language;
-            while ((lngCode = languages.getProperty(lngItem = (lngPostfix + ++counter))) != null) {
-                mnemonic = (int) languages.getProperty(lngItem + lngMnemonicPostfix, "\0").charAt(0);
-                country = languages.getProperty(lngItem + countryPrefix, "");
-                flags = languages.getProperty(lngItem + flagsPrefix, "");
-                language = new SupportedLanguage(lngCode, languages.getProperty(lngItem + lngNamePostfix, "?"), languages.getProperty(lngItem + lngIconPostfix, LANG_NONAME_ICON), mnemonic, country);
-                language.setFlags(flags);
-                supportedLanguages.add(language);
+            final BindingHandler handler = new BindingHandler(LanguageBinding.class);
+            try {
+                supportedLanguages = (List<SupportedLanguage>) handler.parse(new InputSource(Utils.class.getClassLoader().getResourceAsStream(LANG_LIST_FILE)));
+            } catch (Exception e) {
+                LogUtils.processException(logger, e);
+                supportedLanguages = Collections.emptyList();
             }
         }
         return supportedLanguages;

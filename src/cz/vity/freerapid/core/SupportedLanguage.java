@@ -13,19 +13,17 @@ public final class SupportedLanguage implements Comparable<SupportedLanguage> {
     private final String name;
     private final String icon;
     private final String country;
-    private final Integer mnemonic;
     private final Map<String, String> flags = new HashMap<String, String>(2);
 
-    public SupportedLanguage(final String languageCode, final String name, final String icon, final Integer mnemonic, final String country) {
+    public SupportedLanguage(final String languageCode, final String name, final String icon, final String country) {
         this.languageCode = languageCode;
         this.name = name;
-        this.icon = icon;
-        this.mnemonic = mnemonic;
+        this.icon = icon;        
         this.country = country;
     }
 
     public SupportedLanguage(final String selLanguageCode, final String country) {
-        this(selLanguageCode, "", null, 0, country);
+        this(selLanguageCode, "", null, country);
     }
 
     public final String getLanguageCode() {
@@ -65,9 +63,6 @@ public final class SupportedLanguage implements Comparable<SupportedLanguage> {
         return icon;
     }
 
-    public final Integer getMnemonic() {
-        return mnemonic;
-    }
 
     public String getCountry() {
         return country;

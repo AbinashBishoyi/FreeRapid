@@ -10,12 +10,13 @@ Legend :
 Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid Downloader
 Fixed - indicates a bug fix
-Internal - indicates an internal change - information for FRD developers
+Internal - indicates an internal change - information for FRD developers - nothing important for users
 
 
 FreeRapid Downloader 0.85 Update 1
   Changed: enhanced ESET antivirus detection, which is blocking FRD to start
   Changed: enhanced detection of not writable plugins directory
+  Changed: Internal - list of languages is represented in file languages.xml, languages.properties was removed
   Fixed: Internal - plugin API - small problem in MethodBuilder when parsing name attribute
   Fixed: Linux - cannot connect server problem - frd.sh was updated
 
