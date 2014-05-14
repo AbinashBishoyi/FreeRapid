@@ -13,6 +13,7 @@ import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
+import org.java.plugin.JpfException;
 import org.java.plugin.ObjectFactory;
 import org.java.plugin.Plugin;
 import org.java.plugin.PluginManager;
@@ -73,11 +74,11 @@ public class PluginsManager {
                 }
             }
         });
-        loadPlugins();
+        findAndInitNewPlugins();
     }
 
 
-    private void loadPlugins() {
+    private void findAndInitNewPlugins() {
 
         logger.info("Init Plugins Manager");
 //        final ExtendedProperties config = new ExtendedProperties(Utils.loadProperties("jpf.properties", true));
@@ -91,46 +92,22 @@ public class PluginsManager {
         //    pluginManager = objectFactory.createManager(objectFactory.createRegistry(), resolver);
         pluginManager = objectFactory.createManager(objectFactory.createRegistry(), resolver);
 
-        initPlugins();
+        initNewPlugins(searchExistingPlugins());
     }
 
-    public void initPlugins() {
-        final File pluginsDir = getPluginsDir();
-        logger.info("Plugins dir: " + pluginsDir.getAbsolutePath());
+    public void reRegisterPlugins(final File[] plugins) throws JpfException {
 
-        File[] plugins = pluginsDir.listFiles(new FilenameFilter() {
+//        if (pluginManager.isPluginActivated()) {
+//            pluginManager.getRegistry().unregister()
+//            pluginManager.publishPlugins(getPluginLocations(plugins));
+//        }
+    }
 
-            public boolean accept(File dir, String name) {
-                return name.toLowerCase().endsWith(".frp");
-            }
-
-        });
+    public void initNewPlugins(final File[] plugins) {
 
         try {
-            if (plugins == null)
-                throw new IllegalStateException("Plugins directory does not exists");
-            final int length = plugins.length;
-            final PluginManager.PluginLocation[] loc = new PluginManager.PluginLocation[length];
 
-            for (int i = 0; i < length; i++) {
-
-                try {
-                    final String path = fileToUrl(plugins[i]).toExternalForm();
-                    logger.info("Plugins path:" + path);
-                    final URL context = new URL("jar:" + path + "!/");
-                    final URL manifest = new URL("jar:" + path + "!/plugin.xml");
-
-                    //loc[i] = StandardPluginLocation.create(plugins[i]);
-                    loc[i] = new StandardPluginLocation(context, manifest);
-                } catch (MalformedURLException e) {
-                    LogUtils.processException(logger, e);
-                }
-
-                //loc[i] = StandardPluginLocation.create(plugins[i]);
-                //logger.info("Plugin location: " + loc);
-            }
-
-            pluginManager.publishPlugins(loc);
+            pluginManager.publishPlugins(getPluginLocations(plugins));
 
             final Set<PluginMetaData> datas = pluginMetaDataManager.getItems();
             final Map<String, PluginMetaData> datasId = new HashMap<String, PluginMetaData>(datas.size());
@@ -155,8 +132,48 @@ public class PluginsManager {
 
         } catch (Exception e) {
             LogUtils.processException(logger, e);
-            context.getApplication().exit();
+            if (this.supportedPlugins == null || supportedPlugins.isEmpty())
+                context.getApplication().exit();
         }
+    }
+
+    private PluginManager.PluginLocation[] getPluginLocations(File[] plugins) {
+        if (plugins == null)
+            throw new IllegalStateException("Plugins directory does not exists");
+        final int length = plugins.length;
+        final PluginManager.PluginLocation[] loc = new PluginManager.PluginLocation[length];
+
+        for (int i = 0; i < length; i++) {
+
+            try {
+                final String path = fileToUrl(plugins[i]).toExternalForm();
+                logger.info("Plugins path:" + path);
+                final URL context = new URL("jar:" + path + "!/");
+                final URL manifest = new URL("jar:" + path + "!/plugin.xml");
+
+                //loc[i] = StandardPluginLocation.create(plugins[i]);
+                loc[i] = new StandardPluginLocation(context, manifest);
+            } catch (MalformedURLException e) {
+                LogUtils.processException(logger, e);
+            }
+
+            //loc[i] = StandardPluginLocation.create(plugins[i]);
+            //logger.info("Plugin location: " + loc);
+        }
+        return loc;
+    }
+
+    private File[] searchExistingPlugins() {
+        final File pluginsDir = getPluginsDir();
+        logger.info("Plugins dir: " + pluginsDir.getAbsolutePath());
+
+        return pluginsDir.listFiles(new FilenameFilter() {
+
+            public boolean accept(File dir, String name) {
+                return name.toLowerCase().endsWith(".frp");
+            }
+
+        });
     }
 
     public File getPluginsDir() {

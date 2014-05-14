@@ -109,7 +109,8 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
         comboPath.setModel(new RecentsFilesComboModel(UserProp.LAST_USED_SAVED_PATH, true));
         //AutoCompleteDecorator.decorate(comboPath);
 
-        comboPath.setSelectedItem(FileUtils.getAbsolutFile(file.getSaveToDirectory()));
+        final File absolutFile = FileUtils.getAbsolutFile(file.getSaveToDirectory());
+        comboPath.setSelectedItem(absolutFile.toString());
         progressBar.setFont(progressBar.getFont().deriveFont(Font.BOLD, 16.0F));
         progressBar.setStringPainted(true);
 

@@ -40,6 +40,7 @@ public class CheckForNewVersionTask extends CoreTask<ConnectResult, Void> {
 //        ProxyHelper.initProxy();//init proxy settings
         this.setDescription("");
         this.setMessage("");
+
         setTaskToForeground();
     }
 

@@ -107,6 +107,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
                         progress.setIndeterminate(false);
                         progress.setValue((Integer) e.getNewValue());
                     } else if ("message".equals(e.getPropertyName())) {
+                        progress.setIndeterminate(true);
                         progress.setStringPainted(true);
                         final String s = (String) e.getNewValue();
                         progress.setString(s);
@@ -127,7 +128,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
             //  progress.setStringPainted(false);
             //indicator = new MemoryIndicator();
             //indicator.setPreferredSize(new Dimension(100, BAR_HEIGHT));
-            infoLabel.setPreferredSize(new Dimension(345, BAR_HEIGHT));
+            infoLabel.setPreferredSize(new Dimension(360, BAR_HEIGHT));
             clipboardMonitoring.setPreferredSize(new Dimension(17, BAR_HEIGHT));
             progress.setPreferredSize(new Dimension(progress.getPreferredSize().width + 35, BAR_HEIGHT));
             progress.setVisible(false);

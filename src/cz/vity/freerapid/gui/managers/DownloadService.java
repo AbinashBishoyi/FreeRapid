@@ -36,6 +36,7 @@ class DownloadService {
         for (ConnectionSettings settings : downloading) {
             if (settings.equals(connectionSettings)) {
                 ++foundCount;
+                //TODO Vity na pocet pluginu
                 if (foundCount >= service.getMaxDownloadsFromOneIP()) {
                     return false;
                 }

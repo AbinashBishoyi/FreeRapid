@@ -389,9 +389,11 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 
 
     protected void error(Throwable cause) {
-
-        setFileErrorMessage(cause);
         setServiceError(DownloadTaskError.GENERAL_ERROR);
+        if (downloadFile == null) { //update plugins
+            return;
+        }
+        setFileErrorMessage(cause);
         if (!(cause instanceof YouHaveToWaitException)) {
             if (AppPrefs.getProperty(UserProp.PLAY_SOUNDS_FAILED, true))
                 Sound.playSound(getContext().getResourceMap().getString("errorWav"));
@@ -400,7 +402,8 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     }
 
     protected void setFileErrorMessage(Throwable cause) {
-        downloadFile.setErrorMessage(Swinger.getMessageFromException(getResourceMap(), cause));
+        if (downloadFile != null)
+            downloadFile.setErrorMessage(Swinger.getMessageFromException(getResourceMap(), cause));
     }
 
     @Override
