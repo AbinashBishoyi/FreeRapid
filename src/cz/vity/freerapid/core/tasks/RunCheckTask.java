@@ -2,11 +2,12 @@ package cz.vity.freerapid.core.tasks;
 
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
-import static cz.vity.freerapid.plugins.webclient.DownloadState.QUEUED;
 import cz.vity.freerapid.plugins.webclient.FileState;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 import org.jdesktop.application.Application;
+
+import static cz.vity.freerapid.plugins.webclient.DownloadState.QUEUED;
 
 /**
  * @author Ladislav Vitasek

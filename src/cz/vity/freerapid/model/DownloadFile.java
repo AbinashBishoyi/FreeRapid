@@ -553,6 +553,11 @@ public class DownloadFile extends AbstractBean implements Identifiable, Property
     }
 
     public Map<String, Object> getProperties() {
+        assert properties != null;
+        if (properties == null) {
+            //sometimes ObjectDB strips it off , dunno why , which causes following NPE
+            properties = new Hashtable<String, Object>();
+        }
         return this.properties;
     }
 
