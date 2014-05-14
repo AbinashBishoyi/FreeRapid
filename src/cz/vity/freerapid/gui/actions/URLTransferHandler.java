@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  */
 public abstract class URLTransferHandler extends TransferHandler {
 
-    private final static Pattern REGEXP_URL = Pattern.compile("((http|https)(%3A%2F%2F|://))?([a-zA-Z0-9\\.\\-]+(:[a-zA-Z0-9\\.:&%\\$\\-]+)*@)?((25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])|([a-zA-Z0-9\\-]+\\.)*[a-zA-Z0-9\\-]+\\.[a-zA-Z]{2,4})(:[0-9]+)?(/[^/][\\p{Lu}\\p{Ll}0-9\\[\\]\\.:,\\?'\\\\/\\+&%\\$#=~_\\-@]*)*", Pattern.MULTILINE);
+    private final static Pattern REGEXP_URL = Pattern.compile("((http|https)://)?([a-zA-Z0-9\\.\\-]+(:[a-zA-Z0-9\\.:&%\\$\\-]+)*@)?((25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])|([a-zA-Z0-9\\-]+\\.)*[a-zA-Z0-9\\-]+\\.[a-zA-Z]{2,4})(:[0-9]+)?(/[^/][\\p{Lu}\\p{Ll}0-9\\[\\]\\.:,\\?'\\\\/\\+&%\\$#=~_\\-@]*)*", Pattern.MULTILINE);
 
     //private final static String URI_LIST_MIME_TYPE = "text/uri-list;class=java.lang.String";
     private final static String URL_LIST_MIME_TYPE = "application/x-java-url; class=java.net.URL";
@@ -63,7 +63,7 @@ public abstract class URLTransferHandler extends TransferHandler {
 //            }
 //
 //        }
-        data = data.replaceAll("(\\p{Punct}|[\\t\\n\\x0B\\f\\r])http", "  http");//2 spaces
+        data = data.replaceAll("(\\p{Punct}|[\\t\\n\\x0B\\f\\r])http(s)?(?!%3A%2F%2F)", "  http$2");//2 spaces
         final Matcher match = REGEXP_URL.matcher(data);
         int start = 0;
         final String http = "http://";
@@ -71,17 +71,21 @@ public abstract class URLTransferHandler extends TransferHandler {
         while (match.find(start)) {
             try {
                 String spec = match.group();
-                System.out.println("spec = " + spec);
                 if (!spec.startsWith(http))
                     spec = http + spec;
-                //support for links like http://egydental.com/vb/redirector.php?url=http%3A%2F%2Frapidshare.com%2Ffiles%2F142677856%2FImplant_volum_1.rar
 
                 URL url = new URL(updateApostrophs(spec));
                 boolean supported = pluginsManager.isSupported(url, clipboardMonitoring);
                 if (!supported) {
-                    int index = spec.indexOf("=http%3A%2F%2F");
+                    //support for links like http://egydental.com/vb/redirector.php?url=http%3A%2F%2Frapidshare.com%2Ffiles%2F142677856%2FImplant_volum_1.rar
+                    int index = spec.indexOf("http%3A%2F%2F");
                     if (index >= 0) {
-                        spec = Utils.urlDecode(spec.substring(index + 1));
+                        int endIndex = spec.indexOf('&', index);
+                        if (endIndex > 0) {
+                            spec = spec.substring(index, endIndex);
+                        } else
+                            spec = spec.substring(index);
+                        spec = Utils.urlDecode(spec);
                         url = new URL(updateApostrophs(spec));
                         supported = pluginsManager.isSupported(url, clipboardMonitoring);
                     }
