@@ -111,7 +111,8 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     }
 
     private CountingOutputStream getFileOutputStream(final File f, final long fileSize, final long startPosition) throws NotEnoughSpaceException, IOException {
-        final long freeSpace = f.getUsableSpace();
+        //from some reason, getUsableSpace method does not return correct value for a nonexisting file
+        final long freeSpace = f.getParentFile().getUsableSpace();
         logger.info("Free space on disk: " + freeSpace);
         final int minDiskSpace = AppPrefs.getProperty(UserProp.MIN_DISK_SPACE, UserProp.MIN_DISK_SPACE_DEFAULT);
         if (freeSpace < fileSize + (minDiskSpace * 1024 * 1024L) - (f.exists() ? f.length() : 0)) { //+ 30MB
