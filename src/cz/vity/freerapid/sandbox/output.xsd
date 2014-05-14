@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:simpleType name="TFirma">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="5"/>
+            <xsd:maxLength value="5"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:element name="Osoba" type="Popis-Osoba"/>
+    <xsd:complexType name="Popis-Osoba">
+        <xsd:sequence>
+            <xsd:element name="Pobyt" minOccurs="1" maxOccurs="2">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="Popis-Adresa">
+                            <xsd:attribute name="Druh" use="required">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                        <xsd:enumeration value="trvala"/>
+                                        <xsd:enumeration value="docasna"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:attribute>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="Jmeno" use="required">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:minLength value="1"/>
+                    <xsd:maxLength value="24"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="Prijmeni" use="required">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:minLength value="1"/>
+                    <xsd:maxLength value="30"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="RC" use="required">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:integer">
+                    <xsd:minInclusive value="10"/>
+                    <xsd:maxInclusive value="11"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="Pohlavi" use="required">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="muz"/>
+                    <xsd:enumeration value="zena"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="Telefon" use="optional">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:integer">
+                    <xsd:minInclusive value="6"/>
+                    <xsd:maxInclusive value="12"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="Firma" type="Popis-Firma"/>
+    <xsd:complexType name="Popis-Firma">
+        <xsd:sequence>
+            <xsd:element name="Adresa" minOccurs="1" maxOccurs="1" type="Popis-Adresa"/>
+
+        </xsd:sequence>
+        <xsd:attribute name="NazevFirmy" use="required">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string"/>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="IC" use="required"/>
+        <xsd:attribute name="Telefon" use="optional">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:integer">
+                    <xsd:minInclusive value="6"/>
+                    <xsd:maxInclusive value="12"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="Manzelstvi" type="Popis-Manzelstvi"/>
+    <xsd:complexType name="Popis-Manzelstvi">
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="Manzel" minOccurs="1" maxOccurs="1" type="Popis-Osoba"/>
+            <xsd:element name="Manzelka" minOccurs="1" maxOccurs="1" type="Popis-Osoba"/>
+            <xsd:element name="Dite" maxOccurs="unbounded" type="Popis-Osoba"/>
+        </xsd:choice>
+    </xsd:complexType>
+    <xsd:complexType name="Popis-Adresa">
+        <xsd:attribute name="Ulice" use="optional">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:minLength value="2"/>
+                    <xsd:maxLength value="30"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="CisloOrientacni" use="optional">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:integer">
+                    <xsd:minInclusive value="1"/>
+                    <xsd:maxInclusive value="99999"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="CisloPopisne" use="required">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:integer">
+                    <xsd:minInclusive value="1"/>
+                    <xsd:maxInclusive value="99999"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="Obec" use="required">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:minLength value="2"/>
+                    <xsd:maxLength value="30"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="Okres" use="required">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:minLength value="2"/>
+                    <xsd:maxLength value="30"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="PSC" use="optional">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:integer">
+                    <xsd:minInclusive value="10000"/>
+                    <xsd:maxInclusive value="99999"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="Rodina" type="Rodina-Rodina"/>
+    <xsd:complexType name="Rodina-Rodina">
+        <xsd:sequence>
+            <xsd:element name="Otec" minOccurs="0" maxOccurs="1" type="Popis-Osoba"/>
+            <xsd:element name="Matka" minOccurs="1" maxOccurs="1" type="Popis-Osoba"/>
+            <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                <xsd:element name="Syn" minOccurs="0" maxOccurs="12" type="Popis-Osoba"/>
+                <xsd:element name="Dcera" minOccurs="0" maxOccurs="12" type="Popis-Osoba"/>
+            </xsd:choice>
+            <xsd:element name="Pobyt" minOccurs="1" maxOccurs="1" type="Popis-Adresa"/>
+            <xsd:element name="Firma" minOccurs="1" maxOccurs="1" type="Popis-Firma"/>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>

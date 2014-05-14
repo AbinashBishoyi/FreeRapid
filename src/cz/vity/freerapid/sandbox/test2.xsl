@@ -38,6 +38,8 @@ we must add the namespaces generated above to dummy attributes -->
         </xsl:variable>
         <!-- ========================================== -->
         <xsd:schema>
+
+
             <!-- since we cannot do xsl:copy, we simply copy the namespace axis referring to the local-name only -->
             <xsl:copy-of select="$default-ns-node/*/namespace::*[local-name()='']"/>
             <xsl:copy-of select="$common-ns-node/*/namespace::*[local-name()='common']"/>

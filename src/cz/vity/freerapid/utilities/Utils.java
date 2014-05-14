@@ -323,10 +323,11 @@ public final class Utils {
 
     /**
      * Checks whether version is current JRE running
+     *
      * @param requiredVersion version for checking
      * @return true if current version is running
      */
     public static boolean isJVMVersion(String requiredVersion) {
-        return System.getProperty("java.version").equals(requiredVersion);  
+        return System.getProperty("java.version").equals(requiredVersion);
     }
 }

@@ -4,6 +4,7 @@ import cz.vity.freerapid.core.Consts;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
 
@@ -31,7 +32,7 @@ final class NirCmdUtils implements SystemCommander {
     }
 
     private boolean createQuickLaunchShortcut() {
-        return createShortCut("", "", "~$folder.appdata$\\Microsoft\\Internet Explorer\\Quick Launch", "");
+        return createShortCut(Consts.APPVERSION, "", "~$folder.appdata$\\Microsoft\\Internet Explorer\\Quick Launch", "");
     }
 
     private boolean startNewApplicationInstance() {
@@ -105,7 +106,7 @@ final class NirCmdUtils implements SystemCommander {
 
     private static boolean runCommand(final String cmd, final boolean waitForResult) {
         final String command = Utils.addFileSeparator(Utils.getAppPath()) + PATH;
-        return run(command + " " + cmd, waitForResult);
+        return run("\"" + new File(command).getPath() + "\" " + cmd, waitForResult);
     }
 
     private static boolean run(final String cmd, final boolean waitForResult) {
@@ -113,7 +114,7 @@ final class NirCmdUtils implements SystemCommander {
             return true;
         logger.info("System command:" + cmd);
         try {
-            final Process process = Runtime.getRuntime().exec(cmd);
+            final Process process = Runtime.getRuntime().exec(SysCommand.splitCommand(cmd));
             if (waitForResult) {
                 process.waitFor();
                 return process.exitValue() == 0;
