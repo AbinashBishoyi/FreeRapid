@@ -61,6 +61,8 @@ public class MainApp extends SingleXFrameApplication {
         try {
             this.appPrefs = new AppPrefs(this.getContext(), map, line.isResetOptions());
         } catch (IllegalStateException e) {
+            java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainApp.class.getName());
+            LogUtils.processException(logger, e);
             exitWithErrorMessage("Fatal Error - not all required libraries are available.\nYou probably didn't extract the zip file properly.\nYou have to have /lib directory with all libraries in the FreeRapid directory.\nExiting.");
         }
 
