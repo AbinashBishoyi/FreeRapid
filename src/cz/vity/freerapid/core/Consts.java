@@ -68,6 +68,7 @@ public class Consts {
     public static final String WEBURL_CHECKNEWVERSION = "http://wordrider.net/checkfrd.php";
 
     public static final String WEBURL = "http://wordrider.net/freerapid";
+    public static final String FORUM_URL = "http://wordrider.net/forum/index/9";
 
     public static final String DEMO_WEBURL = "http://wordrider.net/freerapid/demo";
     public static final String HELP_WEBURL = "http://wordrider.net/freerapid/help";

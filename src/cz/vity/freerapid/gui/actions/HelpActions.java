@@ -49,6 +49,11 @@ public class HelpActions {
     }
 
     @Action
+    public void visitForum() {
+        Browser.openBrowser(Consts.FORUM_URL);
+    }
+
+    @Action
     public void checkPluginStatuses() {
         Browser.openBrowser(AppPrefs.getProperty(UserProp.PLUGINSSTATUS_URL, Consts.PLUGINSSTATUS_URL));
     }

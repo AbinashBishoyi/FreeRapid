@@ -151,6 +151,7 @@ public class MenuManager {
                 MENU_SEPARATOR,
                 "showDemo",
                 "visitHomepage",
+                "visitForum",
                 "checkPluginStatuses",
                 MENU_SEPARATOR,
                 "checkForNewPlugins",
