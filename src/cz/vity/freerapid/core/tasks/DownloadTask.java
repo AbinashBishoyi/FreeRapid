@@ -123,7 +123,8 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         }
 
         final OutputStream fos;
-        if (AppPrefs.getProperty(UserProp.ANTI_FRAGMENT_FILES, UserProp.ANTI_FRAGMENT_FILES_DEFAULT)) {
+        if (AppPrefs.getProperty(UserProp.ANTI_FRAGMENT_FILES, UserProp.ANTI_FRAGMENT_FILES_DEFAULT)
+                && client.getHTTPClient().getParams().isParameterFalse(DownloadClientConsts.NO_CONTENT_LENGTH_AVAILABLE)) {
             synchronized (DownloadTask.class) {
                 if (isTerminated())
                     return null;
