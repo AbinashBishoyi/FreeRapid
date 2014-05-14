@@ -185,7 +185,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
     public void setFileName(String fileName) {
         String oldValue = this.fileName;
         this.fileName = fileName;
-        setFileType(FileTypeIconProvider.identifyFileType(this.fileName));
+        this.setFileType(FileTypeIconProvider.identifyFileType(this.fileName));
         firePropertyChange("fileName", oldValue, this.fileName);
     }
 

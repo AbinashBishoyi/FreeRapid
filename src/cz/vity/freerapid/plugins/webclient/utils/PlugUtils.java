@@ -263,9 +263,9 @@ public final class PlugUtils {
      * @since 0.82
      */
     public static void checkName(HttpFile file, String content, String fileNameBefore, String fileNameAfter) throws PluginImplementationException {
-        final String before = Pattern.quote(fileNameBefore);
-        final String after = Pattern.quote(fileNameAfter);
-        final Matcher matcher = matcher(before + "(.+?)" + after, content);
+        final String before = Pattern.quote(Utils.rtrim(fileNameBefore));
+        final String after = Pattern.quote(Utils.ltrim(fileNameAfter));
+        final Matcher matcher = matcher(before + "\\s*(.+?)\\s*" + after, content);
         if (matcher.find()) {
             String fileName = matcher.group(1).trim();
             logger.info("File name " + fileName);
@@ -285,15 +285,15 @@ public final class PlugUtils {
      *
      * @param file           file to apply found file name
      * @param content        content to search
-     * @param fileSizeBefore string before file name
-     * @param fileSizeAfter  string after file name
+     * @param fileSizeBefore string before file name  - without white space characters on the RIGHT side
+     * @param fileSizeAfter  string after file name  - without white space characters on the LEFT side
      * @throws PluginImplementationException file size string was not found
      * @since 0.82
      */
     public static void checkFileSize(HttpFile file, String content, String fileSizeBefore, String fileSizeAfter) throws PluginImplementationException {
-        final String before = Pattern.quote(fileSizeBefore);
-        final String after = Pattern.quote(fileSizeAfter);
-        final Matcher matcher = matcher(before + "(.+?)" + after, content);
+        final String before = Pattern.quote(Utils.rtrim(fileSizeBefore));
+        final String after = Pattern.quote(Utils.ltrim(fileSizeAfter));
+        final Matcher matcher = matcher(before + "\\s*(.+?)\\s*" + after, content);
         if (matcher.find()) {
             final String fileSize = matcher.group(1);
             logger.info("File size " + fileSize);
@@ -308,15 +308,15 @@ public final class PlugUtils {
      * Returns string between 2 other strings.
      *
      * @param content      searched content
-     * @param stringBefore string before searched string
-     * @param stringAfter  string after searched string
+     * @param stringBefore string before searched string  - without white space characters on the RIGHT side
+     * @param stringAfter  string after searched string  - without white space characters on the LEFT side
      * @return found string
      * @throws PluginImplementationException No string between stringBefore and stringAfter
      */
     public static String getStringBetween(String content, String stringBefore, String stringAfter) throws PluginImplementationException {
-        final String before = Pattern.quote(stringBefore);
-        final String after = Pattern.quote(stringAfter);
-        final Matcher matcher = matcher(before + "(.+?)" + after, content);
+        final String before = Pattern.quote(Utils.rtrim(stringBefore));
+        final String after = Pattern.quote(Utils.ltrim(stringAfter));
+        final Matcher matcher = matcher(before + "\\s*(.+?)\\s*" + after, content);
         if (matcher.find()) {
             return matcher.group(1);
         } else {

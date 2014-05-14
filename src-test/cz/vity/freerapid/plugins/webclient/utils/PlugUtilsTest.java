@@ -1,6 +1,8 @@
 package cz.vity.freerapid.plugins.webclient.utils;
 
+import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.exceptions.PluginImplementationException;
+import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
@@ -128,5 +130,34 @@ public class PlugUtilsTest {
     @Test
     public void testRecognize() {
         //
+    }
+
+    @Test
+    public void testCheckName() throws PluginImplementationException {
+        final String content = "strong>File name:   filename <";
+        final HttpFile httpFile = new DownloadFile() {
+            String fn;
+
+            @Override
+            public void setFileName(String fileName) {
+                fn = fileName;
+            }
+
+            @Override
+            public String getFileName() {
+                return fn;
+            }
+        };
+        PlugUtils.checkName(httpFile, content, "strong>File name:", "<");
+        assertEquals(httpFile.getFileName(), "filename");
+    }
+
+
+    @Test
+    public void testCheckSize() throws PluginImplementationException {
+        final String content = "strong>File size:   5900 KB <";
+        final HttpFile httpFile = new DownloadFile();
+        PlugUtils.checkFileSize(httpFile, content, "strong>File size:", "<");
+        assertEquals(httpFile.getFileSize(), 5900 * 1024);
     }
 }
