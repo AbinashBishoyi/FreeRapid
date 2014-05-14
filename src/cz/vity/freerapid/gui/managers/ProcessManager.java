@@ -124,7 +124,7 @@ public class ProcessManager extends Thread {
                 continue;
             final DownloadService downloadService = getDownloadService(service);
 
-            final List<ConnectionSettings> connectionSettingses = clientManager.getRotatedEnabledConnections();
+            final List<ConnectionSettings> connectionSettingses = clientManager.getRotatedEnabledConnections(file.getFileUrl().getHost());
             if (file.getFileState() == FileState.NOT_CHECKED && service.supportsRunCheck() && !connectionSettingses.isEmpty()) {
                 //pokud to podporuje plugin a  soucasne nebyl jeste ocheckovan a soucasne je k dispozici vubec nejake spojeni
                 queueDownload(file, connectionSettingses.get(0), downloadService, service, true);
@@ -167,7 +167,7 @@ public class ProcessManager extends Thread {
                 continue;
             final DownloadService downloadService = getDownloadService(service);
 
-            final List<ConnectionSettings> connectionSettingses = clientManager.getRotatedEnabledConnections();
+            final List<ConnectionSettings> connectionSettingses = clientManager.getRotatedEnabledConnections(file.getFileUrl().getHost());
             if (testFiles && file.getFileState() == FileState.NOT_CHECKED && service.supportsRunCheck() && !connectionSettingses.isEmpty()) {
                 //pokud to podporuje plugin a  soucasne nebyl jeste ocheckovan a soucasne je k dispozici vubec nejake spojeni
                 //a soucasne je to zapnuto v nastavenich

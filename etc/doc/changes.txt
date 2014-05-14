@@ -12,6 +12,16 @@ Changed - indicates a change in usage or behavior of FreeRapid Downloader
 Fixed - indicates a bug fix
 Internal - indicates an internal change - information for FRD developers - nothing important for users
 
+- FreeRapid Downloader 0.91
+  Fixed: Fix invalid main queue items' ordering in certain circumstances. [by Tong2Shot - thanks!]
+  Fixed: Recent files combobox uses [by Tong2Shot - thanks!]
+  Fixed : widen up main frame's status bar's info label a bit as it got truncated on some LaFs that use bold font.
+          [by Tong2Shot - thanks!]
+  Fixed : improved replaceInvalidCharsForFileSystem [by Ntoskrnl]
+  Changed : French translation, Bahasa Indonesia translation
+  Changed: rotate proxy per host [by Serge Baranov - thanks!]
+
+
 15th September 2013 - FreeRapid Downloader 0.9 Update 3
   Added : Icons for file types .apk (Android APK), .srt & .sub (subtitles), mp4 (video)
   Added : System icons are now shown for all file types, not just a few predefined types

@@ -15,10 +15,7 @@ import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.ProxySelector;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,7 +36,7 @@ public class ClientManager {
 
     private final Object connectionSettingsLock = new Object();
     private final ManagerDirector managerDirector;
-    private int rotate = 0;
+    private final Map<String, Integer> rotate = new HashMap<String, Integer>();
 
     public ClientManager(ManagerDirector managerDirector) {
         this.managerDirector = managerDirector;
@@ -219,7 +216,7 @@ public class ClientManager {
         }
     }
 
-    public List<ConnectionSettings> getRotatedEnabledConnections() {
+    public List<ConnectionSettings> getRotatedEnabledConnections(String id) {
         synchronized (connectionSettingsLock) {
             final List<ConnectionSettings> list = new ArrayList<ConnectionSettings>(availableConnections.size());
             for (ConnectionSettings settings : availableConnections) {
@@ -229,11 +226,24 @@ public class ClientManager {
             }
 
             if (list.size() > 1) {//rotate enabled proxies
-                Collections.rotate(list, rotate++);
+                Collections.rotate(list, getNextRotation(id));
             }
             if (useDefaultConnection() && defaultConnectionSettings.isEnabled())
                 list.add(0, defaultConnectionSettings);
             return list;
+        }
+    }
+
+    private int getNextRotation(String id) {
+        if (rotate.containsKey(id)) {
+            int r = rotate.get(id);
+            r++;
+            rotate.put(id, r);
+            logger.info("Rotate for '" + id + "' is: " + r);
+            return r;
+        } else {
+            rotate.put(id, 0);
+            return 0;
         }
     }
 
