@@ -39,7 +39,6 @@
     <property name="resources" value="cz/vity/freerapid/core/resources/"/>
     <property name="splash" value="${resources}icons/splash.jpg"/>
 
-    <property name="unicodeResources" value="**/?*_zh*.properties,**/?*_ja*.properties"/>
 
     <property name="ignoreProperties" value="log*,lookandfeels*"/>
 
@@ -105,15 +104,12 @@
                     <comment value="#"/>
                 </striplinecomments>
             </filterchain>
-            <fileset dir="${src.dir}" includes="**/?*.properties" excludes="${unicodeResources}"/>
+            <fileset dir="${src.dir}" includes="**/?*.properties"/>
             <mapper type="glob" from="*.properties" to="*.stripped">
             </mapper>
         </copy>
 
         <native2AsciiExt src="${classes.dir}" encoding="utf-8" includes="**/?*.stripped"
-                         dest="${classes.dir}" ext=".properties"/>
-
-        <native2AsciiExt src="${src.dir}" encoding="unicode" includes="${unicodeResources}"
                          dest="${classes.dir}" ext=".properties"/>
 
         <delete>
@@ -282,11 +278,8 @@
             <fileset dir="out/production/freerapid" includes="**/?*.properties" excludes="${ignoreProperties}"/>
         </delete>
 
-        <native2AsciiExt src="${src.dir}" encoding="utf-8" includes="${unicodeResources}"
-                         dest="out/production/freerapid" ext=".properties"/>
-
         <native2AsciiExt src="${src.dir}" encoding="utf-8" includes="**/?*.properties"
-                         excludes="${ignoreProperties},${unicodeResources}"
+                         excludes="${ignoreProperties}"
                          dest="out/production/freerapid" ext=".properties"/>
     </target>
 
@@ -359,7 +352,7 @@
     </target>
 
     <target name="reverseResources" description="Target reverse all properties into UTF-8 encoded files">
-        <native2AsciiExt src="${src.dir}" encoding="utf-8" includes="**/?*.properties" excludes="${unicodeResources}"
+        <native2AsciiExt src="${src.dir}" encoding="utf-8" includes="**/?*.properties" excludes="${ignoreProperties}"
                          dest="${src.dir}" ext=".properties2" reverse="true"/>
 
         <!--<native2AsciiExt src="${src.dir}" encoding="UTF-16LE" includes="${unicodeResources}"-->
