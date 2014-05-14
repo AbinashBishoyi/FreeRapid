@@ -7,7 +7,7 @@
     <lng name="English" code="EN" flags="UK=uk.gif|CA=ca.gif|AU=au.gif" icon="usa.gif"/>
     <lng name="Čeština" code="CS" icon="cz.gif"/>
     <lng name="Français" code="FR" icon="france.gif"/>
-    <lng name="Magyar nyelv" code="HU" icon="hungary.gif"/>
+    <lng name="Magyar" code="HU" icon="hungary.gif"/>
     <!--<lng name="Deutsch" code="DE" icon="germany.gif"/>-->
     <!--<lng name="Español" code="ES" icon="spain.gif"/>-->
     <lng name="Slovenčina" code="SK" icon="slovakia.gif"/>
