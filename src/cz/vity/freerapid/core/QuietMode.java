@@ -1,6 +1,7 @@
 package cz.vity.freerapid.core;
 
 import cz.vity.freerapid.utilities.LogUtils;
+import cz.vity.freerapid.utilities.Sound;
 import cz.vity.freerapid.utilities.os.SystemCommanderFactory;
 import org.jdesktop.application.ApplicationContext;
 
@@ -16,7 +17,7 @@ public final class QuietMode {
 
     private final static Logger logger = Logger.getLogger(QuietMode.class.getName());
     private final static QuietMode INSTANCE = new QuietMode();
-    private final static ApplicationContext APP_CONTEXT = MainApp.getAContext();
+    private final ApplicationContext context = MainApp.getAContext();
 
     public static QuietMode getInstance() {
         return INSTANCE;
@@ -48,7 +49,7 @@ public final class QuietMode {
     private boolean findWindow() {
         final List<String> windows;
         try {
-            windows = SystemCommanderFactory.getInstance().getSystemCommanderInstance(APP_CONTEXT).getTopLevelWindowsList();
+            windows = SystemCommanderFactory.getInstance().getSystemCommanderInstance(context).getTopLevelWindowsList();
         } catch (final IOException e) {
             LogUtils.processException(logger, e);
             return false;
@@ -85,8 +86,10 @@ public final class QuietMode {
         return AppPrefs.getProperty(UserProp.QUIET_MODE_NO_CONFIRM_DIALOGS, UserProp.QUIET_MODE_NO_CONFIRM_DIALOGS_DEFAULT);
     }
 
-    public boolean shouldPlaySoundOnActivation() {
-        return AppPrefs.getProperty(UserProp.QUIET_MODE_PLAY_SOUND_ON_ACTIVATE, UserProp.QUIET_MODE_PLAY_SOUND_ON_ACTIVATE_DEFAULT);
+    public void playUserInteractionRequiredSound() {
+        if (AppPrefs.getProperty(UserProp.QUIET_MODE_PLAY_SOUND_ON_ACTIVATE, UserProp.QUIET_MODE_PLAY_SOUND_ON_ACTIVATE_DEFAULT)) {
+            Sound.playSound(context.getResourceMap().getString("userInteractionRequiredWav"), false);
+        }
     }
 
     public List<String> getActivationStrings() {

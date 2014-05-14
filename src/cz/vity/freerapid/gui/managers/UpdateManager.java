@@ -139,6 +139,9 @@ public class UpdateManager {
 
         if (method == UserProp.PLUGIN_UPDATE_ASK_FOR_METHOD) {
             final boolean bringToFront = !QuietMode.getInstance().isActive() || !QuietMode.getInstance().isDialogsDisabled();
+            if (!bringToFront) {
+                QuietMode.getInstance().playUserInteractionRequiredSound();
+            }
             final int res = Swinger.showOptionDialog(context.getResourceMap(), bringToFront, JOptionPane.QUESTION_MESSAGE, "informationMessage", "updatesFoundMessage", new String[]{"updateWithDetails", "updateNowButton", "updateCancel"});
             if (res == 0)
                 method = UserProp.PLUGIN_UPDATE_METHOD_DIALOG;

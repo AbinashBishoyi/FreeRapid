@@ -104,6 +104,8 @@ public class StandardDialogSupportImpl implements DialogSupport {
     private void askCaptcha(Icon image) {
         if (!QuietMode.getInstance().isActive() || !QuietMode.getInstance().isCaptchaDisabled()) {
             Swinger.bringToFront(((SingleFrameApplication) context.getApplication()).getMainFrame(), true);
+        } else {
+            QuietMode.getInstance().playUserInteractionRequiredSound();
         }
         if (AppPrefs.getProperty(UserProp.BLIND_MODE, UserProp.BLIND_MODE_DEFAULT)) {
             Sound.playSound(context.getResourceMap().getString("captchaWav"));
@@ -161,6 +163,8 @@ public class StandardDialogSupportImpl implements DialogSupport {
     private void askPassword(final String name) {
         if (!QuietMode.getInstance().isActive() || !QuietMode.getInstance().isDialogsDisabled()) {
             Swinger.bringToFront(((SingleFrameApplication) context.getApplication()).getMainFrame(), true);
+        } else {
+            QuietMode.getInstance().playUserInteractionRequiredSound();
         }
         /*
         if (AppPrefs.getProperty(UserProp.BLIND_MODE, UserProp.BLIND_MODE_DEFAULT)) {

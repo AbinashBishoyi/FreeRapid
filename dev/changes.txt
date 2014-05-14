@@ -16,6 +16,8 @@ quietModeActionTray=Quiet Mode
 labelQuietMode.icon=${iconsPath}loudspeaker.png
 labelQuietMode.toolTipText=Quiet Mode
 
+userInteractionRequiredWav=user_interaction.wav
+
 
 Changed:
 monitorClipboardAction.Action.accelerator=F7
