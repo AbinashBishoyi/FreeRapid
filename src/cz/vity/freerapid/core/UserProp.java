@@ -323,8 +323,10 @@ final public class UserProp {
     public static final String SEARCH_FIELD_WIDTH = "searchFieldWidth";
     public static final int SEARCH_FIELD_WIDTH_DEFAULT = 165;
 
-
     public static final String SHOW_PAYPAL_REQUEST = "showPaypalRequest";
+
+    public static final String USE_RECYCLE_BIN = "useRecycleBin";
+    public static final boolean USE_RECYCLE_BIN_DEFAULT = false;
 }
 
 

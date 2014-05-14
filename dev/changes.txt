@@ -1,3 +1,7 @@
+Version 0.85->0.85u1
+checkUseRecycleBin.text=Use system recycle &bin for deleting files
+
+
 Version 0.83->0.85
 NEW FILES:
 ExportLinksTask.properties

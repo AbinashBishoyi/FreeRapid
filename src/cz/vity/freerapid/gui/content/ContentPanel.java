@@ -20,10 +20,7 @@ import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
 import cz.vity.freerapid.swing.SwingUtils;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.swing.components.FindTableAction;
-import cz.vity.freerapid.utilities.Browser;
-import cz.vity.freerapid.utilities.LogUtils;
-import cz.vity.freerapid.utilities.OSDesktop;
-import cz.vity.freerapid.utilities.Utils;
+import cz.vity.freerapid.utilities.*;
 import org.jdesktop.application.ApplicationActionMap;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.ResourceMap;
@@ -49,6 +46,7 @@ import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -207,11 +205,21 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         if (result == Swinger.RESULT_OK) {
             for (DownloadFile file : files) {
                 File outputFile = file.getOutputFile();
-                if (outputFile != null)
-                    outputFile.delete();
+                if (outputFile != null) {
+                    try {
+                        FileUtils.deleteFileWithRecycleBin(outputFile);
+                    } catch (IOException e) {
+                        LogUtils.processException(logger, e);
+                    }
+                }
                 outputFile = file.getStoreFile();
-                if (outputFile != null)
-                    outputFile.delete();
+                if (outputFile != null) {
+                    try {
+                        FileUtils.deleteFileWithRecycleBin(outputFile);
+                    } catch (IOException e) {
+                        LogUtils.processException(logger, e);
+                    }
+                }
             }
             removeSelected(files, indexes, showedDialog);
             if (indexes.length > 0) {

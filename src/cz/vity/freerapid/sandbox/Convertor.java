@@ -14,9 +14,9 @@ import java.util.List;
 public class Convertor {
     public static void main(String[] args) {
         final List<File> list = new LinkedList<File>();
-        findFiles(new File("c:\\Temp\\si"), list);
+        findFiles(new File("c:\\develope\\freerapid\\src\\cz\\vity\\freerapid\\gui\\dialogs\\resources"), list);
         for (File file : list) {
-            final String f = Utils.loadFile(file, "Windows-1250");
+            final String f = Utils.loadFile(file, "Windows-1252");
             file.delete();
             writeFile(file, f);
         }
@@ -37,7 +37,7 @@ public class Convertor {
         for (File file : files) {
             if (file.isDirectory()) {
                 findFiles(file, list);
-            } else if (file.getAbsolutePath().endsWith("_si.properties")) list.add(file);
+            } else if (file.getAbsolutePath().endsWith("_PT.properties")) list.add(file);
         }
     }
 }

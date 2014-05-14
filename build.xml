@@ -108,6 +108,7 @@
 
         <jar jarfile="${build.dir}/${mainjar.file}" compress="false">
             <manifest>
+                <!--suppress AntResolveInspection -->
                 <attribute name="Build-Date" value="${TODAY}"/>
                 <attribute name="Build" value="${build.number}"/>
                 <attribute name="Class-Path" value="${lib.dir}/languages.jar ${classpath}"/>
@@ -130,6 +131,7 @@
         </copy>
         <jar jarfile="${build.dir}/${lib.dir}/languages.jar" compress="true">
             <manifest>
+                <!--suppress AntResolveInspection -->
                 <attribute name="Build-Date" value="${TODAY}"/>
             </manifest>
             <fileset dir="${classes.dir}" includes="**/**/?*.properties"/>
@@ -141,6 +143,7 @@
 
         <jar jarfile="${dist.dir}/plugin-api.jar" compress="true">
             <manifest>
+                <!--suppress AntResolveInspection -->
                 <attribute name="Build-Date" value="${TODAY}"/>
             </manifest>
             <fileset dir="${classes.dir}" includes="**/plugins/**"/>

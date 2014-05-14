@@ -14,12 +14,12 @@ import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.container.FileInfo;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
-import static cz.vity.freerapid.plugins.webclient.DownloadState.*;
 import cz.vity.freerapid.plugins.webclient.FileState;
-import static cz.vity.freerapid.plugins.webclient.FileState.NOT_CHECKED;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
 import cz.vity.freerapid.plugins.webclient.interfaces.MaintainQueueSupport;
 import cz.vity.freerapid.swing.Swinger;
+import cz.vity.freerapid.utilities.FileUtils;
+import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
 import org.apache.commons.httpclient.URIException;
 import org.jdesktop.application.AbstractBean;
@@ -34,6 +34,7 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -41,6 +42,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 import java.util.logging.Logger;
+
+import static cz.vity.freerapid.plugins.webclient.DownloadState.*;
+import static cz.vity.freerapid.plugins.webclient.FileState.NOT_CHECKED;
 
 /**
  * @author Vity
@@ -340,13 +344,21 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                     if (delete && file.getDownloaded() > 0) {
                         File outputFile = file.getStoreFile();
                         if (outputFile != null && outputFile.exists()) {
-                            if (!outputFile.delete())
+                            try {
+                                FileUtils.deleteFileWithRecycleBin(outputFile);
+                            } catch (IOException e) {
                                 logger.warning("Deleting store file " + outputFile + " failed");
+                                LogUtils.processException(logger, e);
+                            }
                         }
                         outputFile = file.getOutputFile();
                         if (outputFile != null && outputFile.exists()) {
-                            if (!outputFile.delete())
-                                logger.warning("Deleting output file " + outputFile + " failed");
+                            try {
+                                FileUtils.deleteFileWithRecycleBin(outputFile);
+                            } catch (IOException e) {
+                                logger.warning("Deleting store file " + outputFile + " failed");
+                                LogUtils.processException(logger, e);
+                            }
                         }
                     }
                     file.setDownloaded(0);

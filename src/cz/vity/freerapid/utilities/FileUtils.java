@@ -1,9 +1,12 @@
 package cz.vity.freerapid.utilities;
 
+import cz.vity.freerapid.core.AppPrefs;
+import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.DownloadTask;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -274,4 +277,41 @@ public class FileUtils {
         // Close the input stream and return bytes
     }
 
+
+    public static void deleteFileWithRecycleBin(File fileToDelete) throws IOException {
+        if (AppPrefs.getProperty(UserProp.USE_RECYCLE_BIN, UserProp.USE_RECYCLE_BIN_DEFAULT)) {
+            final com.sun.jna.platform.FileUtils instance = com.sun.jna.platform.FileUtils.getInstance();
+            final boolean hasTrash = instance.hasTrash();
+            if (hasTrash) {
+                if (!fileToDelete.exists()) {
+                    return;
+                }
+                if (logger.isLoggable(Level.INFO)) {
+                    logger.info("Moving file to trash ");
+                }
+                try {
+                    instance.moveToTrash(new File[]{fileToDelete});
+                } catch (IOException e) {
+                    deleteFile(fileToDelete);
+                    throw e;
+                } catch (Exception e) {
+                    deleteFile(fileToDelete);
+                    throw new IOException(e);
+                } 
+            }
+        }
+
+    }
+
+    public static void deleteFile(File... fileToDelete) {
+        for (File file : fileToDelete) {
+            if (!file.exists()) {
+                continue;
+            }
+            final boolean delete = file.delete();
+            if (!delete) {
+                logger.info("Failed to delete file " + file);
+            }
+        }
+    }
 }

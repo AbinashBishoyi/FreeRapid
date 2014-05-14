@@ -21,10 +21,7 @@ import cz.vity.freerapid.swing.SwingUtils;
 import cz.vity.freerapid.swing.SwingXUtils;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.swing.binding.MyPreferencesAdapter;
-import cz.vity.freerapid.utilities.Browser;
-import cz.vity.freerapid.utilities.LogUtils;
-import cz.vity.freerapid.utilities.OSDesktop;
-import cz.vity.freerapid.utilities.Utils;
+import cz.vity.freerapid.utilities.*;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.swinghelper.buttonpanel.JXButtonPanel;
@@ -47,6 +44,8 @@ import java.awt.datatransfer.Transferable;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -532,7 +531,14 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         }
         if (result == Swinger.RESULT_OK) {
             for (FileHistoryItem file : files) {
-                file.getOutputFile().delete();
+                final File outputFile = file.getOutputFile();
+                if (outputFile != null) {
+                    try {
+                        FileUtils.deleteFileWithRecycleBin(outputFile);
+                    } catch (IOException e) {
+                        LogUtils.processException(logger, e);
+                    }
+                }
             }
             this.removeSelected(indexes, showedDialog);
             selectFirstIfNoSelection();
