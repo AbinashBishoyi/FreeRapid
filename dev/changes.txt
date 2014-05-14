@@ -1,6 +1,32 @@
 =======================================================================================================================
                                            Version 0.9u1->0.9u2
 =======================================================================================================================
+MainApp.properties
+===================================
+Added:
+mainTableColumns_11=Date
+visitForum.Action.text=FreeRapid Downloader Forum
+
+
+DownloadHistoryDialog.properties
+===================================
+Added:
+columns_5=Connection
+columns_6=Avg. speed
+
+
+UpdateDialog.properties
+===================================
+Added:
+iconsPath=icons/
+selectAll.Action.text=Select &All
+selectAll.Action.smallIcon=${iconsPath}checks.png
+deSelectAll.Action.text=Select &None
+deSelectAll.Action.smallIcon=${iconsPath}uncheck.png
+popmenuButton.text=
+popmenuButton.icon=${iconsPath}right.gif
+
+
 UserPreferencesDialog.properties
 ===================================
 Added:
