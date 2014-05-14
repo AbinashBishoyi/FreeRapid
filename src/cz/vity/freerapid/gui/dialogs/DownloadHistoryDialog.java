@@ -78,7 +78,6 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         this.director = director;
         this.manager = director.getFileHistoryManager();
         this.setName("DownloadHistoryDialog");
-        this.setTitle(getResourceMap().getString("DownloadHistoryDialog.title"));
         this.exampleSearchString = getResourceMap().getString("exampleSearchString");
         try {
             initComponents();

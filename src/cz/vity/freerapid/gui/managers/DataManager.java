@@ -54,6 +54,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
     private static final String DATA_CHANGED_PROPERTY = "dataChanged";
 
     private final ArrayListModel<DownloadFile> downloadFiles = new ArrayListModel<DownloadFile>();
+    private final Set<DownloadFile> changedFiles = Collections.synchronizedSet(new HashSet<DownloadFile>());
 
     private ProcessManager processManager;
     private final ManagerDirector director;
@@ -91,7 +92,8 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
 
             public void willExit(EventObject event) {
                 exitDownloading();
-                saveListToBeanImmediately();
+                updateChangedFilesInDatabase();//commit changed files
+                fileListMaintainer.doShutDown();//run all tasks, stop accepting new ones
             }
         });
         updateCompleted();
@@ -134,7 +136,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
     }
 
     private void saveListToBeanImmediately() {
-        fileListMaintainer.saveToFile(downloadFiles);
+        fileListMaintainer.saveToDatabase(downloadFiles);
     }
 
     public void initProcessManagerInstance() {
@@ -156,7 +158,8 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
             delayedReadValueModel.addValueChangeListener(new PropertyChangeListener() {
 
                 public void propertyChange(PropertyChangeEvent evt) {
-                    fileListMaintainer.saveListToFileOnBackground(downloadFiles);
+                    updateChangedFilesInDatabase();
+
                 }
             });
         }
@@ -170,6 +173,15 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                 }
             }
         });
+    }
+
+    private void updateChangedFilesInDatabase() {
+        //we are on EDT thread, we don't need to block changedFiles
+        if (!changedFiles.isEmpty()) {
+            final List<DownloadFile> updateFiles = new ArrayList<DownloadFile>(changedFiles);
+            changedFiles.clear();
+            fileListMaintainer.saveToDatabaseOnBackground(updateFiles);
+        }
     }
 
 
@@ -199,11 +211,13 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                 file.setErrorMessage(Swinger.getMessageFromException(Swinger.getResourceMap(), e));
             }
             file.addPropertyChangeListener(this);
-            if (startFromTop)
-                this.downloadFiles.add(file);
-            else
-                this.downloadFiles.add(0, file);
         }
+        if (startFromTop) {
+            this.downloadFiles.addAll(files);
+        } else {
+            this.downloadFiles.addAll(0, files); //reverse collection first?
+        }
+        reOrderListProperty();
     }
 
 
@@ -291,28 +305,19 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                 // logger.info("Firing contents changed");
                 final DownloadFile downloadFile = (DownloadFile) evt.getSource();
                 downloadFiles.fireContentsChanged(getIndex(downloadFile));
+                if (downloadFile.getState() != DELETED) {
+                    //deleted file cannot be re-added
+                    changedFiles.add(downloadFile);//mark as dirty - on EDT thread
+                }
                 if ("state".equals(s) || (!optimizeSavingList && "downloaded".equals(s))) {
                     firePropertyChange(s, evt.getOldValue(), evt.getNewValue());
                     fireDataChanged();
                 }
-                if ("state".equals(s)) {
+                if ("orderList".equals(s)) {
+                    fireDataChanged();
+                } else if ("state".equals(s)) {
                     fireFileStateChanged(downloadFile, (DownloadState) evt.getOldValue(), (DownloadState) evt.getNewValue());
                 }
-//                else if ("averageSpeed".equals(s)) {
-//                    final float oldValue = averageSpeed;
-//                    averageSpeed -= (Float) evt.getOldValue();
-//                    averageSpeed += (Float) evt.getNewValue();
-//                    firePropertyChange(s, oldValue, averageSpeed);
-//                } else if ("speed".equals(s)) {
-//                    final int oldValue = speed;
-//                    speed -= (Long) evt.getOldValue();
-//                    speed += (Long) evt.getNewValue();
-//                    firePropertyChange(s, oldValue, speed);
-//                }
-//                    } else if ("speed".equals(s)) {
-//                        firePropertyChange(s, -1, getCurrentAllSpeed());
-//                        firePropertyChange("averageSpeed", -1, getAverageSpeed());
-//                    }
             }
         });
 
@@ -484,19 +489,32 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
     }
 
     public void intervalAdded(ListDataEvent e) {
+        //to do make on the thread
+        this.fileListMaintainer.saveToDatabaseOnBackground(getItems(e));
         contentsChanged(e);
         fireDataChanged();
     }
 
     public void intervalRemoved(ListDataEvent e) {
+        //to do make on the thread
         contentsChanged(e);
-
         fireDataChanged();
     }
 
     public void contentsChanged(ListDataEvent e) {
         updateCompleted();
     }
+
+    private Collection<DownloadFile> getItems(ListDataEvent e) {
+        final int start = e.getIndex0();
+        final int end = e.getIndex1();
+        Collection<DownloadFile> result = new ArrayList<DownloadFile>(end - start + 1);
+        for (int i = start; i <= end; ++i) {
+            result.add(downloadFiles.get(i));
+        }
+        return result;
+    }
+
 
     private void updateCompleted() {
 //        logger.info("updateCompleted");
@@ -528,15 +546,6 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         return completed;
     }
 
-    /**
-     * Getter for property 'notFound'.
-     *
-     * @return Value for property 'notFound'.
-     */
-    public int getNotFound() {
-        return notFound;
-    }
-
     public void setCompleted(int completed) {
         int oldValue = this.completed;
         this.completed = completed;
@@ -552,11 +561,18 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                 if (file.getState() == COMPLETED)
                     toRemoveList.add(file);
             }
-            downloadFiles.removeAll(toRemoveList);
+            removeFromList(toRemoveList);
             for (DownloadFile file : toRemoveList) {
                 file.setState(DELETED);
             }
         }
+    }
+
+    private void removeFromList(List<DownloadFile> toRemoveList) {
+        downloadFiles.removeAll(toRemoveList);
+        //we have to remove existing changed, otherwise it would be added in the future again
+        changedFiles.removeAll(toRemoveList);
+        this.fileListMaintainer.removeFromDatabaseOnBackground(toRemoveList);
     }
 
     public void removeCompletedAndDeleted() {
@@ -567,7 +583,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                     toRemoveList.add(file);
                 }
             }
-            downloadFiles.removeAll(toRemoveList);
+            removeFromList(toRemoveList);
             for (DownloadFile file : toRemoveList) {
                 file.setState(DELETED);
             }
@@ -599,20 +615,6 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         }
     }
 
-//    public int getCurrentAllSpeed() {
-//
-//        int speed = 0;
-//        averageSpeed = 0;
-//        for (DownloadFile file : downloadFiles) {
-//            if (file.getState() == DownloadState.DOWNLOADING) {
-//                speed += file.getSpeed();
-//                averageSpeed += file.getAverageSpeed();
-//            }
-//        }
-//        return speed;
-//    }
-
-
     public void moveTop(int[] indexes) {
         synchronized (lock) {
             if (indexes.length > 1)
@@ -624,6 +626,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                     downloadFiles.add(i, f);
                 }
             }
+            reOrderListProperty();
         }
     }
 
@@ -637,9 +640,11 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                 int index = indexes[i];
                 int newIndex = top - (length - 1 - i);
                 if (index != newIndex) {
-                    downloadFiles.add(newIndex, downloadFiles.remove(index));
+                    final DownloadFile downloadFile = downloadFiles.remove(index);
+                    downloadFiles.add(newIndex, downloadFile);
                 }
             }
+            reOrderListProperty();
         }
     }
 
@@ -651,10 +656,21 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                 int index = indexes[i];
                 int newIndex = Math.max(Math.max(0, index - 1), i);
                 if (index != newIndex) {
-                    downloadFiles.add(newIndex, downloadFiles.remove(index));
+                    //cannot use Collections.swap
+                    final DownloadFile downloadFile = downloadFiles.remove(index);
+                    downloadFiles.add(newIndex, downloadFile);
                 }
                 indexes[i] = newIndex;
             }
+            reOrderListProperty();
+        }
+    }
+
+    private void reOrderListProperty() {
+        //should be called from synchronized block
+        int counter = 0;
+        for (DownloadFile file : downloadFiles) {
+            file.setListOrder(counter++);
         }
     }
 
@@ -669,9 +685,11 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                 int newIndex = Math.min(Math.min(top, index + 1), top - (length - 1 - i));
                 indexes[i] = newIndex;
                 if (index != newIndex) {
-                    downloadFiles.add(newIndex, downloadFiles.remove(index));
+                    final DownloadFile downloadFile = downloadFiles.remove(index);
+                    downloadFiles.add(newIndex, downloadFile);
                 }
             }
+            reOrderListProperty();
         }
     }
 
@@ -740,7 +758,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                 if (file.getFileState() == FileState.FILE_NOT_FOUND)
                     toRemoveList.add(file);
             }
-            downloadFiles.removeAll(toRemoveList);
+            removeFromList(toRemoveList);
             for (DownloadFile file : toRemoveList) {
                 file.setState(DELETED);
             }

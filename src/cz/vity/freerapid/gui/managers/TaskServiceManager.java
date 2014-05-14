@@ -16,6 +16,7 @@ public class TaskServiceManager {
     public static final String DOWNLOAD_SERVICE = "downloadService";
     public static final String MOVE_FILE_SERVICE = "moveFile";
     public static final String WORK_WITH_FILE_SERVICE = "workWithFile";
+    public static final String DATABASE_SERVICE = "databaseService";
 
     private ApplicationContext context;
 
@@ -32,6 +33,8 @@ public class TaskServiceManager {
                 return initMoveFileTaskService();
             } else if (WORK_WITH_FILE_SERVICE.equals(name)) {
                 return initWorkWithFileTaskService();
+            } else if (DATABASE_SERVICE.equals(name)) {
+                return initWorkWithDatabaseTaskService();
             }
         }
         return service;
@@ -42,11 +45,15 @@ public class TaskServiceManager {
     }
 
     private TaskService initMoveFileTaskService() {
-        return initTaskService(1, 1, 5L, MOVE_FILE_SERVICE, new LinkedBlockingQueue<Runnable>());
+        return initTaskService(1, 1, 60L, MOVE_FILE_SERVICE, new LinkedBlockingQueue<Runnable>());
     }
 
     private TaskService initWorkWithFileTaskService() {
-        return initTaskService(1, 1, 5L, WORK_WITH_FILE_SERVICE, new LinkedBlockingQueue<Runnable>());
+        return initTaskService(1, 1, 60L, WORK_WITH_FILE_SERVICE, new LinkedBlockingQueue<Runnable>());
+    }
+
+    private TaskService initWorkWithDatabaseTaskService() {
+        return initTaskService(1, 1, 60L, DATABASE_SERVICE, new LinkedBlockingQueue<Runnable>());
     }
 
     private TaskService initTaskService(int corePoolSize, int maximumPoolSize, long keepAliveTime, String name, BlockingQueue<Runnable> runnables) {

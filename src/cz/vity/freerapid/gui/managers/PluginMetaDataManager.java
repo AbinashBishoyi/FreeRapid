@@ -1,17 +1,18 @@
 package cz.vity.freerapid.gui.managers;
 
-import cz.vity.freerapid.core.tasks.CoreTask;
 import cz.vity.freerapid.model.PluginMetaData;
 import cz.vity.freerapid.utilities.FileUtils;
 import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.LocalStorage;
-import org.jdesktop.application.TaskService;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -35,15 +36,15 @@ public class PluginMetaDataManager {
 
     }
 
-    public void saveToFile(final Set<PluginMetaData> files) {
-        final TaskService service = director.getTaskServiceManager().getTaskService(TaskServiceManager.WORK_WITH_FILE_SERVICE);
-        service.execute(new CoreTask<Void, Void>(context.getApplication()) {
-            @Override
-            protected Void doInBackground() throws Exception {
+    public void saveToDatabase(final Set<PluginMetaData> files) {
+        Runnable runnable = new Runnable() {
+            public void run() {
+                logger.info("Saving metadata info into database - start");
                 director.getDatabaseManager().saveCollection(files);
-                return null;
+                logger.info("Saving metadata info into database - end");
             }
-        });
+        };
+        director.getDatabaseManager().runOnTask(runnable);
     }
 
     public Collection<PluginMetaData> getItems() {
@@ -51,36 +52,36 @@ public class PluginMetaDataManager {
     }
 
     private Collection<PluginMetaData> loadData() {
-          Set<PluginMetaData> result = null;
-          final File srcFile = new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML);
-          if (srcFile.exists()) { //extract from old file
-              try {
-                  result = loadList(srcFile);
-              } catch (Exception e) {
-                  LogUtils.processException(logger, e);
-                  logger.info("Trying to renew file from backup");
-                  try {
-                      FileUtils.renewBackup(srcFile);
-                      result = loadList(srcFile);
-                  } catch (FileNotFoundException ex) {
-                      //ignore
-                  } catch (Exception e1) {
-                      LogUtils.processException(logger, e);
-                  }
-              }
-              if (result != null) {
-                  //re-save into database
-                  director.getDatabaseManager().saveCollection(result);
-              } else result = new HashSet<PluginMetaData>();
-              //rename old file history file into another one, so we won't import it again next time
-              //noinspection ResultOfMethodCallIgnored
-              srcFile.renameTo(new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML + ".imported"));
-              return result;
-          } else {
-              //load from database
-              return director.getDatabaseManager().loadAll(PluginMetaData.class);
-          }
-      }
+        Set<PluginMetaData> result = null;
+        final File srcFile = new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML);
+        if (srcFile.exists()) { //extract from old file
+            try {
+                result = loadList(srcFile);
+            } catch (Exception e) {
+                LogUtils.processException(logger, e);
+                logger.info("Trying to renew file from backup");
+                try {
+                    FileUtils.renewBackup(srcFile);
+                    result = loadList(srcFile);
+                } catch (FileNotFoundException ex) {
+                    //ignore
+                } catch (Exception e1) {
+                    LogUtils.processException(logger, e);
+                }
+            }
+            if (result != null) {
+                //re-save into database
+                saveToDatabase(result);
+            } else result = new HashSet<PluginMetaData>();
+            //rename old file history file into another one, so we won't import it again next time
+            //noinspection ResultOfMethodCallIgnored
+            srcFile.renameTo(new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML + ".imported"));
+            return result;
+        } else {
+            //load from database
+            return director.getDatabaseManager().loadAll(PluginMetaData.class);
+        }
+    }
 
     @SuppressWarnings({"unchecked"})
     private Set<PluginMetaData> loadList(final File srcFile) throws IOException {

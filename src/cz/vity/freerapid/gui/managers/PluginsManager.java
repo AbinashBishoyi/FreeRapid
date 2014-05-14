@@ -507,7 +507,7 @@ public class PluginsManager {
     }
 
     public void updatePluginSettings() {
-        pluginMetaDataManager.saveToFile(new HashSet<PluginMetaData>(supportedPlugins.values()));
+        pluginMetaDataManager.saveToDatabase(new HashSet<PluginMetaData>(supportedPlugins.values()));
     }
 
     public PluginMetaData getPluginMetadata(String serviceID) throws NotSupportedDownloadServiceException {

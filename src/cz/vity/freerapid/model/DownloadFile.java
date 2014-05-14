@@ -61,6 +61,8 @@ public class DownloadFile extends AbstractBean implements Identifiable, Property
     private int speedLimit = -1;
     private volatile long realDownload;
     private volatile boolean resumeSupported = true;
+    private int listOrder;
+
 
     @Transient
     private volatile DownloadTask task = null;
@@ -653,5 +655,15 @@ public class DownloadFile extends AbstractBean implements Identifiable, Property
     @Override
     public Object getIdentificator() {
         return dbId;
+    }
+
+    public int getListOrder() {
+        return listOrder;
+    }
+
+    public void setListOrder(int listOrder) {
+        final int oldValue = this.listOrder;
+        this.listOrder = listOrder;
+        firePropertyChange("listOrder", oldValue, this.listOrder);
     }
 }

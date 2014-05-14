@@ -25,6 +25,11 @@ public class LogFileHandler extends FileHandler {
 
     public static File getLogFile() {
         final File folder = new File(MainApp.getAContext().getLocalStorage().getDirectory(), "log");
+        //noinspection ResultOfMethodCallIgnored
+        if (!folder.exists()) {
+            //noinspection ResultOfMethodCallIgnored
+            folder.mkdirs();
+        }
         return new File(folder, "app.log");
     }
 

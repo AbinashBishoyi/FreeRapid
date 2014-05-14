@@ -82,7 +82,14 @@ public class FileHistoryManager extends AbstractBean {
             }
             if (result != null) {
                 //re-save into database
-                director.getDatabaseManager().saveCollection(result);
+                final List<FileHistoryItem> finalResult = result;
+                Runnable runnable = new Runnable() {
+                    public void run() {
+                        logger.info("Resaving file history into database from old format");
+                        director.getDatabaseManager().saveCollection(finalResult);
+                    }
+                };
+                director.getDatabaseManager().runOnTask(runnable);
             } else result = new ArrayList<FileHistoryItem>();
             //rename old file history file into another one, so we won't import it again next time
             //noinspection ResultOfMethodCallIgnored
@@ -96,23 +103,40 @@ public class FileHistoryManager extends AbstractBean {
 
     public void addHistoryItem(final DownloadFile file, final File savedAs) {
         final FileHistoryItem item = new FileHistoryItem(file, savedAs);
-        director.getDatabaseManager().saveOrUpdate(item);
+        Runnable runnable = new Runnable() {
+            public void run() {
+                director.getDatabaseManager().saveOrUpdate(item);
+            }
+        };
+        director.getDatabaseManager().runOnTask(runnable);
         fireDataAdded(item);
     }
 
     public void clearHistory() {
-        director.getDatabaseManager().removeAll(FileHistoryItem.class);
+        Runnable runnable = new Runnable() {
+            public void run() {
+                director.getDatabaseManager().removeAll(FileHistoryItem.class);
+            }
+        };
+        director.getDatabaseManager().runOnTask(runnable);
     }
 
 
-    public void removeItems(Collection<FileHistoryItem> items) {
-        director.getDatabaseManager().removeCollection(items);
+    public void removeItems(final Collection<FileHistoryItem> items) {
+        Runnable runnable = new Runnable() {
+            public void run() {
+                director.getDatabaseManager().removeCollection(items);
+            }
+        };
+        director.getDatabaseManager().runOnTask(runnable);
     }
 
 
     private void fireDataAdded(FileHistoryItem dataAdded) {
         firePropertyChange("dataAdded", null, dataAdded);
     }
+
+
 //
 //
 }
