@@ -13,12 +13,16 @@ Fixed - indicates a bug fix
 
   Added : plugin API
             - DownloadClientConsts class with constants for DownloadClient parameters
+  Added :  New theme for JTattoo LookAndFeel - "Graphite"             
   Changed : Removed obsolete entries for sorting downloads from dropdown menu, as the table can now be sorted by clicking the headings
   Changed : Show amount of downloaded data instead of "unknown" if file size is not known while downloading
   Changed : Removed Kunstoff and PGS LookAndFeel (too old and not updated), upgraded Substance LaF to version 6.0
   Changed : Default FRD Look And Feel is set to JTattoo AERO
   Fixed : Wrong file is deleted when cancelling a download in some cases, see http://bugtracker.wordrider.net/task/1306
-  Fixed: Regression: Look and Feel reverts to Quaqua on every startup
+
+  Fixed against FreeRapid Downloader 0.85 Alfa 1
+     - Look and Feel reverts to Quaqua on every startup
+     - Plugins - clipboard monitoring status is not properly set
 
 11th July 2010 - FreeRapid Downloader 0.85 Alfa 1
   Added : New action in Remove menu: "Remove Completed Links and Deleted Files"
@@ -41,6 +45,7 @@ Fixed - indicates a bug fix
             Big thanks to the developers of Flazr! Home page: http://www.flazr.com/
   Changed : Faster matching of URLs against plugins
   Changed : Less required restarts after plugin updates
+  Changed : Upgraded SwingX library version to this date (nightly build)
   Fixed : Problem with downloading txt files + using description, see http://wordrider.net/forum/read.php?7,4681,4696
   Fixed : Inconsistent behavior of "Close to tray" option
   Fixed : file properties dialog (Information dialog) cannot be closed by OK button

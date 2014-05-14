@@ -55,16 +55,18 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
 
 
     public PluginMetaData() {
-    }
-
-    public PluginMetaData(PluginDescriptor descriptor) {
-        this.descriptor = descriptor;
-        this.id = descriptor.getId();
+        //default values
         this.enabled = true;
         this.clipboardMonitored = true;
         this.updatesEnabled = true;
         this.priority = -1;
         this.maxAllowedDownloads = -1;
+    }
+
+    public PluginMetaData(PluginDescriptor descriptor) {
+        this();
+        this.descriptor = descriptor;
+        this.id = descriptor.getId();
         setPluginDescriptor(descriptor);
     }
 
