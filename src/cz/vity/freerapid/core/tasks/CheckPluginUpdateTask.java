@@ -108,12 +108,13 @@ public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
                     newVersionURL = Consts.WEBURL;
                 }
                 result = ConnectResult.NEW_VERSION_REQUIRED;
+            } else {
+                if (lineL.contains("yes"))
+                    //   return CONNECT_SAME_VERSION;
+                    result = ConnectResult.CONNECT_NEW_VERSION;
+                else
+                    result = ConnectResult.SAME_VERSION;
             }
-            if (lineL.contains("yes"))
-                //   return CONNECT_SAME_VERSION;
-                result = ConnectResult.CONNECT_NEW_VERSION;
-            else
-                result = ConnectResult.SAME_VERSION;
         } else
             result = ConnectResult.SAME_VERSION;
 

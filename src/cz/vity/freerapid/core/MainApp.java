@@ -40,7 +40,7 @@ public class MainApp extends SingleXFrameApplication {
     private AppPrefs appPrefs;
 
     private boolean minimizeOnStart = false;
-    public static final int BUILD_REQUEST = 2;
+    public static final int BUILD_REQUEST = 4;
 
 //    private static Logger logger = null;
 
@@ -216,7 +216,7 @@ public class MainApp extends SingleXFrameApplication {
         frame.setMinimumSize(new Dimension(30, 30));
         frame.pack();
 
-        if (AppPrefs.getProperty(FWProp.NEW_VERSION, true) && !debug)
+        if (AppPrefs.getProperty(FWProp.NEW_VERSION, true))
             startCheckNewVersion();
     }
 
