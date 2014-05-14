@@ -3,6 +3,7 @@ package cz.vity.freerapid.plugins.webclient;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
 import cz.vity.freerapid.plugins.webclient.utils.HttpUtils;
+import cz.vity.freerapid.plugins.webclient.utils.PlugUtils;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
@@ -213,7 +214,7 @@ public class DownloadClient implements HttpDownloadClient {
         final String fileName = HttpUtils.getFileName(method);
         if (fileName != null) {
             if (!client.getParams().isParameterTrue("dontUseHeaderFilename"))
-                file.setFileName(HttpUtils.replaceInvalidCharsForFileSystem(fileName, "_"));
+                file.setFileName(HttpUtils.replaceInvalidCharsForFileSystem(PlugUtils.unescapeHtml(fileName), "_"));
             if (client.getParams().isParameterTrue("noContentTypeInHeader"))
                 isStream = true;
         } else logger.warning("No Content-Disposition (filename) header in file");
