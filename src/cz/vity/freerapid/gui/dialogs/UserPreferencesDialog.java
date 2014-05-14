@@ -324,8 +324,8 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                         }
                     });
                     bind(pluginDetailPanel.getSpinnerPluginPriority(), 1, MAXIMUM_PRIORITY, MINIMUM_PRIORITY, 1, beanModel.getValueModel("priority"));
-                    final int max = data.getMaxAllowedDownloads();
-                    bind(pluginDetailPanel.getSpinnerMaxPluginConnections(), 1, 1, max, 1, beanModel.getValueModel("maxParallelDownloads"));
+                    final int max = data.getMaxParallelDownloads();
+                    bind(pluginDetailPanel.getSpinnerMaxPluginConnections(), 1, 1, max, 1, beanModel.getValueModel("maxAllowedDownloads"));
                     pluginDetailPanel.getSpinnerMaxPluginConnections().setEnabled(max > 1);
                     bind(pluginDetailPanel.getCheckboxClipboardMonitoring(), beanModel.getValueModel("clipboardMonitored"));
                     bind(pluginDetailPanel.getCheckboxPluginIsActive(), beanModel.getValueModel("enabled"));
@@ -2267,11 +2267,11 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
             column = table.convertColumnIndexToModel(column);
             spinner.setEnabled(true);
             if (column == PluginMetaDataTableModel.COLUMN_MAX_PARALEL_DOWNLOADS) {
-                final int max = data.getMaxParallelDownloads();
-                if (max == 1) {
+                final int maxParallel = data.getMaxParallelDownloads();
+                if (maxParallel == 1) {
                     spinner.setEnabled(false);
                 }
-                model.setMaximum(max);
+                model.setMaximum(maxParallel);
             } else {
                 model.setMaximum(MINIMUM_PRIORITY);
             }

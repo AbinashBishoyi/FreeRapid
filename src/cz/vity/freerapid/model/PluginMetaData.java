@@ -77,7 +77,7 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
         premium = DescriptorUtils.getAttribute("premium", false, descriptor);
         favicon = DescriptorUtils.getAttribute("faviconImage", null, descriptor) != null;
         removeCompleted = DescriptorUtils.getAttribute("removeCompleted", false, descriptor);
-        maxParallelDownloads = DescriptorUtils.getAttribute("maxParallelDownloads", 1, descriptor);
+        maxParallelDownloads = DescriptorUtils.getAttribute("maxDownloads", 1, descriptor);
         if (priority == -1)
             priority = DescriptorUtils.getAttribute("priority", (premium) ? 100 : 1000, descriptor);
         if (maxAllowedDownloads > 1)
@@ -225,7 +225,9 @@ final public class PluginMetaData extends AbstractBean implements Comparable<Plu
     }
 
     public void setMaxAllowedDownloads(int maxAllowedDownloads) {
+        int oldValue = this.maxAllowedDownloads;
         this.maxAllowedDownloads = maxAllowedDownloads;
+        firePropertyChange("maxAllowedDownloads", oldValue, maxAllowedDownloads);
     }
 
     public void setClipboardMonitored(boolean clipboardMonitored) {
