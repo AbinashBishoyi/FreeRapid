@@ -145,7 +145,7 @@ public class SearchField extends JTextField implements FocusListener, PopupMenuL
         for (SearchItem item : searchItemList) {
             if (item.getId().equals(idDefault)) {
                 setSelectedItem(item);
-                break;
+                return;
             }
         }
         if (searchItemList.isEmpty()) {
@@ -171,9 +171,6 @@ public class SearchField extends JTextField implements FocusListener, PopupMenuL
             id = selectedItem.getId();
             btn.setIcon(selectedItem.getImage());
             setEmptyString(selectedItem.getSearchDescription().getShortName());
-        }
-        if (id == null) {
-
         }
         AppPrefs.storeProperty(UserProp.SEARCH_FIELD_SEARCH_ENGINE, id);
     }
