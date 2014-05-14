@@ -138,10 +138,7 @@ public class TrayIconSupport implements PropertyChangeListener {
         clipboardMonitoring.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 final boolean b = clipboardMonitoring.getState();
-
-                final Action action = app.getContext().getActionMap().get("monitorClipboardAction");
-                action.putValue(Action.SELECTED_KEY, b);
-                action.actionPerformed(new ActionEvent(this, 0, ""));
+                AppPrefs.storeProperty(UserProp.CLIPBOARD_MONITORING, b);
             }
         });
 

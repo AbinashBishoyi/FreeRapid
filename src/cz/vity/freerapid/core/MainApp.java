@@ -121,7 +121,7 @@ public class MainApp extends SingleXFrameApplication {
     }
 
     private void checkBugs() {
-        if (!Utils.isWindows() && Utils.isJVMVersion("1.6.0_0")) {
+        if (Utils.isJVMVersion("1.6.0_0") || Utils.isJVMVersion("1.6.0-beta")) {
             exitWithErrorMessage("errorInvalidJRE");
         }
     }

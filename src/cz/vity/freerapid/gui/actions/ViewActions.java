@@ -30,16 +30,9 @@ public class ViewActions extends AbstractBean {
 
     private MainApp app;
 
-    private boolean showCompleted;
-    private final static String SHOW_COMPLETED_PROPERTY = "showCompleted";
-
-    private boolean clipboardMonitoringSelected;
-    private static final String CLIPBOARD_MONITORING_PROPERTY = "clipboardMonitoringSelected";
 
     public ViewActions() {
         app = MainApp.getInstance(MainApp.class);
-        setShowCompleted(AppPrefs.getProperty(UserProp.SHOW_COMPLETED, true));
-        setClipboardMonitoringSelected(AppPrefs.getProperty(UserProp.CLIPBOARD_MONITORING, UserProp.CLIPBOARD_MONITORING_DEFAULT));
         AppPrefs.getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
             public void preferenceChange(PreferenceChangeEvent evt) {
                 if (UserProp.AUTOSHUTDOWN.equals(evt.getKey())) {
@@ -72,22 +65,6 @@ public class ViewActions extends AbstractBean {
         return app;
     }
 
-//    public boolean isEnabled() {
-//        System.out.println("isenabled");
-//        return true;
-//    }
-//
-//    public void setEnabled(boolean value) {
-//        System.out.println("set enabled");
-//    }
-//
-//    public boolean isSelectedShowMenu() {
-//        System.out.println("check selected");
-//        return ((SingleFrameApplication)ApplicationContext.getInstance().getApplication()).getMainFrame().getJMenuBar().isVisible();
-//    }
-
-    //
-
     @Action
     public void showDownloadHistoryAction() {
         final ManagerDirector managerDirector = app.getManagerDirector();
@@ -116,42 +93,22 @@ public class ViewActions extends AbstractBean {
         }
     }
 
-    @Action(selectedProperty = ViewActions.CLIPBOARD_MONITORING_PROPERTY)
+    @Action
     public void monitorClipboardAction() {
-        AppPrefs.storeProperty(UserProp.CLIPBOARD_MONITORING, isClipboardMonitoringSelected());
+        AppPrefs.negateProperty(UserProp.CLIPBOARD_MONITORING, UserProp.CLIPBOARD_MONITORING_DEFAULT);
     }
 
-    @Action(selectedProperty = ViewActions.SHOW_COMPLETED_PROPERTY)
+    @Action
+    public void globalLimitSpeedAction() {
+        AppPrefs.negateProperty(UserProp.SPEED_LIMIT_ENABLED, UserProp.SPEED_LIMIT_ENABLED_DEFAULT);
+    }
+
+    @Action
     public void showCompletedAction() {
-        //setShowCompleted(!isShowCompleted());
-        AppPrefs.storeProperty(UserProp.SHOW_COMPLETED, isShowCompleted());
+        AppPrefs.negateProperty(UserProp.SHOW_COMPLETED, UserProp.SHOW_COMPLETED_DEFAULT);
         final ManagerDirector managerDirector = app.getManagerDirector();
         final ContentPanel panel = managerDirector.getContentManager().getContentPanel();
         panel.updateFilters();
-    }
-
-    public boolean isShowCompleted() {
-        return showCompleted;
-    }
-
-    public boolean getShowCompleted() {
-        return showCompleted;
-    }
-
-    public void setShowCompleted(boolean showCompleted) {
-        boolean oldValue = this.showCompleted;
-        this.showCompleted = showCompleted;
-        firePropertyChange("showCompleted", oldValue, showCompleted);
-    }
-
-    public boolean isClipboardMonitoringSelected() {
-        return clipboardMonitoringSelected;
-    }
-
-    public void setClipboardMonitoringSelected(boolean clipboardMonitoringSelected) {
-        boolean oldValue = this.clipboardMonitoringSelected;
-        this.clipboardMonitoringSelected = clipboardMonitoringSelected;
-        firePropertyChange("clipboardMonitoringSelected", oldValue, clipboardMonitoringSelected);
     }
 
     @Action

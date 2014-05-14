@@ -28,7 +28,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package cz.vity.freerapid.gui;
+package cz.vity.freerapid.swing.binding;
 
 import com.jgoodies.binding.beans.BeanAdapter;
 import com.jgoodies.binding.beans.BeanUtils;

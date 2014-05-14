@@ -17,6 +17,7 @@ import cz.vity.freerapid.plugins.webclient.FileState;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
 import cz.vity.freerapid.swing.SwingUtils;
 import cz.vity.freerapid.swing.Swinger;
+import cz.vity.freerapid.swing.components.FindTableAction;
 import cz.vity.freerapid.utilities.Browser;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.OSDesktop;
@@ -814,6 +815,25 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
         updateFilters();
         table.addHighlighter(highlighter);
+        new FindTableAction(Swinger.getResourceMap(), COLUMN_NAME) {
+            protected Object getObject(int index, int column) {
+                final DownloadFile downloadFile = (DownloadFile) table.getValueAt(index, column);
+                if (downloadFile == null) {
+                    logger.warning("Download File is null");
+                    return null;
+                }
+                final String fn = downloadFile.getFileName();
+                final String url = downloadFile.getFileUrl().toString();
+                final String value;
+                if (fn != null && !fn.isEmpty()) {
+                    value = fn;
+                } else {
+                    value = url;
+                }
+                return value;
+            }
+        }.install(table);
+
     }
 
     @org.jdesktop.application.Action

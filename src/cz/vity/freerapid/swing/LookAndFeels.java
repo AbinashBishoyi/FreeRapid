@@ -76,22 +76,27 @@ public final class LookAndFeels {
      */
     private LookAndFeels() {
         classLoader = initClassLoader();
+
         String selectedLookAndFeelClassName = AppPrefs.getProperty(FWProp.LOOK_AND_FEEL_SELECTED_KEY, null);
+
         String selectedTheme = AppPrefs.getProperty(FWProp.THEME_SELECTED_KEY, DEFAULT_THEME);
+
         if (selectedLookAndFeelClassName == null) {
-            final String s = Swinger.getResourceMap().getString("Application.lookAndFeelDefault", "").trim();
-            selectedLookAndFeelClassName = org.jdesktop.swingx.util.OS.isMacOSX() ? AQUA : DEFAULT_LAF;
+            final String value = Swinger.getResourceMap().getString("Application.lookAndFeelDefault");
+            final String s = (value == null) ? "" : value.trim();
+            selectedTheme = null;
             if ("system".equals(s)) {
                 selectedLookAndFeelClassName = UIManager.getSystemLookAndFeelClassName();
-                selectedTheme = null;
             } else if (!"default".equals(s) && s != null && !s.isEmpty()) {
                 selectedLookAndFeelClassName = s;
-                selectedTheme = null;
-            }
+            } else
+                selectedLookAndFeelClassName = org.jdesktop.swingx.util.OS.isMacOSX() ? AQUA : DEFAULT_LAF;
+
         }
+
         final boolean opaque = AppPrefs.getProperty(FWProp.LOOK_AND_FEEL_OPAQUE_KEY, true);
 
-        if (selectedTheme == null && selectedLookAndFeelClassName.equals(KUNSTSTOFF))
+        if (selectedTheme == null && KUNSTSTOFF.equals(selectedLookAndFeelClassName))
             selectedTheme = KunstoffMetalTheme.class.getName();
         if (selectedTheme == null)
             selectedTheme = "";

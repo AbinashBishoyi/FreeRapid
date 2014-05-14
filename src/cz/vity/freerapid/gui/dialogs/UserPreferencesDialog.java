@@ -17,8 +17,6 @@ import com.l2fprod.common.swing.JButtonBar;
 import com.l2fprod.common.swing.plaf.blue.BlueishButtonBarUI;
 import cz.vity.freerapid.core.*;
 import cz.vity.freerapid.gui.FRDUtils;
-import cz.vity.freerapid.gui.MyPreferencesAdapter;
-import cz.vity.freerapid.gui.MyPresentationModel;
 import cz.vity.freerapid.gui.dialogs.filechooser.OpenSaveDialogFactory;
 import cz.vity.freerapid.gui.managers.ClientManager;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
@@ -26,7 +24,10 @@ import cz.vity.freerapid.gui.managers.MenuManager;
 import cz.vity.freerapid.model.PluginMetaData;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 import cz.vity.freerapid.swing.*;
+import cz.vity.freerapid.swing.binding.MyPreferencesAdapter;
+import cz.vity.freerapid.swing.binding.MyPresentationModel;
 import cz.vity.freerapid.swing.components.EnhancedToolbar;
+import cz.vity.freerapid.swing.components.FindTableAction;
 import cz.vity.freerapid.swing.components.PopdownButton;
 import cz.vity.freerapid.swing.models.SimplePreferencesComboModel;
 import cz.vity.freerapid.utilities.FileUtils;
@@ -304,6 +305,11 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         tableInputMap.put(SwingUtils.getShiftKeyStroke(KeyEvent.VK_HOME), "selectFirstRowExtendSelection");
         tableInputMap.put(SwingUtils.getShiftKeyStroke(KeyEvent.VK_END), "selectLastRowExtendSelection");
 
+        new FindTableAction(getResourceMap(), PluginMetaDataTableModel.COLUMN_ID) {
+            protected Object getObject(int index, int column) {
+                return pluginTable.getModel().getValueAt(index, column);
+            }
+        }.install(pluginTable);
 //        registerKeyboardAction(focusFilterAction, ctrlF);
 
     }
@@ -331,6 +337,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         final int selCol = pluginTable.convertColumnIndexToModel(pluginTable.getColumnModel().getSelectionModel().getLeadSelectionIndex());
         if (selCol == PluginMetaDataTableModel.COLUMN_ACTIVE || selCol == PluginMetaDataTableModel.COLUMN_UPDATE)
             return;
+
         final Object value = tableModel.getValueAt(rows[0], selCol);
 
         if (value != null)

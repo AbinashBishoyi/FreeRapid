@@ -1,8 +1,8 @@
 package cz.vity.freerapid.gui.dialogs;
 
 import cz.vity.freerapid.core.AppPrefs;
-import cz.vity.freerapid.gui.MyPreferencesAdapter;
 import cz.vity.freerapid.swing.LaF;
+import cz.vity.freerapid.swing.binding.MyPreferencesAdapter;
 
 /**
  * @author Vity

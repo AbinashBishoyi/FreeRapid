@@ -1,9 +1,10 @@
 package cz.vity.freerapid.plugins.webclient;
 
-import cz.vity.freerapid.swing.EDTPropertyChangeSupport;
 import org.jdesktop.application.Application;
 
+import javax.swing.event.SwingPropertyChangeSupport;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
 /**
  * @author Vity
@@ -42,7 +43,7 @@ public class ConnectionSettings {
     /**
      * Field pcs
      */
-    private final EDTPropertyChangeSupport pcs;
+    private final PropertyChangeSupport pcs;
 
     /**
      * Field isDefault
@@ -56,7 +57,7 @@ public class ConnectionSettings {
     public ConnectionSettings() {
         //setProxy("localhost", 8081);
         defaultConnectionLabel = Application.getInstance().getContext().getResourceMap().getString("defaultConnection");
-        pcs = new EDTPropertyChangeSupport(this);
+        pcs = new SwingPropertyChangeSupport(this);
     }
 
     /**
@@ -201,7 +202,6 @@ public class ConnectionSettings {
      * Method delegations
      *
      * @param listener
-     * @see cz.vity.freerapid.swing.EDTPropertyChangeSupport#addPropertyChangeListener(java.beans.PropertyChangeListener)
      */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(listener);
@@ -211,7 +211,6 @@ public class ConnectionSettings {
      * Method delegations
      *
      * @param listener
-     * @see cz.vity.freerapid.swing.EDTPropertyChangeSupport#removePropertyChangeListener(java.beans.PropertyChangeListener)
      */
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(listener);
@@ -221,7 +220,6 @@ public class ConnectionSettings {
      * Method delegation.
      *
      * @return
-     * @see cz.vity.freerapid.swing.EDTPropertyChangeSupport#getPropertyChangeListeners()
      */
     public PropertyChangeListener[] getPropertyChangeListeners() {
         return pcs.getPropertyChangeListeners();
@@ -233,7 +231,6 @@ public class ConnectionSettings {
      *
      * @param propertyName name of bean property
      * @param listener     listener to add
-     * @see cz.vity.freerapid.swing.EDTPropertyChangeSupport#addPropertyChangeListener(String, java.beans.PropertyChangeListener)
      */
     public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(propertyName, listener);
@@ -244,7 +241,6 @@ public class ConnectionSettings {
      *
      * @param propertyName bean property name
      * @param listener     listener to remove from property
-     * @see cz.vity.freerapid.swing.EDTPropertyChangeSupport#removePropertyChangeListener(String, java.beans.PropertyChangeListener)
      */
     public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(propertyName, listener);

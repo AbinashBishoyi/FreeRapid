@@ -249,4 +249,8 @@ public final class AppPrefs {
             throw new IllegalStateException("Properties were not initialized yet");
         return properties;
     }
+
+    public static void negateProperty(String key, boolean defaultValue) {
+        storeProperty(key, !getProperty(key, defaultValue));
+    }
 }

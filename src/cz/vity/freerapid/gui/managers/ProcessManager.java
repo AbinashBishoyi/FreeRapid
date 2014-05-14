@@ -16,7 +16,6 @@ import static cz.vity.freerapid.plugins.webclient.DownloadState.*;
 import cz.vity.freerapid.plugins.webclient.FileState;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
-import cz.vity.freerapid.swing.EDTPropertyChangeSupport;
 import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.TaskEvent;
@@ -24,8 +23,10 @@ import org.jdesktop.application.TaskListener;
 import org.jdesktop.application.TaskService;
 
 import javax.swing.*;
+import javax.swing.event.SwingPropertyChangeSupport;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.*;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.logging.Logger;
@@ -40,7 +41,7 @@ public class ProcessManager extends Thread {
     private final ApplicationContext context;
     private DataManager dataManager;
 
-    private final EDTPropertyChangeSupport pcs;
+    private final PropertyChangeSupport pcs;
 
     private volatile Map<String, DownloadService> services = new Hashtable<String, DownloadService>();
     private volatile Map<DownloadFile, ConnectionSettings> forceDownloadFiles = new Hashtable<DownloadFile, ConnectionSettings>();
@@ -61,7 +62,7 @@ public class ProcessManager extends Thread {
         dataManager = director.getDataManager();
         pluginsManager = director.getPluginsManager();
 
-        pcs = new EDTPropertyChangeSupport(this);
+        pcs = new SwingPropertyChangeSupport(this);
         this.context = context;
         taskService = director.getTaskServiceManager().getTaskService(TaskServiceManager.DOWNLOAD_SERVICE);
         clientManager = director.getClientManager();
@@ -396,9 +397,13 @@ public class ProcessManager extends Thread {
                 remove = true;
             } else {
                 final boolean removeCompleted = AppPrefs.getProperty(UserProp.REMOVE_COMPLETED_DECRYPTER, UserProp.REMOVE_COMPLETED_DECRYPTER_DEFAULT);
-                final PluginMetaData data = pluginsManager.getPluginMetadata(file.getPluginID());
-                if (removeCompleted && data.isRemoveCompleted()) {
-                    remove = true;
+                try {
+                    final PluginMetaData data = pluginsManager.getPluginMetadata(file.getPluginID());
+                    if (removeCompleted && data.isRemoveCompleted()) {
+                        remove = true;
+                    }
+                } catch (NotSupportedDownloadServiceException e) {
+                    //ignore
                 }
             }
             if (remove)

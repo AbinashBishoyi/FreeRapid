@@ -1,3 +1,21 @@
+Version 0.82->0.83
+MainApp.properties
+==============================
+Changed:
+-----------
+Was:
+errorInvalidJRE=This application cannot be started with JRE 1.6.0_0 on Linux.\nThis JRE version is buggy therefore FRD wouldn't work properly.\nUpgrade to newer version.\nExiting.
+New:
+errorInvalidJRE=This application cannot be started with JRE 1.6.0_0.\nThis JRE version is buggy therefore FRD wouldn't work properly.\nUpgrade to newer version.\nExiting.
+
+
+
+
+
+
+
+
+
 Version 0.8->
 
 MainApp.properties

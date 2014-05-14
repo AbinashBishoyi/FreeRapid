@@ -2,29 +2,35 @@ package cz.vity.freerapid.gui.managers;
 
 import com.jgoodies.binding.adapter.Bindings;
 import com.jgoodies.binding.adapter.BoundedRangeAdapter;
-import com.jgoodies.binding.adapter.PreferencesAdapter;
 import com.jgoodies.binding.beans.PropertyConnector;
 import com.jgoodies.binding.value.ConverterFactory;
 import com.jgoodies.binding.value.ValueModel;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.DownloadTask;
-import cz.vity.freerapid.gui.MyPreferencesAdapter;
 import cz.vity.freerapid.gui.content.ContentPanel;
+import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.swing.TrayIconSupport;
+import cz.vity.freerapid.swing.binding.BindUtils;
 import cz.vity.freerapid.swing.components.MemoryIndicator;
 import cz.vity.freerapid.utilities.Utils;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.Task;
+import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXStatusBar;
 
 import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
@@ -52,12 +58,12 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
     private Image downloadingIconImage;
     private TrayIconSupport trayIconSupport;
 
-    private JLabel clipboardMonitoring;
     private MemoryIndicator indicator;
     private PropertyChangeListener taskPCL;
 
     private Task activeTask = null;
     private JSlider slider;
+    private static final int BAR_HEIGHT = 18;
 
     /**
      * Konstruktor
@@ -93,14 +99,11 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
                 }
             });
 
-            clipboardMonitoring = new JLabel();
+            JLabel clipboardMonitoring = new JLabel();
             clipboardMonitoring.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    final boolean b = AppPrefs.getProperty(UserProp.CLIPBOARD_MONITORING, UserProp.CLIPBOARD_MONITORING_DEFAULT);
-                    final Action action = app.getContext().getActionMap().get("monitorClipboardAction");
-                    action.putValue(Action.SELECTED_KEY, !b);
-                    action.actionPerformed(new ActionEvent(this, 0, ""));
+                    AppPrefs.negateProperty(UserProp.CLIPBOARD_MONITORING, UserProp.CLIPBOARD_MONITORING_DEFAULT);
                 }
             });
 
@@ -129,62 +132,28 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
 
             //  progress.setStringPainted(false);
             indicator = new MemoryIndicator();
-            indicator.setPreferredSize(new Dimension(100, 15));
-            infoLabel.setPreferredSize(new Dimension(345, 15));
-            clipboardMonitoring.setPreferredSize(new Dimension(17, 15));
-            progress.setPreferredSize(new Dimension(progress.getPreferredSize().width + 35, 15));
+            indicator.setPreferredSize(new Dimension(100, BAR_HEIGHT));
+            infoLabel.setPreferredSize(new Dimension(345, BAR_HEIGHT));
+            clipboardMonitoring.setPreferredSize(new Dimension(17, BAR_HEIGHT));
+            progress.setPreferredSize(new Dimension(progress.getPreferredSize().width + 35, BAR_HEIGHT));
             progress.setVisible(false);
             director.getMenuManager().getMenuBar().addPropertyChangeListener("selectedText", this);
             statusbar.add(infoLabel, JXStatusBar.Constraint.ResizeBehavior.FIXED);
 
-            final JPanel speedLimitPanel = new JPanel();
-            speedLimitPanel.setLayout(new BoxLayout(speedLimitPanel, BoxLayout.LINE_AXIS));
-            //speedLimitPanel.setSize(80, 15);
-            speedLimitPanel.setPreferredSize(new Dimension(170, 15));
-            speedLimitPanel.setBorder(null);
-            final JCheckBox speedLimiterEnabled = new JCheckBox();
-            speedLimiterEnabled.setName("speedLimiterEnabled");
-            speedLimiterEnabled.setBorder(null);
-            speedLimiterEnabled.setText(null);
-            final ValueModel valueModel = bind(speedLimiterEnabled, UserProp.SPEED_LIMIT_ENABLED, UserProp.SPEED_LIMIT_ENABLED_DEFAULT);
-            speedLimitPanel.add(speedLimiterEnabled);
-            final PreferencesAdapter speedAdapter = new PreferencesAdapter(AppPrefs.getPreferences(), UserProp.SPEED_LIMIT, UserProp.SPEED_LIMIT_DEFAULT);
-            slider = new JSlider(new BoundedRangeAdapter(speedAdapter, 0, 0, 250));
-            slider.setName("speedSlider");
-            slider.setPreferredSize(new Dimension(100, 15));
-            slider.setMaximumSize(new Dimension(100, 15));
-            slider.setFont(slider.getFont().deriveFont(6F));
-            slider.setBorder(BorderFactory.createEmptyBorder(0, 3, 0, 3));
-            slider.setSnapToTicks(true);
+            final JPanel speedBarPanel = new JPanel();
+            speedBarPanel.setLayout(new BoxLayout(speedBarPanel, BoxLayout.LINE_AXIS));
 
-            speedLimitPanel.add(slider);
-            final JLabel labelSpeed = new JLabel();
-            labelSpeed.setName("labelSpeed");
-            labelSpeed.setLabelFor(slider);
+            initSpeedBar(speedBarPanel, resourceMap);
 
-            bindSpeedSlider(slider);
 
-            Bindings.bind(labelSpeed, ConverterFactory.createStringConverter(speedAdapter, NumberFormat.getIntegerInstance()));
-            labelSpeed.setAlignmentX(JLabel.RIGHT_ALIGNMENT);
-            labelSpeed.setPreferredSize(new Dimension(32, 15));
-            speedLimitPanel.add(labelSpeed);
-            labelSpeed.setBackground(Color.green);
-            final JLabel labelSpeedUnit = new JLabel();
-            labelSpeedUnit.setLabelFor(slider);
-            labelSpeedUnit.setName("labelSpeedUnit");
-            speedLimitPanel.add(labelSpeedUnit);
+            PropertyConnector.connectAndUpdate(BindUtils.getPrefsValueModel(UserProp.CLIPBOARD_MONITORING, UserProp.CLIPBOARD_MONITORING_DEFAULT), clipboardMonitoring, "enabled");
 
-            slider.setSize(45, 12);
-
-            PropertyConnector.connectAndUpdate(valueModel, slider, "enabled");
-            PropertyConnector.connectAndUpdate(valueModel, labelSpeed, "enabled");
-            PropertyConnector.connectAndUpdate(valueModel, labelSpeedUnit, "enabled");
-
-            statusbar.add(speedLimitPanel, JXStatusBar.Constraint.ResizeBehavior.FIXED);
-            statusbar.add(progress, JXStatusBar.Constraint.ResizeBehavior.FIXED);
             statusbar.add(clipboardMonitoring, JXStatusBar.Constraint.ResizeBehavior.FIXED);
+            statusbar.add(speedBarPanel, JXStatusBar.Constraint.ResizeBehavior.FIXED);
+            statusbar.add(progress, JXStatusBar.Constraint.ResizeBehavior.FIXED);
+
             statusbar.add(Box.createGlue(), JXStatusBar.Constraint.ResizeBehavior.FILL);
-            //statusbar.add(Box.createGlue(), JXStatusBar.Constraint.ResizeBehavior.FILL);
+
             context.getTaskMonitor().addPropertyChangeListener(this);
 
             dataManager.getDownloadFiles().addListDataListener(this);
@@ -205,12 +174,85 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
                     });
                 }
             });
-            //final ContentPanel panel = director.getDockingManager().getContentPanel();
+            //final ContentPanel speedBarPanel = director.getDockingManager().getContentPanel();
             updateInfoStatus();
-            updateClipboardMonitoring();
             updateMemoryIndicator();
         }
         return statusbar;
+    }
+
+    private void initSpeedBar(JPanel panel, ResourceMap resourceMap) {
+        final JXCollapsiblePane cp = new JXCollapsiblePane();
+        cp.setDirection(JXCollapsiblePane.Direction.RIGHT);
+        cp.setBorder(null);
+        cp.addPropertyChangeListener(JXCollapsiblePane.ANIMATION_STATE_KEY, this);
+        cp.setAnimated(true);
+
+        cp.setPreferredSize(new Dimension(160, BAR_HEIGHT));
+        //cp.setSize(80, 16);
+
+        cp.setBorder(null);
+
+
+        final JLabel labelSpeedBtn = new JLabel();
+        labelSpeedBtn.setName("labelSpeedBtn");
+        resourceMap.injectComponent(labelSpeedBtn);
+        labelSpeedBtn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // cp.setCollapsed(!cp.isCollapsed());
+                AppPrefs.negateProperty(UserProp.SPEED_LIMIT_ENABLED, UserProp.SPEED_LIMIT_ENABLED_DEFAULT);
+            }
+        });
+
+        panel.add(labelSpeedBtn);
+        panel.add(cp);
+
+        labelSpeedBtn.setBackground(null);
+
+        final ValueModel valueModel = BindUtils.getPrefsValueModel(UserProp.SPEED_LIMIT_ENABLED, UserProp.SPEED_LIMIT_ENABLED_DEFAULT);
+        PropertyConnector.connectAndUpdate(ConverterFactory.createBooleanNegator(valueModel), cp, "collapsed");
+
+        final ValueModel speedAdapter = BindUtils.getReadOnlyPrefsValueModel(UserProp.SPEED_LIMIT, UserProp.SPEED_LIMIT_DEFAULT);
+        slider = new JSlider(new BoundedRangeAdapter(speedAdapter, 0, 0, 250));
+        slider.setName("speedSlider");
+        slider.setPreferredSize(new Dimension(100, BAR_HEIGHT));
+        slider.setMaximumSize(new Dimension(100, BAR_HEIGHT));
+        slider.setSize(45, 12);
+        final Font font = slider.getFont().deriveFont(6F);
+        slider.setFont(font);
+
+        slider.setBorder(BorderFactory.createEmptyBorder(0, 3, 0, 3));
+        slider.setSnapToTicks(true);
+
+        bindSpeedSlider(slider);
+
+        final JLabel labelSpeed = new JLabel();
+        labelSpeed.setName("labelSpeed");
+        labelSpeed.setLabelFor(slider);
+        Bindings.bind(labelSpeed, ConverterFactory.createStringConverter(speedAdapter, NumberFormat.getIntegerInstance()));
+        labelSpeed.setAlignmentX(JLabel.RIGHT_ALIGNMENT);
+        labelSpeed.setPreferredSize(new Dimension(32, BAR_HEIGHT));
+        labelSpeed.setBackground(Color.green);
+
+
+        final JLabel labelSpeedUnit = new JLabel();
+        labelSpeedUnit.setLabelFor(slider);
+        labelSpeedUnit.setName("labelSpeedUnit");
+
+
+        PropertyConnector.connectAndUpdate(valueModel, slider, "enabled");
+        PropertyConnector.connectAndUpdate(valueModel, labelSpeed, "enabled");
+        PropertyConnector.connectAndUpdate(valueModel, labelSpeedUnit, "enabled");
+        PropertyConnector.connectAndUpdate(valueModel, labelSpeedBtn, "enabled");
+
+        CellConstraints cc = new CellConstraints();
+        PanelBuilder panelBuilder = new PanelBuilder(new FormLayout(new ColumnSpec[]{FormFactory.PREF_COLSPEC, FormFactory.PREF_COLSPEC, FormFactory.PREF_COLSPEC}, new RowSpec[]{FormFactory.PREF_ROWSPEC}), cp);
+
+        panelBuilder.add(slider, cc.xy(1, 1));
+        panelBuilder.add(labelSpeed, cc.xy(2, 1));
+        panelBuilder.add(labelSpeedUnit, cc.xy(3, 1));
+
     }
 
     private void checkPropertyChange(PreferenceChangeEvent evt) {
@@ -222,10 +264,11 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
                 trayIconSupport.setImage(defaultIconImage);
             else
                 updateIconAnimation();
-        } else if (UserProp.CLIPBOARD_MONITORING.equals(key)) {
-            updateClipboardMonitoring();
         } else if (UserProp.SHOW_MEMORY_INDICATOR.equals(key)) {
             updateMemoryIndicator();
+        } else if (UserProp.SPEED_LIMIT_ENABLED.equals(key)) {
+            if (Boolean.TRUE.equals(Boolean.valueOf(evt.getNewValue())))
+                Swinger.inputFocus(slider);
         } else
         if (UserProp.GLOBAL_SPEED_SLIDER_MAX.equals(key) || UserProp.GLOBAL_SPEED_SLIDER_MAX.equals(key) || UserProp.GLOBAL_SPEED_SLIDER_STEP.equals(key)) {
             bindSpeedSlider(slider);
@@ -241,14 +284,8 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
             statusbar.remove(indicator);
     }
 
-    private void updateClipboardMonitoring() {
-        clipboardMonitoring.setEnabled(AppPrefs.getProperty(UserProp.CLIPBOARD_MONITORING, UserProp.CLIPBOARD_MONITORING_DEFAULT));
-    }
-
-
     private void setStatusBarVisible(boolean visible) {
         getStatusBar().setVisible(visible);
-        //AppPrefs.storeProperty(AppPrefs.SHOW_STATUSBAR, visible); //ulozeni uzivatelskeho nastaveni
     }
 
 
@@ -269,6 +306,8 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
         } else if ("downloading".equals(propertyName)) {
             if (AppPrefs.getProperty(UserProp.ANIMATE_ICON, UserProp.ANIMATE_ICON_DEFAULT))
                 updateIconAnimation();
+        } else if (JXCollapsiblePane.ANIMATION_STATE_KEY.equals(propertyName)) {
+            statusbar.repaint();
         }
     }
 
@@ -361,11 +400,11 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
         slider.setMinorTickSpacing(step);
     }
 
-    private ValueModel bind(final JCheckBox checkBox, final String key, final Object defaultValue) {
-        final ValueModel valueModel = new MyPreferencesAdapter(key, defaultValue);
-        Bindings.bind(checkBox, valueModel);
-        return valueModel;
-    }
+//    private ValueModel bind(final JCheckBox checkBox, final String key, final Object defaultValue) {
+//        final ValueModel valueModel = new MyPreferencesAdapter(key, defaultValue);
+//        Bindings.bind(checkBox, valueModel);
+//        return valueModel;
+//    }
 
 
 }

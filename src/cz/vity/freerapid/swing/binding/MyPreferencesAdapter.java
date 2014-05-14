@@ -28,7 +28,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package cz.vity.freerapid.gui;
+package cz.vity.freerapid.swing.binding;
 
 import com.jgoodies.binding.value.AbstractValueModel;
 import cz.vity.freerapid.core.AppPrefs;
@@ -104,8 +104,8 @@ public class MyPreferencesAdapter extends AbstractValueModel {
      */
     public MyPreferencesAdapter(
             Preferences prefs,
-            String key,
-            Object defaultValue) {
+            final String key,
+            final Object defaultValue) {
         if (prefs == null)
             throw new NullPointerException("The Preferences must not be null.");
         if (key == null)
@@ -163,15 +163,15 @@ public class MyPreferencesAdapter extends AbstractValueModel {
 //                  + "with the default value type " + type);
 //
         if (newValue instanceof Boolean)
-            setBoolean(((Boolean) newValue).booleanValue());
+            setBoolean((Boolean) newValue);
         else if (newValue instanceof Double)
-            setDouble(((Double) newValue).doubleValue());
+            setDouble((Double) newValue);
         else if (newValue instanceof Float)
-            setFloat(((Float) newValue).floatValue());
+            setFloat((Float) newValue);
         else if (newValue instanceof Integer)
-            setInt(((Integer) newValue).intValue());
+            setInt((Integer) newValue);
         else if (newValue instanceof Long)
-            setLong(((Long) newValue).longValue());
+            setLong((Long) newValue);
         else if (newValue instanceof String)
             setString((String) newValue);
     }
@@ -185,7 +185,7 @@ public class MyPreferencesAdapter extends AbstractValueModel {
      * @return the stored value or the default
      */
     public boolean getBoolean() {
-        return prefs.getBoolean(key, ((Boolean) defaultValue).booleanValue());
+        return prefs.getBoolean(key, (Boolean) defaultValue);
     }
 
     /**
@@ -195,7 +195,7 @@ public class MyPreferencesAdapter extends AbstractValueModel {
      * @return the stored value or the default
      */
     public double getDouble() {
-        return prefs.getDouble(key, ((Double) defaultValue).doubleValue());
+        return prefs.getDouble(key, ((Number) defaultValue).doubleValue());
     }
 
     /**
@@ -205,7 +205,7 @@ public class MyPreferencesAdapter extends AbstractValueModel {
      * @return the stored value or the default
      */
     public float getFloat() {
-        return prefs.getFloat(key, ((Float) defaultValue).floatValue());
+        return prefs.getFloat(key, ((Number) defaultValue).floatValue());
     }
 
     /**
@@ -215,7 +215,7 @@ public class MyPreferencesAdapter extends AbstractValueModel {
      * @return the stored value or the default
      */
     public int getInt() {
-        return prefs.getInt(key, ((Integer) defaultValue).intValue());
+        return prefs.getInt(key, ((Number) defaultValue).intValue());
     }
 
     /**
@@ -225,7 +225,7 @@ public class MyPreferencesAdapter extends AbstractValueModel {
      * @return the stored value or the default
      */
     public long getLong() {
-        return prefs.getLong(key, ((Long) defaultValue).longValue());
+        return prefs.getLong(key, ((Number) defaultValue).longValue());
     }
 
     /**

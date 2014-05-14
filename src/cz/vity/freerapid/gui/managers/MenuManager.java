@@ -9,6 +9,7 @@ import cz.vity.freerapid.gui.actions.ViewActions;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.swing.SwingUtils;
 import cz.vity.freerapid.swing.Swinger;
+import cz.vity.freerapid.swing.binding.BindUtils;
 import cz.vity.freerapid.utilities.Utils;
 import org.jdesktop.application.ApplicationActionMap;
 import org.jdesktop.application.ApplicationContext;
@@ -17,6 +18,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.ComboPopup;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -44,7 +46,6 @@ public class MenuManager {
     private final static String RADIO = "*";
     private final static String RADIO2 = "*2";
     private final static String CHECKED = "!";
-    private ViewActions viewActions;
     private JMenu useConnections;
 
 //    private final static String AUTOSEARCH_PROPERTY = "autosearch";
@@ -62,7 +63,7 @@ public class MenuManager {
         this.director = director;
         fileActions = new FileActions(context);
         Swinger.initActions(fileActions, context);
-        viewActions = new ViewActions();
+        ViewActions viewActions = new ViewActions();
         Swinger.initActions(viewActions, context);
         Swinger.initActions(new HelpActions(), context);
     }
@@ -124,6 +125,7 @@ public class MenuManager {
                 "options",
                 MENU_SEPARATOR,
                 CHECKED + "monitorClipboardAction",
+                CHECKED + "globalLimitSpeedAction",
                 MENU_SEPARATOR,
                 createConnectionsMenu(),
                 MENU_SEPARATOR,
@@ -173,25 +175,31 @@ public class MenuManager {
                         for (MenuElement menuElement : path) {
                             if (menuElement instanceof ComboPopup)
                                 return;
-                            if (!(menuElement.getComponent() instanceof JMenuItem))
-                                continue;
+                            final Component component = menuElement.getComponent();
 
-                            JMenuItem menuItem = (JMenuItem) menuElement.getComponent();
-                            final Action action = menuItem.getAction();
-                            if (action == null)
-                                continue;
-                            final String longDescription = (String) action.getValue(Action.LONG_DESCRIPTION);
-                            if (longDescription != null) {
-                                if (builder.length() > 0)
-                                    builder.append(" - ");
-                                builder.append(longDescription);
-                            } else {
-                                final Object shortDescription = action.getValue(Action.SHORT_DESCRIPTION);
-                                if (shortDescription != null) {
+                            if (component instanceof JMenuItem) {
+                                JMenuItem menuItem = (JMenuItem) component;
+                                final Action action = menuItem.getAction();
+                                if (action == null)
+                                    continue;
+                                final String longDescription = (String) action.getValue(Action.LONG_DESCRIPTION);
+                                if (longDescription != null) {
                                     if (builder.length() > 0)
                                         builder.append(" - ");
-                                    builder.append(shortDescription);
+                                    builder.append(longDescription);
+                                } else {
+                                    final Object shortDescription = action.getValue(Action.SHORT_DESCRIPTION);
+                                    if (shortDescription != null) {
+                                        if (builder.length() > 0)
+                                            builder.append(" - ");
+                                        builder.append(shortDescription);
+                                    }
                                 }
+                            } else if (component instanceof JComponent) {
+                                final JComponent comp = (JComponent) component;
+                                final String text = comp.getToolTipText();
+                                if (text != null)
+                                    builder.append(text);
                             }
                         }
                         menuBar.putClientProperty(SELECTED_TEXT_PROPERTY, (path.length != 0) ? builder.toString() : "cancel");
@@ -208,8 +216,9 @@ public class MenuManager {
 
         final ApplicationActionMap map = context.getActionMap();
 
-        map.get("showCompletedAction").putValue(AbstractAction.SELECTED_KEY, viewActions.isShowCompleted());
-        map.get("monitorClipboardAction").putValue(AbstractAction.SELECTED_KEY, viewActions.isClipboardMonitoringSelected());
+        PropertyConnector.connectAndUpdate(BindUtils.getPrefsValueModel(UserProp.SHOW_COMPLETED, UserProp.SHOW_COMPLETED_DEFAULT), map.get("showCompletedAction"), "selected");
+        PropertyConnector.connectAndUpdate(BindUtils.getPrefsValueModel(UserProp.SPEED_LIMIT_ENABLED, UserProp.SPEED_LIMIT_ENABLED_DEFAULT), map.get("globalLimitSpeedAction"), "selected");
+        PropertyConnector.connectAndUpdate(BindUtils.getPrefsValueModel(UserProp.CLIPBOARD_MONITORING, UserProp.CLIPBOARD_MONITORING_DEFAULT), map.get("monitorClipboardAction"), "selected");
 
         final JRootPane rootPane = director.getMainFrame().getRootPane();
         rootPane.registerKeyboardAction(Swinger.getAction("showDownloadHistoryAction"), SwingUtils.getCtrlKeyStroke(KeyEvent.VK_H), JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -220,8 +229,6 @@ public class MenuManager {
         if (AppPrefs.getProperty(UserProp.AUTOSHUTDOWN_DISABLED_WHEN_EXECUTED, UserProp.AUTOSHUTDOWN_DISABLED_WHEN_EXECUTED_DEFAULT)) {
             AppPrefs.storeProperty(UserProp.AUTOSHUTDOWN, UserProp.AUTOSHUTDOWN_DISABLED);
         }
-
-//        final MainApp app = (MainApp) context.getApplication();
 
     }
 

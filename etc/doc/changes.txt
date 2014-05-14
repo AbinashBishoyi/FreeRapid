@@ -11,6 +11,8 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
+  Added : quick search (incremental search) for searching in the main queue table and plugins table
+  Added : global speed limiter
   Added : MS Windows - windows key for popmenu emulates a click with right mouse button on content panel with links
   Added : Apple MacOS - support for native Aqua Look&Feel
   Changed : upgraded JTattoo library to the latest version
