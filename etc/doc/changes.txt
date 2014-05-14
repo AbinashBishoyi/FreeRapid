@@ -11,8 +11,12 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid Downloader
 Fixed - indicates a bug fix
 
-  Added : Plugin API
+
+FreeRapid Downloader 0.85 Alpha 4
+   Added : new LookAndFeel skin support - Substance Office Black 2007 and Substance Mariner
+   Added : Plugin API
             - Hash class with functions to calculate hashes
+   Changed : Upgraded Substance L&F to version 6.1 Final
 
 8th August 2010 - FreeRapid Downloader 0.85 Alpha 3
   Added : Plugin API
@@ -33,7 +37,7 @@ Fixed - indicates a bug fix
   Added : new items in menu Options/Global speed limit, Help/Check for plugin statuses
   Added : plugin API
             - DownloadClientConsts class with constants for DownloadClient parameters
-  Added :  New theme for JTattoo LookAndFeel - "Graphite"             
+  Added :  New theme for JTattoo LookAndFeel - "Graphite"
   Changed : Removed obsolete entries for sorting downloads from dropdown menu, as the table can now be sorted by clicking the headings
   Changed : Show amount of downloaded data instead of "unknown" if file size is not known while downloading
   Changed : Removed Kunstoff and PGS LookAndFeel (too old and not updated), upgraded Substance LaF to version 6.0
