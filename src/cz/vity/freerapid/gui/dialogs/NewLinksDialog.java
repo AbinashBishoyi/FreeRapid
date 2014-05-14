@@ -33,9 +33,7 @@ import java.awt.datatransfer.Transferable;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashSet;
+import java.util.*;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -55,6 +53,8 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
         super(owner, true);
         this.director = director;
         this.dataManager = director.getDataManager();
+
+
         this.pluginsManager = director.getPluginsManager();
         this.setName("NewLinksDialog");
         try {
@@ -151,6 +151,7 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
         comboPath.setSelectedItem(AppPrefs.getProperty(UserProp.LAST_COMBO_PATH, ""));
 
         descriptionArea.setFont(descriptionArea.getFont().deriveFont(11.0F));
+        descriptionArea.setComponentOrientation(ComponentOrientation.getOrientation(Locale.getDefault()));
 
         this.setTransferHandler(new URLTransferHandler(director) {
             protected void doDropAction(List<URL> files) {

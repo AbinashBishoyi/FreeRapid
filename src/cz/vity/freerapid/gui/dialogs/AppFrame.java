@@ -16,6 +16,7 @@ import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
@@ -63,6 +64,8 @@ abstract class AppFrame extends JFrame {
         Application application = Application.getInstance(Application.class);
         ApplicationContext context = application.getContext();
         context.getResourceMap(getClass()).injectComponents(this);
+
+        this.getContentPane().applyComponentOrientation(ComponentOrientation.getOrientation(Locale.getDefault()));
 //        ActionMap actionMap = context.getActionMap(this.getClass(),
 //                this);
 //        ApplicationAction action = (ApplicationAction) actionMap.get("ok");

@@ -19,6 +19,7 @@ import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.util.EventObject;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -146,6 +147,9 @@ public class MainApp extends SingleXFrameApplication {
 
         frame.setJMenuBar(director.getMenuManager().getMenuBar());
         frame.setContentPane(director.getComponent());
+        final ComponentOrientation componentOrientation = ComponentOrientation.getOrientation(Locale.getDefault());
+        frame.getJMenuBar().applyComponentOrientation(componentOrientation);
+        frame.getContentPane().applyComponentOrientation(componentOrientation);
         frame.setMinimumSize(new Dimension(30, 30));
         frame.pack();
 
