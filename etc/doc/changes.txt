@@ -11,12 +11,13 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
+19th July 2009 - - FreeRapid Downloader 0.83 beta released
   Added : support for resuming files for hostings which support it (eg. HotFile, but not Rapidshare free!)
   Added : quick search (incremental search) for searching in the main queue table and plugins table (ctrl+F)  
   Added : MS Windows - windows key for popmenu emulates a click with right mouse button on content panel with links
   Added : Apple MacOS - support for native Aqua Look&Feel
   Added : support for GTK look and feel
-  Added : new frd.sh starting script [thanks to Petris!]
+  Added : new frd.sh launchin script [thanks to Petris!]
   Changed : upgraded JTattoo library to the latest version
   Changed : fatal exceptions are shown only once for reporting
   Changed : Apple MacOS - screen menu bar used by default

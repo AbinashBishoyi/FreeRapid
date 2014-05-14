@@ -37,6 +37,7 @@ public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
     private static final String VERSION__PARAM = "version";
     private static final String PRODUCT_PARAM = "product";
     private static final String APIVERSION_PARAM = "apiversion";
+    private static int failed = 0;
 
 
     public CheckPluginUpdateTask(ManagerDirector director, ApplicationContext context, boolean quiet) {
@@ -50,6 +51,8 @@ public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
 
     protected List<Plugin> doInBackground() throws Exception {
         final List<Plugin> newPlugins = new ArrayList<Plugin>();
+        if (failed > 6)
+            return newPlugins;
         AppPrefs.storeProperty(UserProp.PLUGIN_LAST_UPDATE_TIMESTAMP_CHECK, System.currentTimeMillis());
         message("updatesPluginCheck");
         final ClientManager clientManager = director.getClientManager();
@@ -101,6 +104,7 @@ public class CheckPluginUpdateTask extends CoreTask<List<Plugin>, Void> {
         LogUtils.processException(logger, cause);
 //        if (handleRuntimeException(cause))
 //            return;
+        ++failed;
         if (quietMode) {
             AppPrefs.storeProperty(UserProp.PLUGIN_LAST_UPDATE_TIMESTAMP_CHECK, -1);
             return;
