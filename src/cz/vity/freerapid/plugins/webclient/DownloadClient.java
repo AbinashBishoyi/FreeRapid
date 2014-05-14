@@ -176,7 +176,7 @@ public class DownloadClient implements HttpDownloadClient {
                     newuri = "http://" + method.getURI().getHost() + newuri;
 
                 logger.info("Redirect target: " + newuri);
-                setReferer(newuri);
+                
                 method.releaseConnection();
                 GetMethod redirect = getGetMethod(newuri);
                 final InputStream inputStream = makeRequestFile(redirect, file, deep + 1, allowRedirect);
@@ -313,7 +313,7 @@ public class DownloadClient implements HttpDownloadClient {
                     newuri = "http://" + method.getURI().getHost() + newuri;
 
                 logger.info("Redirect target: " + newuri);
-                setReferer(newuri);
+
                 GetMethod redirect = getGetMethod(newuri);
                 final int i = makeRequest(redirect, allowRedirect);
                 logger.info("Redirect: " + redirect.getStatusLine().toString());
