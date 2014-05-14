@@ -14,7 +14,7 @@
 *      by Ladislav Vitasek aka Vity                          *
 *   Website/Forum/Bugtracker: http://wordrider.net/freerapid *
 *   Mail: info@wordrider.net - suggestions                   *
-*   Last change: 18th October 2009                           *
+*   Last change: 31th October 2010                           *
 **************************************************************
 
 =======================================
@@ -62,7 +62,7 @@ Currently supported services are (in alphabetical order):
  - bitroad.net	             - letitbit.net	             - stream.cz
  - cobrashare.sk	         - linkbucks.com	         - subory.sk
  - czshare.com	             - load.to	                 - tinyurl.com
- - czshare.com_profi	     - mediafire.com	         - ugotfile.com
+ - czshare.com_profi	     -                           - ugotfile.com
  - dataup.de	             - megaupload.com	         - uloz.cz
  - depositfiles.com	         - myurl.in	                 - uloz.to
  - disperseit.com	         - nahraj.cz	             - ulozisko.sk
