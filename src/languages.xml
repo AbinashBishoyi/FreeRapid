@@ -35,5 +35,5 @@
     <!--<lng name="עברית" code="HE" icon="il.gif"/>-->
     <!--<lng name="한국어" code="KO" icon="kr.gif"/>-->
     <!--<lng name="Български" code="BG" icon="bg.gif"/>-->
-    <!--<lng name="Suomi" code="FI" icon="fi.gif"/>-->
+    <lng name="Suomi" code="FI" icon="fi.gif"/>
 </languages>

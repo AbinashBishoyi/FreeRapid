@@ -26,6 +26,7 @@ UserPreferencesDialog.properties
 Added:
 checkPreventStandbyWhileDownloading.text=Prevent standby while downloading (Windows only)
 
+alertsPanelGeneral.tab.title=General
 alertsPanelQM.tab.title=Quiet Mode
 
 panelActivateQM.border=Quiet Mode activation
@@ -42,6 +43,7 @@ checkNoConfirmDialogsInQM.text=Do not bring confirmation &dialogs to front in qu
 checkPlaySoundForQM.text=&Play sound when user interaction is required
 labelNoteForQM.text=You can enable or disable quiet mode by clicking the icon in the status bar or from the Options menu.
 addNewWindowPopupTitle=Add new window title
+
 
 =======================================================================================================================
                                            Version 0.85->0.85u1
