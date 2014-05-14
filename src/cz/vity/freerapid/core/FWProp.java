@@ -32,6 +32,9 @@ final public class FWProp {
     public static final String NEW_VERSION = "checkForNewVersionAuto";
     public static final String WEBURL_SUBMIT_ERROR = "weburlSubmitError";
     public static final String DECORATED_FRAMES = "decoratedFrames";
+    /**
+     * A better name for this property would be CLOSE_TO_TRAY
+     */
     public static final String MINIMIZE_ON_CLOSE = "minimizeOnClose";
     public static final boolean MINIMIZE_ON_CLOSE_DEFAULT = false;
     public static final String SELECTED_LANGUAGE = "selLanguage";

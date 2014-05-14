@@ -49,7 +49,7 @@ final class EstTimeCellRenderer extends DefaultTableCellRenderer {
 //                    value = String.format("%s (%s)", stateToString(state), secondsToHMin(downloadFile.getSleep()));
 //                else value = "";
         }
-        if (state == DownloadState.ERROR || state == DownloadState.SLEEPING || state == DownloadState.DISABLED) {
+        if (state == DownloadState.ERROR || state == DownloadState.SLEEPING || state == DownloadState.DISABLED || state == DownloadState.SKIPPED) {
             final String errorMessage = downloadFile.getErrorMessage();
             if (errorMessage != null) {
                 if (state == DownloadState.ERROR || state == DownloadState.DISABLED)

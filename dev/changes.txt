@@ -1,4 +1,9 @@
 Version 0.83->0.84
+DownloadTask.properties
+====================================
+New:
+fileAlreadyExistsTooltip=File already exists on the disk
+
 MainApp.properties
 ====================================
 New:
@@ -8,6 +13,8 @@ removeCompletedAndDeletedAction.Action.shortDescription = Remove all completed d
 removeCompletedAndDeletedAction.Action.smallIcon=${iconsPath}clean.png
 
 SKIPPED=SKIPPED
+
+refreshProxyList.text=Refresh proxy list
 
 UserPreferencesDialog.properties
 ====================================

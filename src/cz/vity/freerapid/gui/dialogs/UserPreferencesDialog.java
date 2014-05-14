@@ -634,7 +634,24 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
         bind(spinnerGlobalSpeedSliderMin, UserProp.GLOBAL_SPEED_SLIDER_MIN, UserProp.GLOBAL_SPEED_SLIDER_MIN_DEFAULT, 1, Integer.MAX_VALUE, 5);
         bind(spinnerGlobalSpeedSliderMax, UserProp.GLOBAL_SPEED_SLIDER_MAX, UserProp.GLOBAL_SPEED_SLIDER_MAX_DEFAULT, 1, Integer.MAX_VALUE, 5);
-        bind(spinnerGlobalSpeedSliderStep, UserProp.GLOBAL_SPEED_SLIDER_STEP, UserProp.GLOBAL_SPEED_SLIDER_STEP_DEFAULT, 1, 1000, 1);
+        final int intSpeedSliderStepMax = (Integer) spinnerGlobalSpeedSliderMax.getValue() - (Integer) spinnerGlobalSpeedSliderMin.getValue();
+        bind(spinnerGlobalSpeedSliderStep, UserProp.GLOBAL_SPEED_SLIDER_STEP, UserProp.GLOBAL_SPEED_SLIDER_STEP_DEFAULT, 1, intSpeedSliderStepMax < 1 ? 1 : intSpeedSliderStepMax, 1);
+
+        final ChangeListener changeListenerSpeedSlider = new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                final SpinnerNumberModel spinnerModel = (SpinnerNumberModel) spinnerGlobalSpeedSliderStep.getModel();
+                spinnerModel.setMaximum((Integer) spinnerGlobalSpeedSliderMax.getValue() - (Integer) spinnerGlobalSpeedSliderMin.getValue());
+                if ((Integer) spinnerModel.getMaximum() < 1) {
+                    spinnerModel.setMaximum(1);
+                }
+                if ((Integer) spinnerModel.getMaximum() < (Integer) spinnerModel.getValue()) {
+                    spinnerModel.setValue(spinnerModel.getMaximum());
+                }
+            }
+        };
+        spinnerGlobalSpeedSliderMin.addChangeListener(changeListenerSpeedSlider);
+        spinnerGlobalSpeedSliderMax.addChangeListener(changeListenerSpeedSlider);
 
         spinnerGlobalSpeedSliderMin.addChangeListener(new ChangeListener() {
             @Override
@@ -675,7 +692,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
         bind(checkProcessFromTop, UserProp.START_FROM_TOP, UserProp.START_FROM_TOP_DEFAULT);
 
-        ValueModel valueModel = bind(checkUseProxyList, UserProp.USE_PROXY_LIST, false);
+        ValueModel valueModel = bind(checkUseProxyList, UserProp.USE_PROXY_LIST, UserProp.USE_PROXY_LIST_DEFAULT);
         PropertyConnector.connectAndUpdate(valueModel, fieldProxyListPath, "enabled");
         PropertyConnector.connectAndUpdate(valueModel, btnProxyListPathSelect, "enabled");
 
@@ -1236,6 +1253,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         JLabel labelSpeedSliderStep = new JLabel();
         JLabel labelSpeedSliderKbps1 = new JLabel();
         JLabel labelSpeedSliderKbps2 = new JLabel();
+        JLabel labelSpeedSliderKbps3 = new JLabel();
         fieldFileSpeedLimiterValues = new JTextField();
         JLabel labelFileSpeedLimiterValues = new JLabel();
         JLabel labelRequiresRestart = new JLabel();
@@ -1985,6 +2003,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
 
                             labelSpeedSliderKbps1.setName("labelSpeedSliderKbps");
                             labelSpeedSliderKbps2.setName("labelSpeedSliderKbps");
+                            labelSpeedSliderKbps3.setName("labelSpeedSliderKbps");
 
                             labelFileSpeedLimiterValues.setName("labelFileSpeedLimiterValues");
                             fieldFileSpeedLimiterValues.setName("fieldFileSpeedLimiterValues");
@@ -2019,6 +2038,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
                             panelSpeedLimiterBuilder.add(labelSpeedSliderKbps2, cc.xy(7, 3));
                             panelSpeedLimiterBuilder.add(labelSpeedSliderStep, cc.xy(3, 5));
                             panelSpeedLimiterBuilder.add(spinnerGlobalSpeedSliderStep, cc.xy(5, 5));
+                            panelSpeedLimiterBuilder.add(labelSpeedSliderKbps3, cc.xy(7, 5));
 
                             panelSpeedLimiterBuilder.add(labelFileSpeedLimiterValues, cc.xy(9, 1));
                             panelSpeedLimiterBuilder.add(fieldFileSpeedLimiterValues, cc.xy(9, 3));

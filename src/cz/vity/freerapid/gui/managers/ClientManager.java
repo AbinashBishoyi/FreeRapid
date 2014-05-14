@@ -68,7 +68,7 @@ public class ClientManager {
     }
 
     private void updateProxies() {
-        if (AppPrefs.getProperty(UserProp.USE_PROXY_LIST, true)) {
+        if (AppPrefs.getProperty(UserProp.USE_PROXY_LIST, UserProp.USE_PROXY_LIST_DEFAULT)) {
             final String file = AppPrefs.getProperty(UserProp.PROXY_LIST_PATH, PROXY_LIST_DEFAULT_PATH);
             final File f = new File(file);
             if (f.exists() && f.isFile() && f.canRead()) {

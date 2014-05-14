@@ -11,6 +11,7 @@ import cz.vity.freerapid.swing.SwingUtils;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.swing.binding.BindUtils;
 import cz.vity.freerapid.utilities.Utils;
+import org.jdesktop.application.AbstractBean;
 import org.jdesktop.application.ApplicationActionMap;
 import org.jdesktop.application.ApplicationContext;
 
@@ -23,6 +24,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.List;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 
 
 /**
@@ -30,22 +33,23 @@ import java.util.List;
  *
  * @author Vity
  */
-public class MenuManager {
+public class MenuManager extends AbstractBean {
+    public final static String MENU_SEPARATOR = "---";
+    private final static String SELECTED_TEXT_PROPERTY = "selectedText";
+    private final static String RADIO = "*";
+    private final static String RADIO2 = "*2";
+    private final static String CHECKED = "!";
+
+    private final static String REFRESH_PROXY_LIST_ACTION_ENABLED_PROPERTY = "refreshProxyListActionEnabled";
+    private boolean refreshProxyListActionEnabled = false;
+
     /**
      * hlavni komponenta pro menu
      */
     private JMenuBar menuBar;
     private final ApplicationContext context;
     private final ManagerDirector director;
-    /**
-     *
-     */
-    private static final String SELECTED_TEXT_PROPERTY = "selectedText";
-    public static final String MENU_SEPARATOR = "---";
     private final FileActions fileActions;
-    private final static String RADIO = "*";
-    private final static String RADIO2 = "*2";
-    private final static String CHECKED = "!";
     private JMenu useConnections;
 
 //    private final static String AUTOSEARCH_PROPERTY = "autosearch";
@@ -164,6 +168,7 @@ public class MenuManager {
 
         MenuSelectionManager.defaultManager().addChangeListener(
                 new ChangeListener() {
+                    @Override
                     public void stateChanged(ChangeEvent evt) {
                         // Get the selected menu or menu item
                         MenuSelectionManager msm = (MenuSelectionManager) evt.getSource();
@@ -233,6 +238,19 @@ public class MenuManager {
             AppPrefs.storeProperty(UserProp.AUTOSHUTDOWN, UserProp.AUTOSHUTDOWN_DISABLED);
         }
 
+        AppPrefs.getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
+            @Override
+            public void preferenceChange(final PreferenceChangeEvent evt) {
+                if (UserProp.USE_PROXY_LIST.equals(evt.getKey())) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            setRefreshProxyListActionEnabled(Boolean.parseBoolean(evt.getNewValue()));
+                        }
+                    });
+                }
+            }
+        });
     }
 
     private void selectAutoShutDownMenu(ApplicationActionMap map) {
@@ -370,12 +388,21 @@ public class MenuManager {
 
     public void updateConnectionSettings(List<ConnectionSettings> connectionSettingses) {
         useConnections.removeAll();
+
+        final JMenuItem refreshProxyList = new JMenuItem();
+        refreshProxyList.setName("refreshProxyList");
+        refreshProxyList.setEnabled(AppPrefs.getProperty(UserProp.USE_PROXY_LIST, UserProp.USE_PROXY_LIST_DEFAULT));
+        refreshProxyList.setAction(context.getActionMap().get("refreshProxyList"));
+        useConnections.add(refreshProxyList);
+        useConnections.add(new JSeparator());
+
         for (final ConnectionSettings settings : connectionSettingses) {
             final JCheckBoxMenuItem item = new JCheckBoxMenuItem(settings.toString());
             final PropertyConnector propertyConnector = PropertyConnector.connect(settings, "enabled", item, "selected");
             propertyConnector.updateProperty2();
             //item.setSelected(settings.isEnabled());
             item.addActionListener(new ActionListener() {
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     director.getClientManager().setConnectionEnabled(settings, !settings.isEnabled());
                     director.getDataManager().checkQueue();
@@ -383,6 +410,21 @@ public class MenuManager {
             });
             useConnections.add(item);
         }
-
     }
+
+    @org.jdesktop.application.Action(enabledProperty = REFRESH_PROXY_LIST_ACTION_ENABLED_PROPERTY)
+    private void refreshProxyList() {
+        director.getClientManager().updateConnectionSettings();
+    }
+
+    public void setRefreshProxyListActionEnabled(boolean refreshProxyListActionEnabled) {
+        boolean oldValue = this.refreshProxyListActionEnabled;
+        this.refreshProxyListActionEnabled = refreshProxyListActionEnabled;
+        firePropertyChange(REFRESH_PROXY_LIST_ACTION_ENABLED_PROPERTY, oldValue, this.refreshProxyListActionEnabled);
+    }
+
+    public boolean isRefreshProxyListActionEnabled() {
+        return refreshProxyListActionEnabled;
+    }
+
 }

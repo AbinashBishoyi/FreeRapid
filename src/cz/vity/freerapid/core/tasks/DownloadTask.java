@@ -157,11 +157,12 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 
         final String fileName = downloadFile.getFileName();
         File outputFile = downloadFile.getOutputFile();
-        //outputFile = new File("d:/vystup.pdf");
+
         if (temporary) {
             this.fileAlreadyExists = checkExists();
             if (this.fileAlreadyExists == UserProp.SKIP) {
                 skipped = true;
+                downloadFile.setErrorMessage(getResourceMap().getString("fileAlreadyExistsTooltip"));
                 this.cancel(true);
                 return;
             }

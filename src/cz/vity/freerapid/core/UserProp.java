@@ -35,14 +35,13 @@ final public class UserProp {
 
 
     public static final String MAX_DOWNLOADS_AT_A_TIME = "maxDownloadsAtATime";
+    public static final int MAX_DOWNLOADS_AT_A_TIME_DEFAULT = 5;
 
     public static final String AUTO_RECONNECT_TIME = "autoReconnectTime";
     public static final int AUTO_RECONNECT_TIME_DEFAULT = 120;
 
     public static final String ERROR_ATTEMPTS_COUNT = "errorAttemptsCount";
     public static final int ERROR_ATTEMPTS_COUNT_DEFAULT = 5;
-
-    public static int MAX_DOWNLOADS_AT_A_TIME_DEFAULT = 5;
 
     public static final String DOWNLOADED_HISTORY_FILE_NAME = "downloads.txt";
 
@@ -60,6 +59,7 @@ final public class UserProp {
     public static final String CLOSE_APPLICATION_CONFIRM_WAITTIME = "closeApplicationConfirmTime";
 
     public static final String USE_PROXY_LIST = "useProxyList";
+    public static final boolean USE_PROXY_LIST_DEFAULT = false;
 
     public static final String PROXY_LIST_PATH = "proxyListPath";
     public static final String PLAY_SOUNDS_FAILED = "playSoundsFailed";

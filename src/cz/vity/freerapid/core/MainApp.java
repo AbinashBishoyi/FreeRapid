@@ -241,8 +241,8 @@ public class MainApp extends SingleXFrameApplication {
 
 
     private void startCheckNewVersion() {
-
         final Thread appThread = new Thread() {
+            @Override
             public void run() {
                 try {
                     Thread.sleep(30000);
@@ -254,7 +254,6 @@ public class MainApp extends SingleXFrameApplication {
         };
         appThread.setPriority(Thread.MIN_PRIORITY);
         appThread.start();
-
     }
 
 
@@ -262,15 +261,16 @@ public class MainApp extends SingleXFrameApplication {
      * Exit listener. Pri ukoncovani provede ulozeni uzivatelskych properties.
      */
     private class MainAppExitListener implements Application.ExitListener {
-
+        @Override
         public boolean canExit(EventObject event) {
             if (AppPrefs.getProperty(FWProp.MINIMIZE_ON_CLOSE, FWProp.MINIMIZE_ON_CLOSE_DEFAULT) && event instanceof WindowEvent) {
-                Swinger.minimize(MainApp.this.getMainFrame());
+                MainApp.this.getMainFrame().setVisible(false);
                 return false;
             }
             return true;
         }
 
+        @Override
         public void willExit(EventObject event) {
             appPrefs.store();
         }
@@ -286,4 +286,5 @@ public class MainApp extends SingleXFrameApplication {
     public AppPrefs getAppPrefs() {
         return appPrefs;
     }
+
 }

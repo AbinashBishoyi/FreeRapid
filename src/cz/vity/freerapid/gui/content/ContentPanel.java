@@ -1047,7 +1047,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         final List<Integer> speeds = new ArrayList<Integer>(speedStrings.length);
         for (String s : speedStrings) {
             try {
-                int num = (s.trim().isEmpty()) ? Integer.MAX_VALUE : Integer.parseInt(s);
+                int num = (s.trim().isEmpty()) ? Integer.MAX_VALUE : Integer.parseInt(s.trim());
                 if (num == 0)
                     num = -1;
                 if (num >= -1)

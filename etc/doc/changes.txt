@@ -15,9 +15,11 @@ Fixed - indicates a bug fix
   Added : New user option: "Slim lines in History dialog"
   Added : New user options for speed limiter
   Added : New download state SKIPPED, which is used for files that already exist and were skipped by the user
-  Changed : Faster appropriate for given URL detection
-  Changed : less required restarts after plugin updates
+  Added : Menu item for refreshing proxy list
+  Changed : Faster matching of URLs against plugins
+  Changed : Less required restarts after plugin updates
   Fixed : Problem with downloading txt files + using description, see http://wordrider.net/forum/read.php?7,4681,4696
+  Fixed : Inconsistent behavior of "Close to tray" option
 
  29th October 2009 - FreeRapid Downloader 0.83 Update 1
   Added : Romanian language [thanks to de-a dura lex]
