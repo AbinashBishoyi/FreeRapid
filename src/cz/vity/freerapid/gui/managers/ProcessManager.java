@@ -12,7 +12,6 @@ import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.model.PluginMetaData;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
-import static cz.vity.freerapid.plugins.webclient.DownloadState.*;
 import cz.vity.freerapid.plugins.webclient.FileState;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
@@ -34,6 +33,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
+
+import static cz.vity.freerapid.plugins.webclient.DownloadState.*;
 
 /**
  * @author Vity
@@ -259,6 +260,14 @@ public class ProcessManager extends Thread {
             logger.info("QUEUED not found - found " + downloadFile.getState());
             return;
         }
+        if (!runCheck && AppPrefs.getProperty(UserProp.COMBINED_DOWNLOADING, UserProp.COMBINED_DOWNLOADING_DEFAULT)) {
+            if (dataManager.isSameDownloading(downloadFile)) {
+                downloadFile.setState(DownloadState.SKIPPED);
+                downloadFile.setErrorMessage(context.getResourceMap().getString("fileIsBeingAlreadyDownloading"));
+                return;
+            }
+        }
+
         final HttpDownloadClient client;
         synchronized (downloadingLock) {
             client = clientManager.popWorkingClient();

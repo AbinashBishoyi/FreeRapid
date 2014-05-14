@@ -61,6 +61,11 @@ final public class DownloadsActions {
      */
     public static EnumSet<DownloadState> completedStates = EnumSet.of(COMPLETED);
 
+    /**
+     * states those indicates that file is being downloaded
+     */
+    public static EnumSet<DownloadState> processStates = EnumSet.of(WAITING, DOWNLOADING, GETTING, TESTING);
+
 
     /**
      * Checks whether state download state means "working"

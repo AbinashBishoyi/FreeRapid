@@ -339,6 +339,10 @@ final public class UserProp {
     public static final String RECONNECT_SCRIPT = "reconnectScript";
     public static final String RECONNECT_SCRIPT_ENABLED = "reconnectScriptEnabled";
     public static final boolean RECONNECT_SCRIPT_ENABLED_DEFAULT = true;
+
+    public static final String COMBINED_DOWNLOADING = "combinedDownloading";
+    public static final boolean COMBINED_DOWNLOADING_DEFAULT = true;
+
 }
 
 

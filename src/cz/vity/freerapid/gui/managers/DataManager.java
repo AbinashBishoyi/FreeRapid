@@ -907,6 +907,19 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
 
     }
 
+
+    public boolean isSameDownloading(DownloadFile file) {
+        synchronized (lock) {
+            final List<DownloadFile> list = getDownloadFilesInStates(DownloadsActions.processStates);
+            for (DownloadFile downloadFile : list) {
+                if (!downloadFile.equals(file) && downloadFile.getFileName().equals(file.getFileName()) && downloadFile.getSaveToDirectory().equals(file.getSaveToDirectory()) && downloadFile.getFileSize() >= 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     /**
      * Bere v uvahu i radky vybrane na preskacku.
      *
