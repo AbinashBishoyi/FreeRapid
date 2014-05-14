@@ -46,7 +46,6 @@ import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -206,19 +205,11 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             for (DownloadFile file : files) {
                 File outputFile = file.getOutputFile();
                 if (outputFile != null) {
-                    try {
-                        FileUtils.deleteFileWithRecycleBin(outputFile);
-                    } catch (IOException e) {
-                        LogUtils.processException(logger, e);
-                    }
+                    FileUtils.deleteFileWithRecycleBin(outputFile);
                 }
                 outputFile = file.getStoreFile();
                 if (outputFile != null) {
-                    try {
-                        FileUtils.deleteFileWithRecycleBin(outputFile);
-                    } catch (IOException e) {
-                        LogUtils.processException(logger, e);
-                    }
+                    FileUtils.deleteFileWithRecycleBin(outputFile);
                 }
             }
             removeSelected(files, indexes, showedDialog);

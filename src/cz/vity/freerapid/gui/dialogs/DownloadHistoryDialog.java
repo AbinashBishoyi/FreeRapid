@@ -45,7 +45,6 @@ import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -533,11 +532,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
             for (FileHistoryItem file : files) {
                 final File outputFile = file.getOutputFile();
                 if (outputFile != null) {
-                    try {
-                        FileUtils.deleteFileWithRecycleBin(outputFile);
-                    } catch (IOException e) {
-                        LogUtils.processException(logger, e);
-                    }
+                    FileUtils.deleteFileWithRecycleBin(outputFile);
                 }
             }
             this.removeSelected(indexes, showedDialog);

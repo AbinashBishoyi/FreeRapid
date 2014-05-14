@@ -19,7 +19,6 @@ import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
 import cz.vity.freerapid.plugins.webclient.interfaces.MaintainQueueSupport;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.FileUtils;
-import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
 import org.apache.commons.httpclient.URIException;
 import org.jdesktop.application.AbstractBean;
@@ -34,7 +33,6 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -344,21 +342,12 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
                     if (delete && file.getDownloaded() > 0) {
                         File outputFile = file.getStoreFile();
                         if (outputFile != null && outputFile.exists()) {
-                            try {
-                                FileUtils.deleteFileWithRecycleBin(outputFile);
-                            } catch (IOException e) {
-                                logger.warning("Deleting store file " + outputFile + " failed");
-                                LogUtils.processException(logger, e);
-                            }
+
+                            FileUtils.deleteFileWithRecycleBin(outputFile);
                         }
                         outputFile = file.getOutputFile();
                         if (outputFile != null && outputFile.exists()) {
-                            try {
-                                FileUtils.deleteFileWithRecycleBin(outputFile);
-                            } catch (IOException e) {
-                                logger.warning("Deleting store file " + outputFile + " failed");
-                                LogUtils.processException(logger, e);
-                            }
+                            FileUtils.deleteFileWithRecycleBin(outputFile);
                         }
                     }
                     file.setDownloaded(0);
