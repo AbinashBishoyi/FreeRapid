@@ -92,13 +92,18 @@ public class MethodBuilderTest {
 
     @Test
     public void testSetActionFromFormByName() throws BuildMethodException {
-        final MethodBuilder methodBuilder = new MethodBuilder(content, client);
+        MethodBuilder methodBuilder = new MethodBuilder(content, client);
         String action = methodBuilder.setActionFromFormByName("test", true).getAction();
         Assert.assertEquals("Parsing Form tag", "/login/", action);
 
         action = methodBuilder.setActionFromFormByName("F1", true).getAction();
         Assert.assertEquals("Parsing Form tag", "./testAction/", action);
 
+        methodBuilder = new MethodBuilder(content, client);
+        action = methodBuilder.setActionFromFormByName("downForm", true).getAction();
+        Assert.assertEquals("Parsing Form tag", "http://www.badongo.com/cfile/8203387", action);
+
+        Assert.assertEquals("Correct parameter parsing", Boolean.FALSE, methodBuilder.getParameters().containsKey("pamatovat"));
     }
 
     @Test

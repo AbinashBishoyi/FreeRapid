@@ -569,7 +569,7 @@ public final class MethodBuilder {
             populateParameters(content);
     }
 
-    private void populateParameters(String content) {
+    private void populateParameters(final String content) {
         if (parameterPattern1 == null)
             parameterPattern1 = Pattern.compile("name=(?:\"|')?(.*?)(?:\"|'|\\s).*?value=(?:\"|')?(.*?)(?:\"|'|\\s*>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         if (parameterPattern2 == null)
@@ -794,5 +794,14 @@ public final class MethodBuilder {
      */
     public void setAutoReplaceEntities(boolean autoReplaceEntities) {
         this.autoReplaceEntities = autoReplaceEntities;
+    }
+
+    /**
+     * Returns parameter map - name/value
+     *
+     * @return hash map with key pair name and value
+     */
+    public Map<String, String> getParameters() {
+        return parameters;
     }
 }
