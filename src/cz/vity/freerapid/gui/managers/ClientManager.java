@@ -133,7 +133,7 @@ public class ClientManager {
                     final ConnectionSettings conn = findConnectionByParameters(this.getRequestingHost(), this.getRequestingPort(), Proxy.Type.SOCKS);
                     if (conn != null) {
                         final String pass = conn.getPassword();
-                        final char[] password = (pass == null) ? null : pass.toCharArray();
+                        final char[] password = (pass == null) ? new char[0] : pass.toCharArray();
                         return new PasswordAuthentication(conn.getUserName(), password);
                     }
                 }
