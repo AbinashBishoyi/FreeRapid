@@ -1,5 +1,5 @@
 =======================================================================================================================
-                                           Version 0.86u1->
+                                           Version 0.86u1->0.9
 =======================================================================================================================
 MainApp.properties
 ===================================
@@ -18,6 +18,12 @@ openLogFile.Action.text=&Open log file
 openLogFile.Action.shortDescription=Open log for viewing
 browseToLogFile.Action.text=&Browse to log file
 browseToLogFile.Action.shortDescription=Open folder of log file
+
+
+UserPreferencesDialog.properties
+===================================
+Added:
+checkZoomCaptchaImage.text=Zoom captcha images for better legibility
 
 
 =======================================================================================================================

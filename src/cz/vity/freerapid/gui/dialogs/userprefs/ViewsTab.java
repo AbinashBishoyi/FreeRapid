@@ -49,6 +49,7 @@ public class ViewsTab extends UserPreferencesTab {
         bind(checkServiceAsIconOnly, UserProp.SHOW_SERVICES_ICONS, UserProp.SHOW_SERVICES_ICONS_DEFAULT);
         bind(checkSlimLinesInHistory, UserProp.SLIM_LINES_IN_HISTORY, UserProp.SLIM_LINES_IN_HISTORY_DEFAULT);
         bind(checkBringToFrontWhenPasted, UserProp.BRING_TO_FRONT_WHEN_PASTED, UserProp.BRING_TO_FRONT_WHEN_PASTED_DEFAULT);
+        bind(checkZoomCaptchaImage, UserProp.ZOOM_CAPTCHA_IMAGE, UserProp.ZOOM_CAPTCHA_IMAGE_DEFAULT);
         bind(checkCloseToTray, FWProp.MINIMIZE_ON_CLOSE, FWProp.MINIMIZE_ON_CLOSE_DEFAULT);
         bind(checkShowToolbarText, UserProp.SHOW_TEXT_TOOLBAR, UserProp.SHOW_TEXT_TOOLBAR_DEFAULT);
 
@@ -140,6 +141,8 @@ public class ViewsTab extends UserPreferencesTab {
         checkSlimLinesInHistory.setName("checkSlimLinesInHistory");
         checkBringToFrontWhenPasted = new JCheckBox();
         checkBringToFrontWhenPasted.setName("checkBringToFrontWhenPasted");
+        checkZoomCaptchaImage = new JCheckBox();
+        checkZoomCaptchaImage.setName("checkZoomCaptchaImage");
 
         checkShowIconInSystemTray = new JCheckBox();
         checkShowIconInSystemTray.setName("checkShowIconInSystemTray");
@@ -184,6 +187,7 @@ public class ViewsTab extends UserPreferencesTab {
                             FormSpecs.DEFAULT_ROWSPEC,
                             FormSpecs.DEFAULT_ROWSPEC,
                             FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC,
                     }), panelAppearance);
 
             panelAppearanceBuilder.add(labelLaF, cc.xy(3, 1));
@@ -198,6 +202,7 @@ public class ViewsTab extends UserPreferencesTab {
             panelAppearanceBuilder.add(checkServiceAsIconOnly, cc.xywh(3, 9, 7, 1));
             panelAppearanceBuilder.add(checkSlimLinesInHistory, cc.xywh(3, 10, 7, 1));
             panelAppearanceBuilder.add(checkBringToFrontWhenPasted, cc.xywh(3, 11, 7, 1));
+            panelAppearanceBuilder.add(checkZoomCaptchaImage, cc.xywh(3, 12, 7, 1));
         }
 
         //======== panel System tray ========
@@ -252,6 +257,7 @@ public class ViewsTab extends UserPreferencesTab {
     private JCheckBox checkServiceAsIconOnly;
     private JCheckBox checkSlimLinesInHistory;
     private JCheckBox checkBringToFrontWhenPasted;
+    private JCheckBox checkZoomCaptchaImage;
     private JCheckBox checkShowIconInSystemTray;
     private JCheckBox checkAnimateIcon;
     private JCheckBox checkCloseToTray;

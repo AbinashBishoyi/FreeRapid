@@ -7,12 +7,12 @@
 Thanks to all individuals who reported bugs.
 
 Legend :
-Added - indicates new functionality or new part of distribution
-Changed - indicates a change in using/behavior FreeRapid Downloader
+Added - indicates new functionality or features
+Changed - indicates a change in usage or behavior of FreeRapid Downloader
 Fixed - indicates a bug fix
 Internal - indicates an internal change - information for FRD developers - nothing important for users
 
-10 October 2012 - FreeRapid Downloader 0.9 Beta
+10th October 2012 - FreeRapid Downloader 0.9 Beta
   Added : After in-depth consideration, all non-updated translations were enabled, bringing the total number of
           supported languages to 31. Missing strings will appear in English. Updates to translations are warmly welcome,
           as usual.
@@ -20,7 +20,6 @@ Internal - indicates an internal change - information for FRD developers - nothi
   Added : Downloaded files can be renamed within FRD
   Added : Support for zooming captcha image
   Added : Progress bar while downloading plugin updates
-  Added : Search engine support for IMDb.com
   Added : Plugin API
            - A few new methods to MethodBuilder
            - FileStreamRecognizer improvements
