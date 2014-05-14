@@ -10,7 +10,6 @@ import cz.vity.freerapid.core.Consts;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,8 +23,6 @@ class WindowsCommander extends AbstractSystemCommander {
     private final static Logger logger = Logger.getLogger(WindowsCommander.class.getName());
 
     static {
-        System.setProperty("jna.nounpack", "true");
-        System.setProperty("jna.boot.library.path", new File("lib").getAbsolutePath());
         if (System.getProperty("os.arch", "").contains("64")) {
             System.setProperty("jna.boot.library.name", "jnidispatch64");
         } else {
