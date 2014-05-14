@@ -7,11 +7,8 @@ import cz.vity.freerapid.utilities.Browser;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
 import jlibs.xml.sax.binding.BindingHandler;
-import jlibs.xml.sax.binding.BindingListener;
-import jlibs.xml.sax.binding.SAXContext;
 import org.jdesktop.application.ApplicationContext;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -55,11 +52,6 @@ public class SearchManager {
         final BindingHandler handler = new BindingHandler(OpenSearchDescriptionBinding.class);
         handler.setPopulateNamespaces(true);
 //        Namespaces.getSuggested().put("http://a9.com/-/spec/opensearch/1.1/", "");
-        handler.setBindingListener(new BindingListener() {
-            public void unresolvedElement(SAXContext<?> context) throws SAXException {
-                System.out.println("context = " + context);
-            }
-        });
         for (File f : files) {
             final long lm = f.lastModified();
             if (lm > lastModified)
@@ -152,7 +144,7 @@ public class SearchManager {
 //        }
         //      uri = checkURI(uri, enc);
 
-        System.out.println("uri = " + uri);
+//        System.out.println("uri = " + uri);
         try {
             final URL url = new URI(uri).toURL();
             logger.info("Opening URL " + url.toExternalForm());
