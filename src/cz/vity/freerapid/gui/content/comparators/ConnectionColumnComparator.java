@@ -41,6 +41,7 @@ public final class ConnectionColumnComparator implements Comparator<DownloadFile
                 con = client.getSettings();
         }
 
+        result[1] = "";
         if (con != null) {
             if (con.isProxySet()) {
                 result[0] = 1;
@@ -50,7 +51,9 @@ public final class ConnectionColumnComparator implements Comparator<DownloadFile
                 }
                 result[1] = value;
             } else result[0] = 0;
-        } else result[0] = 2;
+        } else {
+            result[0] = 2;
+        }
         return result;
     }
 }

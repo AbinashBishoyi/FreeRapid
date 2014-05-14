@@ -42,6 +42,7 @@ Fixed - indicates a bug fix
   Changed : "Sort by Name" action is back
   Fixed : Exception when starting an RTMP download with file pre-allocation enabled
   Fixed : Problems with links containing '#' character
+  Fixed : NullPointerException while sorting Connection column 
 
 8th August 2010 - FreeRapid Downloader 0.85 Alpha 3
   Added : Plugin API
