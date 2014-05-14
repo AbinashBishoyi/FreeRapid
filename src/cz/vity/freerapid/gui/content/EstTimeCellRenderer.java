@@ -34,7 +34,7 @@ class EstTimeCellRenderer extends DefaultTableCellRenderer {
         this.setToolTipText(null);
         if (state == DownloadState.DOWNLOADING) {
             long hasToBeDownloaded = downloadFile.getFileSize() - downloadFile.getDownloaded();
-            final double avgSpeed = downloadFile.getAverageSpeed();
+            final double avgSpeed = downloadFile.getShortTimeAvgSpeed();
             if (hasToBeDownloaded >= 0) {
                 if (avgSpeed > 0) {
                     value = ContentPanel.secondsToHMin(Math.round((double) hasToBeDownloaded / avgSpeed));

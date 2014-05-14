@@ -13,10 +13,13 @@ Fixed - indicates a bug fix
 
   Added : internal - plugin API - support for using SSL in plugins 
   Added : French version of readme.txt [thanks to Jean-François]
+  Added : Information (fileinfo) dialog - allow to create non existing folder like in NewLinks dialog  
   Changed : support for viewing info about >GB long files 
   Changed : internal - upgraded Substance L&F to version 5.1, upgraded SwingX components to version 0.96  
   Changed : this file and readme.txt files were moved to 'doc' folder
   Changed : improved clipboard monitoring for URLs violating with RFC
+  Changed : Estimated time of arrival (ETA) counted based on the average speed of last 20 seconds
+  Changed : readme.txt files moved to 'doc' folder 
   Fixed : support for only X bytes long files (eg. 515B)
   Fixed : UI - UserPreferences dialog - OK not enabled when changed How to update plugins combobox [reported by Alex]
   Fixed : shutdown commands don't not work properly on FRD path with spaces

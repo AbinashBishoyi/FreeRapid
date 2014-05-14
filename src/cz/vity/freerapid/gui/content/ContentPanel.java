@@ -872,12 +872,16 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         boolean forceEnabled = isSelectedEnabled() && this.manager.hasDownloadFilesStates(selectedRows, DownloadsActions.forceEnabledStates);
         forceMenu.setEnabled(forceEnabled);
         final List<ConnectionSettings> connectionSettingses = director.getClientManager().getAvailableConnections();
+        boolean anyEnabled = false;
         for (ConnectionSettings settings : connectionSettingses) {
             final ForceDownloadAction action = new ForceDownloadAction(settings);
             forceMenu.add(action);
             action.setEnabled(forceEnabled);
+            if (settings.isEnabled())
+                anyEnabled = true;
         }
-        forceMenu.setEnabled(!connectionSettingses.isEmpty());
+
+        forceMenu.setEnabled(forceEnabled && anyEnabled);
 
         popup.addSeparator();
         popup.add(forceMenu);

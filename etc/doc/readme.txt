@@ -162,6 +162,8 @@ IV.    Known bugs and Limitations
     X ignore this exception in the app.log
 - java.lang.UnsupportedClassVersionError exception
     X You are using old Java version, you should use Sun Java version 6 or newer
+- IllegalArgumentException: 53687091 incompatible with Text-specific LCD contrast key
+    X Fix your registry settings, please see forum thread (http://wordrider.net/forum/read.php?7,713,713#msg-713)
 - DirectoryChooser throws java.lang.InternalError or freezes on Win Vista (64bit)
     X ignore this exception in the app.log
 - java.lang.ClassCastException: java.awt.TrayIcon cannot be cast to java.awt.Component

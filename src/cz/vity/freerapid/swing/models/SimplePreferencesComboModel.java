@@ -1,7 +1,7 @@
 package cz.vity.freerapid.swing.models;
 
 import cz.vity.freerapid.core.AppPrefs;
-import cz.vity.freerapid.core.Consts;
+import cz.vity.freerapid.core.UserProp;
 
 import javax.swing.*;
 import java.util.*;
@@ -18,7 +18,7 @@ public final class SimplePreferencesComboModel extends DefaultComboBoxModel {
 
 
     public SimplePreferencesComboModel(final String propertyKey, final boolean autosave) {
-        this(Consts.MAX_RECENT_PHRASES_COUNT, propertyKey, autosave);
+        this(AppPrefs.getProperty(UserProp.MAX_RECENT_PHRASES_COUNT, UserProp.MAX_RECENT_PHRASES_COUNT_DEFAULT), propertyKey, autosave);
 
     }
 
@@ -55,7 +55,7 @@ public final class SimplePreferencesComboModel extends DefaultComboBoxModel {
             if (!"".equals(s) && !"?".equals(s)) {
                 super.insertElementAt(anObject, 0);
                 if (stack.size() > maxRecentPhrasesCount) {
-                    this.remove(Consts.MAX_RECENT_PHRASES_COUNT - 1);
+                    this.remove(this.maxRecentPhrasesCount - 1);
                     if (autosave)
                         store();
                 }

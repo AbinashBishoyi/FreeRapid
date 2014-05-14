@@ -90,6 +90,8 @@ public class MethodBuilderTest {
         final MethodBuilder methodBuilder = getMethodBuilder();
         String action = methodBuilder.setActionFromFormByIndex(3, true).getAction();
         Assert.assertEquals("Parsing Form tag", "/login/", action);
+
+
     }
 
     @Test
@@ -121,6 +123,9 @@ public class MethodBuilderTest {
         action = methodBuilder.setActionFromFormByName("formular", true).getAction();
         Assert.assertEquals("Simple Form name with ' = '", "/getfile.php?152686", action);
         Assert.assertEquals("Parameters size", methodBuilder.getParameters().size(), 4);
+
+        methodBuilder = getMethodBuilder();
+        methodBuilder.setActionFromFormByName("noActionForm", true);
     }
 
     private MethodBuilder getMethodBuilder() {

@@ -28,6 +28,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.ConnectException;
 import java.net.NoRouteToHostException;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -177,9 +178,14 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                 setSpeed(0);
                 final long time = System.currentTimeMillis();
 
+                final int avgSpeedMeasuredSeconds = AppPrefs.getProperty(UserProp.AVG_SPEED_MEASURED_SECONDS, UserProp.AVG_SPEED_MEASURED_SECONDS_DEFAULT);
+                final long[] avgSpeedArray = new long[avgSpeedMeasuredSeconds];
+                Arrays.fill(avgSpeedArray, -1);
+
                 timer.schedule(new TimerTask() {
                     private long lastSize = 0;
                     private int noDataTimeOut = 0; //10 seconds to timeout
+                    private short indexer = 0;
 
                     public void run() {
 
@@ -210,11 +216,16 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                         }
 
                         final long current = System.currentTimeMillis();
-                        final double l = (current - time) / 1000.0;
-                        if (Double.compare(l, 0) == 0) {
+                        final float l = (current - time) / (float) 1000.0;
+
+                        if (Float.compare(l, 0) == 0) {
                             setAverageSpeed(0.0F);
                         } else
-                            setAverageSpeed((float) ((float) counter / l));
+                            setAverageSpeed((float) counter / l);
+                        if (indexer == avgSpeedMeasuredSeconds)
+                            indexer = 0;
+                        avgSpeedArray[indexer++] = speed;
+                        updateShortAvgSpeed(avgSpeedArray);
                     }
                 }, 0, 1000);
 
@@ -265,6 +276,18 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
             checkDeleteTempFile();
         }
 
+    }
+
+    private void updateShortAvgSpeed(long[] avgSpeedArray) {
+        int i = 0;
+        long sum = 0;
+        for (long l : avgSpeedArray) {
+            if (l != -1) {
+                sum += l;
+                ++i;
+            }
+        }
+        downloadFile.setShortTimeAvgSpeed((i == 0) ? 0 : (float) sum / (float) i);
     }
 
     protected boolean useTemporaryFiles() {

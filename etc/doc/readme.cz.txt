@@ -165,6 +165,8 @@ IV.    Známé problémy a omezení
     X ignorujte tuto výjimku v souboru app.log
 - Výjimka java.lang.UnsupportedClassVersionError
     X pravdìpodobnì používáte starší verzi Javy (aplikace vyžaduje Sun Java verze 6 èi novìjší)
+- Výjimka IllegalArgumentException: 53687091 incompatible with Text-specific LCD contrast key
+    X Je nutné si správnì nastavit (opravit) registry systému Windows, více viz (http://wordrider.net/forum/read.php?7,713,713#msg-713)     
 - DirectoryChooser vyhazuje výjimku java.lang.InternalError nebo zamrzá na Windows Vista (64bit)
     X ignorujte tuto výjimku v souboru app.log
 - java.lang.ClassCastException: java.awt.TrayIcon cannot be cast to java.awt.Component

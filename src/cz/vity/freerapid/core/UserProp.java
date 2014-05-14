@@ -224,5 +224,10 @@ final public class UserProp {
     public static final String DONT_ADD_NOTSUPPORTED_FROMCRYPTER = "dontAddNotSupportedFromCrypter";
     public static final boolean DONT_ADD_NOTSUPPORTED_FROMCRYPTER_DEFAULT = true;
 
+    public static final String AVG_SPEED_MEASURED_SECONDS = "avgSpeedMeasuredSeconds";
+    public static final int AVG_SPEED_MEASURED_SECONDS_DEFAULT = 10;
+
+    public static final String MAX_RECENT_PHRASES_COUNT = "maxRecentPhrasesCount";
+    public static final int MAX_RECENT_PHRASES_COUNT_DEFAULT = 6;
 
 }

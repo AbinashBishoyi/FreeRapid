@@ -34,6 +34,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
     private volatile long downloaded = 0;
     private int sleep;
     private float averageSpeed;
+    private float shortTimeAvgSpeed;
     private long speed;
     private volatile String errorMessage;
     private volatile URL fileUrl = null;
@@ -57,7 +58,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
                     info.getPropertyDescriptors();
             for (PropertyDescriptor pd : propertyDescriptors) {
                 final Object name = pd.getName();
-                if ("task".equals(name) || "speed".equals(name) || "connectionSettings".equals(name)) {
+                if ("task".equals(name) || "speed".equals(name) || "shortTimeAvgSpeed".equals(name) || "connectionSettings".equals(name)) {
                     pd.setValue("transient", Boolean.TRUE);
                 }
             }
@@ -554,5 +555,15 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
      */
     public String getPluginID() {
         return this.shareDownloadServiceID;
+    }
+
+    public float getShortTimeAvgSpeed() {
+        return shortTimeAvgSpeed;
+    }
+
+    public void setShortTimeAvgSpeed(float shortTimeAvgSpeed) {
+        float oldValue = this.shortTimeAvgSpeed;
+        this.shortTimeAvgSpeed = shortTimeAvgSpeed;
+        firePropertyChange("allTimeAverageSpeed", oldValue, connectionSettings);
     }
 }

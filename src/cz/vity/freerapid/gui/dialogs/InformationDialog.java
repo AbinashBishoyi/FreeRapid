@@ -18,6 +18,8 @@ import cz.vity.freerapid.swing.ComponentFactory;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.swing.models.RecentsFilesComboModel;
 import cz.vity.freerapid.utilities.LogUtils;
+import cz.vity.freerapid.utilities.Utils;
+import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.Task;
 import org.jdesktop.swinghelper.buttonpanel.JXButtonPanel;
 
@@ -150,11 +152,33 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
 
     private boolean validateChanges() {
         final String dir = (String) comboPath.getEditor().getItem();
-        if (dir == null || !new File(dir).isDirectory()) {
+        if (dir == null || dir.isEmpty()) {
             Swinger.showErrorMessage(this.getResourceMap(), "noDirectoryMessage");
             btnSelectPathAction();
             return false;
         }
+        final ResourceMap linksDialogMap = Swinger.getResourceMap(NewLinksDialog.class);
+        final File outputDir = new File(Utils.isWindows() ? dir.trim() : dir);
+        if (!outputDir.isDirectory()) {
+            final int choiceYesNo = Swinger.getChoiceYesNo(linksDialogMap.getString("directoryCreateMessage"));
+            if (choiceYesNo == Swinger.RESULT_YES) {
+                if (!outputDir.mkdirs()) {
+                    Swinger.showErrorMessage(linksDialogMap, "directoryCreatingFailed", outputDir.getAbsolutePath());
+                    btnSelectPathAction();
+                    return false;
+                } else {
+                    if (!outputDir.isDirectory()) {
+                        Swinger.showErrorMessage(linksDialogMap, "itsNotDirectory", outputDir.getAbsolutePath());
+                        btnSelectPathAction();
+                        return false;
+                    }
+                }
+            } else {
+                btnSelectPathAction();
+                return false;
+            }
+        }
+
         return true;
     }
 

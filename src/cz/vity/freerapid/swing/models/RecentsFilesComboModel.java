@@ -1,7 +1,7 @@
 package cz.vity.freerapid.swing.models;
 
 import cz.vity.freerapid.core.AppPrefs;
-import cz.vity.freerapid.core.Consts;
+import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.gui.FRDUtils;
 import cz.vity.freerapid.utilities.FileUtils;
 import cz.vity.freerapid.utilities.Utils;
@@ -21,14 +21,9 @@ public final class RecentsFilesComboModel extends DefaultComboBoxModel {
     private int maxRecentPhrasesCount;
 
 
-    public RecentsFilesComboModel(final String propertyKey, final boolean autosave) {
-        this(Consts.MAX_RECENT_PHRASES_COUNT, propertyKey, autosave);
-
-    }
-
-    public RecentsFilesComboModel(final int maxRecentPhrasesCount, final String keyProperties, final boolean autosave) {
+    public RecentsFilesComboModel(final String keyProperties, final boolean autosave) {
         this(new Stack<String>());
-        this.maxRecentPhrasesCount = maxRecentPhrasesCount;
+        this.maxRecentPhrasesCount = AppPrefs.getProperty(UserProp.MAX_RECENT_PHRASES_COUNT, UserProp.MAX_RECENT_PHRASES_COUNT_DEFAULT);
         this.keyProperties = keyProperties;
         this.autosave = autosave;
         final String[] values = AppPrefs.getProperty(keyProperties, "").split("\\|");
@@ -65,7 +60,7 @@ public final class RecentsFilesComboModel extends DefaultComboBoxModel {
                 if (!(new File(s).exists())) {
                     super.insertElementAt(anObject, 0);
                     if (stack.size() > maxRecentPhrasesCount) {
-                        this.remove(Consts.MAX_RECENT_PHRASES_COUNT - 1);
+                        this.remove(maxRecentPhrasesCount - 1);
                         if (autosave)
                             storeFiles();
                     }
