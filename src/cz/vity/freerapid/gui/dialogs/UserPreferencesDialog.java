@@ -600,6 +600,12 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
         bindLaFCombobox();
 
         bindLngCombobox();
+
+        comboHowToUpdate.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                model.setBuffering(true);
+            }
+        });
     }
 
     private void bindLaFCombobox() {
