@@ -2,7 +2,6 @@ package cz.vity.freerapid.gui.managers;
 
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.UserProp;
-import cz.vity.freerapid.swing.binding.MyPreferencesAdapter;
 import cz.vity.freerapid.utilities.os.SystemCommander;
 import cz.vity.freerapid.utilities.os.SystemCommanderFactory;
 import org.jdesktop.application.ApplicationContext;
@@ -11,6 +10,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 
 /**
  * @author Vity
@@ -28,8 +29,6 @@ public class SystemManager {
     }
 
     private void init() {
-        final MyPreferencesAdapter preferencesAdapter = new MyPreferencesAdapter(UserProp.PREVENT_STANDBY_WHILE_DOWNLOADING, UserProp.PREVENT_STANDBY_WHILE_DOWNLOADING_DEFAULT);
-
         final PropertyChangeListener pcl = new PropertyChangeListener() {
             private boolean lastState = false;
 
@@ -47,7 +46,14 @@ public class SystemManager {
                 }
             }
         };
-        preferencesAdapter.addValueChangeListener(pcl);
+        AppPrefs.getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
+            @Override
+            public void preferenceChange(PreferenceChangeEvent evt) {
+                if (UserProp.PREVENT_STANDBY_WHILE_DOWNLOADING.equals(evt.getKey())) {
+                    pcl.propertyChange(null);
+                }
+            }
+        });
         director.getDataManager().getProcessManager().addPropertyChangeListener("downloading", pcl); //for all on download thread
     }
 
