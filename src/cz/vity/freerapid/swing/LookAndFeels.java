@@ -74,9 +74,8 @@ public final class LookAndFeels {
         String selectedLookAndFeelClassName = AppPrefs.getProperty(FWProp.LOOK_AND_FEEL_SELECTED_KEY, null);
         String selectedTheme = AppPrefs.getProperty(FWProp.THEME_SELECTED_KEY, DEFAULT_THEME);
         if (selectedLookAndFeelClassName == null) {
-            final String s = Swinger.getResourceMap().getString("Application.lookAndFeelDefault");
+            final String s = Swinger.getResourceMap().getString("Application.lookAndFeelDefault", "").trim();
             selectedLookAndFeelClassName = DEFAULT_LAF;
-
             if ("system".equals(s)) {
                 selectedLookAndFeelClassName = UIManager.getSystemLookAndFeelClassName();
                 selectedTheme = null;
@@ -89,6 +88,8 @@ public final class LookAndFeels {
 
         if (selectedTheme == null && selectedLookAndFeelClassName.equals(KUNSTSTOFF))
             selectedTheme = KunstoffMetalTheme.class.getName();
+        if (selectedTheme == null)
+            selectedTheme = "";
         selectedLookAndFeel = new LaF(selectedLookAndFeelClassName, "", selectedTheme, opaque);
     }
 

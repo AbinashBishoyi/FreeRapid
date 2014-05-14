@@ -27,6 +27,8 @@ public class OSDesktop {
                 Desktop.getDesktop().open(file);
             } catch (IOException e) {
                 LogUtils.processException(logger, e);
+            } catch (RuntimeException e) {
+                LogUtils.processException(logger, e);
             }
         }
     }
