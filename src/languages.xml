@@ -4,7 +4,7 @@
     <!--language can be country specific, flags indicates -->
     <!-- for adding new language you have to add new icon into the flags dir in freerapid\src\cz\vity\freerapid\core\resources\icons\flags\-->
     <!-- from freerapid\dev\flags-->
-    <lng name="English" code="EN" flags="UK=uk.gif|CA=ca.gif" icon="usa.gif"/>
+    <lng name="English" code="EN" flags="UK=uk.gif|CA=ca.gif|AU=au.gif" icon="usa.gif"/>
     <lng name="Čeština" code="CS" icon="cz.gif"/>
     <lng name="Français" code="FR" icon="france.gif"/>
     <!--<lng name="Magyar nyelv" code="HU" icon="hungary.gif"/>-->
