@@ -1,4 +1,5 @@
 #!/bin/sh
+# FRD requires Sun Java 6, NO Shity GCJ, NO OpenJDK, but Sun Java 6!
 # Look for java in these directories
 LOOKUP_JRE_DIRS="/usr/lib/jvm/* /opt/java* /opt/jre*"
 #Created by Petris 2009 -> Many thanks!

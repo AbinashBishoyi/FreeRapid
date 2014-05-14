@@ -60,6 +60,12 @@ public class MainApp extends SingleXFrameApplication {
 
         minimizeOnStart = line.isMinimize();
 
+        final String vm = System.getProperty("java.vm.vendor", "");
+        if (!vm.contains("Sun")) {
+            getLogger().log(Level.SEVERE, "Not using Sun Java" + vm);
+            exitWithErrorMessage(String.format("You are not using Sun Java, but %s. See readme.txt for minimal requirements to run FreeRapid Downloader.", vm));
+        }
+
         final Map<String, String> map = line.getProperties();
         if (Utils.isWindows() && (new java.io.File("C:/Program files/Eset").exists() || new java.io.File("D:/Program files/Eset").exists())) {
             if (!map.containsKey(FWProp.ONEINSTANCE)) {
@@ -260,4 +266,7 @@ public class MainApp extends SingleXFrameApplication {
         return trayIconSupport;
     }
 
+    public AppPrefs getAppPrefs() {
+        return appPrefs;
+    }
 }

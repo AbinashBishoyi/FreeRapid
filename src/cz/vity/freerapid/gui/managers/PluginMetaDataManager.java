@@ -76,6 +76,7 @@ public class PluginMetaDataManager {
 //    }
 
     //
+
     public void saveToFile(Set<PluginMetaData> files) {
         synchronized (saveFileLock) {
             logger.info("=====Saving PluginMetaData list into XML file=====");

@@ -27,6 +27,7 @@ Main features:
  - support for concurrent downloading from multiple services
  - downloading using proxy list
  - download history
+ - resume downloads support
  - smart clipboard monitoring
  - automatic checking for file's existence on server
  - automatic plugins updates
@@ -80,14 +81,14 @@ Note: This list might be not actual - the current list you can find at http://wo
 =======================================
 
 Recommended configuration:
-    * Windows 2000/XP/Linux(core 2.4)* or higher operating system
+    * Windows 2000/XP/Vista/7/Linux(core 2.4)* or higher operating system
     * Pentium 800MHz processor
     * min 1024x768 screen resolution
     * 40 MB of free RAM
     * 10 MB free disk space
     * Java 2 Platform - version at least 1.6 (Java SE 6 Runtime) installed
 
-Application needs at least Java 6.0 to start (http://java.sun.com/javase/downloads/index.jsp , JRE 6).
+Application needs at least Sun Java 6.0 to start (http://java.sun.com/javase/downloads/index.jsp , JRE 6).
 
 Linux Debian like users can use this command to intall Java:
    sudo apt-get install sun-java6-jre
@@ -101,11 +102,19 @@ Unzip files to any of your directory, but beware special characters (like '+' or
 If you make an upgrade to higher version, you can delete previous folder. All user
 settings are preserved. All user settings are saved in home directories:
 MS Windows: c:\Documents and Settings\YOUR_USER_NAME\application data\VitySoft\FRD
-            and in registry HKEY_CURRENT_USER\Software\JavaSoft\Prefs\vitysoft\frd
+            
 Linux: ~/.FRD
 
 DO NOT copy new version over older one.
 
+
+How to get the latest Sun Java on Linux (Ubuntu)?
+
+Run these commands:
+- apt-get update
+- apt-get install sun-java6-jre
+- update-java-alternatives -l
+- update-java-alternatives -s java-6-sun
 
 Launching
 -----------
@@ -167,6 +176,8 @@ IV.    Known bugs and Limitations
     X Fix your registry settings, please see forum thread (http://wordrider.net/forum/read.php?7,713,713#msg-713)
 - DirectoryChooser throws java.lang.InternalError or freezes on Win Vista (64bit)
     X ignore this exception in the app.log
+- IllegalStateException - Cannot open system clipboard
+    X ignore this exception in the app.log
 - java.lang.ClassCastException: java.awt.TrayIcon cannot be cast to java.awt.Component
     X ignore this exception in the app.log    
 - Linux users reported not showing icon in tray on Linux
@@ -215,6 +226,8 @@ use bank account described on the homepage http://wordrider.net/freerapid/donati
 
 VIII.   FAQ
 =======================================
+More updated FAQs you can find in FAQ section at http://wordrider.net/freerapid
+
 
 Q: Why did you create another "RapidShare Downloader"?
 A: 1) Because I don't want to be dependant on the russian software, which is probably full of malware and spyware.

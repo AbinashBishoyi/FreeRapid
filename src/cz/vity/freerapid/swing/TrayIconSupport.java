@@ -91,15 +91,15 @@ public class TrayIconSupport implements PropertyChangeListener {
         popup.setFont(font);
         this.trayIcon = new TrayIcon(image, frame.getTitle(), popup);
 
-        trayIcon.setImageAutoSize(true);
+        trayIcon.setImageAutoSize(AppPrefs.getProperty(UserProp.TRAY_ICON_AUTOIMAGESIZE, UserProp.TRAY_ICON_AUTOIMAGESIZE_DEFAULT));
         trayIcon.addMouseListener(mouseListener);
         try {
             SystemTray tray = SystemTray.getSystemTray();
             tray.add(trayIcon);
+            setEnabled(true);
         } catch (AWTException e) {
             logger.log(Level.WARNING, "Cannot enable Tray icon - Tray icon is not supported on this system");
         }
-        setEnabled(true);
     }
 
     private void windowPlay(final JFrame frame, boolean toFront) {

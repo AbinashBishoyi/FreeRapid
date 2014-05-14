@@ -29,12 +29,14 @@ public class DownloadNewPluginsTask extends DownloadTask {
 
     private final ManagerDirector director;
     private final List<DownloadFile> fileList;
+    private ScreenInputBlocker blocker;
 
     public DownloadNewPluginsTask(ManagerDirector director, ApplicationContext context, List<DownloadFile> fileList) {
         super(context.getApplication());
         this.director = director;
         this.fileList = fileList;
-        this.setInputBlocker(new ScreenInputBlocker(this, BlockingScope.APPLICATION, Swinger.getActiveWindowComponent(), null));
+        blocker = new ScreenInputBlocker(this, BlockingScope.APPLICATION, Swinger.getActiveFrame(), null);
+        this.setInputBlocker(blocker);
         setUseRelativeStoreFileIfPossible(false);
     }
 
@@ -135,6 +137,7 @@ public class DownloadNewPluginsTask extends DownloadTask {
 
     @Override
     protected void succeeded(Void result) {
+        blocker.unblock();
         final int choiceYesNo = Swinger.getChoiceYesNo(getResourceMap().getString("installed"));
         if (choiceYesNo == Swinger.RESULT_YES) {
             director.getMenuManager().getFileActions().restartApplication();

@@ -64,15 +64,23 @@ public class FileUtils {
     }
 
     public static void makeBackup(final File srcFile) throws IOException {
+        if (!srcFile.exists())
+            return;
         final File backupFile = getBackupFile(srcFile);
 
+        final File tmp = File.createTempFile("FRD", "temp", srcFile.getParentFile());
+        final boolean b = srcFile.renameTo(tmp);
+        if (!b) {
+            logger.warning("Failed to rename oldSrc file to " + tmp);
+        }
         if (backupFile.exists()) {
             final boolean result = backupFile.delete();
             if (!result) {
                 logger.warning("Deleting old backup file " + backupFile + " failed.");
             }
         }
-        final boolean result = srcFile.renameTo(backupFile);
+
+        final boolean result = tmp.renameTo(backupFile);
         if (!result) {
             logger.warning("Making backup of file " + srcFile + " to backup file " + backupFile + " failed.");
         }

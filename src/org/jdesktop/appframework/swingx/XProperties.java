@@ -7,10 +7,9 @@ package org.jdesktop.appframework.swingx;
 import com.jgoodies.binding.list.ArrayListModel;
 import org.jdesktop.application.SessionStorage.Property;
 import org.jdesktop.swingx.JXTable;
-import org.jdesktop.swingx.decorator.SortKey;
-import org.jdesktop.swingx.decorator.SortOrder;
 import org.jdesktop.swingx.table.TableColumnExt;
 
+import javax.swing.*;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
@@ -24,6 +23,8 @@ import java.util.List;
 
 /**
  * Container class for SwingX specific SessionStorage Properties. Is Factory for custom PersistanceDelegates
+ *
+ * @author Kleopatra & Vity
  */
 public class XProperties {
 
@@ -40,8 +41,8 @@ public class XProperties {
     public void registerPersistenceDelegates() {
         XMLEncoder e = new XMLEncoder(System.out);
         e.setPersistenceDelegate(SortKeyState.class,
-                new DefaultPersistenceDelegate(new String[]{"ascending",
-                        "modelIndex", "comparator"}));
+                new DefaultPersistenceDelegate(new String[]{"sortOrder",
+                        "modelIndex"}));
         e.setPersistenceDelegate(ColumnState.class,
                 new DefaultPersistenceDelegate(
                         new String[]{"width", "preferredWidth", "modelIndex",
@@ -51,22 +52,29 @@ public class XProperties {
                         "sortKeyState", "horizontalScrollEnabled"}));
         e.setPersistenceDelegate(ArrayListModel.class, e.getPersistenceDelegate(List.class));
 //PersistenceDelegate for URL class ~ This tells XMLEncoder how to deal with these objects
-        final PersistenceDelegate defDelegate = new PersistenceDelegate() {
-            protected Expression instantiate(Object oldInstance, Encoder out) {
-                return new Expression(oldInstance, oldInstance.getClass(), "new", new Object[]{oldInstance.toString()});
-            }
-        };
-        e.setPersistenceDelegate(URL.class, defDelegate);
-        e.setPersistenceDelegate(File.class, defDelegate);
+        final PrimitivePersistenceDelegate primitivePersistenceDelegate = new PrimitivePersistenceDelegate();
+        e.setPersistenceDelegate(URL.class, new PrimitivePersistenceDelegate());
+        e.setPersistenceDelegate(File.class, primitivePersistenceDelegate);
     }
 
-    static class FilePersistenceDelegate extends PersistenceDelegate {
+//    static class FilePersistenceDelegate extends PersistenceDelegate {
+//        protected Expression instantiate(Object oldInstance, Encoder out) {
+//            File f = (File) oldInstance;
+//            return new Expression(oldInstance, f.getClass(), "new", new Object[]{f.toString()});
+//        }
+//    }
+
+
+    class PrimitivePersistenceDelegate extends PersistenceDelegate {
+//        protected boolean mutatesTo(Object oldInstance, Object newInstance) {
+//            return oldInstance.equals(newInstance);
+//        }
+
         protected Expression instantiate(Object oldInstance, Encoder out) {
-            File f = (File) oldInstance;
-            return new Expression(oldInstance, f.getClass(), "new", new Object[]{f.toString()});
+            return new Expression(oldInstance, oldInstance.getClass(),
+                    "new", new Object[]{oldInstance.toString()});
         }
     }
-
 
     public static class XTableProperty implements Property {
 
@@ -82,7 +90,14 @@ public class XProperties {
             }
             XTableState tableState = new XTableState(columnStates.toArray(new ColumnState[columnStates.size()]));
             tableState.setHorizontalScrollEnabled(table.isHorizontalScrollEnabled());
-            SortKey sortKey = SortKey.getFirstSortingKey(table.getFilters().getSortController().getSortKeys());
+            final List<? extends RowSorter.SortKey> keys = table.getRowSorter().getSortKeys();
+            RowSorter.SortKey sortKey = null;
+            for (RowSorter.SortKey key : keys) {
+                if (!SortOrder.UNSORTED.equals(key.getSortOrder())) {
+                    sortKey = key;
+                    break;
+                }
+            }
             if (sortKey != null) {
                 tableState.setSortKey(sortKey);
             }
@@ -105,7 +120,7 @@ public class XProperties {
             table.setHorizontalScrollEnabled(tableState
                     .getHorizontalScrollEnabled());
             if (tableState.getSortKey() != null) {
-                table.getFilters().getSortController().setSortKeys(
+                table.getRowSorter().setSortKeys(
                         Collections.singletonList(tableState.getSortKey()));
             }
         }
@@ -186,12 +201,12 @@ public class XProperties {
 
         }
 
-        public void setSortKey(SortKey sortKey) {
+        public void setSortKey(RowSorter.SortKey sortKey) {
             this.sortKeyState = new SortKeyState(sortKey);
 
         }
 
-        private SortKey getSortKey() {
+        private RowSorter.SortKey getSortKey() {
             if (sortKeyState != null) {
                 return sortKeyState.getSortKey();
             }
@@ -236,22 +251,20 @@ public class XProperties {
     public static class SortKeyState {
         int modelIndex;
 
-        Comparator comparator;
+        // Comparator comparator;
 
-        boolean ascending;
+        int sortOrder;
 
         /**
          * Constructor used by the custom PersistenceDelegate.
          *
-         * @param ascending
+         * @param sortOrder
          * @param modelIndex
          * @param comparator
          */
-        public SortKeyState(boolean ascending, int modelIndex,
-                            Comparator comparator) {
-            this.ascending = ascending;
+        public SortKeyState(int sortOrder, int modelIndex) {
+            this.sortOrder = sortOrder;
             this.modelIndex = modelIndex;
-            this.comparator = comparator;
         }
 
         /**
@@ -259,27 +272,20 @@ public class XProperties {
          *
          * @param sortKey
          */
-        public SortKeyState(SortKey sortKey) {
-            this(sortKey.getSortOrder().isAscending(), sortKey.getColumn(),
-                    sortKey.getComparator());
+        public SortKeyState(RowSorter.SortKey sortKey) {
+            this(sortKey.getSortOrder().ordinal(), sortKey.getColumn());
         }
 
-        protected SortKey getSortKey() {
-            SortOrder sortOrder = getAscending() ? SortOrder.ASCENDING
-                    : SortOrder.DESCENDING;
-            return new SortKey(sortOrder, getModelIndex(), getComparator());
+        protected RowSorter.SortKey getSortKey() {
+            return new RowSorter.SortKey(getModelIndex(), SortOrder.values()[getSortOrder()]);
         }
 
-        public boolean getAscending() {
-            return ascending;
+        public int getSortOrder() {
+            return sortOrder;
         }
 
         public int getModelIndex() {
             return modelIndex;
-        }
-
-        public Comparator getComparator() {
-            return comparator;
         }
     }
 
@@ -360,11 +366,6 @@ public class XProperties {
         public int compare(ColumnState o1, ColumnState o2) {
             return o1.getViewIndex() - o2.getViewIndex();
         }
-
-//        public int compare(Object o1, Object o2) {
-//
-//            return ((ColumnState) o1).getViewIndex() - ((ColumnState) o2).getViewIndex();
-//        }
 
     }
 }

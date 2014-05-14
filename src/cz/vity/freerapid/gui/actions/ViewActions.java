@@ -88,6 +88,7 @@ public class ViewActions extends AbstractBean {
         try {
             final UserPreferencesDialog dialog = new UserPreferencesDialog(app.getMainFrame(), app.getContext());
             app.prepareDialog(dialog, true);
+            app.getAppPrefs().store();
         } catch (Exception e) {
             LogUtils.processException(logger, e);
         }

@@ -5,6 +5,7 @@ package cz.vity.freerapid.core;
  */
 final public class UserProp {
 
+
     private UserProp() {
     }
 
@@ -235,7 +236,7 @@ final public class UserProp {
     public static final int SPEED_LIMIT_DEFAULT = 250;
 
     public static final String SPEED_LIMIT_ENABLED = "speedLimitEnabled";
-    public static final boolean SPEED_LIMIT_ENABLED_DEFAULT = true;
+    public static final boolean SPEED_LIMIT_ENABLED_DEFAULT = false;
 
     public static final String SPEED_LIMIT_SPEEDS = "speedLimitSpeeds";
     public static final String SPEED_LIMIT_SPEEDS_DEFAULT = "0,,10,15,20,30,40,50,100,150,200,300";
@@ -262,4 +263,6 @@ final public class UserProp {
     public static final String CHECK_FOR_NEW_VERSION_TIME = "checkForNewVersionLastTime";
     public static final int CHECK_FOR_NEW_VERSION_TIME_DEFAULT = 0;
 
+    public static final String TRAY_ICON_AUTOIMAGESIZE = "trayIconAutoImageSize";
+    public static final boolean TRAY_ICON_AUTOIMAGESIZE_DEFAULT = true;
 }

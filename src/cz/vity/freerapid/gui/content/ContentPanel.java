@@ -27,9 +27,8 @@ import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.ColorHighlighter;
-import org.jdesktop.swingx.decorator.FilterPipeline;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
-import org.jdesktop.swingx.decorator.PatternFilter;
+import org.jdesktop.swingx.sort.SortController;
 import org.jdesktop.swingx.table.TableColumnExt;
 
 import javax.swing.*;
@@ -39,6 +38,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
@@ -299,7 +299,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             Arrays.sort(indexes);
         for (int i = 0; i < count; i++) {
             if (Arrays.binarySearch(indexes, i) < 0) {
-                int index = table.convertRowIndexToView(i);
+                int index = Swinger.convertRowIndexToView(table, i);
                 selectionModel.addSelectionInterval(index, index);
             }
         }
@@ -332,7 +332,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                 if (visibleRowCount <= 0)
                     return;
                 for (int row : rows) {
-                    int i = table.convertRowIndexToView(row);
+                    int i = Swinger.convertRowIndexToView(table, row);
                     if (i != -1) {
                         if (i >= visibleRowCount)
                             i = visibleRowCount - 1;
@@ -381,8 +381,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
                 int count = getVisibleRowCount();
                 if (count > 0) {//pokud je neco videt
                     int index = count - 1; //vypoctem si posledni viditelnou
-                    if (index > min) {
-                        index = table.convertRowIndexToView(min); //pokud neni videt
+                    if (min < index) {
+                        index = min;
                         if (index == -1)
                             index = count - 1;//nastavime posledni
                     }
@@ -394,18 +394,20 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         });
     }
 
+
     private int getVisibleRowCount() {
-        return table.getFilters().getOutputSize();
+        return table.getRowSorter().getViewRowCount();
     }
 
     private int getArrayMin(final int[] indexes) {
         int min = Integer.MAX_VALUE;
         for (int i : indexes) {
-            if (min > i) {
+            i = Swinger.convertRowIndexToView(table, i);
+            if (min > i && i != -1) {
                 min = i;
             }
         }
-        return min;
+        return min;//nejmensi z View
     }
 
     @org.jdesktop.application.Action(enabledProperty = VALIDATELINKS_ACTION_ENABLED_PROPERTY)
@@ -425,7 +427,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         final int resultIndex = manager.sortByName(indexes);
         selectionModel.setValueIsAdjusting(false);
         if (resultIndex != -1) {
-            int index = table.convertRowIndexToView(resultIndex);
+            int index = Swinger.convertRowIndexToView(table, resultIndex);
             selectionModel.setSelectionInterval(index, index + indexes.length - 1);
             scrollToVisible(true);
         }
@@ -448,9 +450,10 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         selectionModel.setValueIsAdjusting(true);
         final int[] indexes = getSelectedRows();
         manager.moveUp(indexes);
+//        table.getRowSorter().modelStructureChanged();
         selectionModel.clearSelection();
         for (int index : indexes) {
-            index = table.convertRowIndexToView(index);
+            index = Swinger.convertRowIndexToView(table, index);
             selectionModel.addSelectionInterval(index, index);
         }
         selectionModel.setValueIsAdjusting(false);
@@ -470,9 +473,10 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         selectionModel.setValueIsAdjusting(true);
         final int[] indexes = getSelectedRows();
         manager.moveDown(indexes);
+//        table.getRowSorter().modelStructureChanged();
         selectionModel.clearSelection();
         for (int index : indexes) {
-            index = table.convertRowIndexToView(index);
+            index = Swinger.convertRowIndexToView(table, index);
             selectionModel.addSelectionInterval(index, index);
         }
         selectionModel.setValueIsAdjusting(false);
@@ -531,22 +535,32 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     }
 
 
+    @SuppressWarnings({"unchecked"})
     public void updateFilters() {
+        final SortController rowSorter = (SortController) table.getRowSorter();
+
         if (!AppPrefs.getProperty(UserProp.SHOW_COMPLETED, true)) {
-            table.setFilters(new FilterPipeline(new StateFilter()));
-        } else table.setFilters(null);
+            rowSorter.setRowFilter(new StateFilter());
+        } else rowSorter.setRowFilter(null);
+
 
     }
 
-    private static class StateFilter extends PatternFilter {
-        public StateFilter() {
-            super("", 0, 0);
-
+    private boolean isCancelledExisting() {
+        final int[] indexes = getSelectedRows();
+        final java.util.List<DownloadFile> files = manager.getSelectionToList(indexes);
+        for (DownloadFile file : files) {
+            if (!(file.getOutputFile().exists() && file.getOutputFile().length() == file.getFileSize()))
+                return false;
         }
+        return true;
+    }
+
+    private static class StateFilter extends RowFilter<Object, Object> {
 
         @Override
-        public boolean test(int row) {
-            DownloadFile file = (DownloadFile) getInputValue(row, COLUMN_STATE);
+        public boolean include(Entry entry) {
+            DownloadFile file = (DownloadFile) entry.getValue(COLUMN_STATE);
             return file != null && file.getState() != DownloadState.COMPLETED;
         }
     }
@@ -697,7 +711,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         final WinampMoveStyle w = new WinampMoveStyle();
         table.addMouseListener(w);
         table.addMouseMotionListener(w);
-
+        table.setUpdateSelectionOnSort(false);
+        table.setSortsOnUpdates(false);
 
         table.setTransferHandler(new URLTransferHandler(director) {
             @Override
@@ -743,6 +758,13 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         tableColumnModel.getColumn(COLUMN_AVERAGE_SPEED).setCellRenderer(new AverageSpeedCellRenderer());
         tableColumnModel.getColumn(COLUMN_SERVICE).setCellRenderer(new ServiceCellRenderer(director));
         tableColumnModel.getColumn(COLUMN_PROXY).setCellRenderer(new ConnectionCellRenderer(context));
+
+
+        final SortController rowSorter = (SortController) table.getRowSorter();
+
+        rowSorter.setSortOrderCycle(SortOrder.ASCENDING, SortOrder.DESCENDING, SortOrder.UNSORTED);
+        ((TableRowSorter) table.getRowSorter()).setMaxSortKeys(1);
+
 
         table.addMouseListener(new MouseAdapter() {
             @Override
@@ -842,7 +864,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
     @org.jdesktop.application.Action
     public void smartEnterAction() {
-        if (this.isCompleteWithFilesEnabled())
+        if (this.isCompleteWithFilesEnabled() || (isSelectedEnabled() && isCancelledExisting()))
             openFileAction();
         else if (isSelectedEnabled()) {
             try {
@@ -1049,7 +1071,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         assert !files.isEmpty();
         final ListSelectionModel selectionModel = table.getSelectionModel();
         final int index = manager.getDownloadFiles().indexOf(files.get(0));
-        final int viewIndex = table.convertRowIndexToView(index);
+        final int viewIndex = Swinger.convertRowIndexToView(table, index);
         selectionModel.setSelectionInterval(viewIndex, viewIndex + files.size() - 1);
         scrollToVisible(true);
     }

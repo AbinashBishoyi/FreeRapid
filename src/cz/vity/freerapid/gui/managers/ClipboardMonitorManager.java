@@ -72,6 +72,7 @@ public class ClipboardMonitorManager extends Thread implements ClipboardOwner {
             }
 
             try {
+
                 if (clipboard.getAvailableDataFlavors().length < 10) { //dirty hack
                     continue;
                 }

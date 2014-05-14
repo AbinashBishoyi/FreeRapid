@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 
 /**
@@ -31,6 +33,8 @@ public final class AppPrefs {
     private String userNode;
     private static final String CONFIG_DIR = "config";
 
+    private long lastSaved;
+
     AppPrefs(final ApplicationContext context, final Map<String, String> properties, final boolean resetOptions) {
         this.context = context;
         final String id = context.getResourceMap().getString("Application.id");
@@ -39,6 +43,17 @@ public final class AppPrefs {
         this.propertiesFileName = id.toLowerCase() + ".xml";
         AppPrefs.properties = loadProperties();
 
+        lastSaved = System.currentTimeMillis();
+        if (Utils.isWindows()) {
+            getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
+                public void preferenceChange(PreferenceChangeEvent evt) {
+                    final long time = System.currentTimeMillis();
+                    if (time - lastSaved > 1000 * 30) {
+                        store();
+                    }
+                }
+            });
+        }
         if (resetOptions) {
             try {
                 AppPrefs.properties.clear();
@@ -189,6 +204,7 @@ public final class AppPrefs {
         } catch (Exception e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
         }
+        lastSaved = System.currentTimeMillis();
     }
 
     private String getUserNode() {
@@ -210,6 +226,10 @@ public final class AppPrefs {
      * @return User Preferences instance
      */
     private Preferences loadProperties() {
+        if (Utils.isWindows()) {
+            System.getProperties().put("java.util.prefs.PreferencesFactory", WinPreferencesFactory.class.getName());
+        }
+
         final LocalStorage localStorage = context.getLocalStorage();
         if (System.getProperties().containsKey("portable")) {
             localStorage.setDirectory(new File(Utils.getAppPath(), CONFIG_DIR));

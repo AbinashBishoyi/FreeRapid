@@ -11,15 +11,23 @@ Added - indicates new functionality or new part of distribution
 Changed - indicates a change in using/behavior FreeRapid
 Fixed - indicates a bug fix
 
-19th August 2009 - FreeRapid Downloader 0.83 RC 1
-  Fixed : "checking... dialog" when updating plugins lies over dialog "checking finished" - finally fixed?
+29th August 2009 - FreeRapid Downloader 0.83 beta 3
+  Added : error message when launching FRD on GJC
+  Changed : updated default plugins to their latest versions
+  Changed : internal - Windows - removed dependency on Windows registry
+  Changed : internal - upgraded SwingX components to the latest build
+  Fixed : selection disappears - when making selection from top to bottom while downloading
+  Fixed : cannot launch CANCELLED (but existing) files
+  Fixed : "checking... dialog" when updating plugins lies over dialog "checking finished" - finally fixed?!
+  Fixed : If you change preferences check for updates every 597 hours or more FRD cannot start [reported by Prthvi, thanks!]
+
 
 9th August 2009 - FreeRapid Downloader 0.83 beta 2 released
   Changed : updated PT_BR translation thanks to Tiago 
   Changed : support for speed limit from menu (additional support will come back with 0.84) 
   Changed : upgraded GOCR to version 0.48
   Changed : internal - upgraded SwingX components to version 1.0
-  Changed : updated default plugins to their latest versions in 0.83beta
+  Changed : updated default plugins to their latest versions
   Changed : removed error message dialog for ERROR when there is not enough space on disk 
   Fixed : regression - avg. speed disappeared from information dialog [thanks to user from forum]
   Fixed : "checking... dialog" when updating plugins lies over dialog "checking finished"

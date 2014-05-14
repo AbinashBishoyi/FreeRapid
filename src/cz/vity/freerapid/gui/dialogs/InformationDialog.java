@@ -17,6 +17,7 @@ import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.swing.ComponentFactory;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.swing.models.RecentsFilesComboModel;
+import cz.vity.freerapid.utilities.FileUtils;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
 import org.jdesktop.application.ResourceMap;
@@ -530,7 +531,7 @@ public class InformationDialog extends AppFrame implements PropertyChangeListene
         final Icon icon = director.getFileTypeIconProvider().getIconImageByFileType(file.getFileType(), true);
         iconLabel.setIcon(icon);
         iconLabel.setHorizontalAlignment(JLabel.CENTER);
-        pathLabel.setText(getResourceMap().getString("textBold", file.getOutputFile().getAbsolutePath()));
+        pathLabel.setText(getResourceMap().getString("textBold", FileUtils.getAbsolutPath(file.getOutputFile())));
     }
 
     private void updateFrom() {

@@ -261,7 +261,7 @@ public class UserPreferencesDialog extends AppDialog implements ClipboardOwner {
             }
         });
 
-        pluginTable.setSortOrder(PluginMetaDataTableModel.COLUMN_ID, org.jdesktop.swingx.decorator.SortOrder.ASCENDING);
+        pluginTable.setSortOrder(PluginMetaDataTableModel.COLUMN_ID, SortOrder.ASCENDING);
 
         TableColumn tableColumn = Swinger.updateColumn(pluginTable, "X", PluginMetaDataTableModel.COLUMN_ACTIVE, 22, 22, null);
         tableColumn.setWidth(22);

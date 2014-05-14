@@ -1,4 +1,4 @@
-﻿**************************************************************
+﻿?**************************************************************
 *   FreeRapid Downloader                                     *
 *      by Ladislav Vitasek aka Vity                          *
 *   Website/Forum/Bugtracker: http://wordrider.net/freerapid *
@@ -80,14 +80,14 @@ Primjedba: Ova lista možda nije aktualna - Trenutačnu listu možete pronaći n
 =======================================
 
 Preporučena konfiguracija:
-    * Windows 2000/XP/Linux(core 2.4)* ili noviji operativni sistem
+    * Windows 2000/XP/Vista/7/Linux(core 2.4)* ili noviji operativni sistem
     * Pentium 800MHz procesor
     * min 1024x768 rezolucija ekrana
     * 40 MB slobodne RAM memorije
     * 10 MB slobodnog mjesta na disku
     * Java 2 Platforma - verzija najmanje 1.6 (Java SE 6 Runtime) instalirana
 
-Aplikacija zahtjeva najmanje Java 6.0 za pokretanje (http://java.sun.com/javase/downloads/index.jsp , JRE 6).
+Aplikacija zahtjeva najmanje Sun Java 6.0 za pokretanje (http://java.sun.com/javase/downloads/index.jsp , JRE 6).
 
 Linux Debian korisnici mogu upotrijebiti ovu komandu da bi instalirali Javu:
    sudo apt-get install sun-java6-jre
@@ -100,7 +100,7 @@ Instalacija
 Razipujte datoteke u bilo koju mapu, ali ne koristite specijalne karaktere (kao '+' ili '!') u putanji.
 Ako radite nadogradnju na višu verziju, možete obrisati prethodnu mapu. Sve korisničke postavke su sačuvane. Sve korisničke postavke su pohranjene u mapama:
 MS Windows: c:\Documents and Settings\YOUR_USER_NAME\application data\VitySoft\FRD
-            and in registry HKEY_CURRENT_USER\Software\JavaSoft\Prefs\vitysoft\frd
+
 Linux: ~/.FRD
 
 NEMOJTE prepisati novu verziju preko stare.

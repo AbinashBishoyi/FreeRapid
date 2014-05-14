@@ -46,7 +46,15 @@ class FileListMaintainer {
         final LocalStorage localStorage = context.getLocalStorage();
         final File srcFile = new File(localStorage.getDirectory(), FILES_LIST_XML);
         if (!srcFile.exists()) {
-            return;
+            logger.info("Src list file does not exists from some reason. Trying to renew file from backup");
+            try {
+                FileUtils.renewBackup(srcFile);
+                logger.info("Backup copy was found and copied succesfuly");
+            } catch (FileNotFoundException e) {
+                logger.info("Cannot renew src file, because backup file does not exist");
+            } catch (IOException e) {
+                LogUtils.processException(logger, e);
+            }
         }
         final boolean downloadOnStart = AppPrefs.getProperty(UserProp.DOWNLOAD_ON_APPLICATION_START, UserProp.DOWNLOAD_ON_APPLICATION_START_DEFAULT);
         final boolean removeCompleted = AppPrefs.getProperty(UserProp.REMOVE_COMPLETED_DOWNLOADS, UserProp.REMOVE_COMPLETED_DOWNLOADS_DEFAULT) == UserProp.REMOVE_COMPLETED_DOWNLOADS_AT_STARTUP;
@@ -61,7 +69,7 @@ class FileListMaintainer {
                 FileUtils.renewBackup(srcFile);
                 result = loadListFromFile(srcFile, downloadOnStart, removeCompleted, recheckOnStart);
             } catch (FileNotFoundException ex) {
-                //ignore            
+                logger.info("Cannot renew src file, because backup file does not exist");
             } catch (Exception e1) {
                 LogUtils.processException(logger, e);
             }
@@ -76,9 +84,6 @@ class FileListMaintainer {
         final Object o = context.getLocalStorage().load(srcFile.getName());
         if (!(o instanceof ArrayListModel))
             return list;
-        if (!srcFile.exists()) {
-            return list;
-        }
         for (DownloadFile file : (ArrayListModel<DownloadFile>) o) {
             final DownloadState state = file.getState();
             if (state == DownloadState.DELETED)

@@ -12,6 +12,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -406,10 +407,18 @@ public class Swinger {
         final int[] ints = table.getSelectedRows();
 
         final int length = ints.length;
+
+        int count = 0;
         for (int i = 0; i < length; i++) {
-            ints[i] = table.convertRowIndexToModel(ints[i]);
+            final int rowIndex = ints[i];
+            if (rowIndex < table.getModel().getRowCount() && rowIndex < table.getRowSorter().getViewRowCount())
+                ints[count++] = table.convertRowIndexToModel(rowIndex);
         }
-        return ints;
+
+        if (count > 0) {
+            return Arrays.copyOfRange(ints, 0, count);
+        } else return new int[0];
+
     }
 
 
@@ -430,4 +439,12 @@ public class Swinger {
         }
         return msg;
     }
+
+
+    public static int convertRowIndexToView(JTable table, int row) {
+        if (row <= -1 || row >= table.getModel().getRowCount())
+            return -1;
+        else return table.convertRowIndexToView(row);
+    }
+
 }

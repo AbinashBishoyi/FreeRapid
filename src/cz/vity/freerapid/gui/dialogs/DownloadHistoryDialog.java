@@ -29,8 +29,6 @@ import org.jdesktop.application.Action;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.swinghelper.buttonpanel.JXButtonPanel;
 import org.jdesktop.swingx.JXTable;
-import org.jdesktop.swingx.decorator.FilterPipeline;
-import org.jdesktop.swingx.decorator.PatternFilter;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -42,6 +40,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
@@ -50,6 +49,7 @@ import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.logging.Logger;
@@ -599,7 +599,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
 
 
     private int getVisibleRowCount() {
-        return table.getFilters().getOutputSize();
+        return table.getRowSorter().getViewRowCount();
     }
 
     private int getArrayMin(int[] indexes) {
@@ -716,56 +716,72 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         }
     }
 
+
     private void updateFilters() {
         String filterText = fieldFilter.getText();
         if (exampleSearchString.equals(filterText))
             filterText = "";
-        final AllPatternFilter allPatternFilter = new AllPatternFilter(filterText, Pattern.CASE_INSENSITIVE, table.getColumnCount());
         final int selectedIndex = combobox.getSelectedIndex();
+
         final DownloadsFilters filter;
+        RowFilter<Object, Object> rowFilter = null;
         if (selectedIndex == -1)
             filter = DownloadsFilters.ALL_DOWNLOADS;
-        else
+        else {
             filter = DownloadsFilters.values()[selectedIndex];
-
-        table.setFilters(new FilterPipeline(new DateTimeFilter(filter), allPatternFilter));
-
-    }
-
-
-    /**
-     * Filtr pro redukci seznamu podle inputu. Prohledava pres vsechny sloupce (defaultne se prohledava jen pevne
-     * urceny).
-     */
-    private static class AllPatternFilter extends PatternFilter {
-        final boolean filter;
-
-        public AllPatternFilter(String string, int patternFlags, int columnCount) {
-            super(Pattern.quote(string), patternFlags, columnCount);
-            filter = (string != null && !string.isEmpty());
         }
 
-        @Override
-        public boolean test(int row) {
-            if (!filter)
-                return true;
-            final int maxColumnIndex = getColumnIndex();
-            for (int i = 0; i < maxColumnIndex; ++i) {
-                if (adapter.isTestable(i)) {
-                    Object value = getInputValue(row, i);
-                    if (value != null) {
-                        boolean matches = pattern.matcher(value.toString()).find();
-                        if (matches)
-                            return true;
-                    }
-                }
+        if (filter != DownloadsFilters.ALL_DOWNLOADS) {
+            rowFilter = new DateTimeFilter(filter);
+        }
+
+        if (!filterText.isEmpty()) {
+            final RowFilter<Object, Object> textFilter = RowFilter.regexFilter("(?i)" + Pattern.quote(filterText));
+            if (rowFilter != null) {
+                final java.util.List<RowFilter<Object, Object>> list = new ArrayList<RowFilter<Object, Object>>(2);
+                list.add(rowFilter);
+                list.add(textFilter);
+                rowFilter = RowFilter.andFilter(list);
+            } else {
+                rowFilter = textFilter;
             }
-            return false;
         }
+        ((TableRowSorter) table.getRowSorter()).setRowFilter(rowFilter);
     }
 
+//    /**
+//     * Filtr pro redukci seznamu podle inputu. Prohledava pres vsechny sloupce (defaultne se prohledava jen pevne
+//     * urceny).
+//     */
+//    private static class AllPatternFilter extends PatternFilter {
+//        final boolean filter;
+//
+//        public AllPatternFilter(String string, int patternFlags, int columnCount) {
+//            super(Pattern.quote(string), patternFlags, columnCount);
+//            filter = (string != null && !string.isEmpty());
+//        }
+//
+//        @Override
+//        public boolean test(int row) {
+//            if (!filter)
+//                return true;
+//            final int maxColumnIndex = getColumnIndex();
+//            for (int i = 0; i < maxColumnIndex; ++i) {
+//                if (adapter.isTestable(i)) {
+//                    Object value = getInputValue(row, i);
+//                    if (value != null) {
+//                        boolean matches = pattern.matcher(value.toString()).find();
+//                        if (matches)
+//                            return true;
+//                    }
+//                }
+//            }
+//            return false;
+//        }
+//    }
 
-    private static class DateTimeFilter extends PatternFilter {
+
+    private static class DateTimeFilter extends RowFilter<Object, Object> {
         private final DownloadsFilters filter;
 
         private DateTimeFilter(DownloadsFilters filter) {
@@ -773,8 +789,8 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         }
 
         @Override
-        public boolean test(int row) {
-            Long value = (Long) getInputValue(row, COLUMN_DATE);
+        public boolean include(Entry entry) {
+            Long value = (Long) entry.getValue(COLUMN_DATE);
 
             if (value == null)
                 return false;

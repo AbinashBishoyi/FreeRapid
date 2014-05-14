@@ -100,14 +100,14 @@ Pozn.: Tento seznam nemusí být vždy aktuální - aktuální seznam lze nalézt na htt
 =======================================
 
 Doporuèená konfigurace
-    * Windows 2000/XP/Linux(jádro 2.4)* nebo vyšší operaèní systém
+    * Windows 2000/XP/Vista/7/Linux(jádro 2.4)* nebo vyšší operaèní systém
     * procesor Pentium 800MHz
     * minimální rozlišení obrazovky 1024x768
     * 40 MB volné operaèní pamìti
     * 10 MB volného prostoru na pevném disku
     * Java 2 Platform - nainstalovaná alespoò verze 1.6 (Java SE 6 Runtime)
 
-Aplikace pro své spuštìní vyžaduje mít nainstalovanou alespoò Javu 6.0 (http://java.sun.com/javase/downloads/index.jsp , JRE 6).
+Aplikace pro své spuštìní vyžaduje mít nainstalovanou alespoò Sun Javu 6.0 (http://java.sun.com/javase/downloads/index.jsp , JRE 6).
 
 Uživatelé Linuxu (Debian) like mohou použít tento pøíkaz k instalaci Javy:
      sudo apt-get install sun-java6-jre
@@ -121,12 +121,20 @@ Rozbalte archiv se soubory do libovolného adresáøe na pevném disku (cesta k apli
 V pøípadì pøechodu na novìjší verzi smažte pøedchozí složku aplikace. Veškerá uživatelská nastavení jsou
 zachována. Uložená uživatelská nastavení naleznete:
 MS Windows: c:\Dokumenty a nastavení\Vaše_uživatelské_jméno\Data aplikací\VitySoft\FRD
-            a v registru HKEY_CURRENT_USER\Software\JavaSoft\Prefs\vitysoft\frd
+
 Linux: ~/.FRD
 
 NEKOPÍRUJTE novou verzi programu pøes starou.
 
 Pokud je použit pøepínaè -p (viz dále) je cesta ke konfiguraèním souborùm shodná s adresáøem programu.
+
+Jak spustit FRD na Ubuntu - nastavení správné Javy
+
+Použijte následující pøíkazy:
+- apt-get update
+- apt-get install sun-java6-jre
+- update-java-alternatives -l
+- update-java-alternatives -s java-6-sun
 
 Spuštìní
 -----------

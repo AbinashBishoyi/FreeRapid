@@ -7,11 +7,11 @@
 **************************************************************
 
 =======================================
-Table des matières :
+Table des matióres :
    I.   Qu'est-ce que FreeRapid Downloader?
   II.   Configuration requise
  III.   Comment lancer FreeRapid Downloader
-  IV.   Problèmes connus et limitations
+  IV.   Problómes connus et limitations
    V.   Diagnostic
   VI.   Reporter un bug
  VII.   Faire un don
@@ -25,7 +25,7 @@ I.    Qu'est-ce que FreeRapid Downloader?
 FreeRapid downloader est un simple téléchargeur en Java destiné au téléchargement d'archives de fichers partagés comme RapidShare.
 
 Caractéristiques principales :
- - support pour des téléchargements parallèles de multiples services
+ - support pour des téléchargements parallóles de multiples services
  - téléchargement via une liste de proxy
  - historique de téléchargement
  - surveillance intelligente du Presse-Papiers
@@ -35,7 +35,7 @@ Caractéristiques principales :
  - extinction automatique
  - beaucoup de réglages de l'UI.
  - tourne sous MS Windows, OS X et Linux
- - est magnifique (beaucoup de thèmes de couleur)
+ - est magnifique (beaucoup de thómes de couleur)
  - ça fonctionne!
 
 Div.:
@@ -74,20 +74,20 @@ Services supportés actuellement (par ordre alphabétique) :
  - iskladka.cz	             - sendspacepl.pl
 
  -  d'autres arrivent...
-Note: Cette liste pourrait ne pas être actuelle - la plus récente se trouve sur http://wordrider.net/freerapid/
+Note: Cette liste pourrait ne pas ôtre actuelle - la plus récente se trouve sur http://wordrider.net/freerapid/
 
  II.    Configuration requise
 =======================================
 
 Configuration recommandée :
-    * Système d'exploitation Windows 2000/XP/Linux(kernel 2.4)* ou mieux
+    * Systóme d'exploitation Windows 2000/XP/Vista/7/Linux(kernel 2.4)* ou mieux
     * Processeur Pentium 800MHz
     * Résolution d'écran min 1024x768
     * 40 Mo de RAM libre
     * 10 Mo d'espace disque libre
     * Java 2 Platform - version 1.6 (Java SE 6 Runtime), au moins, installée
 
-L'application a besoin de Java 6.0 au moins pour démarrer (http://java.sun.com/javase/downloads/index.jsp , JRE 6).
+L'application a besoin de Sun Java 6.0 au moins pour démarrer (http://java.sun.com/javase/downloads/index.jsp , JRE 6).
 
 Les utilisateurs d'un Linux Debian-like peuvent utiliser cette commande pour installer Java :
    sudo apt-get install sun-java6-jre
@@ -97,10 +97,10 @@ III.   Comment lancer FreeRapid Downloader
 
 Installation
 ------------
-Extraire les fichiers n'importe où, évitez les caractères spéciaux (par exemple '+' ou '!') dans le chemin.
+Extraire les fichiers n'importe oÿ, évitez les caractóres spéciaux (par exemple '+' ou '!') dans le chemin.
 Si vous faites une mise à jour vers une version plus récente, vous pouvez effacer le dossier précédent. Les préférences utilisateur seront conservées. Ces derniers sont en effet sauvegardées dans les répertoires suivants :
 MS Windows: c:\Documents and Settings\VOTRE_NOM_D_UTILISATEUR\application data\VitySoft\FRD
-            et dans la clé de registre HKEY_CURRENT_USER\Software\JavaSoft\Prefs\vitysoft\frd
+
 Linux: ~/.FRD
 
 NE COPIEZ PAS une nouvelle version sur une ancienne. Effacez toujours l'ancien dossier avant.
@@ -121,7 +121,7 @@ Toutes plate-formes
  Lancez la commande java -jar frd.jar
 
 
-Les paramètres additionnels de lancement sont :
+Les paramótres additionnels de lancement sont :
 
 java -jar frd.jar [-h -v -d -r -D<property>=<value> -m -p]
 
@@ -130,7 +130,7 @@ options
   -v (--version)      affiche les informations de version et quitte
   -d (--debug)        affiche des informations de debogage
   -r (--reset)        remet les propriétés utilisateur à zéro
-  -m (--minim)        minimise la fenêtre principale au démarrage
+  -m (--minim)        minimise la fenôtre principale au démarrage
   -Dproperty=value    passe les propriétés et leurs valeurs à l'application (utilisé principalement à des fins de test et de débogage)
   -p (--portable)     les fichiers de configuration seront stockés dans le dossier 'config', et tous les chemins de fichiers seront sauvegardés par rapport au dossier FRD, si possible (utile pour les clés USB)
 
@@ -148,12 +148,12 @@ Plus d'infos :
 
 IV.    Bugs connus et limitations
 =======================================
-- L'application ne démarre pas si elle est placée sur un chemin contenant des caractères spéciaux ('+', '%',...)
-  - Merci de la déplacer vers un endroit dépourvu de ces caractères.
+- L'application ne démarre pas si elle est placée sur un chemin contenant des caractóres spéciaux ('+', '%',...)
+  - Merci de la déplacer vers un endroit dépourvu de ces caractóres.
 - L'antivirus ESET "Smart" sur Windows bloque le démarrage de FRD
-  - Paramétrez correctement votre programme antivirus, ou lancez FRD de cette manière : frd.exe -Doneinstance=false
-- Fermez toujours FRD de manière propre et correcte, sans quoi vous pourriez perdre votre liste de fichiers (i.e. n'éteignez pas brutalement votre ordinateur)
-- La sélection de "haut en bas" dans le tableau principal disparait partiellement pendant un déplacement de la fenêtre :-(
+  - Paramétrez correctement votre programme antivirus, ou lancez FRD de cette manióre : frd.exe -Doneinstance=false
+- Fermez toujours FRD de manióre propre et correcte, sans quoi vous pourriez perdre votre liste de fichiers (i.e. n'éteignez pas brutalement votre ordinateur)
+- La sélection de "haut en bas" dans le tableau principal disparait partiellement pendant un déplacement de la fenôtre :-(
     X Selectionnez les colonnes du tableau par ctrl+clic gauche ou sélectionnez les items de bas en haut.
 - Substance look and feel throws org.jvnet.substance.api.UiThreadingViolationException:
                                                      Component creation must be done on Event Dispatch Thread
@@ -165,12 +165,12 @@ IV.    Bugs connus et limitations
 - java.lang.ClassCastException: java.awt.TrayIcon cannot be cast to java.awt.Component
     X ignorez cette exception dans le app.log    
 - Des utilisateurs Linux ont reporté que l'icône dans le tableau de bord qui ne s'affichait pas
-    X La seule solution connue pour ce problème pourrait être une mise-à-jour de JRE vers la version 1.6.0_10-rc ou plus récent
-- limitation: la version 0.7x n'est pas utilisable à partir du moment où vous utilisez la version 0.8 ou plus récent (la seule solution possible est de supprimer les anciens fichiers de configuration)
+    X La seule solution connue pour ce problóme pourrait ôtre une mise-à-jour de JRE vers la version 1.6.0_10-rc ou plus récent
+- limitation: la version 0.7x n'est pas utilisable à partir du moment oÿ vous utilisez la version 0.8 ou plus récent (la seule solution possible est de supprimer les anciens fichiers de configuration)
 
 V.    Diagnostic
 =======================================
-1. Vérifiez la section IV - pour voir si votre problème ne figure pas déjà dedans
+1. Vérifiez la section IV - pour voir si votre problóme ne figure pas déjà dedans
 2. Avez-vous essayé de redémarrer l'application? :-)
 3. Vérifiez le site http://wordrider.net/freerapid et/ou http://bugtracker.wordrider.net/
    pour d'éventuels nouveaux bugs connus
@@ -178,7 +178,7 @@ V.    Diagnostic
 5. Lancez l'application en mode de déboguage :
    Windows OS: frd.exe --debug
    Linux/MacOS: java -jar frd.jar --debug
-6. Reportez le problème avec app.log comme décrit dans la section VI
+6. Reportez le problóme avec app.log comme décrit dans la section VI
 
 
 VI.    Reporter un bug
@@ -187,8 +187,8 @@ Si vous trouvez un bug, merci de ne pas supposer que je le connais. Informez m'e
 Etant donné que mes ressources sont limitées, je ne peux rétro-porter les résolutions de bug sur des anciennes versions.
 Pour reporter un bug, vous pouvez utiliser le tracker de bug (recommandé), les forums du projet, ou mon e-mail personnel (en anglais).
 
-Merci de préciser votre système d'exploitation, sa version ainsi que celle de votre JRE, et de joindre le fichier app.log (qui se trouve dans le dossier de FRD).
-Il peut nous aider à reconnaitre un problème. Vous pouvez également nous aider en lançant l'application avec le paramètre --debug.
+Merci de préciser votre systóme d'exploitation, sa version ainsi que celle de votre JRE, et de joindre le fichier app.log (qui se trouve dans le dossier de FRD).
+Il peut nous aider à reconnaitre un problóme. Vous pouvez également nous aider en lançant l'application avec le paramótre --debug.
 Nous ignorons les reports simple du style "Je ne peux lancer FRD. Que dois-je faire?". Décrivez votre situation et le comportement de l'application. Soyez précis.
 
 
@@ -211,15 +211,15 @@ VIII.   FAQ
 =======================================
 
 Q: Pourquoi avez-vous créé un autre "RapidShare Downloader"?
-A: 1) Parce que je ne veux pas être dépendant d'un logiciel russe probablement plein de malware et autres spywares.
-   2) Parce que je peux simplement régler des téléchargements automatisés moi-même.
+A: 1) Parce que je ne veux pas ôtre dépendant d'un logiciel russe probablement plein de malware et autres spywares.
+   2) Parce que je peux simplement régler des téléchargements automatisés moi-môme.
    3) Parce que d'autres téléchargeurs existants ont des interfaces utilisateurs peu intuitives, et/ou manquent de fonctionnalités importantes.
    4) Parce que je peux le faire.
 
 Q: Comment activer un support pour des commandes au démarrage/à l'extinction sur Linux et MacOS?
 A: Merci de lire le fichier de configuration 'syscmd.properties' dans le dossier de l'application pour plus de détails.
 
-Q: Où sont situés les fichiers de configuration?
+Q: Oÿ sont situés les fichiers de configuration?
 A: Cf. section III/Installation.
 
 Q: Comment utiliser un compte RapidShare Premium?
@@ -235,4 +235,4 @@ cmd ENTER
 cd path_to_freerapid_directory' ENTER
 frd.exe ENTER
 
-Si vous avez besoin d'entrer des paramètres, utilisez par exemple "frd.exe --portable"
+Si vous avez besoin d'entrer des paramótres, utilisez par exemple "frd.exe --portable"

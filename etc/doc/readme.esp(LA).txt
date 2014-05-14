@@ -71,14 +71,14 @@ Los serivicios soportados actualmente son:
 =======================================
 
 Recommended configuration:
-    * Windows 2000/XP/Linux(core 2.4)* o posterior
+    * Windows 2000/XP/Vista/7/Linux(core 2.4)* o posterior
     * Procesador Pentium 800MHz 
     * resulción mínima 1024x768 
     * 40 MB de memoria RAM
     * 10 MB de espacio libre en el disco 
     * Java 2 Platform - version 1.6 (Java SE 6 Runtime) 
 
-la aplicacion necesita por lo menos Java 6.0 para funcionar (http://java.sun.com/javase/downloads/index.jsp , JRE 6)
+la aplicacion necesita por lo menos Sun Java 6.0 para funcionar (http://java.sun.com/javase/downloads/index.jsp , JRE 6)
 
 
 III.   Como ejecutar FreeRapid Downloader
@@ -90,7 +90,6 @@ Descomprima los archivos a cualquier directorio, pero cuidado con caracteres esp
 si hace una actualización a una versión posterior, puede eliminar la carpeta anterior todas las configuraciones se 
 almacenan en su directorio.ç
 MS Windows: c:\Documents and Settings\YOUR_USER_NAME\application data\VitySoft\FRD
-            y en el registro: HKEY_CURRENT_USER\Software\JavaSoft\Prefs\vitysoft\frd
 
 Linux: ~/.FRD
 

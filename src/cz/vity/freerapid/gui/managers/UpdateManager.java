@@ -88,7 +88,7 @@ public class UpdateManager {
                 if (checkForUpdates())
                     checkUpdate(true);
             }
-        }, scheduleTime.getTime(), interval * 1000 * 3600);
+        }, scheduleTime.getTime(), interval * 1000 * 3600L);
     }
 
     private boolean checkForUpdates() {
