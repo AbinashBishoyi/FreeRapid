@@ -86,6 +86,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     private static final String RESUME_ACTION_ENABLED_PROPERTY = "resumeActionEnabled";
     private boolean removeCompletedActionEnabled = false;
     private static final String REMOVECOMPLETED_ACTION_ENABLED_PROPERTY = "removeCompletedActionEnabled";
+    private boolean removeCompletedAndDeletedActionEnabled = false;
+    private static final String REMOVECOMPLETEDANDDELETED_ACTION_ENABLED_PROPERTY = "removeCompletedAndDeletedActionEnabled";
     private boolean pauseActionEnabled = false;
     private static final String PAUSE_ACTION_ENABLED_PROPERTY = "pauseActionEnabled";
     private boolean completeWithFilesEnabled = false;
@@ -284,6 +286,16 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         final ListSelectionModel selectionModel = table.getSelectionModel();
         selectionModel.setValueIsAdjusting(true);
         manager.removeCompleted();
+        renewSelection(rows);
+        selectionModel.setValueIsAdjusting(false);
+    }
+
+    @org.jdesktop.application.Action(enabledProperty = REMOVECOMPLETEDANDDELETED_ACTION_ENABLED_PROPERTY)
+    public void removeCompletedAndDeletedAction() {
+        final int[] rows = getSelectedRows();
+        final ListSelectionModel selectionModel = table.getSelectionModel();
+        selectionModel.setValueIsAdjusting(true);
+        manager.removeCompletedAndDeleted();
         renewSelection(rows);
         selectionModel.setValueIsAdjusting(false);
     }
@@ -650,6 +662,15 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         firePropertyChange(REMOVECOMPLETED_ACTION_ENABLED_PROPERTY, oldValue, removeCompletedActionEnabled);
     }
 
+    public boolean isRemoveCompletedAndDeletedActionEnabled() {
+        return removeCompletedAndDeletedActionEnabled;
+    }
+
+    public void setRemoveCompletedAndDeletedActionEnabled(boolean removeCompletedAndDeletedActionEnabled) {
+        boolean oldValue = this.removeCompletedAndDeletedActionEnabled;
+        this.removeCompletedAndDeletedActionEnabled = removeCompletedAndDeletedActionEnabled;
+        firePropertyChange(REMOVECOMPLETEDANDDELETED_ACTION_ENABLED_PROPERTY, oldValue, removeCompletedAndDeletedActionEnabled);
+    }
 
     public boolean isRemoveInvalidLinksActionEnabled() {
         return removeInvalidLinksActionEnabled;
@@ -989,8 +1010,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         final JPopupMenu popup = new JPopupMenu();
         final ApplicationActionMap map = this.context.getActionMap();
         final MenuManager mm = director.getMenuManager();
-        final JMenu removeMenu = mm.createMenu("removeMenu", map, "removeCompletedAction", "removeInvalidLinksAction", "removeSelectedAction");
-        boolean removeEnabled = map.get("removeCompletedAction").isEnabled() || map.get("removeInvalidLinksAction").isEnabled() || map.get("removeSelectedAction").isEnabled();
+        final JMenu removeMenu = mm.createMenu("removeMenu", map, "removeCompletedAction", "removeCompletedAndDeletedAction", "removeInvalidLinksAction", "removeSelectedAction");
+        boolean removeEnabled = map.get("removeCompletedAction").isEnabled() || map.get("removeCompletedAndDeletedAction").isEnabled() || map.get("removeInvalidLinksAction").isEnabled() || map.get("removeSelectedAction").isEnabled();
         removeMenu.setEnabled(removeEnabled);
 
         final ResourceMap rMap = context.getResourceMap();
@@ -1139,6 +1160,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         final String propertyName = evt.getPropertyName();
         if ("completed".equals(propertyName)) {
             setRemoveCompletedActionEnabled(((Integer) evt.getNewValue()) > 0);
+            setRemoveCompletedAndDeletedActionEnabled(((Integer) evt.getNewValue()) > 0);
         } else if ("notFound".equals(propertyName)) {
             setRemoveInvalidLinksActionEnabled(((Integer) evt.getNewValue()) > 0);
         }

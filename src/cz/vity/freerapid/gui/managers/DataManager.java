@@ -12,9 +12,7 @@ import cz.vity.freerapid.gui.managers.exceptions.NotSupportedDownloadServiceExce
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
-import static cz.vity.freerapid.plugins.webclient.DownloadState.*;
 import cz.vity.freerapid.plugins.webclient.FileState;
-import static cz.vity.freerapid.plugins.webclient.FileState.NOT_CHECKED;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
 import cz.vity.freerapid.plugins.webclient.interfaces.MaintainQueueSupport;
 import cz.vity.freerapid.swing.Swinger;
@@ -35,6 +33,9 @@ import java.net.URI;
 import java.net.URL;
 import java.util.*;
 import java.util.logging.Logger;
+
+import static cz.vity.freerapid.plugins.webclient.DownloadState.*;
+import static cz.vity.freerapid.plugins.webclient.FileState.NOT_CHECKED;
 
 /**
  * @author Vity
@@ -354,7 +355,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
         synchronized (this.lock) {
             final List<DownloadFile> resumingFiles = new LinkedList<DownloadFile>();
             for (DownloadFile file : downloadFiles) {
-                if ( file.getState() == DownloadState.ERROR ) {
+                if (file.getState() == DownloadState.ERROR) {
                     file.resetErrorAttempts();
                     resumingFiles.add(file);
                 }
@@ -469,6 +470,21 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
             for (DownloadFile file : downloadFiles) {
                 if (file.getState() == COMPLETED)
                     toRemoveList.add(file);
+            }
+            downloadFiles.removeAll(toRemoveList);
+            for (DownloadFile file : toRemoveList) {
+                file.setState(DELETED);
+            }
+        }
+    }
+
+    public void removeCompletedAndDeleted() {
+        synchronized (lock) {
+            List<DownloadFile> toRemoveList = new LinkedList<DownloadFile>();
+            for (DownloadFile file : downloadFiles) {
+                if (file.getState() == COMPLETED && !file.getOutputFile().exists()) {
+                    toRemoveList.add(file);
+                }
             }
             downloadFiles.removeAll(toRemoveList);
             for (DownloadFile file : toRemoveList) {
@@ -674,7 +690,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
             final DownloadFile[] sorted = files.toArray(new DownloadFile[files.size()]);
             Arrays.sort(sorted, new Comparator<DownloadFile>() {
                 public int compare(DownloadFile o1, DownloadFile o2) {
-                    if( o1.getPluginID().compareToIgnoreCase(o2.getPluginID()) == 0 ) {
+                    if (o1.getPluginID().compareToIgnoreCase(o2.getPluginID()) == 0) {
                         return o1.getFileName().compareToIgnoreCase(o2.getFileName());
                     }
                     return o1.getPluginID().compareToIgnoreCase(o2.getPluginID());

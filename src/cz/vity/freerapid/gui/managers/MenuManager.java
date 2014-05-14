@@ -78,6 +78,7 @@ public class MenuManager {
 
         final Object[] removeActionNames = {
                 "removeCompletedAction",
+                "removeCompletedAndDeletedAction",
                 "removeInvalidLinksAction",
                 "removeSelectedAction",
         };

@@ -1,4 +1,12 @@
 Version 0.83->0.84
+MainApp.properties
+====================================
+New:
+removeCompletedAndDeletedAction.Action.text=Remove Completed Links and De&leted Files
+removeCompletedAndDeletedAction.Action.accelerator =shortcut L
+removeCompletedAndDeletedAction.Action.shortDescription = Remove all completed downloads whose files do not exist
+removeCompletedAndDeletedAction.Action.smallIcon=${iconsPath}clean.png
+
 UserPreferencesDialog.properties
 ====================================
 New:
