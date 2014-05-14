@@ -1,6 +1,5 @@
 package cz.vity.freerapid.gui.managers;
 
-import cz.vity.freerapid.gui.dialogs.WrappedPluginData;
 import cz.vity.freerapid.gui.managers.exceptions.NotSupportedDownloadServiceException;
 import cz.vity.freerapid.gui.managers.exceptions.PluginIsNotEnabledException;
 import cz.vity.freerapid.model.DownloadFile;
@@ -14,7 +13,6 @@ import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
-import org.java.plugin.JpfException;
 import org.java.plugin.ObjectFactory;
 import org.java.plugin.Plugin;
 import org.java.plugin.PluginManager;
@@ -110,12 +108,12 @@ public class PluginsManager {
     }
 
 
-    public boolean isPluginInUse(String id) {
+    public boolean isPluginInUseForUpdates(String id) {
         if (hasPlugin(id)) {
             final PluginRegistry pluginRegistry = pluginManager.getRegistry();
             if (pluginRegistry.isPluginDescriptorAvailable(id)) {
                 final PluginDescriptor descr = pluginRegistry.getPluginDescriptor(id);
-                return pluginManager.isPluginActivated(descr) || pluginManager.isBadPlugin(descr) || pluginManager.isPluginActivating(descr) || !pluginManager.isPluginEnabled(descr);
+                return pluginManager.isBadPlugin(descr) || !pluginManager.isPluginEnabled(descr);
             }
         }
         return false;
@@ -132,23 +130,40 @@ public class PluginsManager {
         return true;
     }
 
-
-    public void reRegisterPlugins(Collection<WrappedPluginData> updatedPlugins) throws JpfException {
-        if (updatedPlugins.isEmpty())
-            return;
-        List<File> updatedPluginsFiles = new ArrayList<File>(updatedPlugins.size());
-        List<String> newPluginsIds = new ArrayList<String>(updatedPlugins.size());
-        for (WrappedPluginData updatedPlugin : updatedPlugins) {
-            updatedPluginsFiles.add(updatedPlugin.getHttpFile().getOutputFile());
-            newPluginsIds.add(updatedPlugin.getID());
-        }
-        final String[] ids = newPluginsIds.toArray(new String[newPluginsIds.size()]);
+    public void reregisterAll() {
         final PluginRegistry pluginRegistry = pluginManager.getRegistry();
         synchronized (lock) {
+            final Collection<PluginDescriptor> desc = pluginRegistry.getPluginDescriptors();
+            String[] ids = new String[desc.size()];
+            int counter = 0;
+            for (PluginDescriptor pluginDescriptor : desc) {
+                final String id = pluginDescriptor.getId();
+                ids[counter++] = id;
+                pluginManager.deactivatePlugin(id);
+            }
+            pluginsCache.clear();
             pluginRegistry.unregister(ids);
-            initNewPlugins(updatedPluginsFiles.toArray(new File[updatedPluginsFiles.size()]));
+            initNewPlugins(searchExistingPlugins());
         }
     }
+
+//    public void reRegisterPlugins(Collection<WrappedPluginData> updatedPlugins) throws JpfException {
+//        if (updatedPlugins.isEmpty())
+//            return;
+//        List<File> updatedPluginsFiles = new ArrayList<File>(updatedPlugins.size());
+//        List<String> newPluginsIds = new ArrayList<String>(updatedPlugins.size());
+//        for (WrappedPluginData updatedPlugin : updatedPlugins) {
+//            updatedPluginsFiles.add(updatedPlugin.getHttpFile().getOutputFile());
+//            newPluginsIds.add(updatedPlugin.getID());
+//        }
+//        final String[] ids = newPluginsIds.toArray(new String[newPluginsIds.size()]);
+//        final PluginRegistry pluginRegistry = pluginManager.getRegistry();
+//        synchronized (lock) {
+//            logger.info("Unregistering plugins " + Arrays.toString(ids));
+//            pluginRegistry.unregister(ids);
+//            initNewPlugins(updatedPluginsFiles.toArray(new File[updatedPluginsFiles.size()]));
+//        }
+//    }
 
     public void initNewPlugins(final File[] plugins) {
         if (plugins.length == 0) {
@@ -219,7 +234,7 @@ public class PluginsManager {
         return pluginsDir.listFiles(new FilenameFilter() {
 
             public boolean accept(File dir, String name) {
-                return name.toLowerCase().endsWith(".frp");
+                return name.toLowerCase(Locale.ENGLISH).endsWith(".frp");
             }
 
         });
@@ -370,7 +385,7 @@ public class PluginsManager {
      */
     public ShareDownloadService getPluginInstance(final String id) throws NotSupportedDownloadServiceException {
         synchronized (lock) {
-            if (isPluginDisabled(id)) {
+            if (!hasPlugin(id)) {
                 throw new NotSupportedDownloadServiceException(id);
             }
 
@@ -390,6 +405,11 @@ public class PluginsManager {
             logger.info("Plugin with ID=" + id + " was loaded");
             return plugin;
         }
+    }
+
+
+    public PluginManager getPluginManager() {
+        return pluginManager;
     }
 
     private PluginContext createPluginContext() {

@@ -7,6 +7,9 @@ import cz.vity.freerapid.gui.managers.PluginsManager;
 import cz.vity.freerapid.gui.managers.exceptions.NotSupportedDownloadServiceException;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.webclient.interfaces.ShareDownloadService;
+import org.java.plugin.Plugin;
+import org.java.plugin.PluginManager;
+import org.java.plugin.registry.PluginDescriptor;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -23,8 +26,21 @@ final class ServiceCellRenderer extends DefaultTableCellRenderer {
 
     ServiceCellRenderer(ManagerDirector director) {
         this.manager = director.getPluginsManager();
+
         final Icon icon = director.getContext().getResourceMap().getIcon("serviceWithNoIcon");
         iconCache.put("default", icon);
+        manager.getPluginManager().registerListener(new PluginManager.EventListenerAdapter() {
+            @Override
+            public void pluginActivated(Plugin plugin) {
+                iconCache.remove(plugin.getDescriptor().getId());
+            }
+
+            @Override
+            public void pluginEnabled(PluginDescriptor descriptor) {
+                iconCache.remove(descriptor.getId());
+            }
+
+        });
     }
 
     public final Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -69,4 +85,6 @@ final class ServiceCellRenderer extends DefaultTableCellRenderer {
         getAccessibleContext().setAccessibleName(table.getColumnName(column) + " " + serviceName);
         return this;
     }
+
+
 }

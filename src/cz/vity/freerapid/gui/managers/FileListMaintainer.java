@@ -125,7 +125,7 @@ class FileListMaintainer {
 
     void saveToFile(ArrayListModel<DownloadFile> downloadFiles) {
         synchronized (saveFileLock) {
-            logger.info("=====Saving queue into the XML file=====");
+            logger.fine("=====Saving queue into the XML file=====");
             final LocalStorage localStorage = context.getLocalStorage();
             File dstFile = new File(localStorage.getDirectory(), FILES_LIST_XML);
             try {
@@ -135,7 +135,7 @@ class FileListMaintainer {
             } catch (IOException e) {
                 LogUtils.processException(logger, e);
             } finally {
-                logger.info("=====Finishing saving queue into the XML file=====");
+                logger.fine("=====Finishing saving queue into the XML file=====");
             }
 
         }

@@ -38,7 +38,6 @@ public class DownloadNewPluginsTask extends DownloadTask {
     private final ManagerDirector director;
     private final List<WrappedPluginData> fileList;
     private final boolean beQuiet;
-    private final ScreenInputBlocker blocker;
     private static boolean restartIsRequiredToUpdateSomePlugins = false;
     private List<File> newPluginsFiles = new ArrayList<File>();
     private Collection<WrappedPluginData> updatedPlugins = new LinkedList<WrappedPluginData>();
@@ -48,7 +47,7 @@ public class DownloadNewPluginsTask extends DownloadTask {
         this.director = director;
         this.fileList = fileList;
         this.beQuiet = beQuiet;
-        blocker = new ScreenInputBlocker(this, BlockingScope.APPLICATION, Swinger.getActiveFrame(), null);
+        ScreenInputBlocker blocker = new ScreenInputBlocker(this, BlockingScope.APPLICATION, Swinger.getActiveFrame(), null);
         this.setInputBlocker(blocker);
         setUseRelativeStoreFileIfPossible(false);
     }
@@ -79,8 +78,6 @@ public class DownloadNewPluginsTask extends DownloadTask {
                 processFile(file);
                 if (data.isNew()) {
                     newPluginsFiles.add(data.getHttpFile().getOutputFile());
-                } else if (data.isPluginInUse()) {
-                    restartIsRequiredToUpdateSomePlugins = true;
                 } else {
                     updatedPlugins.add(data);
                 }
@@ -91,6 +88,8 @@ public class DownloadNewPluginsTask extends DownloadTask {
                 LogUtils.processException(logger, e);
             }
         }
+        message("DownloadNewPluginsTask.reloadingPlugins");
+        updatePlugins();
         if (!success)
             throw new UpdateFailedException("UpdateFailed");
         return null;
@@ -115,8 +114,7 @@ public class DownloadNewPluginsTask extends DownloadTask {
 
     private void updatePlugins() throws JpfException {
         final PluginsManager pluginsManager = director.getPluginsManager();
-        pluginsManager.reRegisterPlugins(updatedPlugins);
-        pluginsManager.initNewPlugins(newPluginsFiles.toArray(new File[newPluginsFiles.size()]));
+        pluginsManager.reregisterAll();
     }
 
     @Override
@@ -175,14 +173,7 @@ public class DownloadNewPluginsTask extends DownloadTask {
 
     @Override
     protected void succeeded(Void result) {
-        Exception ex = null;
-        try {
-            updatePlugins();
-        } catch (JpfException e) {
-            LogUtils.processException(logger, e);
-            ex = e;
-        }
-        blocker.unblock();
+        // blocker.unblock();
         final int updateMethod = AppPrefs.getProperty(UserProp.PLUGIN_UPDATE_METHOD, UserProp.PLUGIN_UPDATE_METHOD_DEFAULT);
         if (restartIsRequiredToUpdateSomePlugins) {
             boolean restart = beQuiet && updateMethod == UserProp.PLUGIN_UPDATE_METHOD_AUTO_RESTART && director.getDataManager().checkAllComplete();
@@ -193,11 +184,9 @@ public class DownloadNewPluginsTask extends DownloadTask {
                 director.getMenuManager().getFileActions().restartApplication();
             }
         } else {
-            if (!updatedPlugins.isEmpty() || !newPluginsFiles.isEmpty()) {
-                if (ex == null) {
+            if (!beQuiet) {
+                if (!updatedPlugins.isEmpty() || !newPluginsFiles.isEmpty()) {
                     Swinger.showInformationDialog(getResourceMap().getString("installedSuccessFully"));
-                } else {
-                    Swinger.showInformationDialog(Swinger.getMessageFromException(getResourceMap(), ex));
                 }
             }
         }

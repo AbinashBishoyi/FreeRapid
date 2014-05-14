@@ -714,7 +714,7 @@ public final class MethodBuilder {
         if (baseURL == null && action == null)
             throw new BuildMethodException("Both action and base url has to be not null");
         if (action != null) {
-            if (action.toLowerCase().startsWith("http")) {
+            if (action.toLowerCase(Locale.ENGLISH).startsWith("http")) {
                 return action;
             } else {
                 if (baseURL != null && baseURL.toLowerCase(Locale.ENGLISH).startsWith("http")) {
@@ -833,7 +833,7 @@ public final class MethodBuilder {
      */
     public MethodBuilder setAction(String action) {
         this.action = action;
-        if (action.toLowerCase().startsWith("http")) {
+        if (action.toLowerCase(Locale.ENGLISH).startsWith("http")) {
             this.postMethod = HttpMethodEnum.GET;
         }
         if (isAutoReplaceEntitiesEnabled())

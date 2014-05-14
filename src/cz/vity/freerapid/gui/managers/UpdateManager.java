@@ -236,7 +236,7 @@ public class UpdateManager {
                 final WrappedPluginData pluginData = new WrappedPluginData(checked, httpFile, plugin);
                 pluginData.setNew(isNew);
                 if (!isNew) {
-                    pluginData.setPluginInUse(pluginsManager.isPluginInUse(id));
+                    pluginData.setPluginInUse(pluginsManager.isPluginInUseForUpdates(id));
                 }
                 result.add(pluginData);
             } catch (MalformedURLException e) {
