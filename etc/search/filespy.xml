@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+<ShortName>FilesSpy.com</ShortName>
+<Description>FilesSpy Search</Description>
+<Tags>schadenfreude</Tags>
+<Image height="16" width="16" type="image/png">data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAGzSURBVDhPpZPPS8JgGMf7c/SkXlvzUgsMOnSJWWtlEBgkQQTrkCE4CbJDh8AfpEYF6UFJjIrsVARF4S2hSxHUyaCUbLQ2v22DZjMtoxe+t/f5vt/n8z5PB/55Ohrra7UaVLV7NAO1IJlMgqIoWCwWTQRBgGVZvL9L2D++xqQvi373BgamtuBe2EE8faG9oRlkMhmYzWaQJAmv1wue5xEIBOD3+8Et7YFwhrRC3+oR5lcO4eFzikm6bkDTNEwmE0qlkiG5JMnopMPom1iHJDdvS0vgcDg0A0EQDAayUkQOR0G5EngTpaZYDAblchmyLOtS2US2z5QWIhicTuL61phQZ/CZwGq1wmaz6XK5XBrgzWwBdiaqpAnD48/i8amqp9ETqBCDwSBisZiufD6vX3yuCJhd2gWhMLErbRWKD3WIrRg0a/rk8gZ2ZxQ9Y2tQIf8IsdUwjXApdDrDeK68/m7QOJQv1TdQo3F0DYcgKkP2a4KZxRy62Sh6xxOK4iCZCLqGQsjkr+oMOI4DwzAQRfFb6kLxHisbp+CCB5hb3kckdY67hyfjL/x1gb6+8m0b293Cz3sfqA1gxaytAbkAAAAASUVORK5CYII=</Image>
+<Url type="text/html" method="GET" template="http://www.filesspy.com/files/{searchTerms}"/>
+<InputEncoding>UTF-8</InputEncoding>
+</OpenSearchDescription>
