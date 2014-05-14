@@ -6,9 +6,11 @@ import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
 import com.l2fprod.common.swing.JDirectoryChooser;
 import cz.vity.freerapid.core.AppPrefs;
+import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.gui.FRDUtils;
 import cz.vity.freerapid.gui.actions.URLTransferHandler;
+import cz.vity.freerapid.gui.dialogs.filechooser.OpenSaveDialogFactory;
 import cz.vity.freerapid.gui.managers.DataManager;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
 import cz.vity.freerapid.gui.managers.PluginsManager;
@@ -118,13 +120,24 @@ public class NewLinksDialog extends AppDialog implements ClipboardOwner {
 
     @Action
     public void btnSelectPathAction() {
-        final JDirectoryChooser directoryChooser = new JDirectoryChooser((String) comboPath.getEditor().getItem());
-        directoryChooser.setDialogTitle(getResourceMap().getString("directoryChooserTitle"));
-        directoryChooser.setControlButtonsAreShown(true);
-        if (directoryChooser.showDialog(this, getResourceMap().getString("SelectDirectory")) != JDirectoryChooser.CANCEL_OPTION) {
-            comboPath.getEditor().setItem(directoryChooser.getSelectedFile().getAbsolutePath());
+        final String item = (String) comboPath.getEditor().getItem();
+        File dir = null;
+        final String directoryChooserTitle = getResourceMap().getString("directoryChooserTitle");
+        if (AppPrefs.getProperty(UserProp.SELECT_DIR_DIALOG_OVERRIDE, UserProp.SELECT_DIR_DIALOG_OVERRIDE_DEFAULT)) {
+            dir = OpenSaveDialogFactory.getInstance(MainApp.getAContext()).getDirChooser((item == null) ? null : new File(item), directoryChooserTitle);
+        } else {
+            final JDirectoryChooser directoryChooser = new JDirectoryChooser(item);
+            directoryChooser.setDialogTitle(directoryChooserTitle);
+            directoryChooser.setControlButtonsAreShown(true);
+            if (directoryChooser.showDialog(this, getResourceMap().getString("SelectDirectory")) != JDirectoryChooser.CANCEL_OPTION) {
+                dir = directoryChooser.getSelectedFile();
+            }
+        }
+        if (dir != null) {
+            comboPath.getEditor().setItem(dir.getAbsolutePath());
             Swinger.inputFocus(comboPath);
         }
+
     }
 
     @Action

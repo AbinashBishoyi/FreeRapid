@@ -371,7 +371,11 @@ final public class UserProp {
     public static final String RENAME_FILE_ACTION_SELECT_WITHOUT_EXTENSION = "renameFileActionSelectWithoutExtension";
     public static final boolean RENAME_FILE_ACTION_SELECT_WITHOUT_EXTENSION_DEFAULT = true;
 
-
+    /**
+     * See http://wordrider.net/forum/7/9889/_bug__report_-_slow_directory_chooser
+     */
+    public static final String SELECT_DIR_DIALOG_OVERRIDE = "selectDirDialogOverride";
+    public static final boolean SELECT_DIR_DIALOG_OVERRIDE_DEFAULT = false;
 }
 
 

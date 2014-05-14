@@ -52,6 +52,9 @@ abstract class JAppFileChooser extends JFileChooser {
     protected abstract String getDialogName();
 
     public void updateFileFilters(final java.util.List<EnhancedFileFilter> fileFilters, final String lastUsedKey) {
+        if (lastUsedKey == null) {
+            return;
+        }
         for (EnhancedFileFilter fileFilter : fileFilters)
             this.addChoosableFileFilter(fileFilter);
         final int filterIndex = AppPrefs.getProperty(lastUsedKey, fileFilters.size() - 1);

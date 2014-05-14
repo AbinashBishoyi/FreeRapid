@@ -21,8 +21,10 @@ import java.util.Locale;
  */
 public class OpenSaveDialogFactory {
     private static OpenSaveDialogFactory instance = null;
+    private ApplicationContext context;
 
     private OpenSaveDialogFactory(ApplicationContext context) {
+        this.context = context;
     }
 
     public static synchronized OpenSaveDialogFactory getInstance(ApplicationContext context) {
@@ -44,6 +46,21 @@ public class OpenSaveDialogFactory {
             AppPrefs.storeProperty(UserProp.LAST_EXPORT_FILENAME, result.getName());
         }
         return result;
+    }
+
+    public File getDirChooser(File currentDirectory, String directoryChooserTitle) {
+        final OpenFileChooser fileDialog = new OpenFileChooser(currentDirectory);
+
+        fileDialog.setAcceptAllFileFilterUsed(false);
+        fileDialog.setDialogTitle(directoryChooserTitle);
+        fileDialog.setMultiSelectionEnabled(false);
+        fileDialog.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        final int result = fileDialog.showOpenDialog(Frame.getFrames()[0]);
+        if (result != JFileChooser.APPROVE_OPTION) {
+            return null;
+        } else {
+            return fileDialog.getSelectedFile();
+        }
     }
 
     public File[] getChooseImageFileDialog() {
