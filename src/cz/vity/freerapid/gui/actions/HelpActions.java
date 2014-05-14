@@ -8,11 +8,11 @@ import cz.vity.freerapid.core.tasks.CheckForNewVersionTask;
 import cz.vity.freerapid.gui.dialogs.AboutDialog;
 import cz.vity.freerapid.gui.managers.UpdateManager;
 import cz.vity.freerapid.utilities.Browser;
+import cz.vity.freerapid.utilities.LogFileHandler;
 import cz.vity.freerapid.utilities.OSDesktop;
 import org.jdesktop.application.Action;
 
 import java.awt.event.ActionEvent;
-import java.io.File;
 
 /**
  * @author Vity
@@ -83,14 +83,12 @@ public class HelpActions {
 
     @Action
     public void openLogFile() {
-        final File file = new File(app.getContext().getLocalStorage().getDirectory(), Consts.LOG_FILE_NAME);
-        OSDesktop.openFile(file);
+        OSDesktop.openFile(LogFileHandler.getLogFile());
     }
 
     @Action
     public void browseToLogFile() {
-        final File file = new File(app.getContext().getLocalStorage().getDirectory(), Consts.LOG_FILE_NAME);
-        OSDesktop.openDirectoryForFile(file);
+        OSDesktop.openDirectoryForFile(LogFileHandler.getLogFile());
     }
 
 }

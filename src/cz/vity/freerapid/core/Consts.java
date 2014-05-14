@@ -33,8 +33,6 @@ public class Consts {
      */
     public static final String LOGDEFAULT = "logdefault.properties";
 
-    public static final String LOG_FILE_NAME = "app.log";
-
     /**
      * jmeno adresare v resources, kde je sound
      */
