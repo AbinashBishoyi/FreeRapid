@@ -30,6 +30,7 @@ import org.jdesktop.application.ApplicationContext;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
@@ -177,10 +178,17 @@ public class PluginsManager {
                 if (pluginRegistry.isPluginDescriptorAvailable(id)) {
                     final PluginDescriptor descriptor = pluginRegistry.getPluginDescriptor(id);
                     try {
-                        updatedPluginsFiles.add(new File(descriptor.getLocation().toURI()));
+                        final URL location = descriptor.getLocation();
+                        logger.info("Location " + location.toExternalForm());
+                        final File file = urlToFile(location);
+                        if (file.exists()) {
+                            updatedPluginsFiles.add(file);
+                        }
                     } catch (URISyntaxException e) {
                         //it happened to me once, but not reproducable
                         logger.severe("Descriptor location " + descriptor.getLocation() + " cannot be converted to URI!!");
+                        LogUtils.processException(logger, e);
+                    } catch (MalformedURLException e) {
                         LogUtils.processException(logger, e);
                     }
                 }
@@ -302,10 +310,6 @@ public class PluginsManager {
                 }
             }
         }
-    }
-
-    private static URL fileToUrl(final File plugin) throws MalformedURLException {
-        return plugin.toURI().toURL();
     }
 
     /**
@@ -512,5 +516,19 @@ public class PluginsManager {
     public boolean hasPlugin(String id) {
         return supportedPlugins.containsKey(id);
     }
+
+    private static URL fileToUrl(final File plugin) throws MalformedURLException {
+        return plugin.toURI().toURL();
+    }
+
+    private static File urlToFile(final URL plugin) throws MalformedURLException, URISyntaxException {
+        final String s = plugin.getFile();
+        final int i = s.lastIndexOf("!/");
+        if (i != -1) { //smells like a pontentional bug
+            return new File(new URI(s.substring(0, i)));
+        }
+        return new File(plugin.toURI());
+    }
+
 
 }
