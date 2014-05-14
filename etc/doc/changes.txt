@@ -14,11 +14,12 @@ Internal - indicates an internal change - information for FRD developers - nothi
 
 FreeRapid Downloader 0.86
   Added : Support for Portuguese and Simplified Chinese languages - thanks to all translators!
+  Added : Quiet Mode - don't let captcha dialogs bother you anymore while watching videos!
   Added : If the same file is downloaded from multiple sources, duplicates are automatically skipped
   Added : Support for preventing standby while downloading
   Added : Support for using system recycle bin for deleting files
   Added : Support for new search engine - http://wuploadsearch.com
-  Changed : Speed up startup time 
+  Changed : Speed up startup time
   Changed : Internal - NirCmd is not used anymore for native Windows actions
   Changed : Internal - Updated BetterSwingApplicationFramework to v1.9.3 snapshot
   Changed : Internal - Updated jna, mina, and commons-codec libraries to their latest versions
