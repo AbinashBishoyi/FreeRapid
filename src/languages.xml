@@ -7,29 +7,29 @@
     <lng name="English" code="EN" flags="UK=uk.gif|CA=ca.gif" icon="usa.gif"/>
     <lng name="Čeština" code="CS" icon="cz.gif"/>
     <lng name="Français" code="FR" icon="france.gif"/>
-    <lng name="Magyar nyelv" code="HU" icon="hungary.gif"/>
-    <lng name="Deutsch" code="DE" icon="germany.gif"/>
-    <lng name="Español" code="ES" icon="spain.gif"/>
+    <!--<lng name="Magyar nyelv" code="HU" icon="hungary.gif"/>-->
+    <!--<lng name="Deutsch" code="DE" icon="germany.gif"/>-->
+    <!--<lng name="Español" code="ES" icon="spain.gif"/>-->
     <lng name="Slovenčina" code="SK" icon="slovakia.gif"/>
-    <lng name="简体字" code="ZH" country="CN" icon="china.gif"/>
-    <lng name="正體字" code="ZH" country="TW" icon="taiwan.gif"/>
-    <lng name="日本語" code="JP" icon="japan.gif"/>
-    <lng name="Bahasa Indonesia" code="IN" icon="indonesia.gif"/>
-    <lng name="Polski" code="PL" icon="poland.gif"/>
+    <!--<lng name="简体字" code="ZH" country="CN" icon="china.gif"/>-->
+    <!--<lng name="正體字" code="ZH" country="TW" icon="taiwan.gif"/>-->
+    <!--<lng name="日本語" code="JP" icon="japan.gif"/>-->
+    <!--<lng name="Bahasa Indonesia" code="IN" icon="indonesia.gif"/>-->
+    <!--<lng name="Polski" code="PL" icon="poland.gif"/>-->
     <lng name="Українська" code="UA" icon="ukraine.gif"/>
-    <lng name="Italiano" code="IT" icon="italy.gif"/>
-    <lng name="Dansk" code="DA" icon="denmark.gif"/>
+    <!--<lng name="Italiano" code="IT" icon="italy.gif"/>-->
+    <!--<lng name="Dansk" code="DA" icon="denmark.gif"/>-->
     <lng name="Português do Brasil" code="PT" country="BR" icon="brazil.gif"/>
-    <lng name="Русский" code="RU" icon="russia.gif"/>
-    <lng name="Türkçe" code="TR" icon="turkey.gif"/>
-    <lng name="فارسی" code="FA" icon="iran.gif"/>
-    <lng name="Bosanski" code="BS" icon="bosnia.gif"/>
-    <lng name="Nederlands" code="NL" icon="nl.gif"/>
-    <lng name="ελληνικά" code="GR" icon="gr.gif"/>
-    <lng name="العربية" code="AR" icon="eg.gif"/>
-    <lng name="Hrvatski" code="HR" icon="hr.gif"/>
+    <!--<lng name="Русский" code="RU" icon="russia.gif"/>-->
+    <!--<lng name="Türkçe" code="TR" icon="turkey.gif"/>-->
+    <!--<lng name="فارسی" code="FA" icon="iran.gif"/>-->
+    <!--<lng name="Bosanski" code="BS" icon="bosnia.gif"/>-->
+    <!--<lng name="Nederlands" code="NL" icon="nl.gif"/>-->
+    <!--<lng name="ελληνικά" code="GR" icon="gr.gif"/>-->
+    <!--<lng name="العربية" code="AR" icon="eg.gif"/>-->
+    <!--<lng name="Hrvatski" code="HR" icon="hr.gif"/>-->
     <lng name="Slovenski" code="SI" icon="si.gif"/>
-    <lng name="Română" code="RO" icon="ro.gif"/>
+    <!--<lng name="Română" code="RO" icon="ro.gif"/>-->
     <lng name="עברית" code="HE" icon="israel.gif"/>
     <lng name="한국어" code="KO" icon="kr.gif"/>
     <lng name="Български" code="BG" icon="bg.gif"/>
