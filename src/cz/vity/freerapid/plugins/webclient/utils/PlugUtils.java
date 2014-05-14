@@ -12,6 +12,7 @@ import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -318,8 +319,29 @@ public final class PlugUtils {
         if (matcher.find()) {
             return matcher.group(1);
         } else {
-            throw new PluginImplementationException(String.format("No string between '%s' and '%s'", stringBefore, stringAfter));
+            throw new PluginImplementationException(String.format("No string between '%s' and '%s' was found", stringBefore, stringAfter));
         }
+    }
+
+    /**
+     * Returns time value in seconds between 2 other strings.
+     *
+     * @param content      searched content
+     * @param stringBefore string before searched string
+     * @param stringAfter  string after searched string
+     * @param srcTimeUnit  source time unit - usually <code>TimeUnit.SECONDS</code> or <code>TimeUnit.MILLISECONDS</code>
+     * @return time value in seconds
+     * @throws PluginImplementationException No wait time value between stringBefore and stringAfter
+     */
+    public static int getWaitTimeBetween(String content, String stringBefore, String stringAfter, TimeUnit srcTimeUnit) throws PluginImplementationException {
+        final String before = Pattern.quote(stringBefore);
+        final String after = Pattern.quote(stringAfter);
+        final Matcher matcher = matcher(before + "([0-9]+?)" + after, content);
+        if (matcher.find()) {
+            final long i = Long.parseLong(matcher.group(1));
+            return new Long(srcTimeUnit.toSeconds(i)).intValue();
+        } else
+            throw new PluginImplementationException(String.format("No wait time value between '%s' and '%s' was found", stringBefore, stringAfter));
     }
 
 

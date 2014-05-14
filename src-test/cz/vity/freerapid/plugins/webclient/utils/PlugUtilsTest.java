@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Junit test for PlugUtils
@@ -115,6 +116,11 @@ public class PlugUtilsTest {
     @Test
     public void testReplaceEntities() {
         assertEquals(PlugUtils.replaceEntities("asdasd &amp; fdsdfsdf"), "asdasd & fdsdfsdf");
+    }
+
+    @Test
+    public void testGetWaitTimeBetween() throws PluginImplementationException {
+        assertEquals(PlugUtils.getWaitTimeBetween("waitTime = 2;", "waitTime = ", ";", TimeUnit.MINUTES), 120);
     }
 
     @Test
