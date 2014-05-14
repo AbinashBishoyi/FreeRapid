@@ -178,9 +178,16 @@ public class PlugUtilsTest {
     }
 
     @Test
+    public void testStringBetween() throws PluginImplementationException {
+        final String between = PlugUtils.getStringBetween(content, "token = unescape(", ");", 2);
+        assertEquals("Result between strigns", between, "pong.replace(/zzz/, \"www\").replace(/unf/g, \"d\")");
+    }
+
+    @Test
     public void testGetNumberBetween() throws PluginImplementationException {
         final int between = PlugUtils.getNumberBetween("http://uloz.to/   1386350    /quickshare.frp", "uloz.to/  ", "/quickshare.frp");
         assertEquals("Result number", between, 1386350);
     }
+
 
 }

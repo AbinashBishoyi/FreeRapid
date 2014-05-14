@@ -326,14 +326,42 @@ public final class PlugUtils {
      * @throws PluginImplementationException No string between stringBefore and stringAfter
      */
     public static String getStringBetween(String content, String stringBefore, String stringAfter) throws PluginImplementationException {
+        return getStringBetween(content, stringBefore, stringAfter, 1);
+    }
+
+    /**
+     * Returns string between 2 other strings.
+     * With parameter count you can specify count of sucessful result, the final result is returned <br />
+     * example:<br/> <code>blablabla(<b>xxx</b>); blablabla(<b>yyyy</b>)</code>, with parameters <code>'blablabla(', ';', count=2</code>   <b>yyyy</b> will be returned
+     *
+     * @param content      searched content
+     * @param stringBefore string before searched string  - without white space characters on the RIGHT side
+     * @param stringAfter  string after searched string  - without white space characters on the LEFT side
+     * @param count        what item in row is the right result
+     * @return found string - result is trimmed
+     * @throws cz.vity.freerapid.plugins.exceptions.PluginImplementationException
+     *          No string between stringBefore and stringAfter
+     * @since 0.84
+     */
+    public static String getStringBetween(final String content, final String stringBefore, final String stringAfter, final int count) throws PluginImplementationException {
+        if (count < 1) {
+            throw new IllegalArgumentException("Finding count is less than 1");
+        }
         final String before = Pattern.quote(Utils.rtrim(stringBefore));
         final String after = Pattern.quote(Utils.ltrim(stringAfter));
-        final Matcher matcher = matcher(before + "\\s*(.+?)\\s*" + after, content);
-        if (matcher.find()) {
-            return matcher.group(1);
-        } else {
-            throw new PluginImplementationException(String.format("No string between '%s' and '%s' was found", stringBefore, stringAfter));
+        final Matcher matcher = PlugUtils.matcher(before + "\\s*(.+?)\\s*" + after, content);
+        int start = 0;
+        for (int i = 1; i <= count; ++i) {
+            if (matcher.find(start)) {
+                if (i == count) {
+                    return matcher.group(1);
+                } else
+                    start = matcher.end();
+            } else {
+                throw new PluginImplementationException(String.format("No string between '%s' and '%s' was found - attempt %s", stringBefore, stringAfter, count));
+            }
         }
+        throw new PluginImplementationException();
     }
 
     /**
