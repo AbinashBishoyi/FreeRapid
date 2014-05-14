@@ -11,6 +11,7 @@ import cz.vity.freerapid.gui.managers.exceptions.NotSupportedDownloadServiceExce
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.model.PluginMetaData;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
+import cz.vity.freerapid.plugins.webclient.DownloadClient;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import cz.vity.freerapid.plugins.webclient.FileState;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
@@ -134,15 +135,10 @@ public class ProcessManager extends Thread {
 
     private boolean canCreateAnotherConnection(final boolean forceDownload) {
         synchronized (downloadingLock) {
-            final int downloading = getDownloading();
-            if (downloading == ClientManager.MAX_DOWNLOADING) {
-                return false;
-            } else {
-                if (forceDownload)
-                    return true;
-                final int maxDownloads = Math.min(AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT), ClientManager.MAX_DOWNLOADING);
-                return maxDownloads > downloading;
-            }
+            if (forceDownload)
+                return true;
+            final int maxDownloads = AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT);
+            return maxDownloads > getDownloading();
         }
     }
 
@@ -270,7 +266,7 @@ public class ProcessManager extends Thread {
 
         final HttpDownloadClient client;
         synchronized (downloadingLock) {
-            client = clientManager.popClient();
+            client = new DownloadClient();
             setDownloading(downloading.intValue(), downloading.incrementAndGet());
             client.setConnectionTimeOut(AppPrefs.getProperty(UserProp.CONNECTION_TIMEOUT, UserProp.CONNECTION_TIMEOUT_DEFAULT));
             client.initClient(settings);
@@ -386,7 +382,6 @@ public class ProcessManager extends Thread {
                 downloadService.finishedDownloading(client);
             }
             synchronized (downloadingLock) {
-                clientManager.pushClient();
                 setDownloading(downloading.intValue(), downloading.decrementAndGet());
             }
 

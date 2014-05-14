@@ -4,8 +4,6 @@ import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.FWProp;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
-import cz.vity.freerapid.plugins.webclient.DownloadClient;
-import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
 import cz.vity.freerapid.plugins.webclient.ssl.EasySSLProtocolSocketFactory;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
@@ -21,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,11 +34,9 @@ public class ClientManager {
 
     private final List<ConnectionSettings> availableConnections = new ArrayList<ConnectionSettings>(2);
     private static final String PROXY_LIST_DEFAULT_PATH = new File(Utils.getAppPath(), "proxy.list").getAbsolutePath();
-    public static final int MAX_DOWNLOADING = 10;
 
     private ConnectionSettings defaultConnectionSettings = new ConnectionSettings();
 
-    private AtomicInteger popCount = new AtomicInteger(0);
     private final Object connectionSettingsLock = new Object();
     private final ManagerDirector managerDirector;
     private int rotate = 0;
@@ -258,27 +253,6 @@ public class ClientManager {
         }
     }
 
-    public synchronized HttpDownloadClient popClient() {
-        if (popCount.intValue() < MAX_DOWNLOADING) {
-            popCount.incrementAndGet();
-            return new DownloadClient();
-        } else {
-            throw new IllegalStateException("Cannot pop more connections");
-        }
-    }
-
-    public synchronized void pushClient() {
-        popCount.decrementAndGet();
-    }
-
-//    private int getMaxDownloads() {
-//        return AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT);
-//    }
-
-    public void updateDefaultConnection() {
-        updateConnectionSettings();
-    }
-
     public void updateConnectionSettings() {
         synchronized (connectionSettingsLock) {
             availableConnections.clear();
@@ -291,7 +265,4 @@ public class ClientManager {
             menuManager.updateConnectionSettings(getAvailableConnections());
     }
 
-    public void updateProxyConnectionList() {
-        updateConnectionSettings();
-    }
 }

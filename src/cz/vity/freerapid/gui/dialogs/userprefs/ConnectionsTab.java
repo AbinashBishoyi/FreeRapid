@@ -12,7 +12,6 @@ import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.gui.FRDUtils;
 import cz.vity.freerapid.gui.dialogs.ConnectDialog;
 import cz.vity.freerapid.gui.dialogs.filechooser.OpenSaveDialogFactory;
-import cz.vity.freerapid.gui.managers.ClientManager;
 import cz.vity.freerapid.gui.managers.ManagerDirector;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.FileUtils;
@@ -70,8 +69,8 @@ public class ConnectionsTab extends UserPreferencesTab {
         final ValueModel useDefault = bind(checkUseDefaultConnection, UserProp.USE_DEFAULT_CONNECTION, UserProp.USE_DEFAULT_CONNECTION_DEFAULT);
         PropertyConnector.connectAndUpdate(useDefault, actionMap.get("btnSelectConnectionProxy"), "enabled");
 
-        bind(spinnerMaxConcurrentDownloads, UserProp.MAX_DOWNLOADS_AT_A_TIME, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT, 1, ClientManager.MAX_DOWNLOADING, 1);
-        bind(spinnerErrorAttemptsCount, UserProp.ERROR_ATTEMPTS_COUNT, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT, -1, 999, 1);
+        bind(spinnerMaxConcurrentDownloads, UserProp.MAX_DOWNLOADS_AT_A_TIME, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT, 1, 1000000, 1);
+        bind(spinnerErrorAttemptsCount, UserProp.ERROR_ATTEMPTS_COUNT, UserProp.ERROR_ATTEMPTS_COUNT_DEFAULT, -1, 999, 1);
         bind(spinnerAutoReconnectTime, UserProp.AUTO_RECONNECT_TIME, UserProp.AUTO_RECONNECT_TIME_DEFAULT, 1, 10000, 10);
 
         bind(spinnerGlobalSpeedSliderMin, UserProp.GLOBAL_SPEED_SLIDER_MIN, UserProp.GLOBAL_SPEED_SLIDER_MIN_DEFAULT, 1, Integer.MAX_VALUE, 5);
