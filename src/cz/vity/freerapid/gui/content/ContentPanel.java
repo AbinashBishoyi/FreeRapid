@@ -70,6 +70,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     private static final int COLUMN_SERVICE = 8;
     private static final int COLUMN_PROXY = 9;
     private static final int COLUMN_DESCRIPTION = 10;
+    private static final int COLUMN_DATE_INSERTED = 11;
 
     private final ApplicationContext context;
     private final ManagerDirector director;
@@ -808,7 +809,7 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
     @SuppressWarnings({"unchecked"})
     private void initTable() {
         table.setName("mainTable");
-        final String[] columns = Swinger.getList(context.getResourceMap(), "mainTableColumns", 11);
+        final String[] columns = Swinger.getList(context.getResourceMap(), "mainTableColumns", 12);
         table.setModel(new CustomTableModel(manager.getDownloadFiles(), columns));
         table.setAutoCreateColumnsFromModel(false);
 
@@ -873,7 +874,12 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         tableColumnModel.getColumn(COLUMN_PROXY).setCellRenderer(new ConnectionCellRenderer(context));
         final TableColumnExt columnDescription = (TableColumnExt) tableColumnModel.getColumn(COLUMN_DESCRIPTION);
         columnDescription.setCellRenderer(new DescriptionCellRenderer(context));
+
+        final TableColumnExt columnDate = (TableColumnExt) tableColumnModel.getColumn(COLUMN_DATE_INSERTED);
+        columnDate.setCellRenderer(new DateCellRenderer());
+
         columnDescription.setVisible(false);
+        columnDate.setVisible(false);
 
         table.addMouseListener(new MouseAdapter() {
             @Override
@@ -902,6 +908,8 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
             sorter.setComparator(COLUMN_SPEED, new SpeedColumnComparator());
             sorter.setComparator(COLUMN_STATE, new EstTimeColumnComparator());
             sorter.setComparator(COLUMN_PROGRESSBAR, new ProgressBarColumnComparator());
+            sorter.setComparator(COLUMN_DESCRIPTION, new DescriptionColumnComparator());
+            sorter.setComparator(COLUMN_DATE_INSERTED, new DateColumnComparator());
         }
         table.setUpdateSelectionOnSort(b);
 

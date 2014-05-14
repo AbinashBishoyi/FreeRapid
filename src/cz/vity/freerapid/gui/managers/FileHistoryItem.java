@@ -29,8 +29,11 @@ final public class FileHistoryItem implements Identifiable<Long> {
 
     private long fileSize;
     private String fileName;
+    private float averageSpeed;
 
     private String shareDownloadServiceID;
+    private String connection;
+
 
     public FileHistoryItem() {
 
@@ -44,7 +47,9 @@ final public class FileHistoryItem implements Identifiable<Long> {
         this.fileName = file.getFileName();
         this.fileSize = file.getFileSize();
         this.fileType = file.getFileType();
+        averageSpeed = file.getAverageSpeed();
         this.shareDownloadServiceID = file.getPluginID();
+        connection = file.getConnectionSettings().toString();
     }
 
     public URL getUrl() {
@@ -101,6 +106,22 @@ final public class FileHistoryItem implements Identifiable<Long> {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public float getAverageSpeed() {
+        return averageSpeed;
+    }
+
+    public String getConnection() {
+        return connection;
+    }
+
+    public void setConnection(String connection) {
+        this.connection = connection;
+    }
+
+    public void setAverageSpeed(float averageSpeed) {
+        this.averageSpeed = averageSpeed;
     }
 
     public String getShareDownloadServiceID() {

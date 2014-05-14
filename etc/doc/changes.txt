@@ -12,6 +12,16 @@ Changed - indicates a change in usage or behavior of FreeRapid Downloader
 Fixed - indicates a bug fix
 Internal - indicates an internal change - information for FRD developers - nothing important for users
 
+24th February 2012 - FreeRapid Downloader 0.9 Update 2
+  Added: UI - select all/select none support in Update plugins dialog
+  Added: UI - main table - new 'Date' column, older added values have this column empty
+  Added: UI - Download history dialog - new 'Connection' and 'Avg. speed' column,
+              older added values have these columns empty
+  Changed : upgraded internal ObjectDB database, can resolve some thrown exceptions
+  Changed : Updated translations
+  Fixed: several minor issues in connection library (HttpClient)
+  Fixed: frd.png should have transparent background
+
 24th November 2012 - FreeRapid Downloader 0.9 Update 1
   Changed : Updated translations
   Fixed : File list was emptied in case an older version was run after the initial import

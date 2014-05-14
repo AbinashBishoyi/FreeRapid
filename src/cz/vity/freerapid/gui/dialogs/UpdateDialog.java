@@ -13,8 +13,10 @@ import cz.vity.freerapid.gui.managers.ManagerDirector;
 import cz.vity.freerapid.gui.managers.UpdateManager;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
+import cz.vity.freerapid.swing.ComponentFactory;
 import cz.vity.freerapid.swing.SwingUtils;
 import cz.vity.freerapid.swing.Swinger;
+import cz.vity.freerapid.swing.components.PopdownButton;
 import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Task;
@@ -53,6 +55,8 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
     private static final int COLUMN_STATUS = 6;
 
     private ArrayListModel<WrappedPluginData> listModel = new ArrayListModel<WrappedPluginData>();
+    private PopdownButton popmenuButton;
+
 
     public UpdateDialog(Frame owner, ManagerDirector managerDirector) throws HeadlessException {
         super(owner, true);
@@ -138,6 +142,8 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
     }
 
     private void initTable() {
+        buildPopmenuButton(popmenuButton.getPopupMenu());
+
         table.setName("updatePluginsTable");
         table.setModel(new CustomTableModel(listModel, getList("columns", 7)));
         table.setAutoCreateColumnsFromModel(false);
@@ -165,8 +171,11 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (!table.hasFocus())
+                if (!table.hasFocus()) {
                     Swinger.inputFocus(table);
+                }
+             if (SwingUtilities.isRightMouseButton(e))
+                SwingUtils.showPopMenu(popmenuButton.getPopupMenu(), e, table, UpdateDialog.this);
             }
         });
 
@@ -221,6 +230,9 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
         JLabel labelUpdateServer = new JLabel();
         labelServer = new JLabel();
         labelUpdatesCount = new JLabel();
+        popmenuButton = ComponentFactory.getPopdownButton();
+        popmenuButton.setName("popmenuButton");
+
         JXButtonPanel buttonBar = new JXButtonPanel();
         btnOK = new JButton();
         btnCancel = new JButton();
@@ -298,8 +310,9 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
                                 FormSpecs.PREF_COLSPEC
                         },
                         RowSpec.decodeSpecs("pref")), buttonBar);
-                ((FormLayout) buttonBar.getLayout()).setColumnGroups(new int[][]{{4, 6}});
+                ((FormLayout) buttonBar.getLayout()).setColumnGroups(new int[][]{{2, 4, 6}});
 
+                buttonBarBuilder.add(popmenuButton, cc.xy(2, 1));
                 buttonBarBuilder.add(btnOK, cc.xy(4, 1));
                 buttonBarBuilder.add(btnCancel, cc.xy(6, 1));
             }
@@ -422,6 +435,34 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
             fireTableRowsUpdated(e.getIndex0(), e.getIndex1());
         }
 
+    }
+
+
+    @Action
+    public void deSelectAll() {
+        checkOrUncheckPlugin(Boolean.FALSE, COLUMN_SELECTED);
+    }
+
+    @Action
+    public void selectAll() {
+        checkOrUncheckPlugin(Boolean.TRUE, COLUMN_SELECTED);
+    }
+
+    private void buildPopmenuButton(final JPopupMenu popupMenu) {
+        JMenuItem menuItem1 = new JMenuItem();
+        menuItem1.setAction(getActionMap().get("selectAll"));
+        popupMenu.add(menuItem1);
+        JMenuItem menuItem2 = new JMenuItem();
+        menuItem2.setAction(getActionMap().get("deSelectAll"));
+        popupMenu.add(menuItem2);
+    }    
+    
+    private void checkOrUncheckPlugin(Object value, int columnIndex) {
+        final CustomTableModel tableModel = (CustomTableModel) this.table.getModel();
+        final int count = tableModel.getRowCount();
+        for (int i = 0; i < count; i++) {
+            tableModel.setValueAt(value, i, columnIndex);
+        }
     }
 
 

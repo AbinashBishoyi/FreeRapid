@@ -383,6 +383,9 @@ final public class UserProp {
     public static final String MAX_SIMULTANEOUS_RUN_CHECK = "maxSimultaneousRunCheck";
     public static final int MAX_SIMULTANEOUS_RUN_CHECK_DEFAULT = 5;
 
+    public static final String CONTENT_TABLE_DATE_FORMAT = "contentTableDateFormat";
+
+
 }
 
 

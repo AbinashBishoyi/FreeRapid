@@ -20,6 +20,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.net.URL;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -62,6 +63,7 @@ public class DownloadFile extends AbstractBean implements Identifiable, Property
     private volatile long realDownload;
     private volatile boolean resumeSupported = true;
     private int listOrder;
+    private Date dateInserted;
 
 
     @Transient
@@ -649,6 +651,14 @@ public class DownloadFile extends AbstractBean implements Identifiable, Property
 
     public boolean isResumeSupported() {
         return resumeSupported;
+    }
+
+    public Date getDateInserted() {
+        return dateInserted;
+    }
+
+    public void setDateInserted(Date dateInserted) {
+        this.dateInserted = dateInserted;
     }
 
     public void setResumeSupported(boolean resumeSupported) {

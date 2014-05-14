@@ -25,6 +25,7 @@ import org.jdesktop.application.Action;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.swinghelper.buttonpanel.JXButtonPanel;
 import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.table.TableColumnExt;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -64,6 +65,8 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
     private static final int COLUMN_DESCRIPTION = 2;
     private static final int COLUMN_SIZE = 3;
     private static final int COLUMN_URL = 4;
+    private static final int COLUMN_CONNECTION = 5;
+    private static final int COLUMN_AVG_SPEED = 6;
 
     private static final String SELECTED_ACTION_ENABLED_PROPERTY = "selectedEnabled";
     private boolean selectedEnabled;
@@ -126,7 +129,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
 
     private void initTable() {
         table.setName("historyTable");
-        table.setModel(new CustomTableModel(new ArrayListModel<FileHistoryItem>(manager.getItems()), getList("columns", 5)));
+        table.setModel(new CustomTableModel(new ArrayListModel<FileHistoryItem>(manager.getItems()), getList("columns", 7)));
         table.setAutoCreateColumnsFromModel(false);
         table.setEditable(false);
         table.setColumnControlVisible(true);
@@ -149,7 +152,10 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         Swinger.updateColumn(table, "Description", COLUMN_DESCRIPTION, -1, 170, new DescriptionCellRenderer());
         Swinger.updateColumn(table, "Size", COLUMN_SIZE, -1, 40, new SizeCellRenderer());
         Swinger.updateColumn(table, "URL", COLUMN_URL, -1, -1, SwingXUtils.getHyperLinkTableCellRenderer());
-
+        final TableColumnExt connection = (TableColumnExt) Swinger.updateColumn(table, "Connection", COLUMN_CONNECTION, -1, -1, new ConnectionCellRenderer());
+        final TableColumnExt avgSpeed = (TableColumnExt) Swinger.updateColumn(table, "AvgSpeed", COLUMN_AVG_SPEED, -1, -1, new AvgSpeedCellRenderer());
+        avgSpeed.setVisible(false);
+        connection.setVisible(false);
 
         table.addMouseListener(new MouseAdapter() {
             @Override
@@ -1025,6 +1031,38 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
 
                 value = ContentPanel.bytesToAnother(fs);
                 this.setToolTipText(NumberFormat.getIntegerInstance().format(fs) + " B");
+            }
+            return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        }
+    }
+
+    private static class ConnectionCellRenderer extends DefaultTableCellRenderer {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            final FileHistoryItem item = (FileHistoryItem) table.getValueAt(row, -1);
+            final String connection = item.getConnection();
+
+            if (connection == null) {
+                value = "";
+                this.setToolTipText(null);
+            } else {
+                value = connection;
+                this.setToolTipText(connection);
+            }
+            return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        }
+    }
+
+    private static class AvgSpeedCellRenderer extends DefaultTableCellRenderer {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            final FileHistoryItem item = (FileHistoryItem) table.getValueAt(row, -1);
+            final float averageSpeed = item.getAverageSpeed();
+
+            if (averageSpeed <= 0) {
+                value = "";
+                this.setToolTipText(null);
+            } else {
+                value = ContentPanel.bytesToAnother((long) averageSpeed) + "/s";
+                this.setToolTipText(value.toString());
             }
             return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         }

@@ -8,6 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * WARNING - if you get class not found error for LanguageBindingImpl, you  have to enable annotation compiler support in your IDE.
+ * For intellij Idea: Settings-> Compiler->Annotation processors
  * @author Vity
  */
 
