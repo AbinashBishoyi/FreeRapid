@@ -1,6 +1,7 @@
 package cz.vity.freerapid.gui.managers;
 
-import com.jgoodies.binding.list.ArrayListModel;
+
+import com.jgoodies.common.collect.ArrayListModel;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.gui.actions.DownloadsActions;
@@ -44,36 +45,36 @@ class FileListMaintainer {
 
 
     private List<DownloadFile> loadFileHistoryList() {
-          List<DownloadFile> result = null;
-          final File srcFile = new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML);
-          if (srcFile.exists()) { //extract from old file, we ignore existence of backup file in case the main file does not exist
-              try {
-                  result = loadList(srcFile);
-              } catch (Exception e) {
-                  LogUtils.processException(logger, e);
-                  logger.info("Trying to renew file from backup");
-                  try {
-                      FileUtils.renewBackup(srcFile);
-                      result = loadList(srcFile);
-                  } catch (FileNotFoundException ex) {
-                      //ignore
-                  } catch (Exception e1) {
-                      LogUtils.processException(logger, e);
-                  }
-              }
-              if (result != null) {
-                  //re-save into database
-                  director.getDatabaseManager().saveCollection(result);
-              } else result = new ArrayList<DownloadFile>();
-              //rename old file history file into another one, so we won't import it again next time
-              //noinspection ResultOfMethodCallIgnored
-              srcFile.renameTo(new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML + ".imported"));
-              return result;
-          } else {
-              //load from database
-              return director.getDatabaseManager().loadAll(DownloadFile.class);
-          }
-      }
+        List<DownloadFile> result = null;
+        final File srcFile = new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML);
+        if (srcFile.exists()) { //extract from old file, we ignore existence of backup file in case the main file does not exist
+            try {
+                result = loadList(srcFile);
+            } catch (Exception e) {
+                LogUtils.processException(logger, e);
+                logger.info("Trying to renew file from backup");
+                try {
+                    FileUtils.renewBackup(srcFile);
+                    result = loadList(srcFile);
+                } catch (FileNotFoundException ex) {
+                    //ignore
+                } catch (Exception e1) {
+                    LogUtils.processException(logger, e);
+                }
+            }
+            if (result != null) {
+                //re-save into database
+                director.getDatabaseManager().saveCollection(result);
+            } else result = new ArrayList<DownloadFile>();
+            //rename old file history file into another one, so we won't import it again next time
+            //noinspection ResultOfMethodCallIgnored
+            srcFile.renameTo(new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML + ".imported"));
+            return result;
+        } else {
+            //load from database
+            return director.getDatabaseManager().loadAll(DownloadFile.class);
+        }
+    }
 
     void loadListToBean(Collection<DownloadFile> downloadFiles) {
         final List<DownloadFile> result = loadFileHistoryList();

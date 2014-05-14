@@ -1,10 +1,9 @@
 package cz.vity.freerapid.gui.dialogs.userprefs;
 
 import com.jgoodies.binding.beans.BeanAdapter;
-import com.jgoodies.binding.list.ArrayListModel;
+import com.jgoodies.common.collect.ArrayListModel;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.Consts;
@@ -565,7 +564,7 @@ public class PluginsTab extends UserPreferencesTab implements ClipboardOwner {
         JLabel labelManualCheck = new JLabel();
         labelManualCheck.setName("labelManualCheck");
 
-        this.setBorder(Borders.TABBED_DIALOG_BORDER);
+        this.setBorder(Borders.TABBED_DIALOG);
 
         //======== pluginTabbedPane ========
         {
@@ -590,15 +589,15 @@ public class PluginsTab extends UserPreferencesTab implements ClipboardOwner {
 
                     PanelBuilder pluginsButtonPanelBuilder = new PanelBuilder(new FormLayout(
                             new ColumnSpec[]{
-                                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                    FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                                    FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                                     new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-                                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                    FormFactory.DEFAULT_COLSPEC,
-                                    FormFactory.UNRELATED_GAP_COLSPEC,
-                                    FormFactory.DEFAULT_COLSPEC,
-                                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                    FormFactory.UNRELATED_GAP_COLSPEC
+                                    FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                                    FormSpecs.DEFAULT_COLSPEC,
+                                    FormSpecs.UNRELATED_GAP_COLSPEC,
+                                    FormSpecs.DEFAULT_COLSPEC,
+                                    FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                                    FormSpecs.UNRELATED_GAP_COLSPEC
                             },
                             RowSpec.decodeSpecs("default")), pluginsButtonPanel);
 
@@ -618,30 +617,30 @@ public class PluginsTab extends UserPreferencesTab implements ClipboardOwner {
 
                 PanelBuilder pluginPanelUpdatesBuilder = new PanelBuilder(new FormLayout(
                         new ColumnSpec[]{
-                                FormFactory.DEFAULT_COLSPEC,
-                                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                FormSpecs.DEFAULT_COLSPEC,
+                                FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                                 new ColumnSpec(Sizes.bounded(Sizes.MINIMUM, Sizes.dluX(30), Sizes.dluX(30))),
-                                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                                 new ColumnSpec(ColumnSpec.FILL, Sizes.bounded(Sizes.DEFAULT, Sizes.dluX(50), Sizes.dluX(75)), FormSpec.DEFAULT_GROW),
-                                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                FormFactory.DEFAULT_COLSPEC,
-                                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                FormFactory.UNRELATED_GAP_COLSPEC
+                                FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                                FormSpecs.DEFAULT_COLSPEC,
+                                FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                                FormSpecs.UNRELATED_GAP_COLSPEC
                         },
                         new RowSpec[]{
-                                FormFactory.DEFAULT_ROWSPEC,
-                                FormFactory.LINE_GAP_ROWSPEC,
-                                FormFactory.DEFAULT_ROWSPEC,
-                                FormFactory.LINE_GAP_ROWSPEC,
-                                FormFactory.DEFAULT_ROWSPEC,
-                                FormFactory.LINE_GAP_ROWSPEC,
-                                FormFactory.DEFAULT_ROWSPEC,
-                                FormFactory.UNRELATED_GAP_ROWSPEC,
-                                FormFactory.DEFAULT_ROWSPEC,
-                                FormFactory.LINE_GAP_ROWSPEC,
-                                FormFactory.UNRELATED_GAP_ROWSPEC,
-                                FormFactory.LINE_GAP_ROWSPEC,
-                                FormFactory.DEFAULT_ROWSPEC
+                                FormSpecs.DEFAULT_ROWSPEC,
+                                FormSpecs.LINE_GAP_ROWSPEC,
+                                FormSpecs.DEFAULT_ROWSPEC,
+                                FormSpecs.LINE_GAP_ROWSPEC,
+                                FormSpecs.DEFAULT_ROWSPEC,
+                                FormSpecs.LINE_GAP_ROWSPEC,
+                                FormSpecs.DEFAULT_ROWSPEC,
+                                FormSpecs.UNRELATED_GAP_ROWSPEC,
+                                FormSpecs.DEFAULT_ROWSPEC,
+                                FormSpecs.LINE_GAP_ROWSPEC,
+                                FormSpecs.UNRELATED_GAP_ROWSPEC,
+                                FormSpecs.LINE_GAP_ROWSPEC,
+                                FormSpecs.DEFAULT_ROWSPEC
                         }), pluginPanelUpdates);
 
                 pluginPanelUpdatesBuilder.add(check4PluginUpdatesAutomatically, cc.xywh(1, 1, 5, 1));
@@ -664,7 +663,7 @@ public class PluginsTab extends UserPreferencesTab implements ClipboardOwner {
                 ColumnSpec.decodeSpecs("default:grow"),
                 new RowSpec[]{
                         new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-                        FormFactory.RELATED_GAP_ROWSPEC,
+                        FormSpecs.RELATED_GAP_ROWSPEC,
                         RowSpec.decode("5px")
                 }), this);
 

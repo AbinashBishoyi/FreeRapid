@@ -4,11 +4,7 @@ import com.jgoodies.binding.PresentationModel;
 import com.jgoodies.binding.adapter.Bindings;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import com.jgoodies.forms.layout.*;
 import cz.vity.freerapid.plugins.webclient.hoster.PremiumAccount;
 import cz.vity.freerapid.swing.ComponentFactory;
 import cz.vity.freerapid.swing.Swinger;
@@ -137,7 +133,7 @@ public class AccountDialog extends AppDialog {
 
         //======== dialogPane ========
         {
-            dialogPane.setBorder(Borders.DIALOG_BORDER);
+            dialogPane.setBorder(Borders.DIALOG);
             dialogPane.setLayout(new BorderLayout());
 
             //======== contentPanel ========
@@ -153,24 +149,24 @@ public class AccountDialog extends AppDialog {
 
                 PanelBuilder contentPanelBuilder = new PanelBuilder(new FormLayout(
                         new ColumnSpec[]{
-                                new ColumnSpec("max(pref;35dlu)"),
-                                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                FormFactory.DEFAULT_COLSPEC,
-                                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                new ColumnSpec("min(pref;40dlu):grow"),
-                                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                FormFactory.DEFAULT_COLSPEC
+                                ColumnSpec.decode("max(pref;35dlu)"),
+                                FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                                FormSpecs.DEFAULT_COLSPEC,
+                                FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                                ColumnSpec.decode("min(pref;40dlu):grow"),
+                                FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                                FormSpecs.DEFAULT_COLSPEC
                         },
                         new RowSpec[]{
-                                FormFactory.DEFAULT_ROWSPEC,
-                                FormFactory.LINE_GAP_ROWSPEC,
-                                FormFactory.DEFAULT_ROWSPEC,
-                                FormFactory.LINE_GAP_ROWSPEC,
-                                FormFactory.DEFAULT_ROWSPEC,
-                                FormFactory.LINE_GAP_ROWSPEC,
-                                FormFactory.DEFAULT_ROWSPEC,
-                                FormFactory.LINE_GAP_ROWSPEC,
-                                FormFactory.UNRELATED_GAP_ROWSPEC
+                                FormSpecs.DEFAULT_ROWSPEC,
+                                FormSpecs.LINE_GAP_ROWSPEC,
+                                FormSpecs.DEFAULT_ROWSPEC,
+                                FormSpecs.LINE_GAP_ROWSPEC,
+                                FormSpecs.DEFAULT_ROWSPEC,
+                                FormSpecs.LINE_GAP_ROWSPEC,
+                                FormSpecs.DEFAULT_ROWSPEC,
+                                FormSpecs.LINE_GAP_ROWSPEC,
+                                FormSpecs.UNRELATED_GAP_ROWSPEC
                         }), contentPanel);
 
                 contentPanelBuilder.add(labelIcon, cc.xywh(1, 1, 2, 7, CellConstraints.FILL, CellConstraints.CENTER));
@@ -183,7 +179,7 @@ public class AccountDialog extends AppDialog {
 
             //======== buttonBar ========
             {
-                buttonBar.setBorder(Borders.BUTTON_BAR_GAP_BORDER);
+                buttonBar.setBorder(Borders.BUTTON_BAR_PAD);
 
                 //---- btnOK ----
                 btnOK.setName("btnOK");
@@ -193,9 +189,9 @@ public class AccountDialog extends AppDialog {
 
                 PanelBuilder buttonBarBuilder = new PanelBuilder(new FormLayout(
                         new ColumnSpec[]{
-                                new ColumnSpec("55px:grow"),
+                                ColumnSpec.decode("55px:grow"),
                                 ComponentFactory.BUTTON_COLSPEC,
-                                FormFactory.RELATED_GAP_COLSPEC,
+                                FormSpecs.RELATED_GAP_COLSPEC,
                                 ComponentFactory.BUTTON_COLSPEC
                         },
                         RowSpec.decodeSpecs("default")), buttonBar);

@@ -1,11 +1,10 @@
 package cz.vity.freerapid.gui.dialogs.userprefs;
 
 import com.jgoodies.binding.adapter.Bindings;
-import com.jgoodies.binding.list.ArrayListModel;
 import com.jgoodies.binding.list.SelectionInList;
+import com.jgoodies.common.collect.ArrayListModel;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
 import cz.vity.freerapid.core.*;
 import cz.vity.freerapid.swing.Swinger;
@@ -166,7 +165,7 @@ public class GeneralTab extends UserPreferencesTab {
         labelRemoveCompleted.setLabelFor(comboRemoveCompleted);
         labelRemoveCompleted.setName("labelRemoveCompleted");
 
-        this.setBorder(Borders.TABBED_DIALOG_BORDER);
+        this.setBorder(Borders.TABBED_DIALOG);
 
         //======== panelApplicationSettings ========
         {
@@ -175,20 +174,20 @@ public class GeneralTab extends UserPreferencesTab {
             PanelBuilder panelApplicationSettingsBuilder = new PanelBuilder(new FormLayout(
                     new ColumnSpec[]{
                             new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(0), FormSpec.NO_GROW),
-                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                            FormFactory.DEFAULT_COLSPEC,
-                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                            FormSpecs.DEFAULT_COLSPEC,
+                            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                             ColumnSpec.decode("max(default;70dlu)"),
                             new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
                     },
                     new RowSpec[]{
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.LINE_GAP_ROWSPEC,
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.LINE_GAP_ROWSPEC,
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.LINE_GAP_ROWSPEC,
-                            FormFactory.DEFAULT_ROWSPEC
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.LINE_GAP_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.LINE_GAP_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.LINE_GAP_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC
                     }), panelApplicationSettings);
 
             panelApplicationSettingsBuilder.add(checkForNewVersion, cc.xyw(3, 1, 4));
@@ -204,19 +203,19 @@ public class GeneralTab extends UserPreferencesTab {
 
             PanelBuilder panelApplicationSettingsBuilder = new PanelBuilder(new FormLayout(
                     new ColumnSpec[]{
-                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                             ColumnSpec.decode("max(pref;30dlu)"),
-                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                     },
                     new RowSpec[]{
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.LINE_GAP_ROWSPEC,
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.LINE_GAP_ROWSPEC,
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.LINE_GAP_ROWSPEC,
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.LINE_GAP_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.LINE_GAP_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.LINE_GAP_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.LINE_GAP_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.LINE_GAP_ROWSPEC,
                     }), panelShortcutsSettings);
 
             panelApplicationSettingsBuilder.add(btnCreateDesktopShortcut, cc.xy(2, 1));
@@ -232,27 +231,27 @@ public class GeneralTab extends UserPreferencesTab {
             PanelBuilder panelDownloadsSettingsBuilder = new PanelBuilder(new FormLayout(
                     new ColumnSpec[]{
                             new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(0), FormSpec.NO_GROW),
-                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                            FormFactory.DEFAULT_COLSPEC,
-                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                            FormFactory.DEFAULT_COLSPEC,
+                            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                            FormSpecs.DEFAULT_COLSPEC,
+                            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                            FormSpecs.DEFAULT_COLSPEC,
                             new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-                            FormFactory.DEFAULT_COLSPEC,
-                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                            FormFactory.DEFAULT_COLSPEC,
+                            FormSpecs.DEFAULT_COLSPEC,
+                            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                            FormSpecs.DEFAULT_COLSPEC,
                     },
                     new RowSpec[]{
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.LINE_GAP_ROWSPEC,
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.LINE_GAP_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.LINE_GAP_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.LINE_GAP_ROWSPEC,
                     }), panelDownloadsSettings);
 
             panelDownloadsSettingsBuilder.add(checkForFileExistenceBeforeDownload, cc.xywh(3, 1, 7, 1));
@@ -272,14 +271,14 @@ public class GeneralTab extends UserPreferencesTab {
         PanelBuilder thisBuilder = new PanelBuilder(new FormLayout(
                 new ColumnSpec[]{
                         new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-                        FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                        FormFactory.DEFAULT_COLSPEC,
+                        FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                        FormSpecs.DEFAULT_COLSPEC,
                 },
                 new RowSpec[]{
                         new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.NO_GROW),
-                        FormFactory.RELATED_GAP_ROWSPEC,
+                        FormSpecs.RELATED_GAP_ROWSPEC,
                         new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.NO_GROW),
-                        FormFactory.LINE_GAP_ROWSPEC,
+                        FormSpecs.LINE_GAP_ROWSPEC,
                         new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
                 }), this);
 

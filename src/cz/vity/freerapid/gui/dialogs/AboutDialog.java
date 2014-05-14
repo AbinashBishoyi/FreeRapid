@@ -246,7 +246,7 @@ public class AboutDialog extends AppDialog {
 
             //======== dialogPane ========
             {
-                dialogPane.setBorder(Borders.DIALOG_BORDER);
+                dialogPane.setBorder(Borders.DIALOG);
                 dialogPane.setName("dialogPane");
                 dialogPane.setLayout(new BorderLayout());
 
@@ -264,7 +264,7 @@ public class AboutDialog extends AppDialog {
 
                 //======== buttonBar ========
                 {
-                    buttonBar.setBorder(Borders.BUTTON_BAR_GAP_BORDER);
+                    buttonBar.setBorder(Borders.BUTTON_BAR_PAD);
                     buttonBar.setName("buttonBar");
 
                     //---- btnOK ----

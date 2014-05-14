@@ -2,7 +2,6 @@ package cz.vity.freerapid.gui.dialogs.userprefs;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.utilities.FileUtils;
@@ -45,7 +44,7 @@ public class MiscTab extends UserPreferencesTab {
         checkUseRecycleBin.setName("checkUseRecycleBin");
         checkUseRecycleBin.setEnabled(FileUtils.supportsRecycleBin());
 
-        this.setBorder(Borders.TABBED_DIALOG_BORDER);
+        this.setBorder(Borders.TABBED_DIALOG);
 
         //======== panelDesc ========
         {
@@ -54,8 +53,8 @@ public class MiscTab extends UserPreferencesTab {
             PanelBuilder panelDescBuilder = new PanelBuilder(new FormLayout(
                     new ColumnSpec[]{
                             new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(0), FormSpec.NO_GROW),
-                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                            FormFactory.DEFAULT_COLSPEC
+                            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                            FormSpecs.DEFAULT_COLSPEC
                     },
                     RowSpec.decodeSpecs("default, default, default")), panelDescSettings);
 
@@ -71,8 +70,8 @@ public class MiscTab extends UserPreferencesTab {
             PanelBuilder panelDescBuilder = new PanelBuilder(new FormLayout(
                     new ColumnSpec[]{
                             new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(0), FormSpec.NO_GROW),
-                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                            FormFactory.DEFAULT_COLSPEC
+                            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                            FormSpecs.DEFAULT_COLSPEC
                     },
                     RowSpec.decodeSpecs("default, default")), panelAdvancedSettings);
 
@@ -83,11 +82,11 @@ public class MiscTab extends UserPreferencesTab {
         PanelBuilder thisBuilder = new PanelBuilder(new FormLayout(
                 ColumnSpec.decodeSpecs("default:grow"),
                 new RowSpec[]{
-                        FormFactory.DEFAULT_ROWSPEC,
-                        FormFactory.RELATED_GAP_ROWSPEC,
-                        FormFactory.DEFAULT_ROWSPEC,
-                        FormFactory.RELATED_GAP_ROWSPEC,
-                        FormFactory.DEFAULT_ROWSPEC
+                        FormSpecs.DEFAULT_ROWSPEC,
+                        FormSpecs.RELATED_GAP_ROWSPEC,
+                        FormSpecs.DEFAULT_ROWSPEC,
+                        FormSpecs.RELATED_GAP_ROWSPEC,
+                        FormSpecs.DEFAULT_ROWSPEC
                 }), this);
 
         thisBuilder.add(panelDescSettings, cc.xy(1, 1));

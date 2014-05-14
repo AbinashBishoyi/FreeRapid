@@ -5,7 +5,6 @@ import com.jgoodies.binding.adapter.Bindings;
 import com.jgoodies.binding.value.Trigger;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
 import cz.vity.freerapid.core.application.SubmitErrorInfo;
 import cz.vity.freerapid.core.tasks.SubmitErrorInfoTask;
@@ -157,7 +156,7 @@ public class SubmitErrorDialog extends AppDialog {
 
         //======== dialogPane ========
         {
-            dialogPane.setBorder(Borders.DIALOG_BORDER);
+            dialogPane.setBorder(Borders.DIALOG);
             dialogPane.setName("dialogPane");
             dialogPane.setLayout(new BorderLayout());
 
@@ -201,20 +200,20 @@ public class SubmitErrorDialog extends AppDialog {
 
                 PanelBuilder contentPanelBuilder = new PanelBuilder(new FormLayout(
                         new ColumnSpec[]{
-                                FormFactory.DEFAULT_COLSPEC,
-                                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                FormSpecs.DEFAULT_COLSPEC,
+                                FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                                 new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-                                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                FormFactory.DEFAULT_COLSPEC,
-                                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                FormFactory.DEFAULT_COLSPEC
+                                FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                                FormSpecs.DEFAULT_COLSPEC,
+                                FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                                FormSpecs.DEFAULT_COLSPEC
                         },
                         new RowSpec[]{
-                                FormFactory.DEFAULT_ROWSPEC,
-                                FormFactory.LINE_GAP_ROWSPEC,
+                                FormSpecs.DEFAULT_ROWSPEC,
+                                FormSpecs.LINE_GAP_ROWSPEC,
                                 new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-                                FormFactory.LINE_GAP_ROWSPEC,
-                                FormFactory.DEFAULT_ROWSPEC
+                                FormSpecs.LINE_GAP_ROWSPEC,
+                                FormSpecs.DEFAULT_ROWSPEC
                         }), contentPanel);
 
                 contentPanelBuilder.add(labelName, cc.xy(1, 1));
@@ -229,7 +228,7 @@ public class SubmitErrorDialog extends AppDialog {
 
             //======== buttonBar ========
             {
-                buttonBar.setBorder(Borders.BUTTON_BAR_GAP_BORDER);
+                buttonBar.setBorder(Borders.BUTTON_BAR_PAD);
                 buttonBar.setName("buttonBar");
 
                 //---- button1 ----
@@ -244,13 +243,13 @@ public class SubmitErrorDialog extends AppDialog {
 
                 PanelBuilder buttonBarBuilder = new PanelBuilder(new FormLayout(
                         new ColumnSpec[]{
-                                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                FormFactory.DEFAULT_COLSPEC,
-                                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                new ColumnSpec("max(min;10dlu):grow"),
-                                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                FormFactory.BUTTON_COLSPEC,
-                                FormFactory.RELATED_GAP_COLSPEC,
+                                FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                                FormSpecs.DEFAULT_COLSPEC,
+                                FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                                ColumnSpec.decode("max(min;10dlu):grow"),
+                                FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                                FormSpecs.BUTTON_COLSPEC,
+                                FormSpecs.RELATED_GAP_COLSPEC,
                                 ComponentFactory.BUTTON_COLSPEC
                         },
                         RowSpec.decodeSpecs("pref")), buttonBar);

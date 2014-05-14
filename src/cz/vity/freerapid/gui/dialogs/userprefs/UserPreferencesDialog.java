@@ -5,11 +5,7 @@ import com.jgoodies.binding.beans.PropertyConnector;
 import com.jgoodies.binding.value.Trigger;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import com.jgoodies.forms.layout.*;
 import com.l2fprod.common.swing.JButtonBar;
 import com.l2fprod.common.swing.plaf.blue.BlueishButtonBarUI;
 import cz.vity.freerapid.core.AppPrefs;
@@ -122,7 +118,7 @@ public class UserPreferencesDialog extends AppDialog {
         trigger = new Trigger();
         model = new MyPresentationModel(null, trigger);
         final javax.swing.Action actionOK = map.get("okBtnAction");
-        PropertyConnector connector = PropertyConnector.connect(model, PresentationModel.PROPERTYNAME_BUFFERING, actionOK, "enabled");
+        PropertyConnector connector = PropertyConnector.connect(model, PresentationModel.PROPERTY_BUFFERING, actionOK, "enabled");
         connector.updateProperty2();
 
         setAction(btnOK, "okBtnAction");
@@ -297,10 +293,10 @@ public class UserPreferencesDialog extends AppDialog {
 
                     PanelBuilder buttonBarBuilder = new PanelBuilder(new FormLayout(
                             new ColumnSpec[]{
-                                    FormFactory.GLUE_COLSPEC,
+                                    FormSpecs.GLUE_COLSPEC,
                                     ColumnSpec.decode("max(pref;42dlu)"),
-                                    FormFactory.RELATED_GAP_COLSPEC,
-                                    FormFactory.PREF_COLSPEC
+                                    FormSpecs.RELATED_GAP_COLSPEC,
+                                    FormSpecs.PREF_COLSPEC
                             },
                             RowSpec.decodeSpecs("pref")), buttonBar);
                     ((FormLayout) buttonBar.getLayout()).setColumnGroups(new int[][]{{2, 4}});

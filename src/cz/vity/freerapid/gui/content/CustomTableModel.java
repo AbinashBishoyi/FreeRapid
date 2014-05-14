@@ -1,6 +1,7 @@
 package cz.vity.freerapid.gui.content;
 
-import com.jgoodies.binding.list.ArrayListModel;
+
+import com.jgoodies.common.collect.ArrayListModel;
 import cz.vity.freerapid.model.DownloadFile;
 
 import javax.swing.event.ListDataEvent;

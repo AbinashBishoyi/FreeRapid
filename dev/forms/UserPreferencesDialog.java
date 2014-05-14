@@ -95,7 +95,7 @@ public class UserPreferencesDialog extends JDialog {
 
 					//======== panelGeneral ========
 					{
-						panelGeneral.setBorder(Borders.TABBED_DIALOG_BORDER);
+						panelGeneral.setBorder(Borders.TABBED_DIALOG);
 
 						//======== panelGeneralSettings ========
 						{
@@ -107,8 +107,8 @@ public class UserPreferencesDialog extends JDialog {
 							PanelBuilder panelGeneralSettingsBuilder = new PanelBuilder(new FormLayout(
 								new ColumnSpec[] {
 									new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(0), FormSpec.NO_GROW),
-									FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-									FormFactory.DEFAULT_COLSPEC
+									FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+									FormSpecs.DEFAULT_COLSPEC
 								},
 								RowSpec.decodeSpecs("default")), panelGeneralSettings);
 
@@ -119,7 +119,7 @@ public class UserPreferencesDialog extends JDialog {
 							ColumnSpec.decodeSpecs("default:grow"),
 							new RowSpec[] {
 								new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.NO_GROW),
-								FormFactory.RELATED_GAP_ROWSPEC,
+								FormSpecs.RELATED_GAP_ROWSPEC,
 								new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.NO_GROW)
 							}), panelGeneral);
 
@@ -129,7 +129,7 @@ public class UserPreferencesDialog extends JDialog {
 
 					//======== panelAlarm ========
 					{
-						panelAlarm.setBorder(Borders.TABBED_DIALOG_BORDER);
+						panelAlarm.setBorder(Borders.TABBED_DIALOG);
 
 						//======== panelWhenAlarmGoesOff ========
 						{
@@ -138,24 +138,24 @@ public class UserPreferencesDialog extends JDialog {
 							PanelBuilder panelWhenAlarmGoesOffBuilder = new PanelBuilder(new FormLayout(
 								new ColumnSpec[] {
 									new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(0), FormSpec.NO_GROW),
-									FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-									FormFactory.DEFAULT_COLSPEC,
-									FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+									FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+									FormSpecs.DEFAULT_COLSPEC,
+									FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 									new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-									FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-									FormFactory.DEFAULT_COLSPEC,
-									FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-									FormFactory.DEFAULT_COLSPEC,
-									FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-									FormFactory.DEFAULT_COLSPEC
+									FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+									FormSpecs.DEFAULT_COLSPEC,
+									FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+									FormSpecs.DEFAULT_COLSPEC,
+									FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+									FormSpecs.DEFAULT_COLSPEC
 								},
 								new RowSpec[] {
-									FormFactory.DEFAULT_ROWSPEC,
-									FormFactory.NARROW_LINE_GAP_ROWSPEC,
-									FormFactory.DEFAULT_ROWSPEC,
-									FormFactory.LINE_GAP_ROWSPEC,
-									FormFactory.DEFAULT_ROWSPEC,
-									FormFactory.DEFAULT_ROWSPEC
+									FormSpecs.DEFAULT_ROWSPEC,
+									FormSpecs.NARROW_LINE_GAP_ROWSPEC,
+									FormSpecs.DEFAULT_ROWSPEC,
+									FormSpecs.LINE_GAP_ROWSPEC,
+									FormSpecs.DEFAULT_ROWSPEC,
+									FormSpecs.DEFAULT_ROWSPEC
 								}), panelWhenAlarmGoesOff);
 							((FormLayout)panelWhenAlarmGoesOff.getLayout()).setColumnGroups(new int[][] {{9, 11}});
 
@@ -168,21 +168,21 @@ public class UserPreferencesDialog extends JDialog {
 							PanelBuilder panelAlarmDefaultsBuilder = new PanelBuilder(new FormLayout(
 								new ColumnSpec[] {
 									new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(0), FormSpec.NO_GROW),
-									FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-									FormFactory.DEFAULT_COLSPEC,
-									FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-									FormFactory.DEFAULT_COLSPEC,
-									FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-									FormFactory.DEFAULT_COLSPEC
+									FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+									FormSpecs.DEFAULT_COLSPEC,
+									FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+									FormSpecs.DEFAULT_COLSPEC,
+									FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+									FormSpecs.DEFAULT_COLSPEC
 								},
 								new RowSpec[] {
-									FormFactory.DEFAULT_ROWSPEC,
-									FormFactory.NARROW_LINE_GAP_ROWSPEC,
-									FormFactory.DEFAULT_ROWSPEC,
-									FormFactory.NARROW_LINE_GAP_ROWSPEC,
-									FormFactory.DEFAULT_ROWSPEC,
-									FormFactory.NARROW_LINE_GAP_ROWSPEC,
-									FormFactory.DEFAULT_ROWSPEC
+									FormSpecs.DEFAULT_ROWSPEC,
+									FormSpecs.NARROW_LINE_GAP_ROWSPEC,
+									FormSpecs.DEFAULT_ROWSPEC,
+									FormSpecs.NARROW_LINE_GAP_ROWSPEC,
+									FormSpecs.DEFAULT_ROWSPEC,
+									FormSpecs.NARROW_LINE_GAP_ROWSPEC,
+									FormSpecs.DEFAULT_ROWSPEC
 								}), panelAlarmDefaults);
 
 						}
@@ -190,9 +190,9 @@ public class UserPreferencesDialog extends JDialog {
 						PanelBuilder panelAlarmBuilder = new PanelBuilder(new FormLayout(
 							ColumnSpec.decodeSpecs("default:grow"),
 							new RowSpec[] {
-								FormFactory.DEFAULT_ROWSPEC,
-								FormFactory.RELATED_GAP_ROWSPEC,
-								FormFactory.DEFAULT_ROWSPEC
+								FormSpecs.DEFAULT_ROWSPEC,
+								FormSpecs.RELATED_GAP_ROWSPEC,
+								FormSpecs.DEFAULT_ROWSPEC
 							}), panelAlarm);
 
 						panelAlarmBuilder.add(panelWhenAlarmGoesOff, cc.xy(1, 1));
@@ -202,7 +202,7 @@ public class UserPreferencesDialog extends JDialog {
 
 					//======== panelPlugins ========
 					{
-						panelPlugins.setBorder(Borders.TABBED_DIALOG_BORDER);
+						panelPlugins.setBorder(Borders.TABBED_DIALOG);
 
 						//======== pluginTabbedPane ========
 						{
@@ -235,15 +235,15 @@ public class UserPreferencesDialog extends JDialog {
 
 									PanelBuilder pluginsButtonPanelBuilder = new PanelBuilder(new FormLayout(
 										new ColumnSpec[] {
-											FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-											FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+											FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+											FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 											new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-											FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-											FormFactory.DEFAULT_COLSPEC,
-											FormFactory.UNRELATED_GAP_COLSPEC,
-											FormFactory.DEFAULT_COLSPEC,
-											FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-											FormFactory.UNRELATED_GAP_COLSPEC
+											FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+											FormSpecs.DEFAULT_COLSPEC,
+											FormSpecs.UNRELATED_GAP_COLSPEC,
+											FormSpecs.DEFAULT_COLSPEC,
+											FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+											FormSpecs.UNRELATED_GAP_COLSPEC
 										},
 										RowSpec.decodeSpecs("default")), pluginsButtonPanel);
 
@@ -292,30 +292,30 @@ public class UserPreferencesDialog extends JDialog {
 
 								PanelBuilder pluginPanelUpdatesBuilder = new PanelBuilder(new FormLayout(
 									new ColumnSpec[] {
-										FormFactory.DEFAULT_COLSPEC,
-										FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+										FormSpecs.DEFAULT_COLSPEC,
+										FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 										new ColumnSpec(Sizes.bounded(Sizes.MINIMUM, Sizes.dluX(30), Sizes.dluX(30))),
-										FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+										FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 										new ColumnSpec(ColumnSpec.FILL, Sizes.bounded(Sizes.DEFAULT, Sizes.dluX(50), Sizes.dluX(75)), FormSpec.DEFAULT_GROW),
-										FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-										FormFactory.DEFAULT_COLSPEC,
-										FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-										FormFactory.UNRELATED_GAP_COLSPEC
+										FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+										FormSpecs.DEFAULT_COLSPEC,
+										FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+										FormSpecs.UNRELATED_GAP_COLSPEC
 									},
 									new RowSpec[] {
-										FormFactory.DEFAULT_ROWSPEC,
-										FormFactory.LINE_GAP_ROWSPEC,
-										FormFactory.DEFAULT_ROWSPEC,
-										FormFactory.LINE_GAP_ROWSPEC,
-										FormFactory.DEFAULT_ROWSPEC,
-										FormFactory.LINE_GAP_ROWSPEC,
-										FormFactory.DEFAULT_ROWSPEC,
-										FormFactory.UNRELATED_GAP_ROWSPEC,
-										FormFactory.DEFAULT_ROWSPEC,
-										FormFactory.LINE_GAP_ROWSPEC,
-										FormFactory.UNRELATED_GAP_ROWSPEC,
-										FormFactory.LINE_GAP_ROWSPEC,
-										FormFactory.DEFAULT_ROWSPEC
+										FormSpecs.DEFAULT_ROWSPEC,
+										FormSpecs.LINE_GAP_ROWSPEC,
+										FormSpecs.DEFAULT_ROWSPEC,
+										FormSpecs.LINE_GAP_ROWSPEC,
+										FormSpecs.DEFAULT_ROWSPEC,
+										FormSpecs.LINE_GAP_ROWSPEC,
+										FormSpecs.DEFAULT_ROWSPEC,
+										FormSpecs.UNRELATED_GAP_ROWSPEC,
+										FormSpecs.DEFAULT_ROWSPEC,
+										FormSpecs.LINE_GAP_ROWSPEC,
+										FormSpecs.UNRELATED_GAP_ROWSPEC,
+										FormSpecs.LINE_GAP_ROWSPEC,
+										FormSpecs.DEFAULT_ROWSPEC
 									}), pluginPanelUpdates);
 
 								pluginPanelUpdatesBuilder.add(check4PluginUpdatesAutomatically, cc.xywh(1,  1, 5, 1));
@@ -338,8 +338,8 @@ public class UserPreferencesDialog extends JDialog {
 							ColumnSpec.decodeSpecs("default:grow"),
 							new RowSpec[] {
 								new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-								FormFactory.RELATED_GAP_ROWSPEC,
-								new RowSpec("5px")
+								FormSpecs.RELATED_GAP_ROWSPEC,
+								RowSpec.decode("5px")
 							}), panelPlugins);
 
 						panelPluginsBuilder.add(pluginTabbedPane, cc.xy(1, 1));
@@ -352,7 +352,7 @@ public class UserPreferencesDialog extends JDialog {
 
 			//======== buttonBar ========
 			{
-				buttonBar.setBorder(Borders.BUTTON_BAR_GAP_BORDER);
+				buttonBar.setBorder(Borders.BUTTON_BAR_PAD);
 				buttonBar.setCyclic(true);
 
 				//---- btnOK ----
@@ -363,10 +363,10 @@ public class UserPreferencesDialog extends JDialog {
 
 				PanelBuilder buttonBarBuilder = new PanelBuilder(new FormLayout(
 					new ColumnSpec[] {
-						FormFactory.GLUE_COLSPEC,
-						new ColumnSpec("max(pref;42dlu)"),
-						FormFactory.RELATED_GAP_COLSPEC,
-						FormFactory.PREF_COLSPEC
+						FormSpecs.GLUE_COLSPEC,
+						ColumnSpec.decode("max(pref;42dlu)"),
+						FormSpecs.RELATED_GAP_COLSPEC,
+						FormSpecs.PREF_COLSPEC
 					},
 					RowSpec.decodeSpecs("pref")), buttonBar);
 				((FormLayout)buttonBar.getLayout()).setColumnGroups(new int[][] {{2, 4}});

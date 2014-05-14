@@ -1,6 +1,6 @@
 package cz.vity.freerapid.gui.dialogs.userprefs;
 
-import com.jgoodies.binding.list.ArrayListModel;
+import com.jgoodies.common.collect.ArrayListModel;
 import cz.vity.freerapid.model.PluginMetaData;
 import cz.vity.freerapid.swing.SwingXUtils;
 import org.jdesktop.swingx.hyperlink.LinkModel;

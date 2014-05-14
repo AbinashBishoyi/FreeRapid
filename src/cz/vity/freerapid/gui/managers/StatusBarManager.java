@@ -6,11 +6,7 @@ import com.jgoodies.binding.beans.PropertyConnector;
 import com.jgoodies.binding.value.ConverterFactory;
 import com.jgoodies.binding.value.ValueModel;
 import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
+import com.jgoodies.forms.layout.*;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
@@ -252,7 +248,7 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
         PropertyConnector.connectAndUpdate(valueModel, labelSpeedBtn, "enabled");
 
         CellConstraints cc = new CellConstraints();
-        PanelBuilder panelBuilder = new PanelBuilder(new FormLayout(new ColumnSpec[]{FormFactory.PREF_COLSPEC, FormFactory.PREF_COLSPEC, FormFactory.PREF_COLSPEC}, new RowSpec[]{FormFactory.PREF_ROWSPEC}), cp);
+        PanelBuilder panelBuilder = new PanelBuilder(new FormLayout(new ColumnSpec[]{FormSpecs.PREF_COLSPEC, FormSpecs.PREF_COLSPEC, FormSpecs.PREF_COLSPEC}, new RowSpec[]{FormSpecs.PREF_ROWSPEC}), cp);
 
         panelBuilder.add(slider, cc.xy(1, 1));
         panelBuilder.add(labelSpeed, cc.xy(2, 1));

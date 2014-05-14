@@ -1,9 +1,9 @@
 package cz.vity.freerapid.gui.dialogs;
 
-import com.jgoodies.binding.list.ArrayListModel;
+
+import com.jgoodies.common.collect.ArrayListModel;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.Consts;
@@ -259,13 +259,13 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
 
                     PanelBuilder topPanelBuilder = new PanelBuilder(new FormLayout(
                             new ColumnSpec[]{
-                                    FormFactory.DEFAULT_COLSPEC,
-                                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                    FormFactory.DEFAULT_COLSPEC,
-                                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                    FormSpecs.DEFAULT_COLSPEC,
+                                    FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                                    FormSpecs.DEFAULT_COLSPEC,
+                                    FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                                     new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-                                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                    FormFactory.DEFAULT_COLSPEC
+                                    FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                                    FormSpecs.DEFAULT_COLSPEC
                             },
                             RowSpec.decodeSpecs("default")), topPanel);
 
@@ -279,7 +279,7 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
 
             //======== buttonBar ========
             {
-                buttonBar.setBorder(Borders.BUTTON_BAR_GAP_BORDER);
+                buttonBar.setBorder(Borders.BUTTON_BAR_PAD);
                 buttonBar.setCyclic(true);
 
                 //---- btnOK ----
@@ -290,12 +290,12 @@ public class UpdateDialog extends AppDialog implements PropertyChangeListener {
 
                 PanelBuilder buttonBarBuilder = new PanelBuilder(new FormLayout(
                         new ColumnSpec[]{
-                                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                FormFactory.DEFAULT_COLSPEC,
-                                FormFactory.GLUE_COLSPEC,
-                                new ColumnSpec("max(pref;42dlu)"),
-                                FormFactory.RELATED_GAP_COLSPEC,
-                                FormFactory.PREF_COLSPEC
+                                FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                                FormSpecs.DEFAULT_COLSPEC,
+                                FormSpecs.GLUE_COLSPEC,
+                                ColumnSpec.decode("max(pref;42dlu)"),
+                                FormSpecs.RELATED_GAP_COLSPEC,
+                                FormSpecs.PREF_COLSPEC
                         },
                         RowSpec.decodeSpecs("pref")), buttonBar);
                 ((FormLayout) buttonBar.getLayout()).setColumnGroups(new int[][]{{4, 6}});

@@ -2,7 +2,6 @@ package cz.vity.freerapid.gui.dialogs;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
 import com.l2fprod.common.swing.JDirectoryChooser;
 import cz.vity.freerapid.core.AppPrefs;
@@ -204,7 +203,7 @@ public class MultipleSettingsDialog extends AppFrame implements PropertyChangeLi
 
         //======== dialogPane ========
         {
-            dialogPane.setBorder(Borders.DIALOG_BORDER);
+            dialogPane.setBorder(Borders.DIALOG);
             dialogPane.setLayout(new BorderLayout());
 
             //======== contentPanel ========
@@ -248,11 +247,11 @@ public class MultipleSettingsDialog extends AppFrame implements PropertyChangeLi
 
                     PanelBuilder optionsPanelBuilder = new PanelBuilder(new FormLayout(
                             new ColumnSpec[]{
-                                    FormFactory.DEFAULT_COLSPEC,
-                                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                    FormSpecs.DEFAULT_COLSPEC,
+                                    FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                                     new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-                                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                    FormFactory.DEFAULT_COLSPEC
+                                    FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                                    FormSpecs.DEFAULT_COLSPEC
                             },
                             RowSpec.decodeSpecs("default")), optionsPanel);
 
@@ -264,25 +263,25 @@ public class MultipleSettingsDialog extends AppFrame implements PropertyChangeLi
                 PanelBuilder contentPanelBuilder = new PanelBuilder(new FormLayout(
                         new ColumnSpec[]{
                                 new ColumnSpec(Sizes.dluX(49)),
-                                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                FormFactory.DEFAULT_COLSPEC,
-                                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                                FormSpecs.DEFAULT_COLSPEC,
+                                FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                                 new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-                                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                new ColumnSpec("max(min;70dlu)")
+                                FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                                ColumnSpec.decode("max(min;70dlu)")
                         },
                         new RowSpec[]{
-                                FormFactory.DEFAULT_ROWSPEC,
-                                FormFactory.LINE_GAP_ROWSPEC,
-                                FormFactory.DEFAULT_ROWSPEC,
-                                FormFactory.LINE_GAP_ROWSPEC,
+                                FormSpecs.DEFAULT_ROWSPEC,
+                                FormSpecs.LINE_GAP_ROWSPEC,
+                                FormSpecs.DEFAULT_ROWSPEC,
+                                FormSpecs.LINE_GAP_ROWSPEC,
                                 new RowSpec(RowSpec.TOP, Sizes.PREFERRED, FormSpec.NO_GROW),
-                                FormFactory.RELATED_GAP_ROWSPEC,
-                                FormFactory.DEFAULT_ROWSPEC,
-                                FormFactory.LINE_GAP_ROWSPEC,
+                                FormSpecs.RELATED_GAP_ROWSPEC,
+                                FormSpecs.DEFAULT_ROWSPEC,
+                                FormSpecs.LINE_GAP_ROWSPEC,
                                 new RowSpec(RowSpec.FILL, Sizes.bounded(Sizes.PREFERRED, Sizes.dluY(40), Sizes.dluY(50)), FormSpec.DEFAULT_GROW),
-                                FormFactory.LINE_GAP_ROWSPEC,
-                                FormFactory.DEFAULT_ROWSPEC
+                                FormSpecs.LINE_GAP_ROWSPEC,
+                                FormSpecs.DEFAULT_ROWSPEC
                         }), contentPanel);
 
                 contentPanelBuilder.add(iconLabel, cc.xywh(1, 1, 1, 5, CellConstraints.DEFAULT, CellConstraints.FILL));
@@ -308,10 +307,10 @@ public class MultipleSettingsDialog extends AppFrame implements PropertyChangeLi
                 PanelBuilder buttonBarBuilder = new PanelBuilder(new FormLayout(
                         new ColumnSpec[]{
                                 new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-                                FormFactory.UNRELATED_GAP_COLSPEC,
-                                new ColumnSpec("max(pref;42dlu)"),
-                                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                FormFactory.DEFAULT_COLSPEC
+                                FormSpecs.UNRELATED_GAP_COLSPEC,
+                                ColumnSpec.decode("max(pref;42dlu)"),
+                                FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                                FormSpecs.DEFAULT_COLSPEC
                         },
                         RowSpec.decodeSpecs("fill:pref")), buttonBar);
                 ((FormLayout) buttonBar.getLayout()).setColumnGroups(new int[][]{{3, 5}});

@@ -1,10 +1,6 @@
-/*
- * Created on 08.02.2007
- *
- */
 package org.jdesktop.appframework.swingx;
 
-import com.jgoodies.binding.list.ArrayListModel;
+import com.jgoodies.common.collect.ArrayListModel;
 import org.jdesktop.application.ApplicationContext;
 import org.jdesktop.application.session.PropertySupport;
 import org.jdesktop.swingx.JXTable;
@@ -39,7 +35,7 @@ public class XProperties {
      * @param context
      */
     public void registerPersistenceDelegates(ApplicationContext context) {
-        final Map<Class<?>,PersistenceDelegate> persistentDelegates = context.getLocalStorage().getPersistentDelegates();
+        final Map<Class<?>, PersistenceDelegate> persistentDelegates = context.getLocalStorage().getPersistentDelegates();
         persistentDelegates.put(SortKeyState.class, new DefaultPersistenceDelegate(new String[]{"sortOrder", "modelIndex"}));
         persistentDelegates.put(ColumnState.class, new DefaultPersistenceDelegate(new String[]{"width", "preferredWidth", "modelIndex", "visible", "viewIndex"}));
         persistentDelegates.put(XProperties.XTableState.class, new DefaultPersistenceDelegate(new String[]{"sortOrder", "modelIndex"}));
@@ -50,7 +46,7 @@ public class XProperties {
         persistentDelegates.put(URL.class, new PrimitivePersistenceDelegate());
         persistentDelegates.put(File.class, primitivePersistenceDelegate);
 
-    }          
+    }
 //    static class FilePersistenceDelegate extends PersistenceDelegate {
 //        protected Expression instantiate(Object oldInstance, Encoder out) {
 //            File f = (File) oldInstance;

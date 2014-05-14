@@ -1,6 +1,7 @@
 package cz.vity.freerapid.gui.managers;
 
-import com.jgoodies.binding.list.ArrayListModel;
+
+import com.jgoodies.common.collect.ArrayListModel;
 import cz.vity.freerapid.model.DownloadFile;
 import cz.vity.freerapid.utilities.FileUtils;
 import cz.vity.freerapid.utilities.LogUtils;
@@ -26,10 +27,10 @@ public class FileHistoryManager extends AbstractBean {
     private final ManagerDirector director;
     private final ApplicationContext context;
 
-//    private boolean loaded = false;
+    //    private boolean loaded = false;
     private static final String FILES_LIST_XML = "history.xml";
 
- //   private int dataChanged = 0;
+    //   private int dataChanged = 0;
 
     public FileHistoryManager(ManagerDirector director, ApplicationContext context) {
         this.director = director;

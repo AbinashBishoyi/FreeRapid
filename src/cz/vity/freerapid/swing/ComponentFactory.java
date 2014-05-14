@@ -25,10 +25,10 @@ public class ComponentFactory {
     private FocusListener focusListener;
 
     private static ComponentFactory instance;
-    @SuppressWarnings({"deprecation"})
-    public final static ColumnSpec DATEPICKER_COLUMN_SPEC = new ColumnSpec("max(pref;65dlu)");
-    @SuppressWarnings({"deprecation"})
-    public static final ColumnSpec BUTTON_COLSPEC = new ColumnSpec("max(pref;42dlu)");
+
+    public final static ColumnSpec DATEPICKER_COLUMN_SPEC = ColumnSpec.decode("max(pref;65dlu)");
+
+    public static final ColumnSpec BUTTON_COLSPEC = ColumnSpec.decode("max(pref;42dlu)");
 
     private synchronized static ComponentFactory getInstance() {
         if (instance == null) {

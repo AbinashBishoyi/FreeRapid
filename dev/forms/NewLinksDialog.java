@@ -47,7 +47,7 @@ public class NewLinksDialog extends JDialog {
 
 		//======== dialogPane ========
 		{
-			dialogPane.setBorder(Borders.DIALOG_BORDER);
+			dialogPane.setBorder(Borders.DIALOG);
 			dialogPane.setLayout(new BorderLayout());
 
 			//======== contentPanel ========
@@ -83,19 +83,19 @@ public class NewLinksDialog extends JDialog {
 
 				PanelBuilder contentPanelBuilder = new PanelBuilder(new FormLayout(
 					new ColumnSpec[] {
-						FormFactory.DEFAULT_COLSPEC,
-						FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+						FormSpecs.DEFAULT_COLSPEC,
+						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 						new ColumnSpec(ColumnSpec.FILL, Sizes.PREFERRED, FormSpec.DEFAULT_GROW),
-						FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-						FormFactory.MIN_COLSPEC
+						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+						FormSpecs.MIN_COLSPEC
 					},
 					new RowSpec[] {
-						FormFactory.DEFAULT_ROWSPEC,
-						FormFactory.LINE_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC,
 						new RowSpec(RowSpec.FILL, Sizes.PREFERRED, FormSpec.DEFAULT_GROW),
-						FormFactory.LINE_GAP_ROWSPEC,
-						FormFactory.DEFAULT_ROWSPEC,
-						FormFactory.LINE_GAP_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC,
 						new RowSpec(RowSpec.FILL, Sizes.bounded(Sizes.PREFERRED, Sizes.dluY(40), Sizes.dluY(55)), FormSpec.DEFAULT_GROW)
 					}), contentPanel);
 
@@ -127,15 +127,15 @@ public class NewLinksDialog extends JDialog {
 
 				PanelBuilder buttonBarBuilder = new PanelBuilder(new FormLayout(
 					new ColumnSpec[] {
-						FormFactory.PREF_COLSPEC,
-						FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+						FormSpecs.PREF_COLSPEC,
+						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 						new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-						FormFactory.UNRELATED_GAP_COLSPEC,
-						FormFactory.PREF_COLSPEC,
-						FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-						FormFactory.PREF_COLSPEC,
-						FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-						FormFactory.DEFAULT_COLSPEC
+						FormSpecs.UNRELATED_GAP_COLSPEC,
+						FormSpecs.PREF_COLSPEC,
+						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+						FormSpecs.PREF_COLSPEC,
+						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+						FormSpecs.DEFAULT_COLSPEC
 					},
 					RowSpec.decodeSpecs("fill:pref")), buttonBar);
 				((FormLayout)buttonBar.getLayout()).setColumnGroups(new int[][] {{5, 7, 9}});

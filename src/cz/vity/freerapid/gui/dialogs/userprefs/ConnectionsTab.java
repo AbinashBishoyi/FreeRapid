@@ -4,7 +4,6 @@ import com.jgoodies.binding.beans.PropertyConnector;
 import com.jgoodies.binding.value.ValueModel;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.MainApp;
@@ -243,7 +242,7 @@ public class ConnectionsTab extends UserPreferencesTab {
         labelRequiresRestart.setName("labelRequiresRestart");
         labelRequiresRestart.setVisible(false);
 
-        this.setBorder(Borders.TABBED_DIALOG_BORDER);
+        this.setBorder(Borders.TABBED_DIALOG);
 
         //======== panelConnections1 ========
         {
@@ -252,22 +251,22 @@ public class ConnectionsTab extends UserPreferencesTab {
             PanelBuilder panelConnections1Builder = new PanelBuilder(new FormLayout(
                     new ColumnSpec[]{
                             new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(0), FormSpec.NO_GROW),
-                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                            FormFactory.DEFAULT_COLSPEC,
-                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                            FormSpecs.DEFAULT_COLSPEC,
+                            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                             ColumnSpec.decode("max(pref;30dlu)"),
-                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                            FormFactory.DEFAULT_COLSPEC,
-                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                            FormFactory.DEFAULT_COLSPEC,
-                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                            FormSpecs.DEFAULT_COLSPEC,
+                            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                            FormSpecs.DEFAULT_COLSPEC,
+                            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                             new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(0), FormSpec.DEFAULT_GROW),
                     },
                     new RowSpec[]{
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.UNRELATED_GAP_ROWSPEC,
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.NARROW_LINE_GAP_ROWSPEC
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.UNRELATED_GAP_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.NARROW_LINE_GAP_ROWSPEC
                     }), panelConnections1);
 
             panelConnections1Builder.add(labelMaxConcurrentDownloads, cc.xy(3, 1));
@@ -283,17 +282,17 @@ public class ConnectionsTab extends UserPreferencesTab {
             PanelBuilder panelProxySettingsBuilder = new PanelBuilder(new FormLayout(
                     new ColumnSpec[]{
                             new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(0), FormSpec.NO_GROW),
-                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                            FormFactory.DEFAULT_COLSPEC,
-                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                            FormSpecs.DEFAULT_COLSPEC,
+                            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                             new ColumnSpec(ColumnSpec.FILL, Sizes.dluX(200), FormSpec.DEFAULT_GROW),
-                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                            FormFactory.DEFAULT_COLSPEC
+                            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                            FormSpecs.DEFAULT_COLSPEC
                     },
                     new RowSpec[]{
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.NARROW_LINE_GAP_ROWSPEC
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.NARROW_LINE_GAP_ROWSPEC
                     }), panelProxySettings);
 
             panelProxySettingsBuilder.add(checkUseProxyList, cc.xy(3, 1));
@@ -309,19 +308,19 @@ public class ConnectionsTab extends UserPreferencesTab {
             PanelBuilder panelErrorHandlingBuilder = new PanelBuilder(new FormLayout(
                     new ColumnSpec[]{
                             new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(0), FormSpec.NO_GROW),
-                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                            FormFactory.DEFAULT_COLSPEC,
-                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                            FormSpecs.DEFAULT_COLSPEC,
+                            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                             ColumnSpec.decode("max(pref;30dlu)"),
-                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                            FormFactory.DEFAULT_COLSPEC
+                            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                            FormSpecs.DEFAULT_COLSPEC
                     },
                     new RowSpec[]{
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.LINE_GAP_ROWSPEC,
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.LINE_GAP_ROWSPEC,
-                            FormFactory.NARROW_LINE_GAP_ROWSPEC
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.LINE_GAP_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.LINE_GAP_ROWSPEC,
+                            FormSpecs.NARROW_LINE_GAP_ROWSPEC
                     }), panelErrorHandling);
 
             panelErrorHandlingBuilder.add(labelErrorAttemptsCount, cc.xy(3, 1));
@@ -339,21 +338,21 @@ public class ConnectionsTab extends UserPreferencesTab {
             PanelBuilder panelGlobalSpeedLimiterBuilder = new PanelBuilder(new FormLayout(
                     new ColumnSpec[]{
                             new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(0), FormSpec.NO_GROW),
-                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                            FormFactory.DEFAULT_COLSPEC,
-                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                            FormSpecs.DEFAULT_COLSPEC,
+                            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                             new ColumnSpec(Sizes.dluX(40)),
-                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                            FormFactory.DEFAULT_COLSPEC
+                            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                            FormSpecs.DEFAULT_COLSPEC
                     },
                     new RowSpec[]{
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.LINE_GAP_ROWSPEC,
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.LINE_GAP_ROWSPEC,
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.LINE_GAP_ROWSPEC,
-                            FormFactory.NARROW_LINE_GAP_ROWSPEC
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.LINE_GAP_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.LINE_GAP_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.LINE_GAP_ROWSPEC,
+                            FormSpecs.NARROW_LINE_GAP_ROWSPEC
                     }), panelGlobalSpeedLimiter);
 
             panelGlobalSpeedLimiterBuilder.add(labelSpeedSliderMinValue, cc.xy(3, 1));
@@ -374,19 +373,19 @@ public class ConnectionsTab extends UserPreferencesTab {
             PanelBuilder panelFileSpeedLimiterBuilder = new PanelBuilder(new FormLayout(
                     new ColumnSpec[]{
                             new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(0), FormSpec.NO_GROW),
-                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                             new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                            FormFactory.DEFAULT_COLSPEC
+                            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                            FormSpecs.DEFAULT_COLSPEC
                     },
                     new RowSpec[]{
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.LINE_GAP_ROWSPEC,
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.LINE_GAP_ROWSPEC,
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.LINE_GAP_ROWSPEC,
-                            FormFactory.NARROW_LINE_GAP_ROWSPEC
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.LINE_GAP_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.LINE_GAP_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.LINE_GAP_ROWSPEC,
+                            FormSpecs.NARROW_LINE_GAP_ROWSPEC
                     }), panelFileSpeedLimiter);
 
             panelFileSpeedLimiterBuilder.add(labelFileSpeedLimiterValues, cc.xy(3, 1));
@@ -397,19 +396,19 @@ public class ConnectionsTab extends UserPreferencesTab {
         PanelBuilder thisBuilder = new PanelBuilder(new FormLayout(
                 new ColumnSpec[]{
                         new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-                        FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                        FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                         new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
                 },
                 new RowSpec[]{
                         new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.NO_GROW),
-                        FormFactory.RELATED_GAP_ROWSPEC,
+                        FormSpecs.RELATED_GAP_ROWSPEC,
                         new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.NO_GROW),
-                        FormFactory.LINE_GAP_ROWSPEC,
-                        FormFactory.DEFAULT_ROWSPEC,
-                        FormFactory.LINE_GAP_ROWSPEC,
-                        FormFactory.DEFAULT_ROWSPEC,
-                        FormFactory.LINE_GAP_ROWSPEC,
-                        FormFactory.DEFAULT_ROWSPEC
+                        FormSpecs.LINE_GAP_ROWSPEC,
+                        FormSpecs.DEFAULT_ROWSPEC,
+                        FormSpecs.LINE_GAP_ROWSPEC,
+                        FormSpecs.DEFAULT_ROWSPEC,
+                        FormSpecs.LINE_GAP_ROWSPEC,
+                        FormSpecs.DEFAULT_ROWSPEC
                 }), this);
 
         thisBuilder.add(panelConnections1, cc.xyw(1, 1, 3));

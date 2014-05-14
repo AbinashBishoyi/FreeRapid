@@ -2,11 +2,10 @@ package cz.vity.freerapid.gui.dialogs.userprefs;
 
 import com.jgoodies.binding.adapter.Bindings;
 import com.jgoodies.binding.beans.PropertyConnector;
-import com.jgoodies.binding.list.ArrayListModel;
 import com.jgoodies.binding.value.ValueModel;
+import com.jgoodies.common.collect.ArrayListModel;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
 import cz.vity.freerapid.core.QuietMode;
 import cz.vity.freerapid.core.UserProp;
@@ -179,7 +178,7 @@ public class AlertsTab extends UserPreferencesTab {
         JLabel labelNoteForQM = new JLabel();
         labelNoteForQM.setName("labelNoteForQM");
 
-        this.setBorder(Borders.TABBED_DIALOG_BORDER);
+        this.setBorder(Borders.TABBED_DIALOG);
 
         //======== alertsTabbedPane ========
         {
@@ -192,13 +191,13 @@ public class AlertsTab extends UserPreferencesTab {
                 {
                     panelSound.setBorder(new CompoundBorder(
                             new TitledBorder(null, resourceMap.getString("panelSound.border"), TitledBorder.LEADING, TitledBorder.TOP),
-                            Borders.DLU2_BORDER));
+                            Borders.DLU2));
 
                     PanelBuilder panelSoundBuilder = new PanelBuilder(new FormLayout(
                             new ColumnSpec[]{
                                     new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(0), FormSpec.NO_GROW),
-                                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                    FormFactory.DEFAULT_COLSPEC
+                                    FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                                    FormSpecs.DEFAULT_COLSPEC
                             },
                             RowSpec.decodeSpecs("default, default")), panelSound);
 
@@ -210,24 +209,24 @@ public class AlertsTab extends UserPreferencesTab {
                 {
                     panelConfirmation.setBorder(new CompoundBorder(
                             new TitledBorder(null, resourceMap.getString("panelConfirmation.border"), TitledBorder.LEADING, TitledBorder.TOP),
-                            Borders.DLU2_BORDER));
+                            Borders.DLU2));
 
                     PanelBuilder panelConfirmationBuilder = new PanelBuilder(new FormLayout(
                             new ColumnSpec[]{
                                     new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(0), FormSpec.NO_GROW),
-                                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                    FormFactory.DEFAULT_COLSPEC,
+                                    FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                                    FormSpecs.DEFAULT_COLSPEC,
                                     new ColumnSpec(Sizes.dluX(9)),
-                                    FormFactory.DEFAULT_COLSPEC,
-                                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                    FormFactory.DEFAULT_COLSPEC,
-                                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                    FormSpecs.DEFAULT_COLSPEC,
+                                    FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                                    FormSpecs.DEFAULT_COLSPEC,
+                                    FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                                     new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
                             },
                             new RowSpec[]{
-                                    FormFactory.DEFAULT_ROWSPEC,
-                                    FormFactory.DEFAULT_ROWSPEC,
-                                    FormFactory.DEFAULT_ROWSPEC,
+                                    FormSpecs.DEFAULT_ROWSPEC,
+                                    FormSpecs.DEFAULT_ROWSPEC,
+                                    FormSpecs.DEFAULT_ROWSPEC,
 
                             }), panelConfirmation);
 
@@ -240,11 +239,11 @@ public class AlertsTab extends UserPreferencesTab {
                 PanelBuilder alertsPanelGeneralBuilder = new PanelBuilder(new FormLayout(
                         ColumnSpec.decodeSpecs("default:grow"),
                         new RowSpec[]{
-                                FormFactory.DEFAULT_ROWSPEC,
-                                FormFactory.RELATED_GAP_ROWSPEC,
-                                FormFactory.DEFAULT_ROWSPEC,
-                                FormFactory.RELATED_GAP_ROWSPEC,
-                                FormFactory.DEFAULT_ROWSPEC
+                                FormSpecs.DEFAULT_ROWSPEC,
+                                FormSpecs.RELATED_GAP_ROWSPEC,
+                                FormSpecs.DEFAULT_ROWSPEC,
+                                FormSpecs.RELATED_GAP_ROWSPEC,
+                                FormSpecs.DEFAULT_ROWSPEC
                         }), alertsPanelGeneral);
 
                 alertsPanelGeneralBuilder.add(panelSound, cc.xy(1, 1));
@@ -262,11 +261,11 @@ public class AlertsTab extends UserPreferencesTab {
                     final PanelBuilder panelActivateQMBuilder = new PanelBuilder(new FormLayout(
                             ColumnSpec.decodeSpecs("default:grow"),
                             new RowSpec[]{
-                                    FormFactory.DEFAULT_ROWSPEC,
-                                    FormFactory.LINE_GAP_ROWSPEC,
-                                    FormFactory.DEFAULT_ROWSPEC,
-                                    FormFactory.LINE_GAP_ROWSPEC,
-                                    FormFactory.DEFAULT_ROWSPEC
+                                    FormSpecs.DEFAULT_ROWSPEC,
+                                    FormSpecs.LINE_GAP_ROWSPEC,
+                                    FormSpecs.DEFAULT_ROWSPEC,
+                                    FormSpecs.LINE_GAP_ROWSPEC,
+                                    FormSpecs.DEFAULT_ROWSPEC
                             }), panelActivateQM);
 
                     panelActivateQMBuilder.add(radioButtonActivateQMAlways, cc.xy(1, 1));
@@ -277,22 +276,22 @@ public class AlertsTab extends UserPreferencesTab {
                         final PanelBuilder panelSearchForWindowsBuilder = new PanelBuilder(new FormLayout(
                                 new ColumnSpec[]{
                                         new ColumnSpec(Sizes.dluX(20)),
-                                        FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                        FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                                         new ColumnSpec(Sizes.dluX(140)),
-                                        FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                        FormFactory.DEFAULT_COLSPEC,
-                                        FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                        FormFactory.MIN_COLSPEC
+                                        FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                                        FormSpecs.DEFAULT_COLSPEC,
+                                        FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                                        FormSpecs.MIN_COLSPEC
                                 },
                                 new RowSpec[]{
-                                        FormFactory.DEFAULT_ROWSPEC,
-                                        FormFactory.LINE_GAP_ROWSPEC,
-                                        FormFactory.DEFAULT_ROWSPEC,
-                                        FormFactory.LINE_GAP_ROWSPEC,
-                                        FormFactory.DEFAULT_ROWSPEC,
+                                        FormSpecs.DEFAULT_ROWSPEC,
+                                        FormSpecs.LINE_GAP_ROWSPEC,
+                                        FormSpecs.DEFAULT_ROWSPEC,
+                                        FormSpecs.LINE_GAP_ROWSPEC,
+                                        FormSpecs.DEFAULT_ROWSPEC,
                                         new RowSpec(RowSpec.FILL, Sizes.ZERO, FormSpec.DEFAULT_GROW),
-                                        FormFactory.LINE_GAP_ROWSPEC,
-                                        FormFactory.DEFAULT_ROWSPEC
+                                        FormSpecs.LINE_GAP_ROWSPEC,
+                                        FormSpecs.DEFAULT_ROWSPEC
                                 }), panelSearchForWindows);
 
                         panelSearchForWindowsBuilder.add(labelSearchForWindows, cc.xy(3, 1));
@@ -310,18 +309,18 @@ public class AlertsTab extends UserPreferencesTab {
                     panelQMOptions.setBorder(new TitledBorder(resourceMap.getString("panelQMOptions.border")));
                     final PanelBuilder panelQMOptionsBuilder = new PanelBuilder(new FormLayout(
                             new ColumnSpec[]{
-                                    FormFactory.DEFAULT_COLSPEC,
-                                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                    FormSpecs.DEFAULT_COLSPEC,
+                                    FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                                     new ColumnSpec(ColumnSpec.FILL, Sizes.dluX(105), FormSpec.DEFAULT_GROW)
                             },
                             new RowSpec[]{
-                                    FormFactory.DEFAULT_ROWSPEC,
-                                    FormFactory.LINE_GAP_ROWSPEC,
-                                    FormFactory.DEFAULT_ROWSPEC,
-                                    FormFactory.LINE_GAP_ROWSPEC,
-                                    FormFactory.DEFAULT_ROWSPEC,
-                                    FormFactory.LINE_GAP_ROWSPEC,
-                                    FormFactory.DEFAULT_ROWSPEC
+                                    FormSpecs.DEFAULT_ROWSPEC,
+                                    FormSpecs.LINE_GAP_ROWSPEC,
+                                    FormSpecs.DEFAULT_ROWSPEC,
+                                    FormSpecs.LINE_GAP_ROWSPEC,
+                                    FormSpecs.DEFAULT_ROWSPEC,
+                                    FormSpecs.LINE_GAP_ROWSPEC,
+                                    FormSpecs.DEFAULT_ROWSPEC
                             }), panelQMOptions);
 
                     panelQMOptionsBuilder.add(checkNoSoundsInQM, cc.xy(1, 1));
@@ -333,12 +332,12 @@ public class AlertsTab extends UserPreferencesTab {
                 final PanelBuilder alertsPanelQMBuilder = new PanelBuilder(new FormLayout(
                         ColumnSpec.decodeSpecs("default:grow"),
                         new RowSpec[]{
-                                FormFactory.DEFAULT_ROWSPEC,
-                                FormFactory.LINE_GAP_ROWSPEC,
-                                FormFactory.DEFAULT_ROWSPEC,
-                                FormFactory.LINE_GAP_ROWSPEC,
-                                FormFactory.DEFAULT_ROWSPEC,
-                                FormFactory.LINE_GAP_ROWSPEC,
+                                FormSpecs.DEFAULT_ROWSPEC,
+                                FormSpecs.LINE_GAP_ROWSPEC,
+                                FormSpecs.DEFAULT_ROWSPEC,
+                                FormSpecs.LINE_GAP_ROWSPEC,
+                                FormSpecs.DEFAULT_ROWSPEC,
+                                FormSpecs.LINE_GAP_ROWSPEC,
                                 new RowSpec(RowSpec.CENTER, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
                         }), alertsPanelQM);
 
@@ -354,7 +353,7 @@ public class AlertsTab extends UserPreferencesTab {
                 ColumnSpec.decodeSpecs("default:grow"),
                 new RowSpec[]{
                         new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-                        FormFactory.RELATED_GAP_ROWSPEC,
+                        FormSpecs.RELATED_GAP_ROWSPEC,
                         RowSpec.decode("5px")
                 }), this);
 

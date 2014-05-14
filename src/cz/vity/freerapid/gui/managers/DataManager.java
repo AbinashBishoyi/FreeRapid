@@ -1,8 +1,8 @@
 package cz.vity.freerapid.gui.managers;
 
 import com.jgoodies.binding.beans.PropertyAdapter;
-import com.jgoodies.binding.list.ArrayListModel;
 import com.jgoodies.binding.value.DelayedReadValueModel;
+import com.jgoodies.common.collect.ArrayListModel;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.FWProp;
 import cz.vity.freerapid.core.UserProp;
@@ -490,6 +490,7 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
 
     public void intervalRemoved(ListDataEvent e) {
         contentsChanged(e);
+
         fireDataChanged();
     }
 

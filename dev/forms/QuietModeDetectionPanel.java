@@ -29,12 +29,12 @@ public class QuietModeDetectionPanel extends JPanel {
         setLayout(new FormLayout(
                 ColumnSpec.decodeSpecs("200dlu:grow"),
                 new RowSpec[]{
-                        FormFactory.DEFAULT_ROWSPEC,
-                        FormFactory.LINE_GAP_ROWSPEC,
-                        FormFactory.DEFAULT_ROWSPEC,
-                        FormFactory.LINE_GAP_ROWSPEC,
-                        FormFactory.DEFAULT_ROWSPEC,
-                        FormFactory.LINE_GAP_ROWSPEC,
+                        FormSpecs.DEFAULT_ROWSPEC,
+                        FormSpecs.LINE_GAP_ROWSPEC,
+                        FormSpecs.DEFAULT_ROWSPEC,
+                        FormSpecs.LINE_GAP_ROWSPEC,
+                        FormSpecs.DEFAULT_ROWSPEC,
+                        FormSpecs.LINE_GAP_ROWSPEC,
                         new RowSpec(RowSpec.CENTER, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
                 }));
 
@@ -44,11 +44,11 @@ public class QuietModeDetectionPanel extends JPanel {
             panelActivateQM.setLayout(new FormLayout(
                     ColumnSpec.decodeSpecs("137dlu:grow"),
                     new RowSpec[]{
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.LINE_GAP_ROWSPEC,
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.LINE_GAP_ROWSPEC,
-                            FormFactory.DEFAULT_ROWSPEC
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.LINE_GAP_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.LINE_GAP_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC
                     }));
 
             //---- radioButtonActivateQMAlways ----
@@ -64,23 +64,23 @@ public class QuietModeDetectionPanel extends JPanel {
                 panelSearchForWindows.setLayout(new FormLayout(
                         new ColumnSpec[]{
                                 new ColumnSpec(Sizes.dluX(20)),
-                                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                                FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                                 new ColumnSpec(Sizes.dluX(140)),
-                                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                FormFactory.DEFAULT_COLSPEC,
-                                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                                FormFactory.MIN_COLSPEC
+                                FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                                FormSpecs.DEFAULT_COLSPEC,
+                                FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                                FormSpecs.MIN_COLSPEC
                         },
                         new RowSpec[]{
-                                FormFactory.DEFAULT_ROWSPEC,
-                                FormFactory.LINE_GAP_ROWSPEC,
-                                FormFactory.DEFAULT_ROWSPEC,
-                                FormFactory.LINE_GAP_ROWSPEC,
-                                FormFactory.DEFAULT_ROWSPEC,
-                                FormFactory.LINE_GAP_ROWSPEC,
-                                FormFactory.DEFAULT_ROWSPEC,
-                                FormFactory.LINE_GAP_ROWSPEC,
-                                FormFactory.DEFAULT_ROWSPEC
+                                FormSpecs.DEFAULT_ROWSPEC,
+                                FormSpecs.LINE_GAP_ROWSPEC,
+                                FormSpecs.DEFAULT_ROWSPEC,
+                                FormSpecs.LINE_GAP_ROWSPEC,
+                                FormSpecs.DEFAULT_ROWSPEC,
+                                FormSpecs.LINE_GAP_ROWSPEC,
+                                FormSpecs.DEFAULT_ROWSPEC,
+                                FormSpecs.LINE_GAP_ROWSPEC,
+                                FormSpecs.DEFAULT_ROWSPEC
                         }));
 
                 //---- labelSearchForWindows ----
@@ -117,18 +117,18 @@ public class QuietModeDetectionPanel extends JPanel {
             panelQMOptions.setBorder(new TitledBorder(bundle.getString("panelQMOptions.border")));
             panelQMOptions.setLayout(new FormLayout(
                     new ColumnSpec[]{
-                            FormFactory.DEFAULT_COLSPEC,
-                            FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                            FormSpecs.DEFAULT_COLSPEC,
+                            FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                             new ColumnSpec(ColumnSpec.FILL, Sizes.dluX(105), FormSpec.DEFAULT_GROW)
                     },
                     new RowSpec[]{
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.LINE_GAP_ROWSPEC,
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.LINE_GAP_ROWSPEC,
-                            FormFactory.DEFAULT_ROWSPEC,
-                            FormFactory.LINE_GAP_ROWSPEC,
-                            FormFactory.DEFAULT_ROWSPEC
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.LINE_GAP_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.LINE_GAP_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC,
+                            FormSpecs.LINE_GAP_ROWSPEC,
+                            FormSpecs.DEFAULT_ROWSPEC
                     }));
 
             //---- checkNoSoundsInQM ----

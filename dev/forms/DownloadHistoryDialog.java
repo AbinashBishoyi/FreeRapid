@@ -43,7 +43,7 @@ public class DownloadHistoryDialog extends JDialog {
 
 		//======== dialogPane ========
 		{
-			dialogPane.setBorder(Borders.DIALOG_BORDER);
+			dialogPane.setBorder(Borders.DIALOG);
 			dialogPane.setLayout(new BorderLayout());
 
 			//======== contentPanel ========
@@ -59,12 +59,12 @@ public class DownloadHistoryDialog extends JDialog {
 
 					PanelBuilder panel1Builder = new PanelBuilder(new FormLayout(
 						new ColumnSpec[] {
-							new ColumnSpec("max(pref;80dlu)"),
-							FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-							FormFactory.DEFAULT_COLSPEC,
-							FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+							ColumnSpec.decode("max(pref;80dlu)"),
+							FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+							FormSpecs.DEFAULT_COLSPEC,
+							FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 							new ColumnSpec(Sizes.dluX(100)),
-							FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+							FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 							new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
 						},
 						RowSpec.decodeSpecs("default")), panel1);
@@ -82,8 +82,8 @@ public class DownloadHistoryDialog extends JDialog {
 				PanelBuilder contentPanelBuilder = new PanelBuilder(new FormLayout(
 					ColumnSpec.decodeSpecs("default:grow"),
 					new RowSpec[] {
-						FormFactory.DEFAULT_ROWSPEC,
-						FormFactory.LINE_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC,
 						new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
 					}), contentPanel);
 
@@ -104,11 +104,11 @@ public class DownloadHistoryDialog extends JDialog {
 
 				PanelBuilder buttonBarBuilder = new PanelBuilder(new FormLayout(
 					new ColumnSpec[] {
-						FormFactory.DEFAULT_COLSPEC,
-						FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+						FormSpecs.DEFAULT_COLSPEC,
+						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 						new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-						FormFactory.UNRELATED_GAP_COLSPEC,
-						new ColumnSpec("max(pref;55dlu)")
+						FormSpecs.UNRELATED_GAP_COLSPEC,
+						ColumnSpec.decode("max(pref;55dlu)")
 					},
 					RowSpec.decodeSpecs("fill:pref")), buttonBar);
 
