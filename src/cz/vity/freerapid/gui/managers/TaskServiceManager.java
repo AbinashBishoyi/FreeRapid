@@ -39,7 +39,7 @@ public class TaskServiceManager {
 
     private TaskService initDownloadTaskService() {
         //final int poolSize = AppPrefs.getProperty(UserProp.MAX_DOWNLOADS_AT_A_TIME, UserProp.MAX_DOWNLOADS_AT_A_TIME_DEFAULT);
-        return initTaskService(1, 10, 60L, DOWNLOAD_SERVICE, new SynchronousQueue<Runnable>());
+        return initTaskService(1, ClientManager.MAX_DOWNLOADING+1, 60L, DOWNLOAD_SERVICE, new SynchronousQueue<Runnable>()); // +1 for Update Task
     }
 
     private TaskService initMoveFileTaskService() {
