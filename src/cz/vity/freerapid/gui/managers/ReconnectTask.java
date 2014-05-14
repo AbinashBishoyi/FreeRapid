@@ -3,6 +3,7 @@ package cz.vity.freerapid.gui.managers;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.CoreTask;
+import cz.vity.freerapid.gui.managers.interfaces.FileStateChangeListener;
 import cz.vity.freerapid.plugins.webclient.DownloadState;
 import jlibs.core.lang.RuntimeUtil;
 import org.jdesktop.application.Application;
@@ -52,7 +53,7 @@ public class ReconnectTask extends AbstractCustomTask implements FileStateChange
 
                 final ScriptTask scriptTask = new ScriptTask(director.getContext().getApplication());
                 scriptTask.addTaskListener(new TaskListener.Adapter<Void, Void>() {
-                    
+
                     @Override
                     public void doInBackground(TaskEvent<Void> event) {
                         super.doInBackground(event);
