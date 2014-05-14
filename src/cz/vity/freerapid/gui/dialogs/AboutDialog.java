@@ -6,12 +6,15 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import cz.vity.freerapid.core.Consts;
 import cz.vity.freerapid.swing.Swinger;
+import cz.vity.freerapid.utilities.Browser;
 import cz.vity.freerapid.utilities.LogUtils;
 import org.jdesktop.application.Action;
 
 import javax.swing.*;
 import java.applet.AudioClip;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.jar.Attributes;
@@ -101,6 +104,13 @@ public class AboutDialog extends AppDialog {
         xImagePanel.setBorder(BorderFactory.createEtchedBorder());
         xImagePanel.setLayout(new BoxLayout(xImagePanel, BoxLayout.Y_AXIS));
         xImagePanel.add(infoLabel);
+        xImagePanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        xImagePanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                Browser.showHomepage();
+            }
+        });
         infoLabel.setBorder(BorderFactory.createEmptyBorder(15, 20, 20, 30));
         infoLabel.setLocation(30, 30);
     }
