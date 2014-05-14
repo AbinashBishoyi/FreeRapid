@@ -548,7 +548,7 @@ public class DownloadHistoryDialog extends AppFrame implements ClipboardOwner, L
         }
         final StringBuilder builder = new StringBuilder();
         for (int i = 0, n = Math.min(existingFiles.size(), 20); i < n; i++) {
-            builder.append('\n').append(Utils.shortenFileName(existingFiles.get(i).getOutputFile(), 60));
+            builder.append('\n').append(Utils.shortenFileName(existingFiles.get(i).getOutputFile()));
         }
         if (existingFiles.size() > 20) {
             builder.append('\n').append(getResourceMap().getString("andOtherFiles", existingFiles.size() - 20));

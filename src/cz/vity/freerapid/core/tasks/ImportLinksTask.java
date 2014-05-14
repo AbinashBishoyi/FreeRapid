@@ -3,16 +3,19 @@ package cz.vity.freerapid.core.tasks;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
+import cz.vity.freerapid.plugimpl.StandardDialogSupportImpl;
 import cz.vity.freerapid.plugins.container.ContainerException;
 import cz.vity.freerapid.plugins.container.ContainerPlugin;
 import cz.vity.freerapid.plugins.container.FileInfo;
 import cz.vity.freerapid.plugins.exceptions.ServiceConnectionProblemException;
+import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.swing.Swinger;
 import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,10 +44,24 @@ public class ImportLinksTask extends CoreTask<Void, Void> {
     protected Void doInBackground() throws Exception {
         int i = 0;
         setProgress(i, 0, files.length);
+        final List<ConnectionSettings> settingsList = app.getManagerDirector().getClientManager().getAvailableConnections();
+        plugin.setConnectionSettings(settingsList.isEmpty() ? null : settingsList.get(0));
+        plugin.setDialogSupport(new StandardDialogSupportImpl(app.getContext()));
         final List<FileInfo> list = new LinkedList<FileInfo>();
         for (final File file : files) {
-            message("importingLinks", Utils.shortenFileName(file, 60));
-            list.addAll(plugin.read(new FileInputStream(file), file.toString()));
+            message("importingLinks", Utils.shortenFileName(file));
+            InputStream stream = null;
+            try {
+                list.addAll(plugin.read(stream = new FileInputStream(file), file.toString()));
+            } finally {
+                if (stream != null) {
+                    try {
+                        stream.close();
+                    } catch (Exception e) {
+                        LogUtils.processException(logger, e);
+                    }
+                }
+            }
             setProgress(++i, 0, files.length);
         }
         if (list.isEmpty()) {

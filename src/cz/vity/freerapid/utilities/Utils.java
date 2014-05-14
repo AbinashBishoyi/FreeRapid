@@ -109,14 +109,41 @@ public final class Utils {
         return filePath.endsWith(File.separator) ? filePath : filePath + File.separator;
     }
 
-    public static String shortenFileName(final File file, final int lengthLimit) {
-        return shortenFileName(file.getAbsolutePath(), lengthLimit);
+    /**
+     * Makes file name max 60 characters long
+     *
+     * @param file file
+     * @return shortened file path
+     */
+    public static String shortenFileName(final File file) {
+        return shortenFileName(file.getAbsolutePath());
     }
 
     /**
      * Makes file name shorter
      *
-     * @param text        filePath as string
+     * @param file        file
+     * @param lengthLimit max length limit
+     * @return shortened file path
+     */
+    public static String shortenFileName(final File file, final int lengthLimit) {
+        return shortenFileName(file.getAbsolutePath(), lengthLimit);
+    }
+
+    /**
+     * Makes file name max 60 characters long
+     *
+     * @param text filePath as string
+     * @return shortened file path
+     */
+    public static String shortenFileName(final String text) {
+        return shortenFileName(text, 60);
+    }
+
+    /**
+     * Makes file name shorter
+     *
+     * @param text        file path as string
      * @param lengthLimit max length limit
      * @return shortened file path
      */

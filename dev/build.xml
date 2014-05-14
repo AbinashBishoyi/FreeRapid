@@ -1,72 +1,48 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <project name="FreeRapid Downloader" default="shrink" basedir=".">
     <property name="application" value="FreeRapid"/>
-    <property name="version" value="0.83-rc"/>
-    <property name="version.name" value="${application}-${version}"/>
-    <property name="mainclass" value="cz.vity.freerapid.core.MainApp"/>
-    <property name="mainjar.file" value="frd.jar"/>
-
+    <property name="minajar" value="mina-core-2.0.1.jar"/>
+    <property name="destjar" value="mina-core-2.0.1-sh.jar"/>
     <property name="shrinklog" value="${application}_mina_shrinklog.xml"/>
 
     <target name="shrink">
+        <unzip src="${minajar}" dest="./tmp/">
+            <patternset>
+                <include name="org/"/>
+            </patternset>
+        </unzip>
+        <unzip src="./../plugins/rtmp.frp" dest="./tmp/">
+            <patternset>
+                <include name="cz/"/>
+            </patternset>
+        </unzip>
+        <jar basedir="./tmp/" destfile="tmp1.jar"/>
+
         <taskdef name="yguard" classname="com.yworks.yguard.YGuardTask" classpath="ant-tasks/yguard.jar"/>
         <yguard>
-            <inoutpair in="mina-core-2.0.0.jar" out="mina-core-2.0.0-sh.jar"/>
+            <inoutpair in="tmp1.jar" out="tmp2.jar"/>
             <shrink logfile="${shrinklog}">
                 <keep>
                     <class classes="private" methods="private" fields="private">
                         <patternset>
-
                             <include name="cz.*"/>
                             <include name="org.apache.mina.transport.socket.nio.NioProcessor"/>
                             <include name="org.apache.mina.proxy.handlers.socks.*"/>
                         </patternset>
                     </class>
                 </keep>
-
-                <!--<keep linenumbertable="true" sourcefile="true">-->
-
-                <!--<class classes="private" methods="private" fields="private">-->
-                <!--<patternset>-->
-                <!--<include name="org.jdesktop.swingx.plaf.*"/>-->
-                <!--<include name="org.jdesktop.swingx.painter.*"/>-->
-                <!--<include name="org.jdesktop.swingx.renderer.*"/>-->
-                <!--</patternset>-->
-                <!--</class>-->
-                <!--<class name="org.jdesktop.swingx.JXTable" classes="private" methods="private" fields="private"/>-->
-                <!--<class name="org.jdesktop.swingx.JXList" classes="private" methods="private" fields="private"/>-->
-                <!--<class name="org.jdesktop.swingx.table.TableColumnExt" classes="private" methods="private"-->
-                <!--fields="private"/>-->
-                <!--<class name="org.jdesktop.swingx.JXFrame" classes="private" methods="private" fields="private"/>-->
-                <!--<class name="org.jdesktop.swingx.decorator.ColorHighlighter" classes="private" methods="private"-->
-                <!--fields="private"/>-->
-                <!--<class name="org.jdesktop.swingx.sort.SortController" classes="private" methods="private"-->
-                <!--fields="private"/>-->
-                <!--<class name="org.jdesktop.swingx.decorator.ComponentAdapter" classes="private" methods="private"-->
-                <!--fields="private"/>-->
-                <!--<class name="org.jdesktop.swingx.hyperlink.LinkModel" classes="private" methods="private"-->
-                <!--fields="private"/>-->
-                <!--<class name="org.jdesktop.swingx.hyperlink.LinkModelAction" classes="private" methods="private"-->
-                <!--fields="private"/>-->
-                <!--<class name="org.jdesktop.swingx.decorator.HighlighterFactory" classes="private" methods="private"-->
-                <!--fields="private"/>-->
-                <!--<class name="org.jdesktop.swingx.error.ErrorInfo" classes="private" methods="private"-->
-                <!--fields="private"/>-->
-                <!--<class name="org.jdesktop.swingx.error.ErrorReporter" classes="private" methods="private"-->
-                <!--fields="private"/>-->
-                <!--<class classes="private" methods="private" fields="private">-->
-                <!--<patternset>-->
-                <!--<include name="org.jdesktop.swingx.JXStatusBar**"/>-->
-                <!--</patternset>-->
-                <!--</class>-->
-                <!--<class name="org.jdesktop.swingx.JXErrorPane" classes="private" methods="private" fields="private"/>-->
-                <!--<class name="org.jdesktop.swingx.JXCollapsiblePane" classes="private" methods="private"-->
-                <!--fields="private"/>-->
-                <!--<class name="org.jdesktop.swingx.SwingXUtilities" classes="private" methods="private"-->
-                <!--fields="private"/>-->
-                <!--</keep>-->
             </shrink>
         </yguard>
-    </target>
 
+        <delete dir="./tmp/"/>
+        <unzip src="./tmp2.jar" dest="./tmp/">
+            <patternset>
+                <include name="org/"/>
+            </patternset>
+        </unzip>
+        <jar basedir="./tmp/" destfile="${destjar}"/>
+        <delete dir="./tmp/"/>
+        <delete file="./tmp1.jar"/>
+        <delete file="./tmp2.jar"/>
+    </target>
 </project>
