@@ -868,7 +868,21 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         forceMenu.setName("forceDownloadMenu");
         context.getResourceMap().injectComponent(forceMenu);
 
-//      menu.add(forceMenu);
+        JMenu speedLimitMenu = new JMenu("Speed Limit");
+        final int[] limits = new int[]{1, 5, 10, 15, 25, 50, 100, 150, 250, 500, -1};
+        ButtonGroup group = new ButtonGroup();
+        final List<DownloadFile> files = this.manager.getSelectionToList(selectedRows);
+        for (int limit : limits) {
+            final JRadioButtonMenuItem radio = new JRadioButtonMenuItem(new SpeedLimitAction(limit));
+            group.add(radio);
+            radio.setAlignmentX(LEFT_ALIGNMENT);
+            speedLimitMenu.add(radio);
+            if (!files.isEmpty()) {
+                radio.setSelected(files.get(0).getSpeedLimit() == limit);
+            }
+        }
+        popup.add(speedLimitMenu);
+
         boolean forceEnabled = isSelectedEnabled() && this.manager.hasDownloadFilesStates(selectedRows, DownloadsActions.forceEnabledStates);
         forceMenu.setEnabled(forceEnabled);
         final List<ConnectionSettings> connectionSettingses = director.getClientManager().getAvailableConnections();
@@ -1035,6 +1049,22 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
 
         public void actionPerformed(ActionEvent e) {
             manager.forceDownload(settings, getSelectedRows());
+        }
+    }
+
+    private class SpeedLimitAction extends AbstractAction {
+        private final int value;
+
+        public SpeedLimitAction(int value) {
+            this.value = value;
+            if (value != -1) {
+                this.putValue(NAME, String.format("%skB", value));
+            } else
+                this.putValue(NAME, "Unlimited");
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            manager.setSpeedLimit(getSelectedRows(), value);
         }
     }
 

@@ -675,4 +675,15 @@ public class DataManager extends AbstractBean implements PropertyChangeListener,
             return false;
         }
     }
+
+    public void setSpeedLimit(int[] indexes, int speed) {
+        if (indexes.length == 0)
+            return;
+
+        synchronized (lock) {
+            for (DownloadFile file : selectionToList(indexes)) {
+                file.setSpeedLimit(speed);
+            }
+        }
+    }
 }

@@ -57,6 +57,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
     private static final int OUTPUT_FILE_BUFFER_SIZE = 600000;
     private volatile boolean connectionTimeOut;
     private int fileAlreadyExists;
+    private final static SpeedRegulator speedRegulator = new SpeedRegulator();
 
     public DownloadTask(Application application) {
         super(application);
@@ -142,7 +143,8 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
         downloadFile.setFileState(FileState.CHECKED_AND_EXISTING);
         final boolean temporary = useTemporaryFiles();
 
-        final byte[] buffer = new byte[AppPrefs.getProperty(UserProp.INPUT_BUFFER_SIZE, INPUT_BUFFER_SIZE)];
+        //final byte[] buffer = new byte[AppPrefs.getProperty(UserProp.INPUT_BUFFER_SIZE, INPUT_BUFFER_SIZE)];
+        final byte[] buffer = new byte[1024];
         final OutputStream[] fileOutputStream = new OutputStream[]{null};
         final String fileName = downloadFile.getFileName();
         outputFile = downloadFile.getOutputFile();
@@ -229,6 +231,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                     }
                 }, 0, 1000);
 
+                speedRegulator.addDownloading(downloadFile);
                 //data downloading-------------------------------
                 while ((len = inputStream.read(buffer)) != -1) {
                     fileOutputStream[0].write(buffer, 0, len);
@@ -236,6 +239,11 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
                     if (isTerminated()) {
                         fileOutputStream[0].flush();
                         break;
+                    }
+                    final boolean ok = speedRegulator.takeTokens(downloadFile, len / 1024);
+                    if (!ok) {
+                        System.out.println("Going to sleep to slow down speed");
+                        Thread.sleep(1000);
                     }
                 }
                 //-----------------------------------------------
@@ -266,6 +274,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 //                } catch (IOException e) {
 //                    LogUtils.processException(logger, e);
 //                }
+                speedRegulator.removeDownloading(downloadFile);
                 closeFileStream(fileOutputStream[0]);
                 fileOutputStream[0] = null;
                 checkDeleteTempFile();

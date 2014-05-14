@@ -144,6 +144,10 @@ public class FileTypeIconProvider {
             return icon;
         } catch (IOException e) {
             return map.getImageIcon("iconFileTypeSmall_UNKNOWN");
+        } catch (NullPointerException e) {
+            return map.getImageIcon("iconFileTypeSmall_UNKNOWN");
+        } catch (ClassFormatError e) {
+            return map.getImageIcon("iconFileTypeSmall_UNKNOWN");
         } finally {
             if (file != null)
                 file.delete();

@@ -50,6 +50,9 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
     private volatile ConnectionSettings connectionSettings;
     private volatile FileState fileState = FileState.NOT_CHECKED;
     private volatile Map<String, Object> properties = new Hashtable<String, Object>();
+    private int speedLimit = -1;
+    private int tokens;
+    private int takenTokens;
 
     static {
         try {
@@ -58,7 +61,7 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
                     info.getPropertyDescriptors();
             for (PropertyDescriptor pd : propertyDescriptors) {
                 final Object name = pd.getName();
-                if ("task".equals(name) || "speed".equals(name) || "shortTimeAvgSpeed".equals(name) || "connectionSettings".equals(name)) {
+                if ("task".equals(name) || "speed".equals(name) || "shortTimeAvgSpeed".equals(name) || "connectionSettings".equals(name) || "tokens".equals(name) || "takenTokens".equals(name)) {
                     pd.setValue("transient", Boolean.TRUE);
                 }
             }
@@ -561,9 +564,39 @@ public class DownloadFile extends AbstractBean implements PropertyChangeListener
         return shortTimeAvgSpeed;
     }
 
-    public void setShortTimeAvgSpeed(float shortTimeAvgSpeed) {
+    public void setShortTimeAvgSpeed(final float shortTimeAvgSpeed) {
         float oldValue = this.shortTimeAvgSpeed;
         this.shortTimeAvgSpeed = shortTimeAvgSpeed;
-        firePropertyChange("allTimeAverageSpeed", oldValue, connectionSettings);
+        firePropertyChange("allTimeAverageSpeed", oldValue, shortTimeAvgSpeed);
+    }
+
+    public int getSpeedLimit() {
+        return speedLimit;
+    }
+
+    public void setSpeedLimit(final int speedLimit) {
+        final int oldValue = this.speedLimit;
+        this.speedLimit = speedLimit;
+        firePropertyChange("speedLimit", oldValue, speedLimit);
+    }
+
+    public boolean hasSpeedLimit() {
+        return speedLimit > 0;
+    }
+
+    public void setTokensLimit(int tokens) {
+        this.tokens = tokens;
+    }
+
+    public int getTokensLimit() {
+        return this.tokens;
+    }
+
+    public int getTakenTokens() {
+        return takenTokens;
+    }
+
+    public void setTakenTokens(int takenTokens) {
+        this.takenTokens = takenTokens;
     }
 }

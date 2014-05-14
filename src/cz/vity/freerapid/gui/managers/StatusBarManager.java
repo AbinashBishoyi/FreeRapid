@@ -1,9 +1,14 @@
 package cz.vity.freerapid.gui.managers;
 
+import com.jgoodies.binding.adapter.Bindings;
+import com.jgoodies.binding.adapter.SpinnerAdapterFactory;
+import com.jgoodies.binding.beans.PropertyConnector;
+import com.jgoodies.binding.value.ValueModel;
 import cz.vity.freerapid.core.AppPrefs;
 import cz.vity.freerapid.core.MainApp;
 import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.core.tasks.DownloadTask;
+import cz.vity.freerapid.gui.MyPreferencesAdapter;
 import cz.vity.freerapid.gui.content.ContentPanel;
 import cz.vity.freerapid.swing.TrayIconSupport;
 import cz.vity.freerapid.swing.components.MemoryIndicator;
@@ -127,6 +132,21 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
             progress.setVisible(false);
             director.getMenuManager().getMenuBar().addPropertyChangeListener("selectedText", this);
             statusbar.add(infoLabel, JXStatusBar.Constraint.ResizeBehavior.FIXED);
+
+            final JPanel speedLimitPanel = new JPanel();
+            speedLimitPanel.setLayout(new BoxLayout(speedLimitPanel, BoxLayout.LINE_AXIS));
+            speedLimitPanel.setSize(45, 15);
+            speedLimitPanel.setBorder(null);
+            final JCheckBox speedLimiterEnabled = new JCheckBox();
+            speedLimiterEnabled.setText("");
+            final ValueModel valueModel = bind(speedLimiterEnabled, UserProp.SPEED_LIMIT_ENABLED, UserProp.SPEED_LIMIT_ENABLED_DEFAULT);
+            speedLimitPanel.add(speedLimiterEnabled);
+            final JSpinner globalSpeed = new JSpinner();
+            speedLimitPanel.add(globalSpeed);
+            bind(globalSpeed, UserProp.SPEED_LIMIT, UserProp.SPEED_LIMIT_DEFAULT, 1, 99999, 10);
+            PropertyConnector.connectAndUpdate(valueModel, globalSpeed, "enabled");
+
+            statusbar.add(speedLimitPanel, JXStatusBar.Constraint.ResizeBehavior.FIXED);
             statusbar.add(progress, JXStatusBar.Constraint.ResizeBehavior.FIXED);
             statusbar.add(clipboardMonitoring, JXStatusBar.Constraint.ResizeBehavior.FIXED);
             statusbar.add(Box.createGlue(), JXStatusBar.Constraint.ResizeBehavior.FILL);
@@ -280,4 +300,21 @@ public class StatusBarManager implements PropertyChangeListener, ListDataListene
     public void contentsChanged(ListDataEvent e) {
 
     }
+
+    private void bind(JSpinner spinner, String key, int defaultValue, int minValue, int maxValue, int step) {
+        spinner.setModel(SpinnerAdapterFactory.createNumberAdapter(
+                new MyPreferencesAdapter(key, defaultValue),
+                defaultValue,   // defaultValue
+                minValue,   // minValue
+                maxValue, // maxValue
+                step)); // step
+    }
+
+    private ValueModel bind(final JCheckBox checkBox, final String key, final Object defaultValue) {
+        final ValueModel valueModel = new MyPreferencesAdapter(key, defaultValue);
+        Bindings.bind(checkBox, valueModel);
+        return valueModel;
+    }
+
+
 }

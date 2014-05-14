@@ -323,7 +323,7 @@ public class EditorPaneLinkDetector extends JEditorPane {
           */
         protected boolean isKeyword(String token) {
             //return keywords.contains(token);
-            System.out.println("token = " + token);
+            //System.out.println("token = " + token);
             final Matcher match = EMAIL_PATTERN.matcher(token);
             return match.find() && getURL(match.group()) != null;
         }

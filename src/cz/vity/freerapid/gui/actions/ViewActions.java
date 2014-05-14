@@ -43,7 +43,11 @@ public class ViewActions extends AbstractBean {
         AppPrefs.getPreferences().addPreferenceChangeListener(new PreferenceChangeListener() {
             public void preferenceChange(PreferenceChangeEvent evt) {
                 if (UserProp.AUTOSHUTDOWN.equals(evt.getKey())) {
-                    updateSelectedAction();
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            updateSelectedAction();
+                        }
+                    });
                 }
             }
         });

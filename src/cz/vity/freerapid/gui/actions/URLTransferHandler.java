@@ -64,6 +64,7 @@ public abstract class URLTransferHandler extends TransferHandler {
         final Matcher match = REGEXP_URL.matcher(data);
         int start = 0;
         final String http = "http://";
+        final Pattern dotsEndPattern = Pattern.compile("(.+)\\.{3,}");
         while (match.find(start)) {
             try {
                 String spec = match.group();
@@ -77,7 +78,10 @@ public abstract class URLTransferHandler extends TransferHandler {
                     final String urlS = url.toExternalForm();
                     final int i = urlS.indexOf("...");
                     Pattern patternMatcher = null;
-                    if (i > 0 && !urlS.endsWith("...")) {
+                    final Matcher dotsMatcher = dotsEndPattern.matcher(urlS);
+                    boolean dotsEnd = dotsMatcher.matches();
+
+                    if (i > 0 && !dotsEnd) {
                         String pattern = Pattern.quote(urlS.substring(0, i)) + ".+" + Pattern.quote(urlS.substring(i + 4));
                         patternMatcher = Pattern.compile(pattern);
                     }
@@ -85,11 +89,12 @@ public abstract class URLTransferHandler extends TransferHandler {
                     boolean containable = false;
                     for (URI u : list) {
                         final String previouslyAdded = u.toURL().toExternalForm();
-                        if (previouslyAdded.length() > urlS.length())
-                            if (previouslyAdded.startsWith(urlS) || (patternMatcher != null && patternMatcher.matcher(previouslyAdded).matches())) {
+                        if (previouslyAdded.length() > urlS.length()) {
+                            if (previouslyAdded.startsWith(urlS) || (patternMatcher != null && patternMatcher.matcher(previouslyAdded).matches() || (dotsEnd && previouslyAdded.startsWith(dotsMatcher.group(1))))) {
                                 containable = true;
                                 break;
                             }
+                        }
                     }
                     if (!containable) {
                         URI uri;
