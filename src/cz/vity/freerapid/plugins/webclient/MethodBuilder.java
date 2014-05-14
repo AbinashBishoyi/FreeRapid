@@ -678,17 +678,6 @@ public final class MethodBuilder {
             populateParameters(content);
     }
 
-
-    private String getCorrectGroup(Matcher matcher) {
-        for (int i = matcher.groupCount(); i > 0; i--) {
-            final String group = matcher.group(i);
-            if (group != null) {
-                return group;
-            }
-        }
-        throw new IllegalStateException("Group cannot be empty");
-    }
-
     private void populateParameters(final String content) {
         if (parameterInputPattern == null)
             parameterInputPattern = Pattern.compile("<input (.+?>)", Pattern.DOTALL | Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
@@ -703,8 +692,7 @@ public final class MethodBuilder {
         if (parameterNamePattern == null)
 
             //parameterNamePattern = Pattern.compile("name\\s?=\\s?(?:\"|')?(.*?)(?:\"|'|\\s|>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE); //invalid
-            parameterNamePattern = Pattern.compile("(?:name\\s?=\\s?)([\"]([^\"]+)[\">])|([']([^']+)['>])|(([^'\">\\s]+)[/\\s>])", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
-            //parameterNamePattern = Pattern.compile("name\\s?=\\s?(?:\"([^\"]+)\")|(?:'([^']+)')|(?:(?:/(?!>))|(?:[^\\s/>]))", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+            parameterNamePattern = Pattern.compile("name\\s?=\\s?(?:(?:\")(.*?)(?:\"|>))|(?:(?:')(.*?)(?:'|>))|(?:(.*?)(?:\\s|>))", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         if (parameterValuePattern == null)
             parameterValuePattern = Pattern.compile("value\\s?=\\s?(?:\"|')?(.*?)(?:\"|'|\\s|>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         final Matcher matcher = parameterInputPattern.matcher(content);
@@ -712,8 +700,7 @@ public final class MethodBuilder {
             final String input = matcher.group(1);
             final Matcher matchName = parameterNamePattern.matcher(input);
             if (matchName.find()) {
-                final String paramName = getCorrectGroup(matchName);
-                System.out.println("paramName = " + paramName);
+                final String paramName = matchName.group(1);
                 String paramType = null;
                 final Matcher matchType = parameterTypePattern.matcher(input);
                 if (matchType.find()) {
