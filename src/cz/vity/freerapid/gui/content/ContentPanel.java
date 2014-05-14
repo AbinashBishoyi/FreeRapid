@@ -51,6 +51,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
@@ -244,6 +245,22 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         final java.util.List<DownloadFile> files = manager.getSelectionToList(indexes);
         for (DownloadFile file : files) {
             OSDesktop.openDirectoryForFile(file.getOutputFile());
+        }
+    }
+
+    @org.jdesktop.application.Action(enabledProperty = SELECTED_ACTION_ENABLED_PROPERTY)
+    public void searchSubtitlesAction() {
+        final int[] indexes = getSelectedRows();
+        final java.util.List<DownloadFile> files = manager.getSelectionToList(indexes);
+        final String subLanguage = AppPrefs.getProperty(UserProp.SEARCH_SUBTITLES_LANGUAGE, Locale.getDefault().getISO3Language());
+        final String weblanguage = Locale.getDefault().getLanguage();
+        for (DownloadFile file : files) {
+            final long fs = file.getFileSize();
+            if (fs <= 0) {
+                continue;
+            }
+            final String url = String.format("http://www.opensubtitles.org/%s/search/moviebytesize-%s/sublanguageid-%s", weblanguage, fs, subLanguage);
+            Browser.openBrowser(url);
         }
     }
 
@@ -1097,6 +1114,9 @@ public class ContentPanel extends JPanel implements ListSelectionListener, ListD
         popup.addSeparator();
         popup.add(map.get("copyContent"));
         popup.add(map.get("openInBrowser"));
+        if (AppPrefs.getProperty(UserProp.SEARCH_SUBTITLES_ENABLED, UserProp.SEARCH_SUBTITLES_ENABLED_DEFAULT)) {
+            popup.add(map.get("searchSubtitlesAction"));
+        }
 
         final MouseEvent event = SwingUtilities.convertMouseEvent(table, e, this);
         popup.show(this, event.getX(), event.getY());

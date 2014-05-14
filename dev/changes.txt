@@ -1,11 +1,27 @@
-Version 0.85->0.85u1
+=======================================================================================================================
+                                           Version 0.85->0.85u1
+=======================================================================================================================
 
 UserPreferencesDialog.properties
 ===================================
+Added:
+
 checkUseRecycleBin.text=Use system recycle &bin for deleting files
 
+MainApp.properties
+===================================
+Added:
 
-Version 0.83->0.85
+searchSubtitlesAction.Action.text=Search subtitles
+searchSubtitlesAction.Action.shortDescription=Search subtitles using opensubtitles.org
+searchSubtitlesAction.Action.smallIcon=${iconsPath}subtitles.png
+
+
+=======================================================================================================================
+                                            Version 0.83->0.85
+=======================================================================================================================
+
+
 NEW FILES:
 ExportLinksTask.properties
 ImportLinksTask.properties

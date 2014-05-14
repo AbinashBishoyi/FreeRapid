@@ -327,6 +327,11 @@ final public class UserProp {
 
     public static final String USE_RECYCLE_BIN = "useRecycleBin";
     public static final boolean USE_RECYCLE_BIN_DEFAULT = false;
+
+    public static final String SEARCH_SUBTITLES_ENABLED = "searchSubtitlesEnabled";
+    public static final boolean SEARCH_SUBTITLES_ENABLED_DEFAULT = false;
+
+    public static final String SEARCH_SUBTITLES_LANGUAGE = "searchSubtitlesLanguage";
 }
 
 
