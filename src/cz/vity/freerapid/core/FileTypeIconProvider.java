@@ -8,7 +8,9 @@ import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
+import java.net.URLDecoder;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -23,6 +25,7 @@ public class FileTypeIconProvider {
     private final static Logger logger = Logger.getLogger(FileTypeIconProvider.class.getName());
     private static Pattern pattern;
     private static Pattern fileNamePattern = Pattern.compile("\\/([^/]*?\\.(zip|rar|avi|wmv|mp3))\\.html?", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+    private static Pattern encoded = Pattern.compile("%[A-Z0-9]{2}%");
     //    private static final String DEFAULT_EXTENSION = "unknown";
     private final Map<String, Icon> systemLargeIcons = new Hashtable<String, Icon>();
     private final Map<String, Icon> systemSmallIcons = new Hashtable<String, Icon>();
@@ -67,7 +70,7 @@ public class FileTypeIconProvider {
     public static String identifyFileName(final String url) {
         final Matcher matcher = fileNamePattern.matcher(url);
         if (matcher.find()) {
-            return matcher.group(1);
+            return checkEncodedFileName(matcher.group(1));
         }
         final String[] strings = url.split("/");
         for (int i = strings.length - 1; i >= 0; i--) {
@@ -81,7 +84,7 @@ public class FileTypeIconProvider {
         if (s.isEmpty()) {
             return "?";
         }
-        return s;
+        return checkEncodedFileName(s);
     }
 
     public Icon getIconImageByFileType(String fileType, boolean bigImage) {
@@ -186,6 +189,24 @@ public class FileTypeIconProvider {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    private static String checkEncodedFileName(String name) {
+        if (encoded.matcher(name).find()) {
+            try {
+                String decoded = URLDecoder.decode(name, "UTF-8");
+                if (decoded.contains("\uFFFD")) {
+                    decoded = URLDecoder.decode(name, "Windows-1250");
+                }
+                if (decoded.contains("\uFFFD")) {
+                    return name;
+                }
+                return decoded;
+            } catch (UnsupportedEncodingException e) {
+                //ignore
+            }
+        }
+        return name;
     }
 
 //    public static void main(String[] args) {

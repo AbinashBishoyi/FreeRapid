@@ -6,6 +6,7 @@ import cz.vity.freerapid.core.UserProp;
 import cz.vity.freerapid.plugins.webclient.ConnectionSettings;
 import cz.vity.freerapid.plugins.webclient.DownloadClient;
 import cz.vity.freerapid.plugins.webclient.interfaces.HttpDownloadClient;
+import cz.vity.freerapid.utilities.LogUtils;
 import cz.vity.freerapid.utilities.Utils;
 
 import java.io.File;
@@ -50,7 +51,11 @@ public class ClientManager {
             final String file = AppPrefs.getProperty(UserProp.PROXY_LIST_PATH, PROXY_LIST_DEFAULT_PATH);
             final File f = new File(file);
             if (f.exists() && f.isFile() && f.canRead()) {
-                readProxyList(f);
+                try {
+                    readProxyList(f);
+                } catch (Exception e) {
+                    LogUtils.processException(logger, e);
+                }
             }
         }
     }

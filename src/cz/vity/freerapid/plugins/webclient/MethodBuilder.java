@@ -363,7 +363,12 @@ public final class MethodBuilder {
      * @throws cz.vity.freerapid.plugins.exceptions.BuildMethodException
      *          if base url does not match URI string
      */
-    public MethodBuilder setBaseURLForAction(String baseURL) throws BuildMethodException {
+    public MethodBuilder setBaseURL(String baseURL) throws BuildMethodException {
+        if (baseURL == null) {
+            this.baseURL = null;
+            return this;
+        }
+
         try {
             new URI(baseURL);
         } catch (URISyntaxException e) {
@@ -508,8 +513,9 @@ public final class MethodBuilder {
      *
      * @param referer Value to set for property 'referer'.
      */
-    public void setReferer(String referer) {
+    public MethodBuilder setReferer(String referer) {
         this.referer = referer;
+        return this;
     }
 
     /**
@@ -694,6 +700,22 @@ public final class MethodBuilder {
     }
 
     /**
+     * Sets new action
+     *
+     * @param action
+     * @return
+     */
+    public MethodBuilder setAction(String action) {
+        this.action = action;
+        if (action.toLowerCase().startsWith("http")) {
+            this.postMethod = HttpMethodEnum.GET;
+        }
+        if (isAutoReplaceEntitiesEnabled())
+            replaceEntitiesInAction();
+        return this;
+    }
+
+    /**
      * Getter for property 'baseURL'.
      *
      * @return Value for property 'baseURL'.
@@ -761,7 +783,7 @@ public final class MethodBuilder {
      *
      * @return Value for property 'autoReplaceEntities'.
      */
-    public boolean isAutoReplaceEntities() {
+    public boolean isAutoReplaceEntitiesEnabled() {
         return autoReplaceEntities;
     }
 

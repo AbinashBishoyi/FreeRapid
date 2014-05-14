@@ -199,9 +199,9 @@
 
 
     <target name="clean" description="clean up">
-        <delete dir="${build.dir}"/>
+        <delete dir="${build.dir}" failonerror="false"/>
         <delete dir="${classes.dir}"/>
-        <delete dir="${dist.dir}"/>
+        <delete dir="${dist.dir}" failonerror="false"/>
         <delete dir="${resources.dir}"/>
         <delete dir="${build.tests}"/>
         <delete dir="${reports.tests}"/>

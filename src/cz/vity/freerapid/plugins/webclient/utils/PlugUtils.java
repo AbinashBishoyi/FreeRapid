@@ -1,6 +1,7 @@
 package cz.vity.freerapid.plugins.webclient.utils;
 
 import cz.vity.freerapid.plugins.exceptions.PluginImplementationException;
+import cz.vity.freerapid.plugins.webclient.interfaces.HttpFile;
 import org.apache.commons.httpclient.methods.PostMethod;
 
 import java.awt.image.BufferedImage;
@@ -29,7 +30,6 @@ public final class PlugUtils {
      */
     private static Pattern parameterPattern1;
     private static Pattern parameterPattern2;
-
 
     /**
      * Parses input string and converts it into bytes.<br />
@@ -240,4 +240,78 @@ public final class PlugUtils {
 //        System.out.println("fileSizeFromString = " + fileSizeFromString);
 //    }
 //
+
+    /**
+     * Extracts file name from the site. White space around file name is trimmed.
+     *
+     * @param file           file to apply found file name
+     * @param content        content to search
+     * @param fileNameBefore string before file name
+     * @param fileNameAfter  string after file name
+     * @throws file name was not found
+     * @since 0.82
+     */
+    public static void checkName(HttpFile file, String content, String fileNameBefore, String fileNameAfter) throws PluginImplementationException {
+        final String before = Pattern.quote(fileNameBefore);
+        final String after = Pattern.quote(fileNameAfter);
+        final Matcher matcher = matcher(before + "(.+?)" + after, content);
+        if (matcher.find()) {
+            String fileName = matcher.group(1).trim();
+            logger.info("File name " + fileName);
+//            final String decoded = checkEncodedFileName(fileName);
+//            if (!fileName.equals(decoded)) {
+//                logger.info("File name decoded" + decoded);
+//                fileName = decoded;
+//            }
+            file.setFileName(fileName);
+        } else {
+            throw new PluginImplementationException("File name not found");
+        }
+    }
+
+    /**
+     * Extracts file name from the site
+     *
+     * @param file           file to apply found file name
+     * @param content        content to search
+     * @param fileSizeBefore string before file name
+     * @param fileSizeAfter  string after file name
+     * @throws file size string was not found
+     * @since 0.82
+     */
+    public static void checkFileSize(HttpFile file, String content, String fileSizeBefore, String fileSizeAfter) throws PluginImplementationException {
+        final String before = Pattern.quote(fileSizeBefore);
+        final String after = Pattern.quote(fileSizeAfter);
+        final Matcher matcher = matcher(before + "(.+?)" + after, content);
+        if (matcher.find()) {
+            final String fileSize = matcher.group(1);
+            logger.info("File size " + fileSize);
+            final long size = getFileSizeFromString(matcher.group(1));
+            file.setFileSize(size);
+        } else {
+            throw new PluginImplementationException("File size not found");
+        }
+    }
+
+    /**
+     * Returns string between 2 other strings.
+     *
+     * @param content      searched content
+     * @param stringBefore string before searched string
+     * @param stringAfter  string after searched string
+     * @return found string
+     * @throws PluginImplementationException
+     */
+    public static String getStringBetween(String content, String stringBefore, String stringAfter) throws PluginImplementationException {
+        final String before = Pattern.quote(stringBefore);
+        final String after = Pattern.quote(stringAfter);
+        final Matcher matcher = matcher(before + "(.+?)" + after, content);
+        if (matcher.find()) {
+            return matcher.group(1);
+        } else {
+            throw new PluginImplementationException(String.format("No string between '%s' and '%s'", stringBefore, stringAfter));
+        }
+    }
+
+
 }

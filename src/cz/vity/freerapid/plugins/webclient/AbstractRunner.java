@@ -1,5 +1,6 @@
 package cz.vity.freerapid.plugins.webclient;
 
+import cz.vity.freerapid.plugins.exceptions.BuildMethodException;
 import cz.vity.freerapid.plugins.webclient.hoster.CaptchaSupport;
 import cz.vity.freerapid.plugins.webclient.interfaces.*;
 import cz.vity.freerapid.plugins.webclient.utils.PlugUtils;
@@ -128,6 +129,7 @@ public abstract class AbstractRunner implements PluginRunner {
      * @throws Exception when connection/writing to file failed
      */
     protected boolean tryDownloadAndSaveFile(HttpMethod method) throws Exception {
+        logger.info("Download link URI: " + method.getURI().toString());
         httpFile.setState(DownloadState.GETTING);
         logger.info("Making final request for file");
         try {
@@ -230,8 +232,8 @@ public abstract class AbstractRunner implements PluginRunner {
      * @return new instance of MethodBuilder
      * @since 0.82
      */
-    protected MethodBuilder getMethodBuilder() {
-        return new MethodBuilder(client);
+    protected MethodBuilder getMethodBuilder() throws BuildMethodException {
+        return new MethodBuilder(client).setBaseURL(getBaseURL());
     }
 
     /**
@@ -242,4 +244,14 @@ public abstract class AbstractRunner implements PluginRunner {
     protected void addCookie(Cookie cookie) {
         client.getHTTPClient().getState().addCookie(cookie);
     }
+
+    /**
+     * Returns base url for the site
+     *
+     * @return base url - null by default
+     */
+    protected String getBaseURL() {
+        return null;
+    }
+
 }

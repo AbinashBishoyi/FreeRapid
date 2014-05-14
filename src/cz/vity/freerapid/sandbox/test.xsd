@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:simpleType name="TOsoba">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="2"/>
+            <xsd:maxLength value="30"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="Tnadpis">
+        <xsd:restriction base="xsd:string"/>
+    </xsd:simpleType>
+    <xsd:simpleType name="Tautor">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="20"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="Todstavec">
+        <xsd:restriction base="xsd:string"/>
+    </xsd:simpleType>
+    <xsd:element name="Osoba" type="TOsoba">
+        <xsd:complexType>
+            <xsd:attribute name="Příjmení" use="required">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:minLength value="1"/>
+                        <xsd:maxLength value="30"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="Jméno" use="required">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:minLength value="1"/>
+                        <xsd:maxLength value="30"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="článek">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="nadpis" type="Tnadpis"/>
+                <xsd:element name="autor" type="Tautor" maxOccurs="unbounded"/>
+                <xsd:element name="odstavec" type="Todstavec" minOccurs="1" maxOccurs="unbounded"/>
+                <xsd:element name="Adresa">
+                    <xsd:complexType>
+                        <xsd:attribute name="Ulice" use="optional">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:string">
+                                    <xsd:minLength value="2"/>
+                                    <xsd:maxLength value="30"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="ČísloDomu" use="required">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:string">
+                                    <xsd:minLength value="1"/>
+                                    <xsd:maxLength value="6"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="Obec" use="required">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:string"/>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="Okres" use="required">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:string">
+                                    <xsd:minLength value="2"/>
+                                    <xsd:maxLength value="30"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                        <xsd:attribute name="PSČ" use="required">
+                            <xsd:simpleType>
+                                <xsd:restriction base="xsd:integer">
+                                    <xsd:minInclusive value="10000"/>
+                                    <xsd:maxInclusive value="99999"/>
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element minOccurs="0" maxOccurs="1" ref="Osoba"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

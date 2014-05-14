@@ -1,0 +1,38 @@
+<xd:def xmlns:xd="http://www.syntea.cz/xdef/2.0"
+        xmlns:fn="http://www.w3.org/2005/xpath-functions"
+        xd:name="dokument"
+        xd:root="Osoba | Firma | Manzelsvi">
+
+    <Osoba Jmeno="required string(1,24)"
+           Prijmeni="required string(1,30)"
+           RC="required int(10,11)"
+           Pohlavi="required list('muz','zena')"
+           Telefon="optional int(6,12)">
+
+        <Pobyt xd:script="ref Adresa;occurs 1..2"
+               Druh="required list('trvala','docasna')"/>
+    </Osoba>
+
+    <Firma NazevFirmy="required string()"
+           IC="required int(8)"
+           Telefon="optional int(6,12)">
+        string(5)
+        <Adresa xd:script="ref Adresa;occurs 1"/>
+    </Firma>
+
+    <Manzelstvi>
+        <xd:mixed>
+            <Manzel xd:script="ref Osoba;occurs 1"/>
+            <Manzelka xd:script="ref Osoba;occurs 1"/>
+            <Dite xd:script="ref Osoba;occurs *"/>
+        </xd:mixed>
+    </Manzelstvi>
+
+    <Adresa Ulice="optional string(2,30)"
+            CisloOrientacni="optional int(1,99999)"
+            CisloPopisne="required int(1,99999)"
+            Obec="required string(2,30)"
+            Okres="required string(2,30)"
+            PSC="optional int(10000,99999)"/>
+
+</xd:def>

@@ -352,12 +352,12 @@ public class DownloadClient implements HttpDownloadClient {
             this.asString = streamToString(method.getResponseBodyAsStream());
     }
 
-    private static String streamToString(final InputStream in) {
+    private String streamToString(final InputStream in) {
         BufferedReader in2 = null;
         StringWriter sw = new StringWriter();
         char[] buffer = new char[4000];
         try {
-            in2 = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            in2 = new BufferedReader(new InputStreamReader(in, getContentPageCharset()));
             int x;
             while ((x = in2.read(buffer)) != -1) {
                 sw.write(buffer, 0, x);
@@ -445,9 +445,17 @@ public class DownloadClient implements HttpDownloadClient {
             b = gin.read(buffer);
             if (b == -1)
                 break;
-            builder.append(new String(buffer, 0, b, "UTF-8"));
+            builder.append(new String(buffer, 0, b, getContentPageCharset()));
         }
         return builder.toString();
+    }
+
+    protected String getContentPageCharset() {
+        final Object o = getHTTPClient().getParams().getParameter("pageCharset");
+        if (o == null) {
+            return "UTF-8";
+        }
+        return o.toString();
     }
 
     @Override

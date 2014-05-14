@@ -65,12 +65,12 @@ public class MethodBuilderTest {
 
         }
 
-        String s = methodBuilder.setBaseURLForAction("http://testbase.com/").toGetMethod().getURI().toString();
+        String s = methodBuilder.setBaseURL("http://testbase.com/").toGetMethod().getURI().toString();
         Assert.assertEquals("Parsing Form tag", "http://testbase.com/login/", s);
 
         methodBuilder = new MethodBuilder(content, client);
         methodBuilder.setActionFromFormWhereTagContains("Zaregistruj se", true);
-        s = methodBuilder.setBaseURLForAction("http://testbase.com/").toGetMethod().getURI().toString();
+        s = methodBuilder.setBaseURL("http://testbase.com/").toGetMethod().getURI().toString();
         Assert.assertEquals("Parsing Form tag", "http://testbase.com/login/?prihlasit=P%C5%99ihl%C3%A1sit&pamatovat=1", s);
 
 

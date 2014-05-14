@@ -52,7 +52,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 
     private int youHaveToSleepSecondsTime = 0;
     private static final int NO_DATA_TIMEOUT_LIMIT = 100;
-    private static final int INPUT_BUFFER_SIZE = 50000;
+    private static final int INPUT_BUFFER_SIZE = 24000;
     private static final int OUTPUT_FILE_BUFFER_SIZE = 600000;
     private volatile boolean connectionTimeOut;
     private int fileAlreadyExists;
@@ -211,7 +211,7 @@ public class DownloadTask extends CoreTask<Void, Long> implements HttpFileDownlo
 
                         final long current = System.currentTimeMillis();
                         final double l = (current - time) / 1000.0;
-                        if (l == 0) {
+                        if (Double.compare(l, 0) == 0) {
                             setAverageSpeed(0.0F);
                         } else
                             setAverageSpeed((float) ((float) counter / l));

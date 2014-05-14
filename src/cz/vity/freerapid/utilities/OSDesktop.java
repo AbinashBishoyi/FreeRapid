@@ -42,6 +42,7 @@ public class OSDesktop {
         if (Utils.isWindows() && file.exists()) {
             try {
                 Runtime.getRuntime().exec("explorer.exe /n,/e,/select,\"" + file.getAbsolutePath() + '\"');
+
             } catch (IOException e) {
                 LogUtils.processException(logger, e);
             }
