@@ -392,7 +392,7 @@ public class MenuManager extends AbstractBean {
 
         final JMenuItem refreshProxyList = new JMenuItem();
         refreshProxyList.setName("refreshProxyList");
-        refreshProxyList.setEnabled(AppPrefs.getProperty(UserProp.USE_PROXY_LIST, UserProp.USE_PROXY_LIST_DEFAULT));
+        setRefreshProxyListActionEnabled(AppPrefs.getProperty(UserProp.USE_PROXY_LIST, UserProp.USE_PROXY_LIST_DEFAULT));
         refreshProxyList.setAction(context.getActionMap().get("refreshProxyList"));
         useConnections.add(refreshProxyList);
         useConnections.add(new JSeparator());
