@@ -208,7 +208,7 @@
         <delete dir="${reports.tests}"/>
     </target>
 
-    <target name="all" depends="clean,init,compile, build, dist" description="build all"/>
+    <target name="all" depends="clean,init,tests, build, dist" description="build all"/>
 
     <!-- run -->
 
