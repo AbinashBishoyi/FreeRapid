@@ -197,6 +197,14 @@ public final class MethodBuilder {
         return this;
     }
 
+    /**
+     * Extracts string between other 2 strings and sets it as an action
+     *
+     * @param textBefore the text before extracted action
+     * @param textAfter  the text after extracted action
+     * @return builder instance
+     * @throws BuildMethodException if there was no such text found between selected strings
+     */
     public MethodBuilder setActionFromTextBetween(final String textBefore, final String textAfter) throws BuildMethodException {
         if (textBefore == null)
             throw new IllegalArgumentException("The text before the searched string cannot be null");
