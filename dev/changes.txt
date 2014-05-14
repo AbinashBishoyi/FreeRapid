@@ -44,6 +44,8 @@ sortbyServerAction.Action.smallIcon=${iconsPath}sort_small.gif
 
 
 New:
+speedSlider.toolTipText=Drag to change global speed limit for all files
+
 #do not translate, just place it there:
 searchDefaultIcon=${iconsPath}search.png
 

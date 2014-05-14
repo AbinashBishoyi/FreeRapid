@@ -215,7 +215,8 @@ public final class MethodBuilder {
 
     /**
      * Checks for generating 'www' or removing int
-     * @param shouldContainWww  if value is TRUE - 'www' for result URL is checked for URL and added, for FALSE 'www' is removed
+     *
+     * @param shouldContainWww if value is TRUE - 'www' for result URL is checked for URL and added, for FALSE 'www' is removed
      * @return builder instance
      * @since 0.85a4
      */
@@ -682,8 +683,16 @@ public final class MethodBuilder {
             parameterInputPattern = Pattern.compile("<input (.+?>)", Pattern.DOTALL | Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         if (parameterTypePattern == null)
             parameterTypePattern = Pattern.compile("type\\s?=\\s?(?:\"|')?(.*?)(?:\"|'|\\s|>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+
+//        name='button test 1' value=
+//        name="button test 1" value=
+//        name=button value=
+//        name=button xy value= is prohibited
+
         if (parameterNamePattern == null)
-            parameterNamePattern = Pattern.compile("name\\s?=\\s?(?:\"|')?(.*?)(?:\"|'|\\s|>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+
+            //parameterNamePattern = Pattern.compile("name\\s?=\\s?(?:\"|')?(.*?)(?:\"|'|\\s|>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE); //invalid
+            parameterNamePattern = Pattern.compile("name\\s?=\\s?(?:(?:\")(.*?)(?:\"|>))|(?:(?:')(.*?)(?:'|>))|(?:(.*?)(?:\\s|>))", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         if (parameterValuePattern == null)
             parameterValuePattern = Pattern.compile("value\\s?=\\s?(?:\"|')?(.*?)(?:\"|'|\\s|>)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         final Matcher matcher = parameterInputPattern.matcher(content);
