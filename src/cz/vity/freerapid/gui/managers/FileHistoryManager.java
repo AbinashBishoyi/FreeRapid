@@ -74,7 +74,8 @@ public class FileHistoryManager extends AbstractBean {
     private List<FileHistoryItem> loadFileHistoryList() {
         List<FileHistoryItem> result = null;
         final File srcFile = new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML);
-        if (srcFile.exists()) { //extract from old file
+        final File targetImportedFile = new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML + ".imported");
+        if (srcFile.exists() && !targetImportedFile.exists()) { //extract from old file
             try {
                 result = loadList(srcFile);
             } catch (Exception e) {
@@ -107,7 +108,7 @@ public class FileHistoryManager extends AbstractBean {
                 //noinspection ResultOfMethodCallIgnored
                 backupFile.renameTo(new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML + ".backup.imported"));
             }
-            srcFile.renameTo(new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML + ".imported"));
+            srcFile.renameTo(targetImportedFile);
             return result;
         } else {
             //load from database

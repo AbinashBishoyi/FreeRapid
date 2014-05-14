@@ -18,7 +18,7 @@ public class LogFormatter extends Formatter {
 
     private Object args[] = new Object[1];
 
-    final static String LINE_SEPARATOR = System.getProperty("line.separator");
+    final static String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
     // Line separator string.  This is the value of the line.separator
     // property at the moment that the SimpleFormatter was created.
 

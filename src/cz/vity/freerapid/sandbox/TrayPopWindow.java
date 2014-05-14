@@ -4,11 +4,7 @@ import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.border.DropShadowBorder;
-import org.jdesktop.swingx.painter.CompoundPainter;
-import org.jdesktop.swingx.painter.GlossPainter;
 import org.jdesktop.swingx.painter.MattePainter;
-import org.jdesktop.swingx.painter.PinstripePainter;
-import org.jdesktop.swingx.util.PaintUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -60,14 +56,14 @@ public class TrayPopWindow extends JWindow {
         this.setLayout(new BorderLayout());
 
         JLabel labelIcon = new JLabel();
-        btnBack = new JButton();        
+        btnBack = new JButton();
         btnForward = new JButton();
         btnClose = new JButton();
         btnClose.setBorderPainted(false);
 
         titlePanel.setLayout(new FormLayout(
-        			"default, $lcgap, default:grow, 3*($lcgap, center:default), $lcgap, default:grow, $lcgap, default",
-        			"default"));
+                "default, $lcgap, default:grow, 3*($lcgap, center:default), $lcgap, default:grow, $lcgap, default",
+                "default"));
         contentPane.setBorder(new DropShadowBorder(Color.BLACK, 4, 0.5f, 4, true, true, true, true));
 
         titlePanel.setBorder(BorderFactory.createCompoundBorder(new DropShadowBorder(Color.BLACK, 2, 0.3f, 4, false, false, true, false), BorderFactory.createEmptyBorder(4, 4, 4, 4)));

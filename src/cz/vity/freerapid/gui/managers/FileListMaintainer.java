@@ -56,7 +56,9 @@ class FileListMaintainer {
             }
         }
 
-        if (srcFile.exists()) { //extract from old file, we ignore existence of backup file in case the main file does not exist
+        final File targetImportedFile = new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML + ".imported");
+
+        if (srcFile.exists() && !targetImportedFile.exists()) { //extract from old file, we ignore existence of backup file in case the main file does not exist
             try {
                 result = loadListFromXML(srcFile);
             } catch (Exception e) {
@@ -86,7 +88,7 @@ class FileListMaintainer {
                 //noinspection ResultOfMethodCallIgnored
                 backupFile.renameTo(new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML + ".backup.imported"));
             }
-            srcFile.renameTo(new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML + ".imported"));
+            srcFile.renameTo(targetImportedFile);
             return result;
         } else {
             //load from database

@@ -62,8 +62,8 @@ public class PluginMetaDataManager {
             }
         }
 
-
-        if (srcFile.exists()) { //extract from old file
+        final File targetImportedFile = new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML + ".imported");
+        if (srcFile.exists() && !targetImportedFile.exists()) { //extract from old file
             try {
                 result = loadList(srcFile);
             } catch (Exception e) {
@@ -89,7 +89,7 @@ public class PluginMetaDataManager {
                 //noinspection ResultOfMethodCallIgnored
                 backupFile.renameTo(new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML + ".backup.imported"));
             }
-            srcFile.renameTo(new File(context.getLocalStorage().getDirectory(), FILES_LIST_XML + ".imported"));
+            srcFile.renameTo(targetImportedFile);
             return result;
         } else {
             //load from database
