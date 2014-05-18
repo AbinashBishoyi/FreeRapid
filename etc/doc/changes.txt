@@ -12,7 +12,8 @@ Changed - indicates a change in usage or behavior of FreeRapid Downloader
 Fixed - indicates a bug fix
 Internal - indicates an internal change - information for FRD developers - nothing important for users
 
-- FreeRapid Downloader 0.9 Update 4
+
+18th May 2014 - FreeRapid Downloader 0.9 Update 4
   Fixed: Recent files combobox uses MRU [by Tong2Shot - thanks!]
   Fixed : widen up main frame's status bar's info label a bit as it got truncated on some LaFs that use bold font.
           [by Tong2Shot - thanks!]
