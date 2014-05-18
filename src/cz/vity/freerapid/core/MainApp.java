@@ -35,8 +35,8 @@ import java.util.logging.Logger;
  */
 public class MainApp extends SingleXFrameApplication {
 
-    public static final int BUILD_REQUEST = 13;
-    public static final int PLUGINS_VERSION = 11;
+    public static final int BUILD_REQUEST = 14;
+    public static final int PLUGINS_VERSION = 12;
     static boolean debug = false;
     private ManagerDirector director;
     private TrayIconSupport trayIconSupport = null;
@@ -175,18 +175,34 @@ public class MainApp extends SingleXFrameApplication {
             Swinger.minimize(mainFrame);
         }
 
-        SwingUtilities.invokeLater(new Runnable() {
+        showDelayedRequestPaypalDialog();
+    }
+
+    private void showDelayedRequestPaypalDialog() {
+        final Thread appThread = new Thread() {
             @Override
             public void run() {
-                paypalRequest();
+                try {
+                    Thread.sleep(20000);
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            paypalRequest();
+                        }
+                    });
+                } catch (InterruptedException e) {
+                    //ignore
+                }
             }
-        });
+        };
+        appThread.setPriority(Thread.MIN_PRIORITY);
+        appThread.start();
     }
 
     private void paypalRequest() {
         if (AppPrefs.getProperty(UserProp.SHOW_PAYPAL_REQUEST, BUILD_REQUEST - 1) != BUILD_REQUEST) {
-            int res = Swinger.getChoiceYesNo(this.getContext().getResourceMap().getString("paypalSupportAction.Action.shortDescription"));
             AppPrefs.storeProperty(UserProp.SHOW_PAYPAL_REQUEST, BUILD_REQUEST);
+            int res = Swinger.getChoiceYesNo(this.getContext().getResourceMap().getString("paypalSupportAction.Action.shortDescription"));
             if (res == Swinger.RESULT_YES) {
                 Browser.openBrowser(AppPrefs.getProperty(UserProp.PAYPAL, UserProp.PAYPAL_DEFAULT));
             }

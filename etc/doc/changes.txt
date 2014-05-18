@@ -12,7 +12,7 @@ Changed - indicates a change in usage or behavior of FreeRapid Downloader
 Fixed - indicates a bug fix
 Internal - indicates an internal change - information for FRD developers - nothing important for users
 
-- FreeRapid Downloader 0.91
+- FreeRapid Downloader 0.9 Update 4
   Fixed: Recent files combobox uses MRU [by Tong2Shot - thanks!]
   Fixed : widen up main frame's status bar's info label a bit as it got truncated on some LaFs that use bold font.
           [by Tong2Shot - thanks!]
@@ -22,7 +22,7 @@ Internal - indicates an internal change - information for FRD developers - nothi
   Added: plugins API
            - Support for JSON parsing
            - Suggest file name
-
+  Changed: upgraded internal ObjectDB database to version 2.5.5
 
 15th September 2013 - FreeRapid Downloader 0.9 Update 3
   Added : Icons for file types .apk (Android APK), .srt & .sub (subtitles), mp4 (video)

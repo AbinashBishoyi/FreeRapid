@@ -15,7 +15,7 @@ public class Consts {
     /**
      * Version
      */
-    public static final String VERSION = "0.9u3";
+    public static final String VERSION = "0.9u4";
 
     /**
      * verze a jmeno programu
@@ -76,7 +76,7 @@ public class Consts {
     // hodnoty pro defaultni hodnoty pripojeni
 
     public static final String APP_CODE = "frd";
-    public static final String AUTHORS = "DevTeam (c) 2008-2013";
+    public static final String AUTHORS = "DevTeam (c) 2008-2014";
 
     public static final String LINUX_SHELL_SCRIPT = APP_CODE + ".sh";
     public static final String LINUX_ICON_NAME = APP_CODE + ".png";
